@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timeline of Life</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { background-color: #ffffff; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        .timeline-container {
+            overflow-x: auto;
+            white-space: nowrap;
+            padding: 2rem 1rem;
+            cursor: grab;
+            scrollbar-width: thin;
+            scrollbar-color: #cbd5e1 #f1f5f9;
+        }
+        .timeline-container:active { cursor: grabbing; }
+        .timeline-container::-webkit-scrollbar { height: 8px; }
+        .timeline-container::-webkit-scrollbar-track { background: #f1f5f9; }
+        .timeline-container::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 4px; }
+        
+        .timeline-line {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%; /* Will be set dynamically via JS */
+            height: 4px;
+            background-color: #e2e8f0;
+            transform: translateY(-50%);
+            z-index: 0;
+        }
+
+        .timeline-point {
+            display: inline-block;
+            vertical-align: middle;
+            position: relative;
+            z-index: 10;
+            margin-right: 150px; /* Spacing between points */
+        }
+
+        .point-circle {
+            width: 24px;
+            height: 24px;
+            background-color: #fff;
+            border: 4px solid #3b82f6; /* Blue-500 */
+            border-radius: 50%;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        
+        .point-circle:hover {
+            transform: scale(1.2);
+            border-color: #2563eb; /* Blue-600 */
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+        }
+
+        .point-year {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-weight: bold;
+            color: #475569;
+            font-size: 0.875rem;
+        }
+        
+        .point-label {
+             position: absolute;
+             bottom: -40px;
+             left: 50%;
+             transform: translateX(-50%);
+             font-size: 0.75rem;
+             color: #64748b;
+             text-align: center;
+             width: 120px;
+             white-space: normal;
+        }
+
+        /* Modal Animation */
+        .modal-enter { opacity: 0; transform: scale(0.95); }
+        .modal-enter-active { opacity: 1; transform: scale(1); transition: opacity 200ms, transform 200ms; }
+        .modal-exit { opacity: 1; transform: scale(1); }
+        .modal-exit-active { opacity: 0; transform: scale(0.95); transition: opacity 200ms, transform 200ms; }
+
+    </style>
+</head>
+<body class="p-4">
+
+    <div class="max-w-4xl mx-auto">
+        <h2 class="text-xl font-bold text-slate-800 mb-2">Timeline: The Origin of Life</h2>
+        <p class="text-sm text-slate-500 mb-6">Scroll horizontally and click on a year to explore the key experiments.</p>
+
+        <div class="relative timeline-container" id="timelineScroll">
+            <!-- Line width needs to cover all points. -->
+            <div class="timeline-line" style="width: 1200px;"></div>
+            
+            <!-- Points generated via JS or hardcoded below for clarity -->
+            <div class="timeline-point" onclick="openModal(0)">
+                <div class="point-year">350 BC</div>
+                <div class="point-circle"></div>
+                <div class="point-label">Aristotle</div>
+            </div>
+
+            <div class="timeline-point" onclick="openModal(1)">
+                <div class="point-year">1668</div>
+                <div class="point-circle"></div>
+                <div class="point-label">Francesco Redi</div>
+            </div>
+
+            <div class="timeline-point" onclick="openModal(2)">
+                <div class="point-year">1745</div>
+                <div class="point-circle"></div>
+                <div class="point-label">John Needham</div>
+            </div>
+
+            <div class="timeline-point" onclick="openModal(3)">
+                <div class="point-year">1768</div>
+                <div class="point-circle"></div>
+                <div class="point-label">Lazzaro Spallanzani</div>
+            </div>
+
+            <div class="timeline-point" onclick="openModal(4)">
+                <div class="point-year">1859</div>
+                <div class="point-circle"></div>
+                <div class="point-label">Louis Pasteur</div>
+            </div>
+
+            <div class="timeline-point" onclick="openModal(5)">
+                <div class="point-year">1953</div>
+                <div class="point-circle"></div>
+                <div class="point-label">Miller-Urey</div>
+            </div>
+             <!-- Extra padding at end -->
+             <div style="display:inline-block; width: 50px;"></div>
+        </div>
+    </div>
+
+    <!-- Modal Backdrop -->
+    <div id="modalBackdrop" class="fixed inset-0 bg-black/50 z-40 hidden flex items-center justify-center p-4">
+        <!-- Modal Content -->
+        <div id="modalContent" class="bg-white rounded-lg shadow-xl w-full max-w-md p-6 relative">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+            
+            <h3 id="modalTitle" class="text-2xl font-bold text-slate-900 mb-1"></h3>
+            <span id="modalYear" class="inline-block bg-blue-100 text-blue-800 text-xs font-bold px-2 py-1 rounded mb-4"></span>
+            
+            <div class="mb-4">
+                <h4 class="text-sm font-bold text-slate-500 uppercase tracking-wide mb-1">The Experiment</h4>
+                <p id="modalSummary" class="text-slate-700 text-sm leading-relaxed"></p>
+            </div>
+
+            <div class="bg-amber-50 border border-amber-200 rounded p-4">
+                <h4 class="flex items-center gap-2 text-sm font-bold text-amber-800 uppercase tracking-wide mb-1">
+                    <i data-lucide="help-circle" class="w-4 h-4"></i> Key Question
+                </h4>
+                <p id="modalQuestion" class="text-amber-900 text-sm italic"></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        const timelineData = [
+            {
+                year: "350 BC",
+                scientist: "Aristotle",
+                summary: "Proposed the theory of Spontaneous Generation (Abiogenesis). He observed that aphids seemingly arose from dew on plants, and mice from dirty hay, concluding that life could arise from non-living matter containing 'pneuma' (vital heat).",
+                question: "Can life arise from non-living matter simply by the presence of a 'vital heat'?"
+            },
+            {
+                year: "1668",
+                scientist: "Francesco Redi",
+                summary: "Conducted the first serious controlled experiment to challenge spontaneous generation. He placed meat in three jars: one open, one sealed, and one covered with gauze. Maggots only appeared in the open jar where flies could land.",
+                question: "Do maggots generate spontaneously from rotting meat, or do they come from flies?"
+            },
+            {
+                year: "1745",
+                scientist: "John Needham",
+                summary: "Boiled chicken broth to kill microbes, then put it into a flask and sealed it. After a few days, the broth became cloudy with microorganisms. He claimed this proved spontaneous generation.",
+                question: "If I kill all life in this broth, will new life appear spontaneously?"
+            },
+            {
+                year: "1768",
+                scientist: "Lazzaro Spallanzani",
+                summary: "Repeated Needham's experiment but boiled the broth *longer* and sealed the flasks *immediately* by melting the glass necks. No growth occurred. Critics argued he had destroyed the 'vital force' in the air by sealing it too tightly.",
+                question: "Did Needham fail to kill the microbes, or did he let them back in?"
+            },
+            {
+                year: "1859",
+                scientist: "Louis Pasteur",
+                summary: "Designed the Swan-Neck Flask. The curved neck allowed air (and the 'vital force') in, but trapped dust and microbes in the bend. The broth remained sterile for months until he tipped the flask. This definitively disproved spontaneous generation.",
+                question: "How can I allow air in but keep microbes out to prove biogenesis once and for all?"
+            },
+            {
+                year: "1953",
+                scientist: "Miller-Urey",
+                summary: "Simulated Earth's early atmosphere (methane, ammonia, hydrogen) and water cycle, then added sparks to simulate lightning. Within a week, amino acids (the building blocks of proteins) formed spontaneously from inorganic chemicals.",
+                question: "Could the chemical building blocks of life have formed naturally on the early Earth?"
+            }
+        ];
+
+        const modalBackdrop = document.getElementById('modalBackdrop');
+        const modalContent = document.getElementById('modalContent');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalYear = document.getElementById('modalYear');
+        const modalSummary = document.getElementById('modalSummary');
+        const modalQuestion = document.getElementById('modalQuestion');
+
+        function openModal(index) {
+            const data = timelineData[index];
+            modalTitle.innerText = data.scientist;
+            modalYear.innerText = data.year;
+            modalSummary.innerText = data.summary;
+            modalQuestion.innerText = data.question;
+            
+            modalBackdrop.classList.remove('hidden');
+            // Small animation
+            modalContent.classList.remove('modal-exit', 'modal-exit-active');
+            modalContent.classList.add('modal-enter');
+            setTimeout(() => modalContent.classList.add('modal-enter-active'), 10);
+        }
+
+        function closeModal() {
+             modalContent.classList.remove('modal-enter', 'modal-enter-active');
+             modalContent.classList.add('modal-exit');
+             setTimeout(() => modalContent.classList.add('modal-exit-active'), 10);
+             
+             setTimeout(() => {
+                 modalBackdrop.classList.add('hidden');
+             }, 200);
+        }
+
+        // Close on backdrop click
+        modalBackdrop.addEventListener('click', (e) => {
+            if (e.target === modalBackdrop) {
+                closeModal();
+            }
+        });
+
+        // Horizontal Drag Scroll Logic
+        const slider = document.getElementById('timelineScroll');
+        let isDown = false;
+        let startX;
+        let scrollLeft;
+
+        slider.addEventListener('mousedown', (e) => {
+            isDown = true;
+            slider.classList.add('active');
+            startX = e.pageX - slider.offsetLeft;
+            scrollLeft = slider.scrollLeft;
+        });
+        slider.addEventListener('mouseleave', () => {
+            isDown = false;
+            slider.classList.remove('active');
+        });
+        slider.addEventListener('mouseup', () => {
+            isDown = false;
+            slider.classList.remove('active');
+        });
+        slider.addEventListener('mousemove', (e) => {
+            if(!isDown) return;
+            e.preventDefault();
+            const x = e.pageX - slider.offsetLeft;
+            const walk = (x - startX) * 2; //scroll-fast
+            slider.scrollLeft = scrollLeft - walk;
+        });
+    </script>
+</body>
+</html>
