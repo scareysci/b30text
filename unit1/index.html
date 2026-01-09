@@ -1,1 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biology 30 Saskatchewan - Chapter 1</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Using unpkg as a reliable fallback/alternative source -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400&family=Inter:wght@300;400;600;800&display=swap');
 
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Merriweather', serif;
+        }
+
+        /* Custom Styles for Feature Placeholders */
+        .feature-box {
+            border: 2px dashed #cbd5e1;
+            background-color: #f1f5f9;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            position: relative;
+            transition: all 0.2s;
+        }
+
+        .feature-box:hover {
+            border-color: #94a3b8;
+            background-color: #e2e8f0;
+        }
+
+        .feature-tag {
+            position: absolute;
+            top: -12px;
+            left: 1rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .tag-image { background-color: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
+        .tag-interactive { background-color: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+
+        .sask-context {
+            border-left: 4px solid #16a34a; /* Green for Saskatchewan */
+            background-color: #f0fdf4;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 0 0.5rem 0.5rem 0;
+        }
+
+        .learning-objective {
+            background-color: #eff6ff;
+            border-left: 4px solid #2563eb;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+        }
+        
+        .formative-check {
+            background-color: #fff7ed;
+            border: 1px solid #fed7aa;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            border-radius: 0.5rem;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <span class="font-bold text-xl text-green-700 tracking-tight">Bio30<span class="text-slate-900">SK</span></span>
+            </div>
+            <div class="text-sm text-slate-500 hidden md:block">
+                Unit 1: What is Life?
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-4 py-12">
+
+        <!-- Unit Header -->
+        <header class="mb-16">
+            <h1 class="text-4xl md:text-5xl font-black text-slate-900 mb-6">Unit 1: What is Life?</h1>
+            
+            <div class="prose prose-lg text-slate-600 mb-8">
+                <p><strong>Unit Overview:</strong> In this unit, we embark on the most fundamental question in biology: <em>What does it mean to be alive?</em> You might think the answer is simple—a dog is alive, a rock is not. But what about a virus? What about a seed that has lain dormant for a thousand years? As we explore the history of biological discovery, from ancient philosophical musings to modern molecular biology, we will see that the line between the living and non-living is often blurrier than we expect.</p>
+            </div>
+
+            <!-- Unit 1 Title Image -->
+            <figure class="mb-8 rounded-lg overflow-hidden shadow-lg border border-slate-200">
+                 <img src="https://scareysci.github.io/b30text/unit1/ch1_1.jpg" alt="Connection between molecular biology and the Saskatchewan landscape" class="w-full h-auto object-cover">
+                 <figcaption class="bg-slate-50 p-3 text-center text-sm text-slate-600 italic border-t border-slate-200">
+                    Figure 1.1 - Visual representation of the connection between molecular biology and the Saskatchewan landscape.
+                 </figcaption>
+            </figure>
+
+            <!-- Sask Context -->
+            <div class="sask-context">
+                <h3 class="flex items-center gap-2 font-bold text-green-800 text-lg mb-2">
+                    <i data-lucide="map-pin" class="w-5 h-5"></i> Saskatchewan Context
+                </h3>
+                <p class="text-slate-700">As we study life, we acknowledge that we are learning on Treaty lands—the traditional territories of the Nêhiyawak, Anihšināpēk, Dakota, Lakota, and Nakoda, and the homeland of the Métis/Michif Nation. Indigenous ways of knowing teach us that "life" is not just a biological checklist but a web of relationships (<em>wâhkôhtowin</em>) connecting all things, animate and inanimate. We will explore these perspectives alongside Western scientific definitions.</p>
+            </div>
+
+            <!-- Digital Feature: Schema Activator -->
+            <div class="my-8">
+                 <!-- Replaced placeholder box with actual Interactive iframe -->
+                 <iframe 
+                    src="unit1_schema_activator.html" 
+                    class="w-full h-[600px] border-0 rounded-lg shadow-md"
+                    title="Unit 1 Schema Activator"
+                 ></iframe>
+            </div>
+        </header>
+
+        <hr class="border-slate-200 my-12">
+
+        <!-- Chapter 1 Content -->
+        <article>
+            <h2 class="text-3xl font-bold text-slate-900 mb-8">Chapter 1: The Changing Scientific Understandings of Life</h2>
+
+            <!-- Section 1.1 -->
+            <section class="mb-16">
+                <h3 class="text-2xl font-bold text-slate-800 mb-4">1.1 Personal Definitions of Life</h3>
+
+                <div class="learning-objective">
+                    <strong>Learning Objective:</strong> Identify your personal definition of life and its characteristics, recognizing that these definitions can be fluid and context-dependent.
+                </div>
+
+                <div class="prose prose-lg text-slate-700">
+                    <p class="mb-4">If you were asked to define "life" right now, what criteria would you list? Most biology students recall the acronym <strong>MRS GREN</strong> from earlier grades (Movement, Respiration, Sensitivity, Growth, Reproduction, Excretion, Nutrition). However, as we advance in biology, we find that these simple checklists often encounter exceptions.</p>
+                    <ul class="list-disc pl-6 mb-6 space-y-2">
+                        <li><strong>Mules</strong> cannot reproduce, yet they are alive.</li>
+                        <li><strong>Fire</strong> consumes energy, grows, and reproduces (spreads), yet it is not alive.</li>
+                        <li><strong>Crystals</strong> can grow and organize, but they lack metabolism.</li>
+                    </ul>
+                    <p class="mb-4">Biologists generally agree on a more robust set of characteristics, though debates continue. To be considered "alive" in a scientific sense, an entity usually must exhibit <strong>all</strong> of the following:</p>
+                </div>
+
+                <!-- Image 1.2 -->
+                <figure class="mb-8 rounded-lg overflow-hidden shadow-md border border-slate-200 my-6">
+                    <img src="https://scareysci.github.io/b30text/unit1/ch1_2.jpg" alt="The 7 Characteristics of Life" class="w-full h-auto object-cover">
+                    <figcaption class="bg-slate-50 p-3 text-center text-sm text-slate-600 italic border-t border-slate-200">
+                        Figure 1.2 - The seven scientific characteristics of life: Order, Reproduction, Growth, Energy, Response, Homeostasis, and Adaptation.
+                    </figcaption>
+                </figure>
+
+                <div class="prose prose-lg text-slate-700">
+                    <ol class="list-decimal pl-6 mb-6 space-y-2">
+                        <li><strong>Order:</strong> Highly organized structures (cells).</li>
+                        <li><strong>Reproduction:</strong> The ability to produce offspring.</li>
+                        <li><strong>Growth and Development:</strong> Controlled by inherited information (DNA).</li>
+                        <li><strong>Energy Processing:</strong> Taking in energy to power activities (metabolism).</li>
+                        <li><strong>Response to the Environment:</strong> Reacting to stimuli.</li>
+                        <li><strong>Regulation (Homeostasis):</strong> Maintaining stable internal conditions.</li>
+                        <li><strong>Evolutionary Adaptation:</strong> Populations change over time to survive in their environment.</li>
+                    </ol>
+                    <p class="mb-6">However, your <em>personal</em> definition might differ. Is life purely biological, or is there a consciousness component? As we move through this course, keep your initial definition in mind and see if it evolves.</p>
+                </div>
+
+                <div class="sask-context">
+                    <h4 class="font-bold text-green-800 mb-2">Saskatchewan Connection: The Western Red Lily vs. The River</h4>
+                    <p class="text-slate-700">Consider the <strong>Western Red Lily</strong> (<em>Lilium philadelphicum</em>), Saskatchewan's floral emblem. It clearly fits the biological criteria: it grows, photosynthesizes (energy processing), and reproduces via seeds. Now consider the <strong>South Saskatchewan River</strong>. It moves, it changes the landscape, and it supports life. In a strict biological sense, it is non-living. However, in many Indigenous worldviews, the river is considered an animate spirit or force with its own agency.</p>
+                </div>
+
+                <!-- Digital Feature -->
+                <div class="feature-box">
+                    <span class="feature-tag tag-interactive">Interactive Feature</span>
+                    <div class="flex items-start gap-4">
+                        <i data-lucide="bar-chart-2" class="w-8 h-8 text-green-600 mt-1"></i>
+                        <div>
+                            <h4 class="font-bold text-slate-800 mb-2">Collaborative Word Cloud</h4>
+                            <div class="bg-white p-4 rounded border border-slate-200 text-sm font-mono text-slate-600">
+                                <strong>Developer Prompt:</strong> Create a simple input field where students type three words they associate with "Life".<br>
+                                • <strong>Output:</strong> A D3.js word cloud visualization that updates in real-time (or simulates real-time data) showing the most common terms submitted by the class (e.g., "Breathing," "Reproduction," "Soul," "Cells").
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="formative-check">
+                    <h4 class="font-bold text-orange-800 mb-3"><i data-lucide="check-circle-2" class="inline w-5 h-5 mr-1"></i> Formative Check</h4>
+                    <ul class="space-y-3 text-slate-700">
+                        <li>1. Why is "movement" alone not a sufficient characteristic to define life? Give an example of a non-living thing that moves.</li>
+                        <li>2. Which of the seven characteristics of life does a sterile mule fail to meet? Does this mean it is not alive? Explain.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Section 1.2 -->
+            <section class="mb-16">
+                <h3 class="text-2xl font-bold text-slate-800 mb-4">1.2 Diverse Perspectives on Life</h3>
+
+                <div class="learning-objective">
+                    <strong>Learning Objective:</strong> Distinguish among scientific, First Nations, Métis, Inuit, and other cultural perspectives with respect to the question of what constitutes life.
+                </div>
+
+                <div class="prose prose-lg text-slate-700">
+                    <p class="mb-4">Science is one powerful way of knowing, but it is not the <em>only</em> way.</p>
+                    
+                    <h5 class="font-bold text-slate-900 mt-4">Western Scientific Perspective:</h5>
+                    <p class="mb-4">Western science tends to be <strong>reductionist</strong>. It seeks to understand life by breaking it down into smaller parts—organs, tissues, cells, molecules, and atoms. In this view, life is a mechanistic process driven by chemistry and physics.</p>
+
+                    <h5 class="font-bold text-slate-900 mt-4">Indigenous Perspectives (First Nations and Métis):</h5>
+                    <p class="mb-4">Indigenous knowledge is often <strong>holistic</strong>. It views the world as a web of relationships. In many First Nations languages, objects are classified not by "living vs. non-living" in the biological sense, but by <strong>animate vs. inanimate</strong> grammar.</p>
+                    <ul class="list-disc pl-6 mb-4 space-y-2">
+                        <li>For example, in Cree (<em>nêhiyawêwin</em>), a rock (<em>asiniy</em>) is grammatically animate. This acknowledges that the rock has a spirit, a history, and a role in the ecosystem.</li>
+                        <li><strong>Wâhkôhtowin</strong> (Kinship): This Cree concept describes the interconnectedness of all beings. Life is not defined by isolation but by connection.</li>
+                    </ul>
+                </div>
+
+                <!-- Image 1.3 -->
+                <figure class="mb-8 rounded-lg overflow-hidden shadow-md border border-slate-200 my-6">
+                    <img src="https://scareysci.github.io/b30text/unit1/ch1_3.jpg" alt="Conceptual Illustration: Two Worldviews" class="w-full h-auto object-cover">
+                    <figcaption class="bg-slate-50 p-3 text-center text-sm text-slate-600 italic border-t border-slate-200">
+                        Figure 1.3 - Conceptual illustration contrasting Western reductionist and Indigenous holistic worldviews.
+                    </figcaption>
+                </figure>
+
+                <div class="sask-context">
+                    <h4 class="font-bold text-green-800 mb-2">Saskatchewan Connection: Elders' Wisdom</h4>
+                    <p class="text-slate-700">In Saskatchewan, Elders often speak of the land as a living relation. When harvesting medicinal plants like sage or sweetgrass, it is traditional protocol to offer tobacco. This is an acknowledgement that the plant is a living being that is giving its life to help you, establishing a reciprocal relationship that is absent in a purely mechanical view of biology.</p>
+                </div>
+
+                <!-- Digital Feature -->
+                <div class="feature-box">
+                    <span class="feature-tag tag-interactive">Interactive Feature</span>
+                    <div class="flex items-start gap-4">
+                        <i data-lucide="headphones" class="w-8 h-8 text-green-600 mt-1"></i>
+                        <div>
+                            <h4 class="font-bold text-slate-800 mb-2">Audio: "Voices of the Land"</h4>
+                            <p class="text-sm text-slate-600 mb-2">Clickable audio clips of Saskatchewan Elders explaining the concept of the land as alive.</p>
+                            <div class="bg-white p-4 rounded border border-slate-200 text-sm font-mono text-slate-600">
+                                <strong>Image Prompt (for background):</strong> A serene, high-definition photograph of the Qu'Appelle Valley in Saskatchewan during autumn, golden hour lighting. In the foreground, sage and prairie grasses. The image should evoke a sense of connection and peace.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="formative-check">
+                    <h4 class="font-bold text-orange-800 mb-3"><i data-lucide="check-circle-2" class="inline w-5 h-5 mr-1"></i> Formative Check</h4>
+                    <ul class="space-y-3 text-slate-700">
+                        <li>1. How does the "reductionist" approach of Western science differ from the "holistic" approach of Indigenous knowledge?</li>
+                        <li>2. In Cree grammar, why might a rock be classified as animate? How does this differ from the biological definition of life?</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Section 1.3 -->
+            <section class="mb-16">
+                <h3 class="text-2xl font-bold text-slate-800 mb-4">1.3 The Evolution of the Definition of Life</h3>
+
+                <div class="learning-objective">
+                    <strong>Learning Objective:</strong> Explore how scientific definitions of life have changed over time, specifically the shift from spontaneous generation to biogenesis.
+                </div>
+
+                <div class="prose prose-lg text-slate-700">
+                    <p class="mb-4">Our understanding of life has not always been stable. For centuries, humans believed in <strong>Spontaneous Generation</strong> (Abiogenesis)—the idea that life could arise from non-living matter.</p>
+                    <ul class="list-disc pl-6 mb-4 space-y-2">
+                        <li><strong>Aristotle (384–322 BC):</strong> Proposed that aphids arise from dew on plants.</li>
+                        <li><strong>Jean-Baptiste van Helmont (1600s):</strong> Published a "recipe" for mice involving a dirty shirt and wheat.</li>
+                    </ul>
+                    <p class="mb-4">It took centuries of inquiry and the development of the <strong>Scientific Method</strong> to shift the paradigm to <strong>Biogenesis</strong>—the principle that living things can only come from other living things.</p>
+                </div>
+
+                <!-- Image 1.4 -->
+                <figure class="mb-8 rounded-lg overflow-hidden shadow-md border border-slate-200 my-6">
+                    <img src="https://scareysci.github.io/b30text/unit1/ch1_4.jpg" alt="Francesco Redi's Experiment" class="w-full h-auto object-cover">
+                    <figcaption class="bg-slate-50 p-3 text-center text-sm text-slate-600 italic border-t border-slate-200">
+                        Figure 1.4 - Francesco Redi's 1668 experiment using meat and jars to disprove spontaneous generation.
+                    </figcaption>
+                </figure>
+
+                <div class="sask-context">
+                    <h4 class="font-bold text-green-800 mb-2">Saskatchewan Connection</h4>
+                    <p class="text-slate-700">While early European scientists were debating spontaneous generation, Indigenous peoples on the Great Plains had deep, observational knowledge of life cycles. They knew that bison populations were driven by breeding seasons and migration, not spontaneous appearance.</p>
+                </div>
+
+                <!-- Digital Feature -->
+                <div class="feature-box">
+                    <span class="feature-tag tag-interactive">Interactive Feature</span>
+                    <div class="flex items-start gap-4">
+                        <i data-lucide="clock" class="w-8 h-8 text-green-600 mt-1"></i>
+                        <div>
+                            <h4 class="font-bold text-slate-800 mb-2">Scrollable Timeline of Life</h4>
+                            <div class="bg-white p-4 rounded border border-slate-200 text-sm font-mono text-slate-600">
+                                <strong>Developer Prompt:</strong> Create a horizontal scroll container.<br>
+                                • <strong>Points:</strong><br>
+                                &nbsp;&nbsp;- 350 BC: Aristotle (Spontaneous Generation)<br>
+                                &nbsp;&nbsp;- 1668: Francesco Redi (Meat and Maggots experiment)<br>
+                                &nbsp;&nbsp;- 1745: John Needham (Boiled broth, open flasks)<br>
+                                &nbsp;&nbsp;- 1768: Lazzaro Spallanzani (Sealed flasks, no growth)<br>
+                                &nbsp;&nbsp;- 1859: Louis Pasteur (Swan-neck flask, disproves spontaneous generation)<br>
+                                &nbsp;&nbsp;- 1953: Miller-Urey (Chemical origins of life)<br>
+                                • <strong>Interaction:</strong> Clicking a point expands a modal with a summary and a "Key Question" the scientist was asking.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="formative-check">
+                    <h4 class="font-bold text-orange-800 mb-3"><i data-lucide="check-circle-2" class="inline w-5 h-5 mr-1"></i> Formative Check</h4>
+                    <ul class="space-y-3 text-slate-700">
+                        <li>1. What was "Spontaneous Generation"? Give one historical example of this belief.</li>
+                        <li>2. Define "Biogenesis."</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Section 1.4 -->
+            <section class="mb-16">
+                <h3 class="text-2xl font-bold text-slate-800 mb-4">1.4 The Gray Area: Viruses, Viroids, and Prions</h3>
+
+                <div class="learning-objective">
+                    <strong>Learning Objective:</strong> Debate whether viruses, viroids, and prions are alive based on biological criteria.
+                </div>
+
+                <div class="prose prose-lg text-slate-700">
+                    <p class="mb-4">Nature rarely fits into perfect boxes. There are entities that exist on the edge of life, challenging our definitions.</p>
+                    
+                    <div class="grid md:grid-cols-3 gap-4 mb-6">
+                        <div class="bg-white p-4 rounded shadow-sm border">
+                            <h5 class="font-bold text-slate-900">1. Viruses</h5>
+                            <p class="text-sm">Genetic code wrapped in protein. Cannot reproduce on their own. Obligate intracellular parasites.</p>
+                        </div>
+                        <div class="bg-white p-4 rounded shadow-sm border">
+                            <h5 class="font-bold text-slate-900">2. Viroids</h5>
+                            <p class="text-sm">Short, circular strands of RNA without a protein coat. Primarily infect plants.</p>
+                        </div>
+                        <div class="bg-white p-4 rounded shadow-sm border">
+                            <h5 class="font-bold text-slate-900">3. Prions</h5>
+                            <p class="text-sm">Misfolded proteins. No DNA or RNA. Induce other proteins to misfold (e.g., CWD).</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Image 1.5 -->
+                <figure class="mb-8 rounded-lg overflow-hidden shadow-md border border-slate-200 my-6">
+                    <img src="https://scareysci.github.io/b30text/unit1/ch1_5.jpg" alt="Comparative 3D Rendering of Virus, Viroid, and Prion" class="w-full h-auto object-cover">
+                    <figcaption class="bg-slate-50 p-3 text-center text-sm text-slate-600 italic border-t border-slate-200">
+                        Figure 1.5 - Comparison of biological entities at the edge of life: A Bacteriophage, a Viroid, and a Prion.
+                    </figcaption>
+                </figure>
+
+                <div class="sask-context">
+                    <h4 class="font-bold text-green-800 mb-2">Saskatchewan Connection: Chronic Wasting Disease (CWD)</h4>
+                    <p class="text-slate-700">Saskatchewan is at the forefront of prion research due to the prevalence of Chronic Wasting Disease in our wild mule deer, white-tailed deer, and elk populations. CWD is caused by a <strong>prion</strong>. It is fatal and spreads through direct contact or environmental contamination.</p>
+                </div>
+
+                <!-- Digital Feature -->
+                <div class="feature-box">
+                    <span class="feature-tag tag-interactive">Interactive Feature</span>
+                    <div class="flex items-start gap-4">
+                        <i data-lucide="map" class="w-8 h-8 text-green-600 mt-1"></i>
+                        <div>
+                            <h4 class="font-bold text-slate-800 mb-2">Interactive Map: The Spread of CWD</h4>
+                            <div class="bg-white p-4 rounded border border-slate-200 text-sm font-mono text-slate-600">
+                                <strong>Developer Prompt:</strong> Create a map of Saskatchewan.<br>
+                                • <strong>Data Layer:</strong> Overlay a heat map showing CWD cases from 2000 to Present (use mock data trending upwards).<br>
+                                • <strong>Slider:</strong> A time slider at the bottom allowing students to scrub through years.<br>
+                                • <strong>Inquiry Question:</strong> "Based on the spread pattern, is the prion 'alive' in the sense that it is moving and reproducing? Why or why not?"
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="formative-check">
+                    <h4 class="font-bold text-orange-800 mb-3"><i data-lucide="check-circle-2" class="inline w-5 h-5 mr-1"></i> Formative Check</h4>
+                    <ul class="space-y-3 text-slate-700">
+                        <li>1. Why are viruses considered "obligate intracellular parasites"?</li>
+                        <li>2. How does a prion differ from a virus in terms of structure?</li>
+                    </ul>
+                </div>
+            </section>
+
+             <!-- Section 1.5 -->
+             <section class="mb-16">
+                <h3 class="text-2xl font-bold text-slate-800 mb-4">1.5 Giants of Biology</h3>
+
+                <div class="learning-objective">
+                    <strong>Learning Objective:</strong> Recognize the contributions of scientists like Redi, Pasteur, Miller, Urey, and Margulis.
+                </div>
+
+                <div class="prose prose-lg text-slate-700">
+                    <p class="mb-4">Science is a cumulative human endeavour.</p>
+                    <ul class="list-disc pl-6 mb-4 space-y-2">
+                        <li><strong>Francesco Redi (1668):</strong> First major blow to spontaneous generation (maggots on meat experiment).</li>
+                        <li><strong>Louis Pasteur (1859):</strong> Used the Swan-Neck Flask to definitively prove <em>"Omne vivum ex vivo"</em> (All life comes from life).</li>
+                        <li><strong>Miller & Urey (1953):</strong> Simulated Earth's early atmosphere to show that organic amino acids could form from inorganic chemicals.</li>
+                        <li><strong>Lynn Margulis (1967):</strong> Proposed Endosymbiosis theory (mitochondria/chloroplasts were once free-living bacteria).</li>
+                    </ul>
+                </div>
+
+                <!-- Image 1.6 -->
+                <figure class="mb-8 rounded-lg overflow-hidden shadow-md border border-slate-200 my-6">
+                    <img src="https://scareysci.github.io/b30text/unit1/ch1_6.jpg" alt="Miller-Urey Apparatus" class="w-full h-auto object-cover">
+                    <figcaption class="bg-slate-50 p-3 text-center text-sm text-slate-600 italic border-t border-slate-200">
+                        Figure 1.6 - The Miller-Urey experiment simulating Earth's early atmosphere to synthesize organic compounds.
+                    </figcaption>
+                </figure>
+
+                <!-- Digital Feature -->
+                <div class="feature-box">
+                    <span class="feature-tag tag-interactive">Interactive Feature</span>
+                    <div class="flex items-start gap-4">
+                        <i data-lucide="flask-conical" class="w-8 h-8 text-green-600 mt-1"></i>
+                        <div>
+                            <h4 class="font-bold text-slate-800 mb-2">Virtual Lab: Pasteur's Flask</h4>
+                            <div class="bg-white p-4 rounded border border-slate-200 text-sm font-mono text-slate-600">
+                                <strong>Code Prompt:</strong> Create a simple HTML5/Canvas simulation.<br>
+                                • <strong>Objects:</strong> A Bunsen burner, a swan-neck flask with broth, a straight-neck flask with broth.<br>
+                                • <strong>Actions:</strong> Button to "Boil Broth", Button to "Wait", Button to "Break Neck of Flask".<br>
+                                • <strong>Logic:</strong><br>
+                                &nbsp;&nbsp;- If boiled + swan neck + wait -> Clear broth.<br>
+                                &nbsp;&nbsp;- If boiled + broken neck + wait -> Cloudy broth (bacteria).<br>
+                                &nbsp;&nbsp;- If not boiled + wait -> Cloudy broth.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="formative-check">
+                    <h4 class="font-bold text-orange-800 mb-3"><i data-lucide="check-circle-2" class="inline w-5 h-5 mr-1"></i> Formative Check</h4>
+                    <ul class="space-y-3 text-slate-700">
+                        <li>1. How did the swan-neck flask design allow Pasteur to control for "air" while keeping out microbes?</li>
+                        <li>2. What did the Miller-Urey experiment suggest about the origin of life on Earth?</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Section 1.6 -->
+            <section class="mb-16">
+                <h3 class="text-2xl font-bold text-slate-800 mb-4">1.6 Technology and the Definition of Life</h3>
+
+                <div class="learning-objective">
+                    <strong>Learning Objective:</strong> Examine the impact of the cell theory and advances in microscopy on scientific definitions of life.
+                </div>
+
+                <div class="prose prose-lg text-slate-700">
+                    <p class="mb-4">Our definition of life is limited by what we can see. The invention of the light microscope (1600s) led to the <strong>Cell Theory</strong>. Later, the electron microscope (1930s) allowed us to see viruses, blurring the line again.</p>
+                </div>
+
+                <!-- Image 1.7 -->
+                <figure class="mb-8 rounded-lg overflow-hidden shadow-md border border-slate-200 my-6">
+                    <img src="https://scareysci.github.io/b30text/unit1/ch1_7.jpg" alt="Microscopy Then and Now" class="w-full h-auto object-cover">
+                    <figcaption class="bg-slate-50 p-3 text-center text-sm text-slate-600 italic border-t border-slate-200">
+                        Figure 1.7 - The evolution of microscopy: Van Leeuwenhoek's early sketches versus modern Electron Microscopy.
+                    </figcaption>
+                </figure>
+
+                <div class="sask-context">
+                    <h4 class="font-bold text-green-800 mb-2">Saskatchewan Connection: Canadian Light Source (CLS)</h4>
+                    <p class="text-slate-700">Located in Saskatoon, the CLS is a synchrotron that uses brilliant beams of light to view the microscopic world. Saskatchewan researchers use it to look at the molecular structure of proteins and plants, pushing the boundaries of how we understand biological structures.</p>
+                </div>
+
+                 <!-- Digital Feature -->
+                 <div class="feature-box">
+                    <span class="feature-tag tag-interactive">Interactive Feature</span>
+                    <div class="flex items-start gap-4">
+                        <i data-lucide="zoom-in" class="w-8 h-8 text-green-600 mt-1"></i>
+                        <div>
+                            <h4 class="font-bold text-slate-800 mb-2">The Scale of the Universe Zoom</h4>
+                            <div class="bg-white p-4 rounded border border-slate-200 text-sm font-mono text-slate-600">
+                                <strong>Image Prompt/Concept:</strong> A slider that zooms from a coffee bean -> dust mite -> blood cell -> bacteria -> virus -> carbon atom.<br>
+                                <strong>Visual Description:</strong> A composite diagram showing the relative scale of a red blood cell, an E. coli bacterium, a Smallpox virus, and a bacteriophage. The background should be a scientific grid.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="formative-check">
+                    <h4 class="font-bold text-orange-800 mb-3"><i data-lucide="check-circle-2" class="inline w-5 h-5 mr-1"></i> Formative Check</h4>
+                    <ul class="space-y-3 text-slate-700">
+                        <li>1. State the three components of the Cell Theory.</li>
+                        <li>2. How did the invention of the electron microscope complicate the definition of life regarding viruses?</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Chapter Review -->
+            <section class="bg-slate-900 text-white p-8 rounded-lg shadow-xl">
+                <h3 class="text-2xl font-bold mb-4">Chapter 1 Review: Narrative Lab Report</h3>
+                <p class="mb-4 text-slate-300">Reflect on the "Unit 1 Schema Activator" where you sorted items into Alive/Non-Living.</p>
+                <ol class="list-decimal pl-6 space-y-4">
+                    <li><strong>What was I looking for?</strong> (Your initial criteria for life).</li>
+                    <li><strong>How did I look for it?</strong> (Applying the 7 characteristics of life learned in Section 1.1).</li>
+                    <li><strong>What did I find?</strong> (Did any items change categories? e.g., Did you move the virus or the river?).</li>
+                    <li><strong>What do these findings mean?</strong> (Write a concluding statement on the complexity of defining life).</li>
+                </ol>
+            </section>
+
+        </article>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-100 py-8 mt-12 border-t border-slate-200">
+        <div class="max-w-4xl mx-auto px-4 text-center text-slate-500 text-sm">
+            <p>&copy; 2024 Biology 30 Saskatchewan Digital Textbook</p>
+            <p class="mt-2">Designed for the Saskatchewan Ministry of Education Curriculum.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide icons when the DOM is fully loaded to prevent reference errors
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            } else {
+                console.error("Lucide library failed to load or is not yet available.");
+            }
+        });
+        
+        // Fallback safety check for window load if DOMContentLoaded already fired or missed
+        window.addEventListener('load', () => {
+             if (typeof lucide !== 'undefined' && !document.querySelector('svg.lucide')) {
+                lucide.createIcons();
+            }
+        });
+    </script>
+</body>
+</html>
