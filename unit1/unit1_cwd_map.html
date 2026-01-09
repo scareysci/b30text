@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spread of CWD in Saskatchewan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { background-color: #f8fafc; font-family: 'Inter', sans-serif; }
+        
+        /* Custom range slider styling */
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 8px;
+            background: #cbd5e1;
+            border-radius: 4px;
+            outline: none;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #ef4444; /* Red-500 */
+            cursor: pointer;
+            box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.2);
+            transition: background 0.2s, transform 0.2s;
+        }
+        input[type=range]::-webkit-slider-thumb:hover {
+            background: #dc2626; /* Red-600 */
+            transform: scale(1.1);
+        }
+
+        .map-container {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+            aspect-ratio: 0.6; /* Aspect ratio fitting SK */
+        }
+
+        /* Heatmap Overlay Points */
+        .heat-point {
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(220, 38, 38, 0.7) 0%, rgba(220, 38, 38, 0) 70%);
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            pointer-events: none;
+            mix-blend-mode: multiply;
+        }
+        
+        .city-label {
+            font-size: 11px;
+            fill: #475569;
+            font-weight: 700;
+            pointer-events: none;
+            text-shadow: 0px 0px 3px rgba(255,255,255,0.9);
+        }
+        
+        .city-dot {
+            fill: #1e293b;
+            stroke: white;
+            stroke-width: 1.5px;
+        }
+    </style>
+</head>
+<body class="p-4 flex flex-col items-center h-full">
+
+    <div class="w-full max-w-2xl bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden">
+        
+        <!-- Header -->
+        <div class="px-6 py-4 bg-slate-50 border-b border-slate-200">
+            <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                <i data-lucide="map" class="text-red-600"></i>
+                Tracking Chronic Wasting Disease
+            </h2>
+            <p class="text-sm text-slate-500">Observe the spread of CWD cases in Saskatchewan over time.</p>
+        </div>
+
+        <!-- Map Area -->
+        <div class="p-6 bg-slate-100 flex justify-center">
+            <div class="map-container relative">
+                <!-- SVG Map of Saskatchewan -->
+                <!-- Trapezoidal shape: Top width narrower than bottom -->
+                <svg viewBox="0 0 400 650" class="w-full h-full drop-shadow-xl filter">
+                    <!-- SK Outline Path -->
+                    <path 
+                        d="M 80,50 L 320,50 L 360,600 L 40,600 Z" 
+                        fill="#e2e8f0" 
+                        stroke="#94a3b8" 
+                        stroke-width="2" 
+                    />
+                    
+                    <!-- Cities -->
+                    <!-- Uranium City (North) -->
+                    <circle cx="110" cy="85" r="4" class="city-dot" />
+                    <text x="120" y="90" class="city-label">Uranium City</text>
+
+                    <!-- Saskatoon (Central) -->
+                    <circle cx="190" cy="390" r="5" class="city-dot" />
+                    <text x="200" y="394" class="city-label">Saskatoon</text>
+
+                    <!-- Regina (South East) -->
+                    <circle cx="240" cy="500" r="5" class="city-dot" />
+                    <text x="250" y="504" class="city-label">Regina</text>
+                    
+                    <!-- Prince Albert (Central-North) -->
+                    <circle cx="210" cy="340" r="4" class="city-dot" />
+                    <text x="220" y="344" class="city-label">Prince Albert</text>
+                    
+                    <!-- Swift Current (South-West) -->
+                    <circle cx="120" cy="510" r="4" class="city-dot" />
+                    <text x="35" y="514" class="city-label">Swift Current</text>
+
+                    <!-- Lloydminster (Mid-West Border) -->
+                    <circle cx="63" cy="360" r="4" class="city-dot" />
+                    <text x="73" y="364" class="city-label">Lloydminster</text>
+
+                </svg>
+
+                <!-- Heatmap Overlay Container -->
+                <!-- Covers the SVG area to map % coordinates to pixels -->
+                <div id="heatMapLayer" class="absolute inset-0 w-full h-full"></div>
+                
+                <!-- Year Display Overlay -->
+                <div class="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded shadow text-2xl font-black text-slate-800 border border-slate-100" id="yearDisplay">
+                    2000
+                </div>
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="px-6 py-4 bg-white border-t border-slate-200">
+            <div class="flex items-center gap-4">
+                <span class="text-sm font-bold text-slate-500">2000</span>
+                <input 
+                    type="range" 
+                    min="2000" 
+                    max="2024" 
+                    value="2000" 
+                    step="1" 
+                    id="yearSlider" 
+                    class="flex-grow"
+                >
+                <span class="text-sm font-bold text-slate-500">2024</span>
+            </div>
+            
+            <div class="mt-6 p-4 bg-red-50 border border-red-100 rounded-lg">
+                <h3 class="flex items-center gap-2 text-sm font-bold text-red-800 uppercase tracking-wide mb-2">
+                    <i data-lucide="help-circle" class="w-4 h-4"></i> Inquiry Question
+                </h3>
+                <p class="text-red-900 font-medium italic">
+                    "Based on the spread pattern, is the prion 'alive' in the sense that it is moving and reproducing? Why or why not?"
+                </p>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        const slider = document.getElementById('yearSlider');
+        const yearDisplay = document.getElementById('yearDisplay');
+        const heatMapLayer = document.getElementById('heatMapLayer');
+
+        // Data: [x, y] coordinates (percentage relative to container)
+        // Mapped generally to the SK Trapezoid shape
+        const outbreakPoints = [
+            // 2000-2005: West/Central Border (Lloydminster/Battlefords area)
+            { year: 2000, x: 18, y: 56 }, { year: 2000, x: 20, y: 58 },
+            { year: 2002, x: 22, y: 55 }, { year: 2002, x: 19, y: 62 },
+            { year: 2004, x: 25, y: 52 }, { year: 2004, x: 28, y: 65 },
+            
+            // 2005-2010: Moving South West (Swift Current) and Central (Saskatoon)
+            { year: 2006, x: 30, y: 78 }, { year: 2006, x: 32, y: 75 }, // South West
+            { year: 2008, x: 45, y: 60 }, { year: 2008, x: 48, y: 62 }, // Approaching Saskatoon
+            { year: 2010, x: 35, y: 85 }, { year: 2010, x: 40, y: 88 }, // Deep South West
+            
+            // 2011-2016: Expansion Eastward towards Regina and North
+            { year: 2012, x: 50, y: 58 }, { year: 2012, x: 48, y: 50 }, // Near Saskatoon
+            { year: 2014, x: 55, y: 75 }, { year: 2014, x: 60, y: 78 }, // Towards Regina
+            { year: 2015, x: 52, y: 45 }, { year: 2015, x: 55, y: 40 }, // North of Saskatoon
+            { year: 2016, x: 70, y: 72 }, { year: 2016, x: 75, y: 85 }, // South East
+            
+            // 2017-Present: Widespread South and moving East border
+            { year: 2018, x: 80, y: 60 }, { year: 2018, x: 85, y: 75 }, // East Central
+            { year: 2020, x: 88, y: 80 }, { year: 2020, x: 90, y: 65 }, // SE Border
+            { year: 2022, x: 55, y: 35 }, { year: 2022, x: 58, y: 32 }, // Prince Albert area
+            { year: 2024, x: 82, y: 50 }, { year: 2024, x: 88, y: 55 }, // East/Central density
+            
+            // Filling in density
+            { year: 2022, x: 40, y: 70 }, { year: 2024, x: 65, y: 80 }
+        ];
+
+        // Generate DOM elements for all points
+        outbreakPoints.forEach(point => {
+            const el = document.createElement('div');
+            el.classList.add('heat-point');
+            el.style.left = point.x + '%';
+            el.style.top = point.y + '%';
+            
+            const size = 20 + Math.random() * 25;
+            el.style.width = size + 'px';
+            el.style.height = size + 'px';
+            
+            el.dataset.year = point.year;
+            heatMapLayer.appendChild(el);
+        });
+
+        function updateMap(year) {
+            yearDisplay.innerText = year;
+            const points = document.querySelectorAll('.heat-point');
+            
+            points.forEach(point => {
+                const pointYear = parseInt(point.dataset.year);
+                if (pointYear <= year) {
+                    point.style.opacity = 0.65; // Visible
+                    point.style.transform = "scale(1)";
+                } else {
+                    point.style.opacity = 0; // Hidden
+                    point.style.transform = "scale(0)";
+                }
+            });
+        }
+
+        slider.addEventListener('input', (e) => {
+            updateMap(parseInt(e.target.value));
+        });
+
+        // Initialize
+        updateMap(2000);
+
+    </script>
+</body>
+</html>
