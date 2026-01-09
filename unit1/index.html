@@ -82,12 +82,72 @@
             border-radius: 0.125rem;
             padding: 0 0.125rem;
         }
+
+        /* --- PRINT STYLES --- */
+        @media print {
+            /* Hide Navigation, Search, Footer, Buttons */
+            nav, footer, button, .print-hidden {
+                display: none !important;
+            }
+
+            /* Hide all iframes (interactive features/videos) */
+            iframe, .feature-box, .my-8 iframe {
+                display: none !important;
+            }
+
+            /* Show a placeholder message where interactive content was */
+            .my-8::after, .feature-box::after {
+                content: "[Interactive feature removed for print version. View online to access.]";
+                display: block;
+                font-style: italic;
+                color: #64748b;
+                border: 1px dashed #cbd5e1;
+                padding: 1rem;
+                margin: 1rem 0;
+                font-size: 0.875rem;
+                text-align: center;
+            }
+
+            /* Reset body styles for paper */
+            body {
+                background-color: white;
+                color: black;
+                font-size: 12pt;
+                line-height: 1.5;
+            }
+
+            /* Ensure main content takes full width */
+            main {
+                max-width: 100% !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+
+            /* Adjust headings */
+            h1 { font-size: 24pt !important; color: black !important; }
+            h2 { font-size: 18pt !important; color: black !important; border-bottom: 1px solid #ccc; padding-bottom: 0.5rem; }
+            h3 { font-size: 14pt !important; color: black !important; }
+
+            /* Ensure links are readable (optional: print URL) */
+            a { text-decoration: none; color: black; }
+            
+            /* Break pages cleanly */
+            section { page-break-inside: avoid; }
+            h2, h3 { page-break-after: avoid; }
+            img { max-width: 100% !important; page-break-inside: avoid; }
+            
+            /* Preserve Sask Context boxes but simplify colors */
+            .sask-context {
+                border-left: 4px solid #333 !important;
+                background-color: #f9f9f9 !important;
+            }
+        }
     </style>
 </head>
 <body class="antialiased">
 
     <!-- Navigation -->
-    <nav class="bg-white shadow-sm sticky top-0 z-50">
+    <nav class="bg-white shadow-sm sticky top-0 z-50 print-hidden">
         <div class="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center gap-4">
             <!-- Left Side: Logo and Back Button -->
             <div class="flex items-center gap-4">
@@ -335,7 +395,7 @@
                 <div class="prose prose-lg text-slate-700">
                     <p class="mb-4">Our scientific understanding of life has not always been stable. For centuries, the prevailing belief was <strong>Spontaneous Generation</strong> (or Abiogenesis)—the idea that life could arise spontaneously from non-living matter. This seemed logical based on casual observation: if you left meat out, maggots appeared; if you left grain in a dark corner, mice eventually "generated."</p>
                     <ul class="list-disc pl-6 mb-4 space-y-2">
-                        <li><strong>Aristotle (384–322 BC):</strong> One of history's greatest thinkers, yet he proposed that aphids arose from the dew on plants because he never saw them mate.</li>
+                        <li><strong>Aristotle (384–322 BC):</strong> One of history's greatest thinkers, yet he proposed that aphids arise from the dew on plants because he never saw them mate.</li>
                         <li><strong>Jean-Baptiste van Helmont (1600s):</strong> He famously published a "recipe" for creating mice: place a dirty shirt and some wheat in a dark container, and in 21 days, he claimed, mice would appear. We now know the mice were simply attracted to the food, but at the time, it was accepted science.</li>
                     </ul>
                     <p class="mb-4">It took centuries of inquiry and the refinement of the <strong>Scientific Method</strong> to shift the paradigm to <strong>Biogenesis</strong>—the principle that living things can only come from other living things (reproduction). This shift required rigorous experimental design, using controls and manipulating variables, to disprove the "common sense" observations of the time.</p>
@@ -599,9 +659,16 @@
 
     <!-- Footer -->
     <footer class="bg-slate-100 py-8 mt-12 border-t border-slate-200">
-        <div class="max-w-4xl mx-auto px-4 text-center text-slate-500 text-sm">
-            <p>&copy; 2024 Biology 30 Saskatchewan Digital Textbook</p>
-            <p class="mt-2">Designed for the Saskatchewan Ministry of Education Curriculum.</p>
+        <div class="max-w-4xl mx-auto px-4 text-center text-slate-500 text-sm flex flex-col md:flex-row justify-between items-center gap-4">
+            <div>
+                <p>&copy; 2024 Biology 30 Saskatchewan Digital Textbook</p>
+                <p class="mt-2">Designed for the Saskatchewan Ministry of Education Curriculum.</p>
+            </div>
+            
+            <button onclick="window.print()" class="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-lg font-medium transition-colors print-hidden">
+                <i data-lucide="printer" class="w-4 h-4"></i>
+                Print Chapter to PDF
+            </button>
         </div>
     </footer>
 
