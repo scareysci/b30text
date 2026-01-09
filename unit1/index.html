@@ -208,21 +208,6 @@
                     <p class="text-slate-700">Consider the <strong>Western Red Lily</strong> (<em>Lilium philadelphicum</em>), Saskatchewan's floral emblem. It clearly fits the biological criteria: it grows, photosynthesizes (energy processing), and reproduces via seeds. Now consider the <strong>South Saskatchewan River</strong>. It moves, it changes the landscape, and it supports life. In a strict biological sense, it is non-living. However, in many Indigenous worldviews, the river is considered an animate spirit or force with its own agency.</p>
                 </div>
 
-                <!-- Digital Feature -->
-                <div class="feature-box">
-                    <span class="feature-tag tag-interactive">Interactive Feature</span>
-                    <div class="flex items-start gap-4">
-                        <i data-lucide="bar-chart-2" class="w-8 h-8 text-green-600 mt-1"></i>
-                        <div>
-                            <h4 class="font-bold text-slate-800 mb-2">Collaborative Word Cloud</h4>
-                            <div class="bg-white p-4 rounded border border-slate-200 text-sm font-mono text-slate-600">
-                                <strong>Developer Prompt:</strong> Create a simple input field where students type three words they associate with "Life".<br>
-                                • <strong>Output:</strong> A D3.js word cloud visualization that updates in real-time (or simulates real-time data) showing the most common terms submitted by the class (e.g., "Breathing," "Reproduction," "Soul," "Cells").
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 <div class="formative-check">
                     <h4 class="font-bold text-orange-800 mb-3"><i data-lucide="check-circle-2" class="inline w-5 h-5 mr-1"></i> Formative Check</h4>
                     <ul class="space-y-3 text-slate-700">
@@ -267,17 +252,25 @@
                     <p class="text-slate-700">In Saskatchewan, Elders often speak of the land as a living relation. When harvesting medicinal plants like sage or sweetgrass, it is traditional protocol to offer tobacco. This is an acknowledgement that the plant is a living being that is giving its life to help you, establishing a reciprocal relationship that is absent in a purely mechanical view of biology.</p>
                 </div>
 
-                <!-- Digital Feature -->
+                <!-- Digital Feature: Embedded Video -->
                 <div class="feature-box">
-                    <span class="feature-tag tag-interactive">Interactive Feature</span>
-                    <div class="flex items-start gap-4">
-                        <i data-lucide="headphones" class="w-8 h-8 text-green-600 mt-1"></i>
-                        <div>
-                            <h4 class="font-bold text-slate-800 mb-2">Audio: "Voices of the Land"</h4>
-                            <p class="text-sm text-slate-600 mb-2">Clickable audio clips of Saskatchewan Elders explaining the concept of the land as alive.</p>
-                            <div class="bg-white p-4 rounded border border-slate-200 text-sm font-mono text-slate-600">
-                                <strong>Image Prompt (for background):</strong> A serene, high-definition photograph of the Qu'Appelle Valley in Saskatchewan during autumn, golden hour lighting. In the foreground, sage and prairie grasses. The image should evoke a sense of connection and peace.
-                            </div>
+                    <span class="feature-tag tag-interactive">Video Feature</span>
+                    <div class="flex flex-col items-center gap-4">
+                        <div class="w-full aspect-video rounded-lg overflow-hidden shadow-lg">
+                            <iframe 
+                                class="w-full h-full" 
+                                src="https://www.youtube.com/embed/NTXMrn2BZB0?si=5RFFHtcrTZhKbUDg" 
+                                title="Wahkohtowin: Cree Natural Law" 
+                                frameborder="0" 
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                                allowfullscreen>
+                            </iframe>
+                        </div>
+                        <div class="w-full">
+                            <h4 class="font-bold text-slate-800 mb-2">Video: Wahkohtowin: Cree Natural Law</h4>
+                            <p class="text-sm text-slate-600">
+                                This video by BearPaw Media and Education explores the Cree concept of Wahkohtowin (kinship) and Natural Law. As you watch, consider how this holistic view of "law" and "relationship" contrasts with and complements the biological definitions of life we are studying.
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -321,26 +314,13 @@
                     <p class="text-slate-700">While early European scientists were debating spontaneous generation, Indigenous peoples on the Great Plains had deep, observational knowledge of life cycles. They knew that bison populations were driven by breeding seasons and migration, not spontaneous appearance.</p>
                 </div>
 
-                <!-- Digital Feature -->
-                <div class="feature-box">
-                    <span class="feature-tag tag-interactive">Interactive Feature</span>
-                    <div class="flex items-start gap-4">
-                        <i data-lucide="clock" class="w-8 h-8 text-green-600 mt-1"></i>
-                        <div>
-                            <h4 class="font-bold text-slate-800 mb-2">Scrollable Timeline of Life</h4>
-                            <div class="bg-white p-4 rounded border border-slate-200 text-sm font-mono text-slate-600">
-                                <strong>Developer Prompt:</strong> Create a horizontal scroll container.<br>
-                                • <strong>Points:</strong><br>
-                                &nbsp;&nbsp;- 350 BC: Aristotle (Spontaneous Generation)<br>
-                                &nbsp;&nbsp;- 1668: Francesco Redi (Meat and Maggots experiment)<br>
-                                &nbsp;&nbsp;- 1745: John Needham (Boiled broth, open flasks)<br>
-                                &nbsp;&nbsp;- 1768: Lazzaro Spallanzani (Sealed flasks, no growth)<br>
-                                &nbsp;&nbsp;- 1859: Louis Pasteur (Swan-neck flask, disproves spontaneous generation)<br>
-                                &nbsp;&nbsp;- 1953: Miller-Urey (Chemical origins of life)<br>
-                                • <strong>Interaction:</strong> Clicking a point expands a modal with a summary and a "Key Question" the scientist was asking.
-                            </div>
-                        </div>
-                    </div>
+                <!-- Digital Feature: Scrollable Timeline -->
+                <div class="my-8">
+                     <iframe 
+                        src="unit1_timeline.html" 
+                        class="w-full h-[350px] border-0 rounded-lg shadow-md"
+                        title="Timeline of Life"
+                     ></iframe>
                 </div>
 
                 <div class="formative-check">
