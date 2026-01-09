@@ -4,430 +4,425 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Microscopic Scale Explorer</title>
-    
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- React & ReactDOM -->
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    
-    <!-- Babel for JSX compilation in browser -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
-    <style>
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            height: 8px;
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #0f172a; 
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #334155; 
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #475569; 
-        }
-    </style>
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body class="bg-slate-950 text-slate-100">
-    <div id="root"></div>
+<body class="bg-slate-950 text-slate-100 m-0 p-0 overflow-hidden">
+    <div id="root" class="h-screen w-screen"></div>
 
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
+        
+        // Since we are using lucide via script tag, we might need to access icons from global object or define SVGs manually if that fails.
+        // For robustness in this standalone file, defining icons manually is safest as done in previous examples, 
+        // OR using the lucide global if available. Let's try manual SVG definition for maximum stability.
 
-        // --- Icon Components (Inline for standalone portability) ---
-        const ZoomInIcon = ({ className }) => (
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-                <circle cx="11" cy="11" r="8"></circle>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                <line x1="11" y1="8" x2="11" y2="14"></line>
-                <line x1="8" y1="11" x2="14" y2="11"></line>
-            </svg>
+        const IconSearch = ({ className }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        );
+        const IconZoomIn = ({ className }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="11" cy="11" r="8"/><line x1="21" x2="16.65" y1="21" y2="16.65"/><line x1="11" x2="11" y1="8" y2="14"/><line x1="8" x2="14" y1="11" y2="11"/></svg>
+        );
+        const IconZoomOut = ({ className }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="11" cy="11" r="8"/><line x1="21" x2="16.65" y1="21" y2="16.65"/><line x1="8" x2="14" y1="11" y2="11"/></svg>
+        );
+        const IconInfo = ({ className }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
         );
 
-        const ZoomOutIcon = ({ className }) => (
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-                <circle cx="11" cy="11" r="8"></circle>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                <line x1="8" y1="11" x2="14" y2="11"></line>
-            </svg>
-        );
-
-        // --- Main Application ---
         const ScaleExplorer = () => {
-            // Range: 0 (Macro/Coffee Bean) to 100 (Atom)
-            const [sliderValue, setSliderValue] = useState(0);
-            const [activeItem, setActiveItem] = useState(null);
+          // Range: 0 (Macro/Coffee Bean) to 100 (Atom)
+          // We'll map this logarithmically to real-world units (nanometers)
+          const [sliderValue, setSliderValue] = useState(0);
+          const [activeItem, setActiveItem] = useState(null);
+          
+          // Real world sizes in nanometers (nm)
+          // 1 mm = 1,000,000 nm
+          const items = [
+            { 
+              id: 'coffee', 
+              name: 'Coffee Bean', 
+              size: 12000000, // 12mm
+              color: '#5D4037', 
+              type: 'Macro',
+              description: 'The seed of the Coffea plant. Visible to the naked eye.'
+            },
+            { 
+              id: 'rice', 
+              name: 'Grain of Rice', 
+              size: 5000000, // 5mm
+              color: '#F5F5F5', 
+              type: 'Macro',
+              description: 'A staple food grain, roughly the limit of detailed naked-eye vision.'
+            },
+            { 
+              id: 'dustmite', 
+              name: 'Dust Mite', 
+              size: 300000, // 0.3mm
+              color: '#9CA3AF', 
+              type: 'Micro',
+              description: 'Microscopic arachnids that live in house dust. Requires a magnifying glass.'
+            },
+            { 
+              id: 'hair', 
+              name: 'Human Hair (Width)', 
+              size: 100000, // 0.1mm
+              color: '#D4A373', 
+              type: 'Micro',
+              description: 'The width of a human hair ranges from 17 to 180 micrometers.'
+            },
+            { 
+              id: 'wbcell', 
+              name: 'White Blood Cell', 
+              size: 15000, // 15um
+              color: '#E0E7FF', 
+              type: 'Cell',
+              description: 'Immune system cells that protect the body against infectious disease.'
+            },
+            { 
+              id: 'rbcell', 
+              name: 'Red Blood Cell', 
+              size: 7000, // 7um
+              color: '#EF4444', 
+              type: 'Cell',
+              description: 'Biconcave cells that deliver oxygen. The standard ruler of the body.'
+            },
+            { 
+              id: 'ecoli', 
+              name: 'E. Coli Bacterium', 
+              size: 2000, // 2um long
+              color: '#22C55E', 
+              type: 'Bacteria',
+              description: 'Rod-shaped bacteria found in the lower intestine of warm-blooded organisms.'
+            },
+            { 
+              id: 'phage', 
+              name: 'T4 Bacteriophage', 
+              size: 200, // 200nm
+              color: '#8B5CF6', 
+              type: 'Virus',
+              description: 'A virus that infects and replicates within bacteria. Has a distinct "lander" shape.',
+              offsetX: -0.8 // Shift left to sit beside HIV
+            },
+            { 
+              id: 'hiv', 
+              name: 'HIV', 
+              size: 120, // 120nm
+              color: '#EC4899', 
+              type: 'Virus',
+              description: 'Roughly spherical virus. 60x smaller than a red blood cell.',
+              offsetX: 0.8 // Shift right to sit beside Phage
+            },
+            { 
+              id: 'dna', 
+              name: 'DNA Helix (Width)', 
+              size: 2.5, // 2.5nm
+              color: '#F472B6', 
+              type: 'Molecule',
+              description: 'The molecule that carries genetic instructions. Extremely thin.'
+            },
+            { 
+              id: 'carbon', 
+              name: 'Carbon Atom', 
+              size: 0.15, // 0.15nm (150 pm)
+              color: '#64748B', 
+              type: 'Atom',
+              description: 'The fundamental building block of life.'
+            }
+          ];
+
+          // Helper: Convert slider 0-100 to Viewport Width (in nm)
+          // Max View (0 slider): 20,000,000 nm (20mm)
+          // Min View (100 slider): 0.5 nm
+          const getViewportWidth = (val) => {
+            const minLog = Math.log(0.4); 
+            const maxLog = Math.log(25000000); 
+            const scale = (100 - val) / 100;
+            const currentLog = minLog + (maxLog - minLog) * scale;
+            return Math.exp(currentLog);
+          };
+
+          const viewportWidthNm = getViewportWidth(sliderValue);
+
+          // Helper: Get scale unit label
+          const getScaleLabel = (nm) => {
+            if (nm >= 1000000) return `${(nm/1000000).toFixed(1)} mm`;
+            if (nm >= 1000) return `${(nm/1000).toFixed(1)} µm`;
+            return `${nm.toFixed(1)} nm`;
+          };
+
+          // Helper: Calculate pixels for an object based on current viewport
+          const getRenderSize = (objectSizeNm) => {
+            // We assume the screen/container is roughly 800px wide effectively for calculation
+            const containerWidthPx = 800; 
+            return (objectSizeNm / viewportWidthNm) * containerWidthPx;
+          };
+
+          const handleSeek = (targetSize) => {
+            // Reverse engineer slider value from target size
+            // We want the target to be about 30% of the screen width
+            const targetViewport = targetSize * 3; 
             
-            // Real world sizes in nanometers (nm)
-            const items = [
-                { 
-                id: 'coffee', 
-                name: 'Coffee Bean', 
-                size: 12000000, // 12mm
-                color: '#5D4037', 
-                type: 'Macro',
-                description: 'The seed of the Coffea plant. Visible to the naked eye.'
-                },
-                { 
-                id: 'rice', 
-                name: 'Grain of Rice', 
-                size: 5000000, // 5mm
-                color: '#F5F5F5', 
-                type: 'Macro',
-                description: 'A staple food grain, roughly the limit of detailed naked-eye vision.'
-                },
-                { 
-                id: 'dustmite', 
-                name: 'Dust Mite', 
-                size: 300000, // 0.3mm
-                color: '#9CA3AF', 
-                type: 'Micro',
-                description: 'Microscopic arachnids that live in house dust. Requires a magnifying glass.'
-                },
-                { 
-                id: 'hair', 
-                name: 'Human Hair (Width)', 
-                size: 100000, // 0.1mm
-                color: '#D4A373', 
-                type: 'Micro',
-                description: 'The width of a human hair ranges from 17 to 180 micrometers.'
-                },
-                { 
-                id: 'wbcell', 
-                name: 'White Blood Cell', 
-                size: 15000, // 15um
-                color: '#E0E7FF', 
-                type: 'Cell',
-                description: 'Immune system cells that protect the body against infectious disease.'
-                },
-                { 
-                id: 'rbcell', 
-                name: 'Red Blood Cell', 
-                size: 7000, // 7um
-                color: '#EF4444', 
-                type: 'Cell',
-                description: 'Biconcave cells that deliver oxygen. The standard ruler of the body.'
-                },
-                { 
-                id: 'ecoli', 
-                name: 'E. Coli Bacterium', 
-                size: 2000, // 2um long
-                color: '#22C55E', 
-                type: 'Bacteria',
-                description: 'Rod-shaped bacteria found in the lower intestine of warm-blooded organisms.'
-                },
-                { 
-                id: 'phage', 
-                name: 'T4 Bacteriophage', 
-                size: 200, // 200nm
-                color: '#8B5CF6', 
-                type: 'Virus',
-                description: 'A virus that infects and replicates within bacteria. Has a distinct "lander" shape.',
-                offsetX: -0.8 // Shift left
-                },
-                { 
-                id: 'hiv', 
-                name: 'HIV', 
-                size: 120, // 120nm
-                color: '#EC4899', 
-                type: 'Virus',
-                description: 'Roughly spherical virus. 60x smaller than a red blood cell.',
-                offsetX: 0.8 // Shift right
-                },
-                { 
-                id: 'dna', 
-                name: 'DNA Helix (Width)', 
-                size: 2.5, // 2.5nm
-                color: '#F472B6', 
-                type: 'Molecule',
-                description: 'The molecule that carries genetic instructions. Extremely thin.'
-                },
-                { 
-                id: 'carbon', 
-                name: 'Carbon Atom', 
-                size: 0.15, // 0.15nm
-                color: '#64748B', 
-                type: 'Atom',
-                description: 'The fundamental building block of life.'
-                }
-            ];
+            const minLog = Math.log(0.4); 
+            const maxLog = Math.log(25000000);
+            const targetLog = Math.log(targetViewport);
+            
+            const scale = (targetLog - minLog) / (maxLog - minLog);
+            const newVal = 100 - (scale * 100);
+            
+            setSliderValue(Math.min(100, Math.max(0, newVal)));
+          };
 
-            // Helper: Convert slider 0-100 to Viewport Width (in nm)
-            const getViewportWidth = (val) => {
-                const minLog = Math.log(0.4); 
-                const maxLog = Math.log(25000000); 
-                const scale = (100 - val) / 100;
-                const currentLog = minLog + (maxLog - minLog) * scale;
-                return Math.exp(currentLog);
-            };
-
-            const viewportWidthNm = getViewportWidth(sliderValue);
-
-            // Helper: Get scale unit label
-            const getScaleLabel = (nm) => {
-                if (nm >= 1000000) return `${(nm/1000000).toFixed(1)} mm`;
-                if (nm >= 1000) return `${(nm/1000).toFixed(1)} µm`;
-                return `${nm.toFixed(1)} nm`;
-            };
-
-            // Helper: Calculate pixels for an object based on current viewport
-            const getRenderSize = (objectSizeNm) => {
-                const containerWidthPx = 800; 
-                return (objectSizeNm / viewportWidthNm) * containerWidthPx;
-            };
-
-            const handleSeek = (targetSize) => {
-                const targetViewport = targetSize * 3; 
-                const minLog = Math.log(0.4); 
-                const maxLog = Math.log(25000000);
-                const targetLog = Math.log(targetViewport);
-                
-                const scale = (targetLog - minLog) / (maxLog - minLog);
-                const newVal = 100 - (scale * 100);
-                setSliderValue(Math.min(100, Math.max(0, newVal)));
-            };
-
-            return (
-                <div className="flex flex-col h-screen bg-slate-950 text-slate-100 font-sans overflow-hidden select-none">
-                
-                {/* Header */}
-                <div className="bg-slate-900/80 backdrop-blur border-b border-slate-800 p-4 flex justify-between items-center z-20">
-                    <div>
-                    <h1 className="text-xl font-bold bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">
-                        Microscopic Scale Explorer
-                    </h1>
-                    <p className="text-xs text-slate-400">Drag the slider to zoom from Millimeters to Nanometers</p>
-                    </div>
-                    <div className="bg-slate-800 px-4 py-2 rounded-lg border border-slate-700 font-mono text-cyan-400 min-w-[140px] text-center">
-                    {getScaleLabel(viewportWidthNm)} width
-                    </div>
+          return (
+            <div className="flex flex-col h-screen bg-slate-950 text-slate-100 font-sans overflow-hidden">
+              
+              {/* Header */}
+              <div className="bg-slate-900/80 backdrop-blur border-b border-slate-800 p-4 flex justify-between items-center z-20">
+                <div>
+                  <h1 className="text-xl font-bold bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">
+                    Microscopic Scale Explorer
+                  </h1>
+                  <p className="text-xs text-slate-400">Drag the slider to zoom from Millimeters to Nanometers</p>
                 </div>
+                <div className="bg-slate-800 px-4 py-2 rounded-lg border border-slate-700 font-mono text-cyan-400">
+                  Width: {getScaleLabel(viewportWidthNm)}
+                </div>
+              </div>
 
-                {/* Main Viewport */}
-                <div className="flex-grow relative overflow-hidden flex justify-center items-center cursor-crosshair">
+              {/* Main Viewport */}
+              <div className="flex-grow relative overflow-hidden flex justify-center items-center cursor-crosshair">
+                
+                {/* Dynamic Grid Background */}
+                <div 
+                  className="absolute inset-0 pointer-events-none opacity-20"
+                  style={{
+                    backgroundImage: `linear-gradient(#334155 1px, transparent 1px), linear-gradient(90deg, #334155 1px, transparent 1px)`,
+                    backgroundSize: `${getRenderSize(viewportWidthNm/10)}px ${getRenderSize(viewportWidthNm/10)}px`,
+                    backgroundPosition: 'center'
+                  }}
+                />
+                
+                {/* Objects Rendering Layer */}
+                {/* We center everything. We render items if they are between 1px and 5000px */}
+                <div className="relative w-full h-full flex justify-center items-center">
+                  {items.map((item) => {
+                    const pixelSize = getRenderSize(item.size);
                     
-                    {/* Dynamic Grid Background */}
-                    <div 
-                    className="absolute inset-0 pointer-events-none opacity-20"
-                    style={{
-                        backgroundImage: `linear-gradient(#334155 1px, transparent 1px), linear-gradient(90deg, #334155 1px, transparent 1px)`,
-                        backgroundSize: `${getRenderSize(viewportWidthNm/10)}px ${getRenderSize(viewportWidthNm/10)}px`,
-                        backgroundPosition: 'center'
-                    }}
-                    />
-                    
-                    {/* Objects Rendering Layer */}
-                    <div className="relative w-full h-full flex justify-center items-center">
-                    {items.map((item) => {
-                        const pixelSize = getRenderSize(item.size);
-                        
-                        if (pixelSize < 1) return null;
-                        if (pixelSize > 50000) return null;
+                    // Optimization: Don't render if too small or completely covers screen
+                    if (pixelSize < 1) return null;
+                    if (pixelSize > 50000) return null; // Too huge to see context
 
-                        return (
-                        <div 
-                            key={item.id}
-                            className="absolute transition-all duration-75 ease-linear flex justify-center items-center group"
-                            style={{
-                            width: pixelSize,
-                            height: pixelSize,
-                            zIndex: Math.floor(10000000 / item.size),
-                            transform: item.offsetX ? `translateX(${item.offsetX * pixelSize}px)` : 'none'
-                            }}
-                            onClick={() => setActiveItem(item)}
-                        >
-                            <div className={`w-full h-full relative transition-transform duration-300 ${activeItem?.id === item.id ? 'scale-110 drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]' : 'group-hover:scale-105'}`}>
-                            
-                            {/* --- SVG ASSETS --- */}
+                    return (
+                      <div 
+                        key={item.id}
+                        className="absolute transition-all duration-75 ease-linear flex justify-center items-center group"
+                        style={{
+                          width: pixelSize,
+                          height: pixelSize,
+                          zIndex: Math.floor(10000000 / item.size), // Smaller items on top
+                          transform: item.offsetX ? `translateX(${item.offsetX * pixelSize}px)` : 'none'
+                        }}
+                        onClick={() => setActiveItem(item)}
+                      >
+                        {/* Render based on item ID - Simplified shapes/SVGs */}
+                        <div className={`w-full h-full relative transition-transform duration-300 ${activeItem?.id === item.id ? 'scale-110 drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]' : 'group-hover:scale-105'}`}>
+                          
+                          {/* COFFEE BEAN */}
+                          {item.id === 'coffee' && (
+                            <svg viewBox="0 0 100 130" className="w-full h-full drop-shadow-2xl">
+                               <ellipse cx="50" cy="65" rx="40" ry="60" fill="#4e342e" />
+                               <path d="M50 15 Q 60 65 50 115" stroke="#3e2723" strokeWidth="3" fill="none" />
+                               <path d="M50 15 Q 40 65 50 115" stroke="#3e2723" strokeWidth="2" fill="none" />
+                               {/* Texture */}
+                               <circle cx="30" cy="40" r="2" fill="#3e2723" opacity="0.5"/>
+                               <circle cx="70" cy="90" r="3" fill="#3e2723" opacity="0.5"/>
+                            </svg>
+                          )}
 
-                            {/* COFFEE BEAN */}
-                            {item.id === 'coffee' && (
-                                <svg viewBox="0 0 100 130" className="w-full h-full drop-shadow-2xl">
-                                <ellipse cx="50" cy="65" rx="40" ry="60" fill="#4e342e" />
-                                <path d="M50 15 Q 60 65 50 115" stroke="#3e2723" strokeWidth="3" fill="none" />
-                                <path d="M50 15 Q 40 65 50 115" stroke="#3e2723" strokeWidth="2" fill="none" />
-                                <circle cx="30" cy="40" r="2" fill="#3e2723" opacity="0.5"/>
-                                <circle cx="70" cy="90" r="3" fill="#3e2723" opacity="0.5"/>
-                                </svg>
-                            )}
+                          {/* RICE */}
+                          {item.id === 'rice' && (
+                            <svg viewBox="0 0 100 200" className="w-full h-full drop-shadow-xl opacity-90">
+                              <ellipse cx="50" cy="100" rx="30" ry="90" fill="#f5f5f4" />
+                              <ellipse cx="45" cy="90" rx="20" ry="80" fill="#fafaf9" /> 
+                            </svg>
+                          )}
 
-                            {/* RICE */}
-                            {item.id === 'rice' && (
-                                <svg viewBox="0 0 100 200" className="w-full h-full drop-shadow-xl opacity-90">
-                                <ellipse cx="50" cy="100" rx="30" ry="90" fill="#f5f5f4" />
-                                <ellipse cx="45" cy="90" rx="20" ry="80" fill="#fafaf9" /> 
-                                </svg>
-                            )}
-
-                            {/* DUST MITE */}
-                            {item.id === 'dustmite' && (
-                                <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg">
+                          {/* DUST MITE */}
+                          {item.id === 'dustmite' && (
+                              <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg">
                                 <path d="M30 30 Q 50 10 70 30 T 70 70 Q 50 90 30 70 T 30 30" fill="#a1a1aa" />
+                                {/* Legs */}
                                 <path d="M30 40 L 10 30" stroke="#a1a1aa" strokeWidth="2" fill="none"/>
                                 <path d="M70 40 L 90 30" stroke="#a1a1aa" strokeWidth="2" fill="none"/>
                                 <path d="M30 60 L 10 70" stroke="#a1a1aa" strokeWidth="2" fill="none"/>
                                 <path d="M70 60 L 90 70" stroke="#a1a1aa" strokeWidth="2" fill="none"/>
-                                </svg>
-                            )}
+                              </svg>
+                          )}
 
-                            {/* HUMAN HAIR */}
-                            {item.id === 'hair' && (
-                                <div className="w-1/2 h-full mx-auto bg-yellow-700/80 rounded-full shadow-lg border-x-2 border-yellow-900/50"></div>
-                            )}
+                          {/* HUMAN HAIR */}
+                          {item.id === 'hair' && (
+                            <div className="w-1/2 h-full mx-auto bg-yellow-700/80 rounded-full shadow-lg border-x-2 border-yellow-900/50"></div>
+                          )}
 
-                            {/* RED BLOOD CELL */}
-                            {item.id === 'rbcell' && (
-                                <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg">
-                                <circle cx="50" cy="50" r="45" fill="#ef4444" />
-                                <circle cx="50" cy="50" r="25" fill="#b91c1c" opacity="0.6" filter="blur(2px)" />
-                                <circle cx="50" cy="50" r="45" fill="url(#rbc-shine)" opacity="0.3" />
-                                <defs>
-                                    <radialGradient id="rbc-shine">
-                                    <stop offset="0%" stopColor="white" />
-                                    <stop offset="100%" stopColor="transparent" />
-                                    </radialGradient>
-                                </defs>
-                                </svg>
-                            )}
+                          {/* RED BLOOD CELL */}
+                          {item.id === 'rbcell' && (
+                            <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg">
+                              <circle cx="50" cy="50" r="45" fill="#ef4444" />
+                              <circle cx="50" cy="50" r="25" fill="#b91c1c" opacity="0.6" filter="blur(2px)" />
+                              <circle cx="50" cy="50" r="45" fill="url(#rbc-shine)" opacity="0.3" />
+                              <defs>
+                                <radialGradient id="rbc-shine">
+                                  <stop offset="0%" stopColor="white" />
+                                  <stop offset="100%" stopColor="transparent" />
+                                </radialGradient>
+                              </defs>
+                            </svg>
+                          )}
 
-                            {/* WHITE BLOOD CELL */}
-                            {item.id === 'wbcell' && (
-                                <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg">
-                                    <path d="M50 10 Q 70 15 80 40 Q 95 60 70 80 Q 50 95 30 80 Q 5 60 20 40 Q 30 15 50 10" fill="#e0e7ff" />
-                                    <circle cx="40" cy="40" r="5" fill="#c7d2fe" />
-                                    <circle cx="60" cy="60" r="8" fill="#c7d2fe" />
-                                </svg>
-                            )}
+                          {/* WHITE BLOOD CELL */}
+                          {item.id === 'wbcell' && (
+                              <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-lg">
+                                 <path d="M50 10 Q 70 15 80 40 Q 95 60 70 80 Q 50 95 30 80 Q 5 60 20 40 Q 30 15 50 10" fill="#e0e7ff" />
+                                 <circle cx="40" cy="40" r="5" fill="#c7d2fe" />
+                                 <circle cx="60" cy="60" r="8" fill="#c7d2fe" />
+                              </svg>
+                          )}
 
-                            {/* E. COLI */}
-                            {item.id === 'ecoli' && (
-                                <svg viewBox="0 0 100 50" className="w-full h-full drop-shadow-md">
-                                <rect x="20" y="10" width="60" height="30" rx="15" fill="#4ade80" />
-                                <path d="M80 25 Q 90 20 100 25" stroke="#4ade80" strokeWidth="1" fill="none" />
-                                <path d="M20 25 Q 10 30 0 25" stroke="#4ade80" strokeWidth="1" fill="none" />
-                                <path d="M80 15 Q 90 5 95 10" stroke="#4ade80" strokeWidth="1" fill="none" />
-                                </svg>
-                            )}
+                          {/* E. COLI */}
+                          {item.id === 'ecoli' && (
+                            <svg viewBox="0 0 100 50" className="w-full h-full drop-shadow-md">
+                              <rect x="20" y="10" width="60" height="30" rx="15" fill="#4ade80" />
+                              {/* Flagella */}
+                              <path d="M80 25 Q 90 20 100 25" stroke="#4ade80" strokeWidth="1" fill="none" />
+                              <path d="M20 25 Q 10 30 0 25" stroke="#4ade80" strokeWidth="1" fill="none" />
+                              <path d="M80 15 Q 90 5 95 10" stroke="#4ade80" strokeWidth="1" fill="none" />
+                            </svg>
+                          )}
 
-                            {/* BACTERIOPHAGE */}
-                            {item.id === 'phage' && (
-                                <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-md">
-                                <path d="M50 10 L 70 30 L 50 50 L 30 30 Z" fill="#a78bfa" />
-                                <rect x="45" y="50" width="10" height="20" fill="#8b5cf6" />
-                                <path d="M45 70 L 30 90" stroke="#a78bfa" strokeWidth="3" />
-                                <path d="M55 70 L 70 90" stroke="#a78bfa" strokeWidth="3" />
-                                <path d="M45 65 L 20 75" stroke="#a78bfa" strokeWidth="3" />
-                                <path d="M55 65 L 80 75" stroke="#a78bfa" strokeWidth="3" />
-                                </svg>
-                            )}
+                          {/* BACTERIOPHAGE */}
+                          {item.id === 'phage' && (
+                            <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-md">
+                              {/* Head */}
+                              <path d="M50 10 L 70 30 L 50 50 L 30 30 Z" fill="#a78bfa" />
+                              {/* Neck */}
+                              <rect x="45" y="50" width="10" height="20" fill="#8b5cf6" />
+                              {/* Legs */}
+                              <path d="M45 70 L 30 90" stroke="#a78bfa" strokeWidth="3" />
+                              <path d="M55 70 L 70 90" stroke="#a78bfa" strokeWidth="3" />
+                              <path d="M45 65 L 20 75" stroke="#a78bfa" strokeWidth="3" />
+                              <path d="M55 65 L 80 75" stroke="#a78bfa" strokeWidth="3" />
+                            </svg>
+                          )}
 
-                            {/* HIV */}
-                            {item.id === 'hiv' && (
-                                <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-md">
-                                <circle cx="50" cy="50" r="40" fill="#db2777" opacity="0.8" />
-                                {[0, 45, 90, 135, 180, 225, 270, 315].map(deg => (
-                                    <rect key={deg} x="48" y="5" width="4" height="10" fill="#fce7f3" transform={`rotate(${deg} 50 50)`} />
-                                ))}
-                                <circle cx="50" cy="50" r="25" fill="#be185d" />
-                                </svg>
-                            )}
+                          {/* HIV */}
+                          {item.id === 'hiv' && (
+                            <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-md">
+                              <circle cx="50" cy="50" r="40" fill="#db2777" opacity="0.8" />
+                              {/* Spikes */}
+                              {[0, 45, 90, 135, 180, 225, 270, 315].map(deg => (
+                                <rect key={deg} x="48" y="5" width="4" height="10" fill="#fce7f3" transform={`rotate(${deg} 50 50)`} />
+                              ))}
+                              <circle cx="50" cy="50" r="25" fill="#be185d" />
+                            </svg>
+                          )}
 
-                            {/* DNA */}
-                            {item.id === 'dna' && (
-                                <svg viewBox="0 0 100 200" className="w-full h-full drop-shadow-sm">
-                                <path d="M30 0 Q 70 25 30 50 Q -10 75 30 100 Q 70 125 30 150" fill="none" stroke="#f472b6" strokeWidth="8" opacity="0.8"/>
-                                <path d="M70 0 Q 30 25 70 50 Q 110 75 70 100 Q 30 125 70 150" fill="none" stroke="#be185d" strokeWidth="8" opacity="0.8"/>
-                                <line x1="30" y1="25" x2="70" y2="25" stroke="white" strokeWidth="2" />
-                                <line x1="30" y1="75" x2="70" y2="75" stroke="white" strokeWidth="2" />
-                                <line x1="30" y1="125" x2="70" y2="125" stroke="white" strokeWidth="2" />
-                                </svg>
-                            )}
+                          {/* DNA */}
+                          {item.id === 'dna' && (
+                            <svg viewBox="0 0 100 200" className="w-full h-full drop-shadow-sm">
+                              <path d="M30 0 Q 70 25 30 50 Q -10 75 30 100 Q 70 125 30 150" fill="none" stroke="#f472b6" strokeWidth="8" opacity="0.8"/>
+                              <path d="M70 0 Q 30 25 70 50 Q 110 75 70 100 Q 30 125 70 150" fill="none" stroke="#be185d" strokeWidth="8" opacity="0.8"/>
+                              {/* Rungs */}
+                              <line x1="30" y1="25" x2="70" y2="25" stroke="white" strokeWidth="2" />
+                              <line x1="30" y1="75" x2="70" y2="75" stroke="white" strokeWidth="2" />
+                              <line x1="30" y1="125" x2="70" y2="125" stroke="white" strokeWidth="2" />
+                            </svg>
+                          )}
 
-                            {/* ATOM */}
-                            {item.id === 'carbon' && (
-                                <div className="w-full h-full relative flex items-center justify-center">
-                                <div className="absolute w-2 h-2 bg-slate-200 rounded-full shadow-[0_0_10px_white]"></div>
-                                <div className="absolute w-full h-1/3 border border-slate-500/50 rounded-[100%] animate-[spin_3s_linear_infinite]"></div>
-                                <div className="absolute w-1/3 h-full border border-slate-500/50 rounded-[100%] animate-[spin_4s_linear_infinite]"></div>
-                                <div className="absolute w-3/4 h-3/4 border border-slate-500/50 rounded-[100%] animate-[spin_5s_linear_infinite_reverse]"></div>
-                                </div>
-                            )}
-
-                            {/* Label */}
-                            {pixelSize > 40 && pixelSize < 800 && (
-                                <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-center whitespace-nowrap z-50">
-                                <span className="text-xs font-bold text-white bg-black/50 px-2 py-1 rounded backdrop-blur-sm border border-slate-600">
-                                    {item.name}
-                                </span>
-                                </div>
-                            )}
+                          {/* ATOM */}
+                          {item.id === 'carbon' && (
+                            <div className="w-full h-full relative flex items-center justify-center">
+                              <div className="absolute w-2 h-2 bg-slate-200 rounded-full shadow-[0_0_10px_white]"></div>
+                              <div className="absolute w-full h-1/3 border border-slate-500/50 rounded-[100%] animate-[spin_3s_linear_infinite]"></div>
+                              <div className="absolute w-1/3 h-full border border-slate-500/50 rounded-[100%] animate-[spin_4s_linear_infinite]"></div>
+                              <div className="absolute w-3/4 h-3/4 border border-slate-500/50 rounded-[100%] animate-[spin_5s_linear_infinite_reverse]"></div>
                             </div>
+                          )}
+
+                          {/* Label (Only show if reasonably sized) */}
+                          {pixelSize > 40 && pixelSize < 800 && (
+                            <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-center whitespace-nowrap z-50">
+                              <span className="text-xs font-bold text-white bg-black/50 px-2 py-1 rounded backdrop-blur-sm border border-slate-600">
+                                {item.name}
+                              </span>
+                            </div>
+                          )}
                         </div>
-                        );
-                    })}
+                      </div>
+                    );
+                  })}
+                </div>
+                
+                {/* Info Card Overlay for Active Item */}
+                {activeItem && (
+                  <div className="absolute top-4 right-4 w-64 bg-slate-900/90 backdrop-blur border border-slate-700 p-4 rounded-xl shadow-2xl z-40 transition-all animate-in slide-in-from-right">
+                    <div className="flex justify-between items-start mb-2">
+                      <h3 className="font-bold text-lg" style={{ color: activeItem.color }}>{activeItem.name}</h3>
+                      <button onClick={() => setActiveItem(null)} className="text-slate-500 hover:text-white">&times;</button>
                     </div>
-                    
-                    {/* Info Card Overlay */}
-                    {activeItem && (
-                    <div className="absolute top-4 right-4 w-64 bg-slate-900/90 backdrop-blur border border-slate-700 p-4 rounded-xl shadow-2xl z-40">
-                        <div className="flex justify-between items-start mb-2">
-                        <h3 className="font-bold text-lg" style={{ color: activeItem.color }}>{activeItem.name}</h3>
-                        <button onClick={() => setActiveItem(null)} className="text-slate-500 hover:text-white text-xl leading-none">&times;</button>
-                        </div>
-                        <div className="text-xs font-mono text-slate-400 mb-2">Size: {getScaleLabel(activeItem.size)}</div>
-                        <p className="text-sm text-slate-300 leading-relaxed">{activeItem.description}</p>
-                        <button 
-                        onClick={() => handleSeek(activeItem.size)}
-                        className="mt-4 w-full py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded text-xs font-bold transition-colors flex items-center justify-center gap-2"
-                        >
-                        <ZoomInIcon className="w-3 h-3" /> Zoom to Fit
-                        </button>
-                    </div>
-                    )}
+                    <div className="text-xs font-mono text-slate-400 mb-2">Size: {getScaleLabel(activeItem.size)}</div>
+                    <p className="text-sm text-slate-300 leading-relaxed">{activeItem.description}</p>
+                    <button 
+                      onClick={() => handleSeek(activeItem.size)}
+                      className="mt-4 w-full py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded text-xs font-bold transition-colors flex items-center justify-center gap-2"
+                    >
+                      <IconZoomIn className="w-3 h-3" /> Zoom to Fit
+                    </button>
+                  </div>
+                )}
 
+              </div>
+
+              {/* Controls Footer */}
+              <div className="bg-slate-900 border-t border-slate-800 p-6 z-20">
+                
+                {/* Slider */}
+                <div className="flex items-center gap-4 max-w-4xl mx-auto">
+                  <IconZoomOut className="text-slate-500 w-5 h-5" />
+                  <input 
+                    type="range" 
+                    min="0" 
+                    max="100" 
+                    step="0.1" 
+                    value={sliderValue} 
+                    onChange={(e) => setSliderValue(Number(e.target.value))}
+                    className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-cyan-400 hover:accent-cyan-300 transition-all"
+                  />
+                  <IconZoomIn className="text-slate-500 w-5 h-5" />
                 </div>
 
-                {/* Controls Footer */}
-                <div className="bg-slate-900 border-t border-slate-800 p-6 z-20">
-                    <div className="flex items-center gap-4 max-w-4xl mx-auto">
-                    <ZoomOutIcon className="text-slate-500 w-5 h-5" />
-                    <input 
-                        type="range" 
-                        min="0" 
-                        max="100" 
-                        step="0.1" 
-                        value={sliderValue} 
-                        onChange={(e) => setSliderValue(Number(e.target.value))}
-                        className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-cyan-400 hover:accent-cyan-300 transition-all"
-                    />
-                    <ZoomInIcon className="text-slate-500 w-5 h-5" />
-                    </div>
-
-                    {/* Quick Jump List */}
-                    <div className="flex gap-2 justify-center mt-6 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-slate-700">
-                    {items.map(item => (
-                        <button
-                        key={item.id}
-                        onClick={() => handleSeek(item.size)}
-                        className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-all border ${
-                            viewportWidthNm < item.size * 10 && viewportWidthNm > item.size / 2
-                            ? 'bg-cyan-500/20 border-cyan-500/50 text-cyan-300' 
-                            : 'bg-slate-800 border-slate-700 text-slate-400 hover:bg-slate-700 hover:text-slate-200'
-                        }`}
-                        >
-                        {item.name}
-                        </button>
-                    ))}
-                    </div>
+                {/* Quick Jump List */}
+                <div className="flex gap-2 justify-center mt-6 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-slate-700">
+                  {items.map(item => (
+                    <button
+                      key={item.id}
+                      onClick={() => handleSeek(item.size)}
+                      className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-all border ${
+                        viewportWidthNm < item.size * 10 && viewportWidthNm > item.size / 2
+                          ? 'bg-cyan-500/20 border-cyan-500/50 text-cyan-300' 
+                          : 'bg-slate-800 border-slate-700 text-slate-400 hover:bg-slate-700 hover:text-slate-200'
+                      }`}
+                    >
+                      {item.name}
+                    </button>
+                  ))}
                 </div>
+              </div>
 
-                </div>
-            );
+            </div>
+          );
         };
 
         const root = ReactDOM.createRoot(document.getElementById('root'));
