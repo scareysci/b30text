@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biology 30 Saskatchewan - Chapter 2</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- MathJax for Chemical Equations -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']]
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400&family=Inter:wght@300;400;600;800&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Merriweather', serif;
+        }
+
+        /* Custom Styles for Feature Placeholders */
+        .feature-box {
+            border: 2px dashed #cbd5e1;
+            background-color: #f1f5f9;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            position: relative;
+            transition: all 0.2s;
+        }
+
+        .feature-box:hover {
+            border-color: #94a3b8;
+            background-color: #e2e8f0;
+        }
+
+        .feature-tag {
+            position: absolute;
+            top: -12px;
+            left: 1rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .design-prompt {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.75rem;
+            color: #64748b;
+            background-color: #e2e8f0;
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+            margin-top: 1rem;
+            border: 1px solid #cbd5e1;
+        }
+
+        .tag-interactive { background-color: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+
+        .sask-context {
+            border-left: 4px solid #16a34a; /* Green for Saskatchewan */
+            background-color: #f0fdf4;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 0 0.5rem 0.5rem 0;
+        }
+
+        .learning-objective {
+            background-color: #eff6ff;
+            border-left: 4px solid #2563eb;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+        }
+        
+        .formative-check {
+            background-color: #fff7ed;
+            border: 1px solid #fed7aa;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            border-radius: 0.5rem;
+        }
+
+        .note-taking {
+            margin-top: 2rem;
+            background-color: #fefce8;
+            border-left: 4px solid #facc15;
+            padding: 1rem;
+        }
+
+        /* Search Highlight Style */
+        .highlight {
+            background-color: #fef08a; /* Yellow-200 */
+            color: #854d0e; /* Yellow-800 */
+            border-radius: 0.125rem;
+            padding: 0 0.125rem;
+        }
+
+        /* Table Styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+        }
+        th, td {
+            border: 1px solid #e2e8f0;
+            padding: 0.75rem;
+            text-align: left;
+        }
+        th {
+            background-color: #f1f5f9;
+            font-weight: 600;
+        }
+
+        /* --- PRINT STYLES --- */
+        @media print {
+            nav, footer, button, .print-hidden { display: none !important; }
+            iframe, .feature-box { display: none !important; }
+            .feature-box::after {
+                content: "[Interactive feature removed for print version. View online to access.]";
+                display: block;
+                font-style: italic;
+                color: #64748b;
+                border: 1px dashed #cbd5e1;
+                padding: 1rem;
+                margin: 1rem 0;
+                font-size: 0.875rem;
+                text-align: center;
+            }
+            body { background-color: white; color: black; font-size: 12pt; }
+            main { max-width: 100% !important; padding: 0 !important; }
+            h1 { font-size: 24pt !important; }
+            h2 { font-size: 18pt !important; border-bottom: 1px solid #ccc; }
+            a { text-decoration: none; color: black; }
+            .sask-context { border-left: 4px solid #333 !important; background-color: #f9f9f9 !important; }
+            .design-prompt { display: none; }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50 print-hidden">
+        <div class="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center gap-4">
+            <div class="flex items-center gap-4">
+                <a href="index.html" class="flex items-center gap-2 text-slate-500 hover:text-green-700 transition-colors" title="Return to Table of Contents">
+                    <i data-lucide="arrow-left" class="w-5 h-5"></i>
+                </a>
+                <span class="font-bold text-xl text-green-700 tracking-tight hidden sm:inline">Bio30<span class="text-slate-900">SK</span></span>
+            </div>
+            <div class="text-sm text-slate-500 font-medium hidden md:block">
+                Unit 2: The Organization of Life
+            </div>
+            <div class="relative flex-grow max-w-xs">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i data-lucide="search" class="w-4 h-4 text-slate-400"></i>
+                </div>
+                <input type="text" id="searchInput" placeholder="Search chapter..." class="block w-full pl-10 pr-3 py-1.5 border border-slate-300 rounded-md leading-5 bg-white placeholder-slate-400 focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 sm:text-sm">
+                <div id="searchResults" class="absolute right-0 mt-2 w-full bg-white rounded-md shadow-lg py-1 ring-1 ring-black ring-opacity-5 hidden z-50 max-h-60 overflow-y-auto"></div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-4 py-12" id="mainContent">
+
+        <!-- Unit Header -->
+        <header class="mb-16">
+            <h1 class="text-4xl md:text-5xl font-black text-slate-900 mb-6">Unit 2: The Organization of Life</h1>
+            
+            <div class="prose prose-lg text-slate-600 mb-8">
+                <p><strong>Unit Overview:</strong> Life is built on architecture. From the smallest bacterium to the largest blue whale, every living organism relies on the precise organization of matter to survive. In Unit 1, we defined <em>what</em> life is. In Unit 2, we explore <em>how</em> life is built. We will journey into the microscopic world of the cell—the fundamental unit of life—to understand the machinery that powers existence. We will examine how cells harvest energy, how they build the structures necessary for survival, and how they interact with their environment.</p>
+            </div>
+
+            <!-- Sask Context -->
+            <div class="sask-context">
+                <h3 class="flex items-center gap-2 font-bold text-green-800 text-lg mb-2">
+                    <i data-lucide="map-pin" class="w-5 h-5"></i> Saskatchewan Context: The Living Prairie
+                </h3>
+                <p class="text-slate-700">As we explore the organization of life, we acknowledge that we are learning on the traditional territories of the Nêhiyawak, Anihšināpēk, Dakota, Lakota, and Nakoda, and the homeland of the Métis/Michif Nation.</p>
+                <p class="text-slate-700 mt-2">The plants and animals of Saskatchewan—from the wheat fields of the Regina plains to the boreal caribou of the north—are built from the same fundamental cellular components we will study in this chapter. Indigenous knowledge teaches that all life is interconnected (<em>wâhkôhtowin</em>). Just as a single cell cannot survive without its organelles working in harmony, no organism exists in isolation from its environment. As you study the internal structures of the cell, consider how these microscopic systems reflect the larger systems of balance and reciprocity found in nature.</p>
+            </div>
+        </header>
+
+        <hr class="border-slate-200 my-12">
+
+        <!-- Chapter 2 Content -->
+        <article>
+            <h2 class="text-3xl font-bold text-slate-900 mb-8">Chapter 2: Cell Structure and Processes</h2>
+
+            <!-- Section 2.1 (NEW) -->
+            <section class="mb-16" id="section-2-1">
+                <h3 class="text-2xl font-bold text-slate-800 mb-4">2.1 The Two Empires: Prokaryotes vs. Eukaryotes</h3>
+
+                <div class="learning-objective">
+                    <strong>Learning Objective:</strong> Differentiate between prokaryotic and eukaryotic cells based on their structure, complexity, and evolutionary history.
+                </div>
+
+                <div class="prose prose-lg text-slate-700">
+                    <p class="mb-4">Before we examine the complex machinery of plants and animals, we must distinguish between the two fundamental types of cells that exist on Earth. This distinction is the most significant division in biology.</p>
+
+                    <h4 class="font-bold text-slate-800 mt-6 mb-2">Prokaryotes ("Before Nucleus")</h4>
+                    <p class="mb-2">These are the simplest and most ancient forms of life. They lack membrane-bound organelles.</p>
+                    <ul class="list-disc pl-6 mb-4 space-y-2">
+                        <li><strong>No Nucleus:</strong> Their DNA is free-floating in a region called the <em>nucleoid</em>.</li>
+                        <li><strong>Small & Simple:</strong> They are typically 10-100 times smaller than eukaryotic cells.</li>
+                        <li><strong>Examples:</strong> Bacteria (like <em>E. coli</em>) and Archaea (extremophiles).</li>
+                    </ul>
+
+                    <h4 class="font-bold text-slate-800 mt-6 mb-2">Eukaryotes ("True Nucleus")</h4>
+                    <p class="mb-2">These cells evolved later and are much more complex. They contain internal membrane-bound compartments.</p>
+                    <ul class="list-disc pl-6 mb-4 space-y-2">
+                        <li><strong>Nucleus:</strong> DNA is protected inside a double membrane.</li>
+                        <li><strong>Organelles:</strong> They have specialized "rooms" (mitochondria, chloroplasts, lysosomes) to perform specific tasks.</li>
+                        <li><strong>Examples:</strong> Plants, Animals, Fungi, and Protists (like Amoeba).</li>
+                    </ul>
+
+                    <figure class="mb-8 rounded-lg overflow-hidden shadow-md border border-slate-200 my-6">
+                        <div class="w-full h-64 bg-slate-200 flex items-center justify-center text-slate-500 font-bold">
+                            [Image: Prokaryote vs Eukaryote Diagram]
+                        </div>
+                        <figcaption class="bg-slate-50 p-3 text-center text-sm text-slate-600 italic border-t border-slate-200">
+                            Figure 2.1: A size and structure comparison. Note the bacterial cell (left) is simple and tiny compared to the complex animal cell (right).
+                        </figcaption>
+                        <div class="design-prompt">
+                            <strong>Image Prompt:</strong> A split diagram. Left: A bacterium (Prokaryote) with capsule, flagella, and free-floating DNA loop. Right: An animal cell (Eukaryote) with a clear nucleus and organelles. Use a scale bar to show the bacteria is much smaller.
+                        </div>
+                    </figure>
+
+                    <table class="w-full mb-6 text-sm">
+                        <thead class="bg-slate-100">
+                            <tr>
+                                <th class="p-2 border">Feature</th>
+                                <th class="p-2 border">Prokaryotes</th>
+                                <th class="p-2 border">Eukaryotes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="p-2 border"><strong>Nucleus</strong></td>
+                                <td class="p-2 border">No (Nucleoid)</td>
+                                <td class="p-2 border">Yes</td>
+                            </tr>
+                            <tr>
+                                <td class="p-2 border"><strong>Membrane-Bound Organelles</strong></td>
+                                <td class="p-2 border">No</td>
+                                <td class="p-2 border">Yes (Mitochondria, Golgi, etc.)</td>
+                            </tr>
+                            <tr>
+                                <td class="p-2 border"><strong>Size</strong></td>
+                                <td class="p-2 border">Small (1-5 $\mu m$)</td>
+                                <td class="p-2 border">Large (10-100 $\mu m$)</td>
+                            </tr>
+                            <tr>
+                                <td class="p-2 border"><strong>DNA Structure</strong></td>
+                                <td class="p-2 border">Circular Loop</td>
+                                <td class="p-2 border">Linear Chromosomes</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="sask-context">
+                    <h4 class="font-bold text-green-800 mb-2">Saskatchewan Connection: Pulse Crops and Nitrogen Fixation</h4>
+                    <p class="text-slate-700">Saskatchewan is a world leader in lentil and pea production. These plants rely on a symbiotic relationship with <strong>Rhizobium</strong>, a genus of soil <strong>bacteria (prokaryotes)</strong>. The bacteria live in nodules on the plant roots and convert atmospheric nitrogen into a form the plant can use—a feat no eukaryotic cell can perform on its own.</p>
+                </div>
+
+                <div class="formative-check">
+                    <h4 class="font-bold text-orange-800 mb-3"><i data-lucide="check-circle-2" class="inline w-5 h-5 mr-1"></i> Formative Check</h4>
+                    <ul class="space-y-3 text-slate-700">
+                        <li>1. If you view a cell under a microscope and see a nucleus, is it prokaryotic or eukaryotic?</li>
+                        <li>2. Antibiotics often target the cell walls of bacteria. Why is this generally safe for humans (besides the fact that we lack cell walls)?</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Section 2.2 (Renumbered from 2.1) -->
+            <section class="mb-16" id="section-2-2">
+                <h3 class="text-2xl font-bold text-slate-800 mb-4">2.2 Reviewing the Foundation: Plant and Animal Cell Structures</h3>
+
+                <div class="learning-objective">
+                    <strong>Learning Objective:</strong> Review and compare the major organelles of plant and animal cells, establishing a foundation for understanding complex cellular processes.
+                </div>
+
+                <div class="prose prose-lg text-slate-700">
+                    <p class="mb-4">Now that we have distinguished eukaryotes from prokaryotes, we will focus on the two main types of eukaryotic cells relevant to this course: Plant and Animal cells. You are likely familiar with the basic model, but in Biology 30, we move beyond simple identification to understanding the <em>functional integration</em> of these structures.</p>
+                    <p class="mb-4">Eukaryotic cells are defined by their compartmentalization. Internal membranes create enclosed spaces called <strong>organelles</strong>, each with a specific chemical environment. This allows incompatible processes—like the creation of proteins and the digestion of waste—to occur simultaneously without interference.</p>
+
+                    <h4 class="font-bold text-slate-800 mt-6 mb-2">Defining the Boundaries</h4>
+                    <ul class="list-disc pl-6 mb-4 space-y-2">
+                        <li><strong>The Cell Membrane (Plasma Membrane):</strong> Found in <strong>both</strong> plant and animal cells. It is a flexible, selective barrier that acts as the gatekeeper, regulating the passage of nutrients, water, and waste.</li>
+                        <li><strong>The Cell Wall:</strong> Found <strong>only in plant cells</strong> (in this comparison). This is a rigid, non-living outer layer made of cellulose. It sits <em>outside</em> the cell membrane and provides the structural support necessary for plants to grow upright against gravity. The outermost layer that cements adjacent plant cells together is called the <strong>middle lamella</strong>.</li>
+                    </ul>
+
+                    <h4 class="font-bold text-slate-800 mt-6 mb-2">The Endomembrane System</h4>
+                    <p class="mb-2">Key to this organization is the endomembrane system.</p>
+                    <ul class="list-disc pl-6 mb-4 space-y-2">
+                        <li><strong>The Nucleus:</strong> The command center housing the genetic blueprint (DNA). It is surrounded by a double membrane (nuclear envelope) with pores that strictly regulate traffic.</li>
+                        <li><strong>Endoplasmic Reticulum (ER):</strong>
+                            <ul class="list-circle pl-6 mt-1">
+                                <li><em>Rough ER:</em> Studded with <strong>ribosomes</strong>; this is the factory for protein synthesis. Ribosomes are the specific sites where amino acids are assembled into proteins.</li>
+                                <li><em>Smooth ER:</em> Synthesizes lipids and detoxifies poisons.</li>
+                            </ul>
+                        </li>
+                        <li><strong>Golgi Apparatus (Golgi Complex):</strong> The post office of the cell. It modifies, sorts, and packages proteins for transport.</li>
+                        <li><strong>Lysosomes:</strong> Found primarily in animal cells, these contain digestive enzymes to break down waste or food.
+                            <div class="bg-blue-50 border-l-4 border-blue-500 p-3 mt-2 text-sm">
+                                <strong>Fungal Note:</strong> Fungi do not ingest food like animals. Instead, they excrete digestive enzymes <em>outside</em> their cells to degrade the substrate (extracellular digestion) and then absorb the nutrients.
+                            </div>
+                        </li>
+                        <li><strong>Vesicles:</strong> Small membrane sacs that act as transport vehicles.</li>
+                    </ul>
+
+                    <h4 class="font-bold text-slate-800 mt-6 mb-2">Powerhouses and Motion</h4>
+                    <ul class="list-disc pl-6 mb-4 space-y-2">
+                        <li><strong>Mitochondria:</strong> Found in both plant and animal cells, they perform cellular respiration, converting chemical energy (glucose) into usable energy (ATP).</li>
+                        <li><strong>Chloroplasts:</strong> Found only in plants and some protists, they are the sites of photosynthesis, converting solar energy into chemical energy.</li>
+                        <li><strong>Centrioles:</strong> Short, tube-like organelles found in animal cells (but not most plants) that help organize cell division (mitosis).</li>
+                        <li><strong>Cilia and Flagella:</strong> Hair-like extensions used for movement.
+                            <ul class="list-circle pl-6 mt-1">
+                                <li><em>Cilia:</em> Short and numerous (like oars).</li>
+                                <li><em>Flagella:</em> Long and few (like a whip). Both use <strong>ATP</strong> to power their movement.</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+
+                <figure class="mb-8 rounded-lg overflow-hidden shadow-md border border-slate-200 my-6">
+                    <!-- Placeholder image - using a generic science placeholder URL -->
+                    <div class="w-full h-64 bg-slate-200 flex items-center justify-center text-slate-500 font-bold">
+                        [Image: Detailed Plant vs Animal Cell Comparison]
+                    </div>
+                    <figcaption class="bg-slate-50 p-3 text-center text-sm text-slate-600 italic border-t border-slate-200">
+                        Figure 2.2: A side-by-side comparison of a generalized animal cell and plant cell. Note the large central vacuole, chloroplasts, and cell wall present only in the plant cell.
+                    </figcaption>
+                    <div class="design-prompt">
+                        <strong>Image Prompt:</strong> A high-quality, 3D rendered cross-section comparison of an animal cell and a plant cell. Labels should point to the Nucleus, Mitochondria, ER, Golgi, Ribosomes, Lysosomes, and Centrioles. The Plant cell should clearly show the Cell Wall, Chloroplasts, and Large Central Vacuole. The style should be realistic and educational.
+                    </div>
+                </figure>
+
+                <div class="sask-context">
+                    <h4 class="font-bold text-green-800 mb-2">Saskatchewan Connection: The Canola Cell</h4>
+                    <p class="text-slate-700">Consider the cells of a Canola plant (<em>Brassica napus</em>), one of Saskatchewan's most important crops. Its cells are packed with <strong>chloroplasts</strong> to maximize the short growing season. Furthermore, the seeds of the canola plant contain specialized organelles called <em>oleosomes</em> (oil bodies), which store the valuable lipids that we harvest as canola oil.</p>
+                </div>
+
+                <!-- Digital Feature -->
+                <div class="feature-box">
+                    <h4 class="font-bold text-slate-800 mb-2 flex items-center gap-2">
+                        <i data-lucide="mouse-pointer-2" class="w-5 h-5 text-blue-600"></i>
+                        Interactive Feature: "Cell Builder" Interactive
+                    </h4>
+                    <span class="feature-tag tag-interactive">Interactive</span>
+                    <p class="text-sm text-slate-600 mb-4">Drag and drop organelles to construct functional plant and animal cells. Watch out—if you try to put a chloroplast in an animal cell, the system will reject it!</p>
+                    <div class="w-full h-64 bg-slate-100 rounded border border-slate-300 flex items-center justify-center text-slate-400">
+                        [Interactive Simulation: Cell Builder]
+                    </div>
+                    <div class="design-prompt">
+                        <strong>Code Prompt:</strong> Create a React component using `react-dnd` for drag-and-drop. The drop zones should be invisible areas within a cell outline. Correct drops trigger a short animation and a definition pop-up. Mode 1: Animal Cell. Mode 2: Plant Cell.
+                    </div>
+                </div>
+
+                <div class="formative-check">
+                    <h4 class="font-bold text-orange-800 mb-3"><i data-lucide="check-circle-2" class="inline w-5 h-5 mr-1"></i> Formative Check</h4>
+                    <ul class="space-y-3 text-slate-700">
+                        <li>1. Why is the compartmentalization provided by membrane-bound organelles essential for complex cell function?</li>
+                        <li>2. If you were looking at a cell under a microscope and observed a cell wall and mitochondria, but no chloroplasts, what type of organism might it be? (Hint: Think beyond plants).</li>
+                    </ul>
+                </div>
+
+                <div class="note-taking">
+                    <h4 class="font-bold text-yellow-800 mb-2 flex items-center gap-2">
+                        <i data-lucide="pencil" class="w-4 h-4"></i> Note-Taking Prompts
+                    </h4>
+                    <ul class="list-disc pl-5 text-sm text-slate-700 space-y-1">
+                        <li><strong>Sketch:</strong> Draw a simplified flow chart showing the path of a protein from the DNA code in the nucleus, to the Ribosome, Rough ER, Golgi, and finally a Vesicle.</li>
+                        <li><strong>Summarize:</strong> In one sentence, explain why mitochondria are found in plant cells, even though plants make their own food.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Section 2.3 (Renumbered from 2.2) -->
+            <section class="mb-16" id="section-2-3">
+                <h3 class="text-2xl font-bold text-slate-800 mb-4">2.3 Energy Creation and Transfer: The Biochemical Pathways</h3>
+
+                <div class="learning-objective">
+                    <strong>Learning Objective:</strong> Analyze the specific biochemical pathways—Cellular Respiration and Photosynthesis—by which organisms create and transfer energy in the form of ATP.
+                </div>
+
+                <div class="prose prose-lg text-slate-700">
+                    <p class="mb-4">Energy is the capacity to cause change. In biological systems, this energy must be converted into a usable form: <strong>Adenosine Triphosphate (ATP)</strong>. While the overall equations for respiration and photosynthesis seem simple, the actual processes involve complex, multi-step pathways that rely on precise machinery within cellular organelles.</p>
+
+                    <h4 class="font-bold text-slate-800 mt-6 mb-2">The Structure of ATP</h4>
+                    <p class="mb-4">ATP is often compared to a fully charged battery. It consists of three parts: Adenine (nitrogenous base), Ribose (sugar), and a chain of three Phosphate Groups.</p>
+                    <p class="mb-4">The key to ATP's power lies in the phosphate tail. These groups are negatively charged and repel each other, like a compressed spring. When the third phosphate bond is broken (hydrolysis), energy is released.</p>
+                    
+                    <div class="bg-slate-50 p-4 border rounded mb-4 overflow-x-auto">
+                        <!-- Upright chemical symbols and upright text -->
+                        $$ \text{ATP} + \mathrm{H_2O} \rightarrow \text{ADP} + \text{P}_i + \text{Energy} $$
+                    </div>
+
+                    <figure class="mb-8 rounded-lg overflow-hidden shadow-md border border-slate-200 my-6">
+                        <div class="w-full h-48 bg-slate-200 flex items-center justify-center text-slate-500 font-bold">
+                            [Image: ATP-ADP Cycle Diagram]
+                        </div>
+                        <figcaption class="bg-slate-50 p-3 text-center text-sm text-slate-600 italic border-t border-slate-200">
+                            Figure 2.3: The ATP-ADP Cycle. Energy from food charges ADP to ATP. Energy for work is released when ATP becomes ADP.
+                        </figcaption>
+                        <div class="design-prompt">
+                            <strong>Image Prompt:</strong> A clear, schematic diagram of the ATP/ADP cycle. On the left, "Energy from Food" pushes a Phosphate group onto ADP to make ATP. On the right, "Energy for Cell Work" is released as the Phosphate pops off ATP, turning it back to ADP. Use bright colors to represent energy bursts.
+                        </div>
+                    </figure>
+
+                    <h4 class="font-bold text-slate-800 mt-8 mb-2">Part A: Cellular Respiration (The Spender)</h4>
+                    <p class="mb-4">This process occurs in the mitochondria of all eukaryotic organisms. It breaks down glucose to produce ATP.</p>
+                    <div class="bg-slate-50 p-4 border rounded mb-4 overflow-x-auto">
+                        <!-- Upright chemical symbols -->
+                        $$ \mathrm{C_6H_{12}O_6} + 6\mathrm{O_2} \rightarrow 6\mathrm{CO_2} + 6\mathrm{H_2O} + 36\text{-}38 \text{ ATP} $$
+                    </div>
+                    
+                    <div class="pl-4 border-l-2 border-slate-300 space-y-4">
+                        <div>
+                            <strong class="text-slate-900">1. Glycolysis ("Sugar Breaking")</strong>
+                            <p class="text-sm">Occurs in the <strong>Cytoplasm</strong> (Cytosol). Glucose splits into two Pyruvate molecules. Anaerobic (does not need oxygen). Yields a net of <strong>2 ATP</strong> and NADH.</p>
+                        </div>
+                        <div>
+                            <strong class="text-slate-900">2. The Transition Reaction (Intermediate Step)</strong>
+                            <p class="text-sm">Pyruvate enters the mitochondria and is converted into <strong>Acetyl-CoA</strong>. $\mathrm{CO_2}$ is released.</p>
+                        </div>
+                        <div>
+                            <strong class="text-slate-900">3. Citric Acid Cycle (Krebs Cycle)</strong>
+                            <p class="text-sm">Occurs in the <strong>Mitochondrial Matrix</strong>. Acetyl-CoA is stripped of carbon (released as $\mathrm{CO_2}$). Yields <strong>2 ATP</strong> and fully loaded electron carriers (NADH, $\mathrm{FADH_2}$). This is where the most $\mathrm{CO_2}$ is produced.</p>
+                        </div>
+                        <div>
+                            <strong class="text-slate-900">4. Oxidative Phosphorylation (Electron Transport Chain)</strong>
+                            <p class="text-sm">Occurs in the <strong>Inner Membrane</strong> (Cristae). High-energy electrons pump $\mathrm{H^+}$ ions, creating a gradient. $\mathrm{H^+}$ rushes back through ATP Synthase to generate approx. <strong>32-34 ATP</strong> (the most of any stage). Oxygen is the final electron acceptor, forming water ($\mathrm{H_2O}$).</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-yellow-50 p-4 my-4 rounded border-l-4 border-yellow-400">
+                        <strong class="text-yellow-800">Key Concept: Aerobic vs. Anaerobic</strong>
+                        <p class="text-sm text-slate-700 mt-1">Cells prefer aerobic respiration because it produces ~36-38 ATP per glucose. Without oxygen (anaerobic), they are stuck doing only Glycolysis, producing only 2 ATP. Complex life requires the high efficiency of aerobic respiration.</p>
+                    </div>
+
+                    <div class="bg-blue-50 p-4 my-4 rounded border-l-4 border-blue-400">
+                        <strong class="text-blue-800">Scientific Tracking</strong>
+                        <p class="text-sm text-slate-700 mt-1">Scientists used radioactive oxygen ($\mathrm{^{18}O}$) to trace metabolic paths. If cells are supplied with radioactive oxygen gas ($\mathrm{O_2}$), the radioactivity ends up in the <strong>Water ($\mathrm{H_2O}$)</strong> produced at the end of the Electron Transport Chain.</p>
+                    </div>
+
+                    <figure class="mb-8 rounded-lg overflow-hidden shadow-md border border-slate-200 my-6">
+                        <div class="w-full h-64 bg-slate-200 flex items-center justify-center text-slate-500 font-bold">
+                            [Image: 4 Stages of Cellular Respiration]
+                        </div>
+                        <figcaption class="bg-slate-50 p-3 text-center text-sm text-slate-600 italic border-t border-slate-200">
+                            Figure 2.3a: The Metabolic Assembly Line: Glycolysis, Transition, Citric Acid Cycle, and Oxidative Phosphorylation.
+                        </figcaption>
+                         <div class="design-prompt">
+                            <strong>Image Prompt:</strong> A complex diagram of a Mitochondrion. 1. Show Glycolysis occurring outside in the cytoplasm (Glucose -> Pyruvate). 2. Show Transition Reaction (Pyruvate -> Acetyl-CoA). 3. Show the Citric Acid Cycle circle in the Matrix releasing CO2. 4. Detail the Inner Membrane: Show the Electron Transport Chain proteins pumping H+ ions, and the ATP Synthase turbine generating ATP. Label "Cytosol", "Matrix", and "Cristae".
+                        </div>
+                    </figure>
+
+                    <h4 class="font-bold text-slate-800 mt-8 mb-2">Part B: Photosynthesis (The Builder)</h4>
+                    <p class="mb-4">Occurring in chloroplasts, this uses light to build glucose.</p>
+                    <div class="bg-slate-50 p-4 border rounded mb-4 overflow-x-auto">
+                        <!-- Upright chemical symbols -->
+                        $$ 6\mathrm{CO_2} + 6\mathrm{H_2O} + \text{Light} \rightarrow \mathrm{C_6H_{12}O_6} + 6\mathrm{O_2} $$
+                    </div>
+
+                    <div class="pl-4 border-l-2 border-slate-300 space-y-4">
+                        <div>
+                            <strong class="text-slate-900">1. Light-Dependent Reactions</strong>
+                            <p class="text-sm">Occurs in <strong>Thylakoid Membranes</strong> (Grana). Sunlight hits chlorophyll photosystems. <strong>Photolysis</strong> splits water: Hydrogen is kept for the ETC, and <strong>Oxygen ($\mathrm{O_2}$)</strong> is released as waste. Electron transport generates ATP and <strong>NADPH</strong>.</p>
+                        </div>
+                        <div>
+                            <strong class="text-slate-900">2. Light-Independent Reactions (Calvin Cycle)</strong>
+                            <p class="text-sm">Occurs in the <strong>Stroma</strong>. $\mathrm{CO_2}$ enters the cycle.</p>
+                            <ul class="list-disc pl-6 text-sm mt-1">
+                                <li><strong>Carbon Fixation:</strong> An enzyme called <strong>Rubisco</strong> attaches $\mathrm{CO_2}$ to a 5-carbon sugar called <strong>RuBP</strong>.</li>
+                                <li><strong>Reduction:</strong> Energy from ATP and NADPH converts the molecule into <strong>G3P</strong>.</li>
+                                <li><strong>Regeneration:</strong> Some G3P leaves to become <strong>Glucose</strong>; the rest is recycled back into RuBP to keep the cycle going.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <figure class="mb-8 rounded-lg overflow-hidden shadow-md border border-slate-200 my-6">
+                        <div class="w-full h-64 bg-slate-200 flex items-center justify-center text-slate-500 font-bold">
+                            [Image: Light-Dependent and Light-Independent Reactions]
+                        </div>
+                        <figcaption class="bg-slate-50 p-3 text-center text-sm text-slate-600 italic border-t border-slate-200">
+                            Figure 2.3b: Inside the Chloroplast. Thylakoids capture light; Stroma builds sugar.
+                        </figcaption>
+                        <div class="design-prompt">
+                            <strong>Image Prompt:</strong> A detailed Chloroplast diagram. Left Side (Light-Dependent Reactions): A stack of green Thylakoids. Sun rays hit them. Show Water entering and Oxygen leaving. Show ATP and NADPH moving to the right. Right Side (Light-Independent Reactions/Calvin Cycle): The Stroma fluid. Show CO2 entering a cycle. Show the cycle using the ATP/NADPH to produce a G3P and Glucose. Label "Rubisco" near the start of the cycle.
+                        </div>
+                    </figure>
+                </div>
+
+                <div class="sask-context">
+                    <h4 class="font-bold text-green-800 mb-2">Saskatchewan Connection: Solar Efficiency in the Wheat Belt</h4>
+                    <p class="text-slate-700">Saskatchewan is the "breadbasket of Canada." The efficiency of these Light-Dependent and Light-Independent Reactions in wheat varieties developed at the University of Saskatchewan directly impacts our economy. Researchers study how to maximize the capture of solar energy during our long summer days to produce starch-rich kernels.</p>
+                </div>
+
+                <div class="feature-box">
+                    <h4 class="font-bold text-slate-800 mb-2 flex items-center gap-2">
+                        <i data-lucide="puzzle" class="w-5 h-5 text-blue-600"></i>
+                        Interactive Feature: "Pathway Puzzler"
+                    </h4>
+                    <span class="feature-tag tag-interactive">Interactive</span>
+                    <p class="text-sm text-slate-600 mb-4">Drag inputs and outputs to the correct metabolic stage, then control light intensity to see how it affects sugar production.</p>
+                    <div class="w-full h-64 bg-slate-100 rounded border border-slate-300 flex items-center justify-center text-slate-400">
+                        [Interactive Simulation: Pathway Puzzler]
+                    </div>
+                     <div class="design-prompt">
+                        <strong>Code Prompt:</strong> Create a split-screen interactive animation. Screen 1 (Respiration): Drag inputs (Glucose, Oxygen) and outputs (CO2, Water, ATP) to the correct stage. Screen 2 (Photosynthesis): A slider allows control of light intensity; graph shows rate of Photolysis and Sugar production.
+                    </div>
+                </div>
+
+                <div class="formative-check">
+                    <h4 class="font-bold text-orange-800 mb-3"><i data-lucide="check-circle-2" class="inline w-5 h-5 mr-1"></i> Formative Check</h4>
+                    <ul class="space-y-3 text-slate-700">
+                        <li>1. Cyanide is a poison that blocks the Electron Transport Chain. Why does this kill an organism so quickly, even if they still have plenty of oxygen and glucose?</li>
+                        <li>2. Explain why the "Light-Independent Reactions" (Calvin Cycle) ultimately depend on sunlight, even though light is not a direct reactant in that stage.</li>
+                    </ul>
+                </div>
+
+                <div class="note-taking">
+                    <h4 class="font-bold text-yellow-800 mb-2 flex items-center gap-2">
+                        <i data-lucide="pencil" class="w-4 h-4"></i> Note-Taking Prompts
+                    </h4>
+                    <ul class="list-disc pl-5 text-sm text-slate-700 space-y-1">
+                        <li><strong>Compare:</strong> Create a T-Chart comparing the mitochondrion and chloroplast. List: Input, Output, Location of ETC, and Name of Cycle.</li>
+                        <li><strong>Define:</strong> In your own words, define "Photolysis."</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Section 2.4 (Renumbered from 2.3) -->
+            <section class="mb-16" id="section-2-4">
+                <h3 class="text-2xl font-bold text-slate-800 mb-4">2.4 The Molecules of Life</h3>
+                <div class="learning-objective">
+                    <strong>Learning Objective:</strong> Describe how biologically important molecules (carbohydrates, lipids, proteins, nucleic acids) work together to form complex cellular structures.
+                </div>
+                
+                <div class="prose prose-lg text-slate-700">
+                    <p class="mb-6">Cells are not random collections of atoms; they are complex structures built from macromolecules. These four major classes serve as the energy, blueprint, and bricks and mortar of cellular architecture.</p>
+
+                    <!-- 1. Carbohydrates -->
+                    <h4 class="font-bold text-slate-900 text-xl mt-8 mb-3">1. Carbohydrates: Energy and Structure</h4>
+                    <p class="mb-4">Carbohydrates are the cell's primary energy source and structural material. They are made of Carbon, Hydrogen, and Oxygen, usually in a 1:2:1 ratio ($\mathrm{CH_2O}$).</p>
+                    <ul class="list-disc pl-6 space-y-2 mb-4">
+                        <li><strong>Simple Carbohydrates (Monosaccharides):</strong> The fundamental building blocks. <strong>Glucose</strong> ($\mathrm{C_6H_{12}O_6}$) is the most critical fuel for cellular respiration.</li>
+                        <li><strong>Complex Carbohydrates (Polysaccharides):</strong> Long chains of glucose units linked together.
+                            <ul class="list-circle pl-6 mt-1">
+                                <li><em>Starch:</em> Energy storage in plants (e.g., potatoes).</li>
+                                <li><em>Glycogen:</em> Energy storage in animals (stored in your liver and muscles).</li>
+                                <li><em>Cellulose:</em> Structural support in plant cell walls (fiber).</li>
+                            </ul>
+                        </li>
+                    </ul>
+
+                    <!-- 2. Lipids -->
+                    <h4 class="font-bold text-slate-900 text-xl mt-8 mb-3">2. Lipids: The Architects of Boundaries</h4>
+                    <p class="mb-4">Lipids are hydrophobic (water-fearing) molecules. While they store long-term energy (fats), their most crucial role in the cell is building the membrane.</p>
+                    
+                    <h5 class="font-bold text-slate-800 mt-4">The Phospholipid</h5>
+                    <p class="mb-4">The cell membrane is built primarily of <strong>phospholipids</strong>. Each molecule is distinct, having two parts with opposite chemical properties (amphipathic):</p>
+                    <ul class="list-disc pl-6 mb-4">
+                        <li><strong>Hydrophilic Head:</strong> Contains a phosphate group; loves water ("hydro" = water, "philic" = loving).</li>
+                        <li><strong>Hydrophobic Tails:</strong> Made of fatty acids; hate water ("phobic" = fearing).</li>
+                    </ul>
+
+                    <figure class="mb-8 rounded-lg overflow-hidden shadow-md border border-slate-200 my-6">
+                        <div class="w-full h-48 bg-slate-200 flex items-center justify-center text-slate-500 font-bold">
+                            [Image: Structure of a Single Phospholipid]
+                        </div>
+                        <figcaption class="bg-slate-50 p-3 text-center text-sm text-slate-600 italic border-t border-slate-200">
+                            Figure 2.4a: A single phospholipid molecule showing the polar phosphate head and non-polar fatty acid tails.
+                        </figcaption>
+                        <div class="design-prompt">
+                            <strong>Image Prompt:</strong> A detailed chemical diagram of a single phospholipid. Label the spherical "Phosphate Head" as Hydrophilic (Polar) and the two "Fatty Acid Tails" as Hydrophobic (Non-polar). Show the kink in one tail due to a double bond.
+                        </div>
+                    </figure>
+
+                    <h5 class="font-bold text-slate-800 mt-4">The Fluid Mosaic Model</h5>
+                    <p class="mb-4">In water, phospholipids spontaneously arrange into a <strong>bilayer</strong>, with heads facing the water inside and outside the cell, and tails hiding in the middle. Proteins float in this sea of lipids like icebergs, creating a "fluid mosaic."</p>
+
+                    <figure class="mb-8 rounded-lg overflow-hidden shadow-md border border-slate-200 my-6">
+                        <div class="w-full h-64 bg-slate-200 flex items-center justify-center text-slate-500 font-bold">
+                            [Image: Membrane Cross-Section]
+                        </div>
+                        <figcaption class="bg-slate-50 p-3 text-center text-sm text-slate-600 italic border-t border-slate-200">
+                            Figure 2.4b: The Cell Membrane. Note the transport proteins spanning the bilayer to allow movement of materials.
+                        </figcaption>
+                        <div class="design-prompt">
+                            <strong>Image Prompt:</strong> A 3D cross-section of the cell membrane. Show the phospholipid bilayer clearly. Include: Integral Proteins (channels allowing particles through), Peripheral Proteins (surface), Cholesterol molecules tucked between tails, and Carbohydrate chains (ID tags) on the outside surface.
+                        </div>
+                    </figure>
+
+                    <!-- 3. Proteins -->
+                    <h4 class="font-bold text-slate-900 text-xl mt-8 mb-3">3. Proteins: The Cellular Machinery</h4>
+                    <p class="mb-4">Proteins are the workhorses of life. They do almost everything: catalyze reactions (enzymes), transport molecules (hemoglobin), and provide structure (keratin).</p>
+                    
+                    <h5 class="font-bold text-slate-800 mt-4">Building Blocks</h5>
+                    <p class="mb-4">Proteins are polymers made of <strong>Amino Acids</strong>. There are 20 different amino acids, linked together by <strong>peptide bonds</strong> to form long chains (polypeptides). The sequence of amino acids determines the protein's shape, and the shape determines its function.</p>
+
+                    <h5 class="font-bold text-slate-800 mt-4">Levels of Protein Structure</h5>
+                    <ul class="list-disc pl-6 mb-4 space-y-2">
+                        <li><strong>Primary Structure:</strong> The linear sequence of amino acids (like beads on a string).</li>
+                        <li><strong>Secondary Structure:</strong> Local folding into alpha-helices (coils) and beta-sheets (pleats) due to hydrogen bonding.</li>
+                        <li><strong>Tertiary Structure:</strong> The comprehensive 3D folding of the entire chain.</li>
+                        <li><strong>Quaternary Structure:</strong> When two or more polypeptide chains clump together to form a functional unit (e.g., Hemoglobin has 4 subunits).</li>
+                    </ul>
+
+                    <figure class="mb-8 rounded-lg overflow-hidden shadow-md border border-slate-200 my-6">
+                        <div class="w-full h-64 bg-slate-200 flex items-center justify-center text-slate-500 font-bold">
+                            [Image: Four Levels of Protein Structure]
+                        </div>
+                        <figcaption class="bg-slate-50 p-3 text-center text-sm text-slate-600 italic border-t border-slate-200">
+                            Figure 2.4c: From a simple chain to a complex machine. The 4 levels of protein folding.
+                        </figcaption>
+                        <div class="design-prompt">
+                            <strong>Image Prompt:</strong> A 4-panel diagram. Panel 1 (Primary): A linear chain of colored beads (amino acids). Panel 2 (Secondary): The chain coiling into a spiral (alpha helix) and distinct pleated sheet. Panel 3 (Tertiary): The coil folding into a complex 3D blob. Panel 4 (Quaternary): Four contrasting colored 3D blobs fitting together to form a final complex.
+                        </div>
+                    </figure>
+
+                    <!-- 4. Nucleic Acids -->
+                    <h4 class="font-bold text-slate-900 text-xl mt-8 mb-3">4. Nucleic Acids: The Information Storage</h4>
+                    <p class="mb-4">Nucleic acids store and transmit hereditary information. There are two types: <strong>DNA</strong> (Deoxyribonucleic Acid) and <strong>RNA</strong> (Ribonucleic Acid).</p>
+                    
+                    <table class="w-full mb-6 text-sm">
+                        <thead class="bg-slate-100">
+                            <tr>
+                                <th class="p-2 border">Feature</th>
+                                <th class="p-2 border">DNA</th>
+                                <th class="p-2 border">RNA</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="p-2 border"><strong>Sugar</strong></td>
+                                <td class="p-2 border">Deoxyribose</td>
+                                <td class="p-2 border">Ribose</td>
+                            </tr>
+                            <tr>
+                                <td class="p-2 border"><strong>Strands</strong></td>
+                                <td class="p-2 border">Double Helix</td>
+                                <td class="p-2 border">Single Strand</td>
+                            </tr>
+                            <tr>
+                                <td class="p-2 border"><strong>Nitrogen Bases</strong></td>
+                                <td class="p-2 border">A, C, G, <strong>Thymine (T)</strong></td>
+                                <td class="p-2 border">A, C, G, <strong>Uracil (U)</strong></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <p class="mb-4"><strong>The Double Helix:</strong> DNA consists of two strands twisting around each other. The "rungs" of the ladder are nitrogen bases held together by weak <strong>Hydrogen Bonds</strong>. Adenine always bonds with Thymine (A-T), and Cytosine always bonds with Guanine (C-G). This specific pairing is the secret to how DNA copies itself.</p>
+
+                    <figure class="mb-8 rounded-lg overflow-hidden shadow-md border border-slate-200 my-6">
+                        <div class="w-full h-64 bg-slate-200 flex items-center justify-center text-slate-500 font-bold">
+                            [Image: DNA Double Helix Structure]
+                        </div>
+                        <figcaption class="bg-slate-50 p-3 text-center text-sm text-slate-600 italic border-t border-slate-200">
+                            Figure 2.4d: The Structure of DNA. Note the hydrogen bonds (dotted lines) holding the two strands together at the center.
+                        </figcaption>
+                        <div class="design-prompt">
+                            <strong>Image Prompt:</strong> A zoomed-in view of a DNA Double Helix. Show the Sugar-Phosphate backbone on the outside. Inside, show the base pairs (A paired with T, G paired with C). Use dotted lines to clearly label "Hydrogen Bonds" between the bases. Label the 5' and 3' ends.
+                        </div>
+                    </figure>
+                </div>
+
+                <div class="sask-context">
+                    <h4 class="font-bold text-green-800 mb-2">Saskatchewan Connection: Flax and Omega-3s</h4>
+                    <p class="text-slate-700">Saskatchewan produces a significant portion of the world's flax. Flax seeds are rich in Omega-3 fatty acids—lipids essential for building flexible, healthy cell membranes in the human body.</p>
+                </div>
+
+                <!-- Interactive Placeholder -->
+                <div class="feature-box">
+                    <h4 class="font-bold text-slate-800 mb-2 flex items-center gap-2">
+                        <i data-lucide="box" class="w-5 h-5 text-blue-600"></i>
+                        Interactive Feature: Macromolecule Assembler
+                    </h4>
+                    <span class="feature-tag tag-interactive">Interactive</span>
+                    <p class="text-sm text-slate-600">Link amino acids, nucleotides, and fatty acids to build 3D macromolecules.</p>
+                    <div class="design-prompt">
+                        <strong>Code Prompt:</strong> A 3D puzzle where students must match monomers to polymers. Link Amino Acids to build a Protein. Link Nucleotides to build DNA. Link Fatty Acids to build a Phospholipid.
+                    </div>
+                </div>
+
+                <div class="formative-check">
+                    <h4 class="font-bold text-orange-800 mb-3"><i data-lucide="check-circle-2" class="inline w-5 h-5 mr-1"></i> Formative Check</h4>
+                    <ul class="space-y-3 text-slate-700">
+                        <li>1. Why do phospholipids naturally form a bilayer when placed in water?</li>
+                        <li>2. If you disrupt the hydrogen bonds in a protein, which levels of structure (primary, secondary, tertiary, quaternary) would be affected?</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Section 2.5 (Renumbered from 2.4) -->
+            <section class="mb-16" id="section-2-5">
+                <h3 class="text-2xl font-bold text-slate-800 mb-4">2.5 Cell Walls Across Kingdoms</h3>
+                <div class="learning-objective">
+                    <strong>Learning Objective:</strong> Compare the structure and composition of cell walls in plants, fungi, and bacteria.
+                </div>
+                <div class="prose prose-lg text-slate-700">
+                    <p class="mb-4">The cell wall provides structural integrity, but its composition varies across kingdoms—a classic example of convergent evolution.</p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Kingdom</th>
+                                <th>Cell Wall Component</th>
+                                <th>Properties</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Plants</strong></td>
+                                <td>Cellulose</td>
+                                <td>Tough fibers (polysaccharide). Acts like steel cables. Includes the <strong>middle lamella</strong>, which cements cells together.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Fungi</strong></td>
+                                <td>Chitin</td>
+                                <td>Strong and flexible nitrogen-containing polysaccharide. Also found in insect exoskeletons.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Bacteria</strong></td>
+                                <td>Peptidoglycan</td>
+                                <td>Mesh of sugars and amino acids. Targeted by antibiotics like Penicillin.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <h5 class="font-bold text-slate-800 mt-4">Gram Staining</h5>
+                    <p class="mb-4">Bacteria are often classified by their cell wall structure using the Gram Stain technique:</p>
+                    <ul class="list-disc pl-6 mb-4">
+                        <li><strong>Gram Positive:</strong> Have a thick peptidoglycan wall that retains the purple stain.</li>
+                        <li><strong>Gram Negative:</strong> Have a thinner wall and an extra outer membrane, causing them to appear pink.</li>
+                    </ul>
+                </div>
+                <div class="sask-context">
+                    <h4 class="font-bold text-green-800 mb-2">Saskatchewan Connection: Clubroot Disease</h4>
+                    <p class="text-slate-700">Clubroot is a devastating disease affecting Saskatchewan canola caused by a protist. Understanding the cell wall composition of both the crop (cellulose) and the pathogen is crucial for research.</p>
+                </div>
+                <div class="formative-check">
+                    <h4 class="font-bold text-orange-800 mb-3"><i data-lucide="check-circle-2" class="inline w-5 h-5 mr-1"></i> Formative Check</h4>
+                    <ul class="space-y-3 text-slate-700">
+                        <li>1. How is the cell wall of a mushroom chemically similar to the shell of a lobster?</li>
+                        <li>2. Why is Penicillin effective against bacteria but harmless to human cells?</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Section 2.6 (Renumbered from 2.5) -->
+            <section class="mb-16" id="section-2-6">
+                <h3 class="text-2xl font-bold text-slate-800 mb-4">2.6 The Versatility of Unicellular Organisms</h3>
+                <div class="learning-objective">
+                    <strong>Learning Objective:</strong> Examine how unicellular organisms exhibit all characteristics of living things within a single cell.
+                </div>
+                <div class="prose prose-lg text-slate-700">
+                    <p class="mb-4">A single cell must find food, digest it, release energy, move, expel waste, and reproduce. The <strong>Paramecium</strong> is a perfect case study.</p>
+                    <ul class="list-disc pl-6 space-y-2">
+                        <li><strong>Nutrition:</strong> Cilia sweep bacteria into an oral groove.</li>
+                        <li><strong>Digestion:</strong> Food vacuoles fuse with lysosomes.</li>
+                        <li><strong>Homeostasis:</strong> The Contractile Vacuole pumps excess water out to prevent bursting in fresh water.</li>
+                    </ul>
+                    
+                    <h5 class="font-bold text-slate-800 mt-4">Amoeboid Movement</h5>
+                    <p class="mb-4">Amoebas move by extending their cytoplasm into <strong>Pseudopods</strong> ("false feet"). They anchor the pseudopod and pull the rest of the cell forward. This same mechanism allows them to engulf food (phagocytosis).</p>
+
+                    <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mt-6">
+                        <h5 class="font-bold text-blue-900 mb-2">Cellular Interactions (Symbiosis)</h5>
+                        <p class="mb-2 text-sm text-slate-800">Organisms often live in close association with one another. These relationships are called symbiosis:</p>
+                        <ul class="list-disc pl-6 text-sm text-slate-800 space-y-1">
+                            <li><strong>Mutualism:</strong> Both benefit (e.g., termites and the microbes in their gut that digest wood).</li>
+                            <li><strong>Commensalism:</strong> One benefits, the other is unaffected.</li>
+                            <li><strong>Parasitism:</strong> One benefits, the other is harmed.</li>
+                            <li><strong>Amensalism:</strong> One is harmed, the other is unaffected (e.g., Penicillium mold secreting antibiotics that kill bacteria).</li>
+                        </ul>
+                    </div>
+                </div>
+                <figure class="mb-8 rounded-lg overflow-hidden shadow-md border border-slate-200 my-6">
+                    <div class="w-full h-48 bg-slate-200 flex items-center justify-center text-slate-500 font-bold">
+                        [Image: Paramecium Anatomy]
+                    </div>
+                    <figcaption class="bg-slate-50 p-3 text-center text-sm text-slate-600 italic border-t border-slate-200">
+                        Figure 2.6: The Paramecium possesses specialized structures like the contractile vacuole to perform life functions.
+                    </figcaption>
+                     <div class="design-prompt">
+                        <strong>Image Prompt:</strong> A labeled diagram of a Paramecium. Labels: Cilia, Oral Groove, Food Vacuole, Contractile Vacuole (one full, one expelling), Macronucleus.
+                    </div>
+                </figure>
+                <div class="sask-context">
+                    <h4 class="font-bold text-green-800 mb-2">Saskatchewan Connection: Sloughs and Ponds</h4>
+                    <p class="text-slate-700">Scoop water from any prairie slough, and you will find a metropolis of unicellular life like Daphnia and Paramecia, forming the base of the food web.</p>
+                </div>
+            </section>
+
+            <!-- Section 2.7 (Renumbered from 2.6) -->
+            <section class="mb-16" id="section-2-7">
+                <h3 class="text-2xl font-bold text-slate-800 mb-4">2.7 Life in the Extreme: Archaeans</h3>
+                <div class="learning-objective">
+                    <strong>Learning Objective:</strong> Research how structural and biochemical adaptations enable archaeans to live in extreme environments.
+                </div>
+                <div class="prose prose-lg text-slate-700">
+                    <p class="mb-4"><strong>Archaea</strong> are extremophiles. They survive using ether-linked lipids (stable in heat/acid) and specialized stable enzymes (like heat-resistant DNA polymerase).</p>
+                    <ul class="list-disc pl-6 space-y-2">
+                        <li><strong>Thermophiles:</strong> Heat lovers.</li>
+                        <li><strong>Halophiles:</strong> Salt lovers.</li>
+                        <li><strong>Methanogens:</strong> Oxygen haters (produce methane as waste).</li>
+                    </ul>
+                </div>
+                <div class="sask-context">
+                    <h4 class="font-bold text-green-800 mb-2">Saskatchewan Connection: Chaplin Lake</h4>
+                    <p class="text-slate-700">Chaplin Lake is a saline lake in southern Saskatchewan. Halophilic Archaea thrive here, producing red pigments that can turn the water pink.</p>
+                </div>
+                <figure class="mb-8 rounded-lg overflow-hidden shadow-md border border-slate-200 my-6">
+                    <div class="w-full h-48 bg-slate-200 flex items-center justify-center text-slate-500 font-bold">
+                        [Image: Chaplin Lake]
+                    </div>
+                    <figcaption class="bg-slate-50 p-3 text-center text-sm text-slate-600 italic border-t border-slate-200">
+                        Figure 2.7: Saline lakes can appear pink due to pigments in Halophilic Archaea.
+                    </figcaption>
+                     <div class="design-prompt">
+                        <strong>Image Prompt:</strong> A landscape photo of a saline lake with a distinct pinkish hue, bordered by white salt crusts. Inset: A microscopic view of Halobacterium (rod-shaped).
+                    </div>
+                </figure>
+                <!-- Digital Feature -->
+                 <div class="feature-box">
+                    <h4 class="font-bold text-slate-800 mb-2 flex items-center gap-2">
+                        <i data-lucide="map" class="w-5 h-5 text-blue-600"></i>
+                        Interactive Feature: Extremophile Explorer
+                    </h4>
+                    <span class="feature-tag tag-interactive">Interactive</span>
+                    <p class="text-sm text-slate-600">Click on Saskatchewan locations to reveal hidden extremophiles.</p>
+                    <div class="design-prompt">
+                        <strong>Code Prompt:</strong> An interactive map of Saskatchewan/World. Click "Chaplin Lake" -> Reveal Halophiles. Click "Deep Gold Mine" -> Reveal Thermophiles. Click "Cow Stomach" -> Reveal Methanogens.
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 2.8 (Renumbered from 2.7) -->
+            <section class="mb-16" id="section-2-8">
+                <h3 class="text-2xl font-bold text-slate-800 mb-4">2.8 Tools of the Trade</h3>
+                <div class="learning-objective">
+                    <strong>Learning Objective:</strong> Research advancements in microscopy and how they have deepened our understanding of cell structure.
+                </div>
+                <div class="prose prose-lg text-slate-700">
+                    <ol class="list-decimal pl-6 space-y-2">
+                        <li><strong>Compound Light Microscope:</strong> Uses light. Good for live cells. Low mag (~1000x).</li>
+                        <li><strong>Transmission Electron Microscope (TEM):</strong> Electrons pass <em>through</em>. Sees internal details. Specimen must be dead. High mag.</li>
+                        <li><strong>Scanning Electron Microscope (SEM):</strong> Electrons bounce off <em>surface</em>. 3D images. Specimen must be dead.</li>
+                    </ol>
+                </div>
+                <div class="sask-context">
+                    <h4 class="font-bold text-green-800 mb-2">Saskatchewan Connection: The Canadian Light Source</h4>
+                    <p class="text-slate-700">The CLS in Saskatoon is a synchrotron used to analyze chemical compositions at the molecular level.</p>
+                </div>
+                <div class="formative-check">
+                    <h4 class="font-bold text-orange-800 mb-3"><i data-lucide="check-circle-2" class="inline w-5 h-5 mr-1"></i> Formative Check</h4>
+                    <ul class="space-y-3 text-slate-700">
+                        <li>1. If you wanted to watch a single-celled organism eat a bacterium, which microscope would you use?</li>
+                        <li>2. Why can't you use an Electron Microscope to view living cells?</li>
+                    </ul>
+                </div>
+            </section>
+
+             <!-- Section 2.9 (Renumbered from 2.8) -->
+             <section class="mb-16" id="section-2-9">
+                <h3 class="text-2xl font-bold text-slate-800 mb-4">2.9 Crossing the Border: Membrane Transport</h3>
+                <div class="learning-objective">
+                    <strong>Learning Objective:</strong> Demonstrate transportation of materials through active and passive transport and explain the role of osmosis.
+                </div>
+                <div class="prose prose-lg text-slate-700">
+                    <h5 class="font-bold mt-4">Passive Transport (No Energy)</h5>
+                    <p>Driven by concentration gradient (High &rarr; Low). No ATP required.</p>
+                    <ul class="list-disc pl-6 mb-4">
+                        <li><strong>Diffusion:</strong> Movement of small particles (like oxygen) directly through the membrane.</li>
+                        <li><strong>Facilitated Diffusion:</strong> Use of protein channels for larger items.</li>
+                        <li><strong>Osmosis:</strong> Diffusion of water.</li>
+                    </ul>
+                    
+                    <h5 class="font-bold mt-4">Active Transport (ATP Required)</h5>
+                    <p>Pumps materials <em>against</em> the gradient (Low &rarr; High) or moves massive items.</p>
+                    <ul class="list-disc pl-6 mb-4">
+                        <li><strong>Protein Pumps:</strong> E.g., Sodium-Potassium pump.</li>
+                        <li><strong>Endocytosis:</strong> Taking bulky material <em>in</em> using vesicles.
+                            <ul class="list-circle pl-6">
+                                <li><em>Phagocytosis:</em> "Cell eating" (solids).</li>
+                                <li><em>Pinocytosis:</em> "Cell drinking" (liquids/droplets).</li>
+                            </ul>
+                        </li>
+                        <li><strong>Exocytosis:</strong> Expelling material <em>out</em> using vesicles.</li>
+                    </ul>
+                </div>
+                <div class="sask-context">
+                    <h4 class="font-bold text-green-800 mb-2">Saskatchewan Connection: Fertilizer Burn</h4>
+                    <p class="text-slate-700">Too much nitrogen fertilizer creates a hypertonic environment in the soil, drawing water <em>out</em> of plant roots via osmosis, "burning" the crop.</p>
+                </div>
+                <div class="feature-box">
+                    <h4 class="font-bold text-slate-800 mb-2 flex items-center gap-2">
+                        <i data-lucide="gamepad-2" class="w-5 h-5 text-blue-600"></i>
+                        Interactive Feature: Membrane Gatekeeper Game
+                    </h4>
+                    <span class="feature-tag tag-interactive">Game</span>
+                    <p class="text-sm text-slate-600">Arcade game: Select the correct transport method for incoming particles.</p>
+                    <div class="design-prompt">
+                        <strong>Code Prompt:</strong> An arcade-style game. You control a section of cell membrane. Particles approach (Oxygen, Sodium, Glucose, Water). Action: Select correct transport method (Diffusion, Active Pump, Channel). Fail State: Toxins enter or water balance lost.
+                    </div>
+                </div>
+                 <div class="note-taking">
+                    <h4 class="font-bold text-yellow-800 mb-2 flex items-center gap-2">
+                        <i data-lucide="pencil" class="w-4 h-4"></i> Note-Taking Prompts
+                    </h4>
+                    <ul class="list-disc pl-5 text-sm text-slate-700 space-y-1">
+                        <li><strong>Sketch:</strong> Draw a cell in Hypertonic, Hypotonic, and Isotonic solutions.</li>
+                        <li><strong>Define:</strong> Concentration Gradient.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Chapter Review -->
+            <section class="bg-slate-900 text-white p-8 rounded-lg shadow-xl">
+                <h3 class="text-2xl font-bold mb-4">Chapter 2 Review: Narrative Lab Report</h3>
+                <p class="mb-4 text-slate-300">Activity: Reviewing the "Cell Builder" Simulation from Section 2.1.</p>
+                <ol class="list-decimal pl-6 space-y-4">
+                    <li><strong>What was I looking for?</strong> (Differences between plant and animal cells).</li>
+                    <li><strong>How did I look for it?</strong> (Attempted to construct both, observing unique organelles).</li>
+                    <li><strong>What did I find?</strong> (Chloroplasts, cell walls, and large vacuoles are specific to plants).</li>
+                    <li><strong>What do these findings mean?</strong> (Plants have specialized structures for their stationary, autotrophic lifestyle).</li>
+                </ol>
+            </section>
+
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-100 py-8 mt-12 border-t border-slate-200">
+        <div class="max-w-4xl mx-auto px-4 text-center text-slate-500 text-sm flex flex-col md:flex-row justify-between items-center gap-4">
+            <div>
+                <p>&copy; 2024 Biology 30 Saskatchewan Digital Textbook</p>
+                <p class="mt-2">Designed for the Saskatchewan Ministry of Education Curriculum.</p>
+            </div>
+            <button onclick="window.print()" class="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-lg font-medium transition-colors print-hidden">
+                <i data-lucide="printer" class="w-4 h-4"></i>
+                Print Chapter to PDF
+            </button>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        });
+        
+        // Simple Search Logic
+        const searchInput = document.getElementById('searchInput');
+        const searchResults = document.getElementById('searchResults');
+        const mainContent = document.getElementById('mainContent');
+
+        searchInput.addEventListener('input', function() {
+            const query = this.value.toLowerCase();
+            searchResults.innerHTML = '';
+            if (query.length < 3) {
+                searchResults.classList.add('hidden');
+                return;
+            }
+            const sections = mainContent.querySelectorAll('section');
+            let hasResults = false;
+
+            sections.forEach(section => {
+                if (section.innerText.toLowerCase().includes(query)) {
+                    hasResults = true;
+                    const resultItem = document.createElement('div');
+                    resultItem.classList.add('px-4', 'py-2', 'hover:bg-gray-100', 'cursor-pointer', 'text-sm');
+                    const title = section.querySelector('h3')?.innerText || 'Untitled Section';
+                    resultItem.innerText = title;
+                    resultItem.onclick = () => {
+                        section.scrollIntoView({ behavior: 'smooth' });
+                        searchResults.classList.add('hidden');
+                    };
+                    searchResults.appendChild(resultItem);
+                }
+            });
+
+            if (hasResults) searchResults.classList.remove('hidden');
+        });
+        
+        // Hide search on click outside
+        document.addEventListener('click', (e) => {
+            if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+                searchResults.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>
