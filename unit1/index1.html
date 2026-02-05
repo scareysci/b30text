@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biology 30 Saskatchewan - Chapter 1</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400&family=Inter:wght@300;400;600;800&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Merriweather', serif;
+        }
+
+        /* Custom Styles for Feature Placeholders */
+        .feature-box {
+            border: 2px dashed #cbd5e1;
+            background-color: #f1f5f9;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            position: relative;
+            transition: all 0.2s;
+        }
+
+        .feature-box:hover {
+            border-color: #94a3b8;
+            background-color: #e2e8f0;
+        }
+
+        .feature-tag {
+            position: absolute;
+            top: -12px;
+            left: 1rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .tag-interactive { background-color: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+        .tag-podcast { background-color: #fdf2f8; color: #be185d; border: 1px solid #fbcfe8; }
+
+        .sask-context {
+            border-left: 4px solid #16a34a; /* Green for Saskatchewan */
+            background-color: #f0fdf4;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 0 0.5rem 0.5rem 0;
+        }
+
+        .learning-objective {
+            background-color: #eff6ff;
+            border-left: 4px solid #2563eb;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+        }
+        
+        .formative-check {
+            background-color: #fff7ed;
+            border: 1px solid #fed7aa;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            border-radius: 0.5rem;
+        }
+
+        .highlight {
+            background-color: #fef08a;
+            color: #854d0e;
+            border-radius: 0.125rem;
+            padding: 0 0.125rem;
+        }
+
+        /* --- PRINT STYLES --- */
+        @media print {
+            nav, footer, button, .print-hidden {
+                display: none !important;
+            }
+
+            iframe, .feature-box, .my-8 iframe {
+                display: none !important;
+            }
+
+            .my-8::after, .feature-box::after {
+                content: "[Interactive feature removed for print version. View online to access.]";
+                display: block;
+                font-style: italic;
+                color: #64748b;
+                border: 1px dashed #cbd5e1;
+                padding: 1rem;
+                margin: 1rem 0;
+                font-size: 0.875rem;
+                text-align: center;
+            }
+
+            body {
+                background-color: white;
+                color: black;
+                font-size: 12pt;
+                line-height: 1.5;
+            }
+
+            main {
+                max-width: 100% !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+
+            h1 { font-size: 24pt !important; color: black !important; }
+            h2 { font-size: 18pt !important; color: black !important; border-bottom: 1px solid #ccc; padding-bottom: 0.5rem; }
+            h3 { font-size: 14pt !important; color: black !important; }
+            
+            section { page-break-inside: avoid; }
+            h2, h3 { page-break-after: avoid; }
+            img { max-width: 100% !important; page-break-inside: avoid; }
+            
+            .sask-context {
+                border-left: 4px solid #333 !important;
+                background-color: #f9f9f9 !important;
+            }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50 print-hidden">
+        <div class="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center gap-4">
+            <div class="flex items-center gap-4">
+                <a href="index.html" class="flex items-center gap-2 text-slate-500 hover:text-green-700 transition-colors" title="Return to Table of Contents">
+                    <i data-lucide="arrow-left" class="w-5 h-5"></i>
+                </a>
+                <span class="font-bold text-xl text-green-700 tracking-tight hidden sm:inline">Biology <span class="text-slate-900">30</span></span>
+            </div>
+
+            <div class="text-sm text-slate-500 font-medium hidden md:block">
+                Unit 1: What is Life?
+            </div>
+
+            <div class="relative flex-grow max-w-xs">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i data-lucide="search" class="w-4 h-4 text-slate-400"></i>
+                </div>
+                <input 
+                    type="text" 
+                    id="searchInput" 
+                    placeholder="Search chapter..." 
+                    class="block w-full pl-10 pr-3 py-1.5 border border-slate-300 rounded-md leading-5 bg-white placeholder-slate-400 focus:outline-none focus:placeholder-slate-500 focus:border-green-500 focus:ring-1 focus:ring-green-500 sm:text-sm transition duration-150 ease-in-out"
+                >
+                <div id="searchResults" class="absolute right-0 mt-2 w-full bg-white rounded-md shadow-lg py-1 ring-1 ring-black ring-opacity-5 hidden z-50 max-h-60 overflow-y-auto"></div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-4 py-12" id="mainContent">
+
+        <header class="mb-16">
+            <h1 class="text-4xl md:text-5xl font-black text-slate-900 mb-6">Unit 1: What is Life?</h1>
+            
+            <div class="prose prose-lg text-slate-600 mb-8 max-w-none">
+                <p><strong>Unit Overview:</strong> In this unit, we embark on the most fundamental question in biology: <em>What does it mean to be alive?</em> You might think the answer is simple—a dog is alive, a rock is not. But what about a virus? What about a seed that has lain dormant for a thousand years? As we explore the history of biological discovery, from ancient philosophical musings to modern molecular biology, we will see that the line between the living and non-living is often blurrier than we expect.</p>
+            </div>
+
+            <figure class="mb-8 rounded-lg overflow-hidden shadow-lg border border-slate-200">
+                 <img src="https://scareysci.github.io/b30text/unit1/ch1_1.jpg" alt="Connection between molecular biology and the Saskatchewan landscape" class="w-full h-auto object-cover" onerror="this.src='https://via.placeholder.com/1200x600?text=Biology+in+Saskatchewan'">
+                 <figcaption class="bg-slate-50 p-3 text-center text-sm text-slate-600 italic border-t border-slate-200">
+                    Figure 1.1 - Visual representation of the connection between molecular biology and the Saskatchewan landscape.
+                 </figcaption>
+            </figure>
+
+            <div class="sask-context">
+                <h3 class="flex items-center gap-2 font-bold text-green-800 text-lg mb-2">
+                    <i data-lucide="map-pin" class="w-5 h-5"></i> Saskatchewan Context
+                </h3>
+                <p class="text-slate-700">As we study life, we acknowledge that we are learning on Treaty lands—the traditional territories of the Nêhiyawak, Anihšināpēk, Dakota, Lakota, and Nakoda, and the homeland of the Métis/Michif Nation. Indigenous ways of knowing teach us that "life" is not just a biological checklist but a web of relationships (<em>wâhkôhtowin</em>) connecting all things, animate and inanimate.</p>
+            </div>
+
+            <div class="my-8">
+                 <h4 class="font-bold text-slate-800 mb-2 flex items-center gap-2">
+                    <i data-lucide="mouse-pointer-2" class="w-5 h-5 text-blue-600"></i>
+                    Interactive Feature: Schema Activator
+                 </h4>
+                 <div class="aspect-video bg-slate-100 flex items-center justify-center rounded-lg border-2 border-dashed border-slate-300">
+                    <p class="text-slate-500 italic">[Interactive Schema Activator Iframe Placeholder]</p>
+                 </div>
+            </div>
+        </header>
+
+        <hr class="border-slate-200 my-12">
+
+        <article>
+            <h2 class="text-3xl font-bold text-slate-900 mb-8">Chapter 1: The Changing Scientific Understandings of Life</h2>
+
+            <!-- Section 1.1 -->
+            <section class="mb-16" id="section-1-1">
+                <h3 class="text-2xl font-bold text-slate-800 mb-4">1.1 Personal Definitions of Life</h3>
+
+                <div class="learning-objective">
+                    <strong>Learning Objective:</strong> Identify your personal definition of life and its characteristics, recognizing that these definitions can be fluid and context-dependent.
+                </div>
+
+                <div class="prose prose-lg text-slate-700 max-w-none">
+                    <p class="mb-4">If you were asked to define "life" right now, what criteria would you list? Most biology students recall the acronym <strong>MRS GREN</strong> (Movement, Respiration, Sensitivity, Growth, Reproduction, Excretion, Nutrition). This mnemonic serves as a useful starting point, but as we advance, we find exceptions. A sterile mule cannot reproduce, but is alive. Fire grows and consumes energy, but is not alive. Biologists generally agree on a set of seven characteristics that, when taken together, define life:</p>
+                </div>
+
+                <figure class="mb-8 rounded-lg overflow-hidden shadow-md border border-slate-200 my-6">
+                    <img src="https://scareysci.github.io/b30text/unit1/ch1_2.jpg" alt="The 7 Characteristics of Life" class="w-full h-auto object-cover" onerror="this.src='https://via.placeholder.com/800x400?text=7+Characteristics+of+Life'">
+                    <figcaption class="bg-slate-50 p-3 text-center text-sm text-slate-600 italic border-t border-slate-200">
+                        Figure 1.2 - The seven scientific characteristics of life: Order, Reproduction, Growth, Energy, Response, Homeostasis, and Adaptation.
+                    </figcaption>
+                </figure>
+
+                <div class="prose prose-lg text-slate-700 max-w-none">
+                    <ol class="list-decimal pl-6 mb-6 space-y-4">
+                        <li><strong>Order:</strong> Life is characterized by highly organized structures (molecules to tissues).</li>
+                        <li><strong>Reproduction:</strong> The ability to produce offspring.</li>
+                        <li><strong>Growth and Development:</strong> Organisms grow according to genetic instructions.</li>
+                        <li><strong>Energy Processing:</strong> Metabolism—transforming energy to perform work.</li>
+                        <li><strong>Response to the Environment:</strong> Responsiveness to environmental stimuli.</li>
+                        <li><strong>Regulation (Homeostasis):</strong> Maintaining a stable internal environment (e.g., body temp).</li>
+                        <li><strong>Evolutionary Adaptation:</strong> Populations evolve over generations to suit environments.</li>
+                    </ol>
+                </div>
+
+                <div class="formative-check">
+                    <h4 class="font-bold text-orange-800 mb-3"><i data-lucide="check-circle-2" class="inline w-5 h-5 mr-1"></i> Formative Check</h4>
+                    <ul class="space-y-3 text-slate-700">
+                        <li>1. Why is "movement" alone not sufficient to define life? Give an example of a non-living thing that moves.</li>
+                        <li>2. Which characteristic does a sterile mule fail to meet? Does this mean it is not alive?</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Section 1.2 -->
+            <section class="mb-16" id="section-1-2">
+                <h3 class="text-2xl font-bold text-slate-800 mb-4">1.2 Diverse Perspectives on Life</h3>
+
+                <div class="learning-objective">
+                    <strong>Learning Objective:</strong> Distinguish among scientific, First Nations, Métis, Inuit, and other cultural perspectives with respect to the question of what constitutes life.
+                </div>
+
+                <div class="prose prose-lg text-slate-700 max-w-none">
+                    <h5 class="font-bold text-slate-900 mt-4">Western Scientific Perspective:</h5>
+                    <p class="mb-4">Western science traditionally tends to be <strong>reductionist</strong>. This approach seeks to understand complex systems by breaking them down into smaller parts (atoms, molecules, cells). Life is often seen as a mechanistic process driven by chemistry and physics.</p>
+
+                    <h5 class="font-bold text-slate-900 mt-4">Indigenous Perspectives:</h5>
+                    <p class="mb-4">Indigenous knowledge systems are often <strong>holistic</strong>. This worldview emphasizes the relationships between all things. In Cree (<em>nêhiyawêwin</em>), objects are often classified by <strong>animate vs. inanimate</strong> grammar rather than a biological checklist. A rock (<em>asiniy</em>) is grammatically animate, acknowledging its spirit and role in the ecosystem.</p>
+                </div>
+
+                <div class="feature-box">
+                    <h4 class="font-bold text-slate-800 mb-2 flex items-center gap-2">
+                        <i data-lucide="play-circle" class="w-5 h-5 text-blue-600"></i>
+                        Interactive Feature: Video Case Study
+                    </h4>
+                    <span class="feature-tag tag-interactive">Video Feature</span>
+                    <p class="text-sm text-slate-600 italic">[Video placeholder: Wahkohtowin: Cree Natural Law]</p>
+                </div>
+
+                <!-- NEW PODCAST SECTION -->
+                <div class="feature-box">
+                    <h4 class="font-bold text-slate-800 mb-2 flex items-center gap-2">
+                        <i data-lucide="headphones" class="w-5 h-5 text-pink-600"></i>
+                        Podcast: Summary of Sections 1.1 & 1.2
+                    </h4>
+                    <span class="feature-tag tag-podcast">Audio Summary</span>
+                    <div class="flex flex-col gap-4">
+                        <p class="text-sm text-slate-600">
+                            Listen to this brief podcast for a recap of the key differences between scientific and Indigenous perspectives on life.
+                        </p>
+                        <div class="w-full h-24 bg-white rounded-lg border border-slate-200 flex items-center px-4 gap-4 shadow-sm">
+                             <a href="https://drive.google.com/file/d/1PnsoQiBTYOPQmoO8opQ3KyfeWhYXbKio/view?usp=sharing" target="_blank" class="p-4 bg-pink-100 rounded-full text-pink-700 hover:bg-pink-200 transition-colors flex items-center justify-center">
+                                <i data-lucide="play" class="w-6 h-6 fill-current"></i>
+                             </a>
+                             <div class="flex-grow overflow-hidden">
+                                 <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Click to Listen on Google Drive</div>
+                                 <div class="text-sm font-semibold text-slate-700 truncate">Biology 30 Summary - Sections 1.1 & 1.2</div>
+                                 <div class="w-full bg-slate-100 h-1 mt-2 rounded-full">
+                                     <div class="bg-pink-400 h-full w-1/4 rounded-full"></div>
+                                 </div>
+                             </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 1.3 -->
+            <section class="mb-16" id="section-1-3">
+                <h3 class="text-2xl font-bold text-slate-800 mb-4">1.3 The Evolution of the Definition of Life</h3>
+
+                <div class="learning-objective">
+                    <strong>Learning Objective:</strong> Explore how scientific definitions of life have changed over time, specifically the shift from spontaneous generation to biogenesis.
+                </div>
+
+                <div class="prose prose-lg text-slate-700 max-w-none">
+                    <p class="mb-4">For centuries, the belief was <strong>Spontaneous Generation</strong> (Abiogenesis)—the idea that life could arise from non-living matter (e.g., maggots from meat). Aristotle and Van Helmont (who had a "recipe" for mice) were early proponents. It took centuries of inquiry to shift to <strong>Biogenesis</strong>—the principle that living things can only come from other living things.</p>
+                </div>
+            </section>
+
+            <!-- Section 1.4 -->
+            <section class="mb-16" id="section-1-4">
+                <h3 class="text-2xl font-bold text-slate-800 mb-4">1.4 The Gray Area: Viruses, Viroids, and Prions</h3>
+
+                <div class="learning-objective">
+                    <strong>Learning Objective:</strong> Debate whether viruses, viroids, and prions are alive based on biological criteria.
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-4 mb-6">
+                    <div class="bg-white p-4 rounded shadow-sm border">
+                        <h5 class="font-bold text-slate-900 mb-2">1. Viruses</h5>
+                        <p class="text-sm text-slate-600">DNA/RNA in a protein coat. They hijack hosts to replicate. Alive or obligate parasites?</p>
+                    </div>
+                    <div class="bg-white p-4 rounded shadow-sm border">
+                        <h5 class="font-bold text-slate-900 mb-2">2. Viroids</h5>
+                        <p class="text-sm text-slate-600">Short circular RNA without coats. They infect plants and challenge definitions of genetic "life".</p>
+                    </div>
+                    <div class="bg-white p-4 rounded shadow-sm border">
+                        <h5 class="font-bold text-slate-900 mb-2">3. Prions</h5>
+                        <p class="text-sm text-slate-600">Misfolded proteins with no genetic material. They replicate by conversion, causing diseases like CWD.</p>
+                    </div>
+                </div>
+
+                <div class="sask-context">
+                    <h4 class="font-bold text-green-800 mb-2">Saskatchewan Context: Chronic Wasting Disease (CWD)</h4>
+                    <p class="text-slate-700">Saskatchewan is at the forefront of prion research due to Chronic Wasting Disease in deer and elk populations. Prions persist in soil for years, challenging our idea of "infectious" life.</p>
+                </div>
+            </section>
+
+            <!-- Section 1.5 -->
+            <section class="mb-16" id="section-1-5">
+                <h3 class="text-2xl font-bold text-slate-800 mb-4">1.5 Giants of Biology</h3>
+
+                <div class="learning-objective">
+                    <strong>Learning Objective:</strong> Recognize the contributions of scientists like Redi, Pasteur, Miller, Urey, and Margulis.
+                </div>
+
+                <div class="prose prose-lg text-slate-700 max-w-none">
+                    <ul class="list-disc pl-6 mb-4 space-y-4">
+                        <li><strong>Francesco Redi (1668):</strong> Disproved spontaneous generation of maggots using gauze-covered jars.</li>
+                        <li><strong>Louis Pasteur (1859):</strong> Disproved microscopic spontaneous generation using <strong>Swan-Neck Flasks</strong>.</li>
+                        <li><strong>Miller & Urey (1953):</strong> Simulated early Earth to synthesize amino acids from inorganic chemicals.</li>
+                        <li><strong>Lynn Margulis (1967):</strong> Proposed <strong>Endosymbiosis Theory</strong>—cooperation as a driver of evolution.</li>
+                    </ul>
+                </div>
+
+                <div class="my-8">
+                     <h4 class="font-bold text-slate-800 mb-2 flex items-center gap-2">
+                        <i data-lucide="flask-conical" class="w-5 h-5 text-blue-600"></i>
+                        Interactive Feature: Pasteur's Virtual Lab
+                     </h4>
+                     <div class="aspect-video bg-blue-50 flex items-center justify-center rounded-lg border-2 border-dashed border-blue-200">
+                        <p class="text-blue-500 italic">[Virtual Lab Placeholder]</p>
+                     </div>
+                </div>
+            </section>
+
+            <!-- Section 1.6 -->
+            <section class="mb-16" id="section-1-6">
+                <h3 class="text-2xl font-bold text-slate-800 mb-4">1.6 Technology and the Definition of Life</h3>
+
+                <div class="learning-objective">
+                    <strong>Learning Objective:</strong> Examine the impact of cell theory and advances in microscopy on scientific definitions of life.
+                </div>
+
+                <div class="prose prose-lg text-slate-700 max-w-none">
+                    <p class="mb-4">Microscopy revealed the <strong>Cell Theory</strong>: the cell is the basic unit of life. Electron microscopes allowed us to see viruses and organelles, blurring the line again. In Saskatchewan, the <strong>Canadian Light Source (CLS)</strong> synchrotron in Saskatoon uses brilliant light to peer into the molecular structure of life.</p>
+                </div>
+            </section>
+
+            <!-- Chapter Review -->
+            <section class="bg-slate-900 text-white p-8 rounded-lg shadow-xl mb-12">
+                <h3 class="text-2xl font-bold mb-4">Chapter 1 Review: Narrative Lab Report</h3>
+                <p class="mb-4 text-slate-300">Reflect on your Alive/Non-Living sorting activity:</p>
+                <ol class="list-decimal pl-6 space-y-4 text-slate-200">
+                    <li><strong>What was I looking for?</strong> (Recall your initial criteria).</li>
+                    <li><strong>What did I find?</strong> (Did any items change categories?).</li>
+                    <li><strong>What do these findings mean?</strong> (Is life a spectrum?).</li>
+                </ol>
+            </section>
+
+        </article>
+    </main>
+
+    <footer class="bg-slate-100 py-8 mt-12 border-t border-slate-200">
+        <div class="max-w-4xl mx-auto px-4 text-center text-slate-500 text-sm flex flex-col md:flex-row justify-between items-center gap-4">
+            <p>Designed for the Saskatchewan Ministry of Education Curriculum.</p>
+            <button onclick="window.print()" class="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-lg font-medium transition-colors print-hidden">
+                <i data-lucide="printer" class="w-4 h-4"></i>
+                Print Chapter to PDF
+            </button>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        });
+
+        const searchInput = document.getElementById('searchInput');
+        const searchResults = document.getElementById('searchResults');
+
+        searchInput.addEventListener('input', function() {
+            const query = this.value.toLowerCase();
+            searchResults.innerHTML = '';
+            if (query.length < 3) {
+                searchResults.classList.add('hidden');
+                return;
+            }
+
+            const sections = document.querySelectorAll('section');
+            let hasResults = false;
+
+            sections.forEach(section => {
+                if (section.innerText.toLowerCase().includes(query)) {
+                    hasResults = true;
+                    const title = section.querySelector('h3')?.innerText || 'Section';
+                    const div = document.createElement('div');
+                    div.className = 'px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm';
+                    div.innerHTML = `<div class="font-bold text-slate-800">${title}</div><div class="text-xs text-slate-500">Matching content in this section</div>`;
+                    div.onclick = () => {
+                        section.scrollIntoView({ behavior: 'smooth' });
+                        searchResults.classList.add('hidden');
+                    };
+                    searchResults.appendChild(div);
+                }
+            });
+
+            if (hasResults) searchResults.classList.remove('hidden');
+            else searchResults.classList.add('hidden');
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!searchInput.contains(e.target)) searchResults.classList.add('hidden');
+        });
+    </script>
+</body>
+</html>
