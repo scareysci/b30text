@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biology 30: Chapter 1 Jeopardy</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Montserrat:wght@600;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f0fdf4; /* Light green bg */
+        }
+        h1, h2, h3, .header-font {
+            font-family: 'Montserrat', sans-serif;
+        }
+        .jeopardy-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 10px;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .category-header {
+            background-color: #15803d; /* Green 700 */
+            color: white;
+            padding: 15px 5px;
+            text-align: center;
+            font-weight: bold;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 80px;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .question-cell {
+            background-color: #166534; /* Green 800 */
+            color: #facc15; /* Yellow 400 */
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            aspect-ratio: 16/9;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: transform 0.1s, background-color 0.2s;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .question-cell:hover:not(.disabled) {
+            transform: scale(1.05);
+            background-color: #14532d;
+            z-index: 10;
+        }
+        .question-cell.disabled {
+            background-color: #dcfce7; /* Green 100 */
+            color: #dcfce7;
+            cursor: default;
+            box-shadow: none;
+            pointer-events: none;
+        }
+        .modal-overlay {
+            background-color: rgba(0, 0, 0, 0.85);
+        }
+        .scenario-box {
+            background-color: #fffbeb;
+            border-left: 4px solid #fbbf24;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            font-style: italic;
+            color: #4b5563;
+        }
+        @media (max-width: 768px) {
+            .jeopardy-grid {
+                grid-template-columns: repeat(2, 1fr); /* Stack for mobile */
+            }
+            .category-header {
+                min-height: 50px;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col relative">
+
+    <!-- NAVIGATION BUTTON -->
+    <a href="https://scareysci.github.io/b30text/" class="absolute top-4 left-4 bg-green-800 hover:bg-green-900 text-white font-bold py-2 px-4 rounded shadow-lg z-50 transition text-sm flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
+        Return to Textbook
+    </a>
+
+    <!-- SETUP SCREEN -->
+    <div id="setup-screen" class="flex-grow flex flex-col items-center justify-center p-4">
+        <div class="bg-white p-8 rounded-xl shadow-2xl max-w-md w-full text-center border-t-8 border-green-600 mt-12">
+            <h1 class="text-4xl font-extrabold text-green-800 mb-2">BIO 30 JEOPARDY</h1>
+            <h2 class="text-xl text-gray-600 mb-8">Chapter 1 Review</h2>
+            
+            <div class="mb-6 text-left">
+                <label class="block text-gray-700 text-sm font-bold mb-2">Number of Players:</label>
+                <div class="flex gap-4">
+                    <button onclick="selectPlayers(1)" id="btn-p1" class="flex-1 py-2 px-4 bg-green-600 text-white rounded hover:bg-green-700 focus:outline-none ring-2 ring-green-600 ring-offset-2 transition">1 Player</button>
+                    <button onclick="selectPlayers(2)" id="btn-p2" class="flex-1 py-2 px-4 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 focus:outline-none transition">2 Players</button>
+                </div>
+            </div>
+
+            <div class="mb-8 text-left">
+                <label class="block text-gray-700 text-sm font-bold mb-2">Number of Rounds:</label>
+                <div class="flex gap-2">
+                    <button onclick="selectRounds(1)" class="round-btn flex-1 py-2 bg-green-600 text-white rounded transition" data-val="1">1</button>
+                    <button onclick="selectRounds(2)" class="round-btn flex-1 py-2 bg-gray-200 text-gray-700 rounded transition" data-val="2">2</button>
+                    <button onclick="selectRounds(3)" class="round-btn flex-1 py-2 bg-gray-200 text-gray-700 rounded transition" data-val="3">3</button>
+                </div>
+            </div>
+
+            <button onclick="startGame()" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-4 rounded-lg text-xl shadow-lg transform transition hover:-translate-y-1">
+                START GAME
+            </button>
+        </div>
+    </div>
+
+    <!-- GAME BOARD SCREEN -->
+    <div id="game-screen" class="hidden flex-grow flex-col p-2 pt-16">
+        <!-- Scoreboard -->
+        <div class="bg-white shadow-md rounded-lg p-4 mb-4 flex justify-between items-center max-w-6xl mx-auto w-full border-b-4 border-green-600">
+            <div id="p1-score-box" class="text-center p-2 rounded w-1/3 transition-colors bg-green-100 border-2 border-green-500">
+                <div class="text-sm font-bold text-gray-500">PLAYER 1</div>
+                <div id="score-1" class="text-3xl font-bold text-green-800">0</div>
+            </div>
+            <div class="flex flex-col items-center w-1/3">
+                <div class="text-sm uppercase tracking-widest text-gray-400 font-bold">Round <span id="current-round-display">1</span></div>
+                <div id="turn-indicator" class="mt-1 px-3 py-1 bg-yellow-400 text-yellow-900 text-xs font-bold rounded-full">Player 1's Turn</div>
+            </div>
+            <div id="p2-score-box" class="text-center p-2 rounded w-1/3 transition-colors opacity-50">
+                <div class="text-sm font-bold text-gray-500">PLAYER 2</div>
+                <div id="score-2" class="text-3xl font-bold text-green-800">0</div>
+            </div>
+        </div>
+
+        <!-- The Grid -->
+        <div id="board" class="jeopardy-grid">
+            <!-- Headers and cells generated by JS -->
+        </div>
+        
+        <div class="mt-4 text-center">
+             <button id="end-round-btn" onclick="nextRound()" class="hidden bg-blue-600 text-white px-6 py-2 rounded shadow hover:bg-blue-700">Next Round</button>
+             <button id="end-game-btn" onclick="finishGame()" class="hidden bg-red-600 text-white px-6 py-2 rounded shadow hover:bg-red-700">End Game</button>
+        </div>
+    </div>
+
+    <!-- MODAL FOR QUESTION -->
+    <div id="question-modal" class="hidden fixed inset-0 modal-overlay flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto flex flex-col">
+            
+            <!-- Header -->
+            <div class="bg-green-700 text-white p-4 flex justify-between items-center">
+                <span id="modal-category" class="font-bold uppercase tracking-wider text-sm opacity-80">Category</span>
+                <span id="modal-value" class="font-bold text-xl">$100</span>
+            </div>
+
+            <!-- Content -->
+            <div class="p-6 flex-grow">
+                <!-- Scenario Section -->
+                <div id="modal-scenario" class="scenario-box hidden">
+                    <!-- Scenario text injected here -->
+                </div>
+
+                <!-- Question -->
+                <h2 id="modal-question" class="text-2xl font-bold text-gray-800 mb-6 leading-relaxed">
+                    Question text goes here?
+                </h2>
+
+                <!-- Options -->
+                <div id="modal-options" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Buttons injected here -->
+                </div>
+            </div>
+
+            <!-- Feedback / Footer -->
+            <div id="modal-feedback" class="p-4 text-center text-white font-bold text-lg hidden">
+                <!-- Correct/Incorrect message -->
+            </div>
+            
+            <div id="modal-continue" class="p-4 bg-gray-100 text-center border-t hidden">
+                <button onclick="closeModal()" class="bg-green-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-green-700 shadow transition">CONTINUE</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- END GAME SCREEN -->
+    <div id="end-screen" class="hidden flex-grow flex flex-col items-center justify-center p-4">
+        <div class="bg-white p-10 rounded-xl shadow-2xl text-center max-w-2xl w-full mt-12">
+            <h1 class="text-4xl font-extrabold text-green-800 mb-6">GAME OVER</h1>
+            
+            <div class="flex justify-center gap-8 mb-8">
+                <div class="text-center">
+                    <div class="text-gray-500 font-bold mb-2">PLAYER 1</div>
+                    <div id="final-score-1" class="text-5xl font-bold text-green-600">0</div>
+                </div>
+                <div id="final-p2-container" class="text-center hidden">
+                    <div class="text-gray-500 font-bold mb-2">PLAYER 2</div>
+                    <div id="final-score-2" class="text-5xl font-bold text-green-600">0</div>
+                </div>
+            </div>
+
+            <div id="winner-banner" class="bg-yellow-100 text-yellow-800 p-4 rounded-lg font-bold text-xl mb-8">
+                <!-- Winner text -->
+            </div>
+
+            <button onclick="location.reload()" class="bg-green-600 text-white font-bold py-3 px-8 rounded-lg shadow-lg hover:bg-green-700 transition">
+                PLAY AGAIN
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // --- DATA -- 
+        // Parsing the user content into a structured format
+        const categories = [
+            "1.1 Definitions",
+            "1.2 Perspectives",
+            "1.3 Evolution",
+            "1.4 Gray Area",
+            "1.5 Giants",
+            "1.6 Technology"
+        ];
+
+        // Helper to define questions. 
+        // 0=A, 1=B, 2=C, 3=D
+        const db = {
+            0: [ // 1.1 Personal Definitions
+                { q: "Which acronym is commonly used in earlier grades to remember the basic characteristics of life?", o: ["BEDMAS", "WHMIS", "MRS GREN", "ROY G BIV"], a: 2 },
+                { q: "A sterile mule is considered alive despite failing which specific biological characteristic of life?", o: ["Energy Processing", "Reproduction", "Response to Environment", "Homeostasis"], a: 1 },
+                { q: "Fire exhibits growth, consumes energy, and spreads, yet it is not considered alive. Which characteristic does it primarily lack?", o: ["It does not contain cells/ordered structure", "It does not release heat", "It does not respond to wind", "It does not consume oxygen"], a: 0 },
+                { q: "Which biological characteristic is defined as the maintenance of a stable internal environment despite external changes?", o: ["Adaptation", "Metabolism", "Homeostasis", "Evolution"], a: 2 },
+                { q: "In the hierarchy of biological order, which level immediately follows 'cells' in complexity?", o: ["Organs", "Tissues", "Organ Systems", "Organelles"], a: 1 },
+                { q: "Which statement best describes 'metabolism'?", o: ["Ability to move location", "Passing genetic traits", "The flow of energy transformations to perform life’s activities", "Structural organization of atoms"], a: 2 },
+                { q: "The camouflage of a snowshoe hare turning white in winter is an example of:", o: ["Evolutionary Adaptation", "Homeostasis", "Energy Processing", "Reproduction"], a: 0 },
+                { q: "How is the South Saskatchewan River viewed differently in Indigenous worldviews compared to strict Western biology?", o: ["Western sees it alive; Indigenous sees it abiotic", "Both view it as non-living", "Western sees non-living; Indigenous may see it as animate with agency", "Indigenous views it as an organism with cells"], a: 2 },
+                { q: "A Venus flytrap snapping shut when an insect touches it is an example of:", o: ["Regulation", "Response to the Environment", "Evolutionary Adaptation", "Growth and Development"], a: 1 },
+                { q: "Which of the following is NOT one of the seven scientific characteristics of life listed in the text?", o: ["Order", "Consciousness", "Energy Processing", "Growth and Development"], a: 1 },
+                { q: "Why are crystals not considered alive, even though they can 'grow' and organize?", o: ["They lack a metabolism", "They are too small", "They do not have mass", "They cannot change shape"], a: 0 },
+                { q: "The Western Red Lily fits the biological definition of life because:", o: ["It has a spirit", "It consumes insects", "It photosynthesizes, grows, and reproduces via seeds", "It moves rapidly"], a: 2 },
+                { q: "Which level of organization allows for complex functions that non-living matter cannot achieve?", o: ["Atomic density", "Hierarchy of structure (Order)", "Random molecular motion", "Gravitational pull"], a: 1 },
+                { q: "Your DNA directing your development from a single cell into a human rather than a fern is an example of:", o: ["Homeostasis", "Energy Processing", "Growth and Development", "Response to Stimuli"], a: 2 },
+                { q: "A polar bear maintaining body heat in the Arctic is an example of:", o: ["Reproduction", "Regulation (Homeostasis)", "Growth", "Order"], a: 1 },
+                // Scenarios 1.1
+                { s: "A rover on Europa discovers a gelatinous blob named 'Specimen X'. It moves toward heat and absorbs sulfur. Over 5 years, it gets larger but never divides.", q: "Based on the observation that Specimen X moves toward heat, which characteristic of life is it demonstrating?", o: ["Evolutionary Adaptation", "Response to the Environment", "Homeostasis", "Reproduction"], a: 1 },
+                { s: "A rover on Europa discovers a gelatinous blob named 'Specimen X'. It moves toward heat and absorbs sulfur. Over 5 years, it gets larger but never divides.", q: "Specimen X absorbs sulfur to fuel its movement. This represents:", o: ["Energy Processing", "Order", "Development", "Regulation"], a: 0 },
+                { s: "A rover on Europa discovers a gelatinous blob named 'Specimen X'. It moves toward heat and absorbs sulfur. Over 5 years, it gets larger but never divides.", q: "Why would scientists hesitate to classify Specimen X as 'alive' based on the data provided?", o: ["It lives in a cold environment", "It is not made of carbon", "It has shown no evidence of reproduction", "It grows too slowly"], a: 2 },
+                { s: "You are programming an advanced AI robot. It can recharge (energy), repair code (homeostasis), and update (growth).", q: "Despite these features, a biologist would argue the robot is not alive because:", o: ["It is made of metal", "It lacks the complex, cellular 'Order' found in nature", "It cannot speak", "It relies on electricity"], a: 1 },
+                { s: "You are programming an advanced AI robot. It can recharge (energy), repair code (homeostasis), and update (growth).", q: "If the robot builds a smaller, identical robot using spare parts, does this count as biological reproduction?", o: ["Yes, it created an offspring", "Yes, it contains the same software", "No, biological reproduction requires genetic transfer and cellular machinery", "No, the new robot is smaller"], a: 2 }
+            ],
+            1: [ // 1.2 Diverse Perspectives
+                { q: "Western science is traditionally described as 'reductionist.' What does this mean?", o: ["It reduces importance of nature", "It seeks to understand systems by breaking them down into parts", "Life is less complex than non-life", "Focuses only on macroscopic level"], a: 1 },
+                { q: "Which term best describes Indigenous knowledge systems as mentioned in the text?", o: ["Mechanistic", "Reductionist", "Holistic", "Linear"], a: 2 },
+                { q: "In the Cree language (nêhiyawêwin), objects are often classified grammatically by:", o: ["Size", "Color", "Animation (Animate vs. Inanimate)", "Origin"], a: 2 },
+                { q: "According to the text, how is a rock (asiniy) classified in Cree grammar?", o: ["Inanimate", "Animate", "Neutral", "Spiritual only"], a: 1 },
+                { q: "What does the Cree concept of Wâhkôhtowin refer to?", o: ["Scientific method", "Separation of man and nature", "Kinship or interconnectedness of all beings", "Hunting bison"], a: 2 },
+                { q: "Offering tobacco when harvesting a medicinal plant signifies:", o: ["Payment for goods", "Reciprocal relationship and acknowledgement of the plant's life", "Fertilizer", "Superstition"], a: 1 },
+                { q: "A reductionist studying a heart would focus on:", o: ["Emotional state", "Role in community", "Muscle tissues, cells, and proteins", "Spiritual connection"], a: 2 },
+                { q: "Which perspective views life as a 'mechanistic process driven by chemistry and physics'?", o: ["Western Scientific", "Traditional Ecological Knowledge", "Holistic", "Spiritual"], a: 0 },
+                { q: "In Indigenous worldviews, severing connections with the land and water:", o: ["Increases independence", "Diminishes life", "Has no effect", "Is necessary for progress"], a: 1 },
+                { q: "The video 'Wahkohtowin: Cree Natural Law' suggests that 'law' and 'relationships' are:", o: ["Unrelated", "Defined by government", "Central to understanding how to live in balance with nature", "Only applicable to humans"], a: 2 },
+                { q: "Why might a biologist and an Elder view a river differently?", o: ["Biologist sees H2O; Elder sees a relative", "Biologist sees relative; Elder sees H2O", "Biologist cannot see river", "Elder does not understand water"], a: 0 },
+                { q: "Holistic thinking emphasizes:", o: ["Isolation of variables", "The whole system and connections", "Breaking data into charts", "Disproving hypotheses"], a: 1 },
+                { q: "In the text, the 'reductionist' approach is compared to understanding a machine by:", o: ["Driving it", "Painting it", "Understanding all its gears", "Selling it"], a: 2 },
+                { q: "First Nations observations of nature are described in the text as:", o: ["Myths", "Casual", "A form of rigorous scientific observation", "Borrowed"], a: 2 },
+                { q: "The distinction between 'living' and 'non-living' in Western science is primarily based on:", o: ["Grammar", "Biological functions and cellular structure", "Spiritual energy", "Cultural stories"], a: 1 },
+                // Scenarios 1.2
+                { s: "Mining company wants to drain a lake. Environmental Assessment focuses on fish count. Elders argue the lake is the 'heart' of the region.", q: "The Environmental Assessment represents which worldview?", o: ["Holistic", "Reductionist", "Animist", "Spiritual"], a: 1 },
+                { s: "Mining company wants to drain a lake. Elders argue hurting the lake hurts the forest and people.", q: "The Elders' argument reflects:", o: ["Wâhkôhtowin (Kinship)", "Photosynthesis", "Spontaneous Generation", "Cellular Theory"], a: 0 },
+                { s: "Mining company wants to drain a lake. They say 'water is just H2O and has no feelings'.", q: "If the company ignores the Elders, they fail to recognize:", o: ["Chemical composition", "Validity of Animate vs. Inanimate worldviews", "Economic value", "Homeostasis"], a: 1 },
+                { s: "Dr. Aris treats liver disease by targeting enzymes. Dr. Ben treats by looking at diet, stress, and family.", q: "Dr. Aris is utilizing a ____________ approach.", o: ["Holistic", "Reductionist", "Traditional", "Spiritual"], a: 1 },
+                { s: "Dr. Aris treats liver disease by targeting enzymes. Dr. Ben treats by looking at diet, stress, and family.", q: "Dr. Ben is utilizing a ____________ approach.", o: ["Holistic", "Reductionist", "Mechanical", "Microscopic"], a: 0 }
+            ],
+            2: [ // 1.3 Evolution of Definition
+                { q: "What is the definition of Spontaneous Generation (Abiogenesis)?", o: ["Life comes from life", "Life can arise suddenly from non-living matter", "Life evolved over millions of years", "Life arrived on meteors"], a: 1 },
+                { q: "Which ancient philosopher suggested aphids arise from dew?", o: ["Socrates", "Plato", "Aristotle", "Hippocrates"], a: 2 },
+                { q: "Jean-Baptiste van Helmont created a 'recipe' for creating which animal using a dirty shirt and wheat?", o: ["Flies", "Rats/Mice", "Frogs", "Bats"], a: 1 },
+                { q: "What is the principle of Biogenesis?", o: ["Living things can only come from other living things", "Living things come from chemical reactions in air", "Generated by sun", "Spontaneously appear"], a: 0 },
+                { q: "Why did people in the 1600s believe maggots arose spontaneously from meat?", o: ["They saw maggots appear without seeing flies lay eggs", "Microscopes showed meat turning to worms", "Aristotle said it was impossible", "Maggots are made of meat"], a: 0 },
+                { q: "Who performed the famous experiment with meat and jars to disprove spontaneous generation of maggots?", o: ["Louis Pasteur", "Francesco Redi", "Stanley Miller", "Lynn Margulis"], a: 1 },
+                { q: "In Redi’s experiment, what was the specific purpose of the gauze covering the jar?", o: ["Keep meat fresh", "Prevent air entering", "Prevent flies landing but let air in", "Trap smell"], a: 2 },
+                { q: "What was the 'control' in Redi’s experiment?", o: ["Jar covered with gauze", "Sealed jar", "Open jar where flies could land", "Type of meat"], a: 2 },
+                { q: "Indigenous peoples of the Great Plains knew bison did not spontaneously generate because:", o: ["They read Aristotle", "They observed breeding seasons and migration patterns", "Experiments in tents", "Believed bison fell from sky"], a: 1 },
+                { q: "Van Helmont’s proof for spontaneous generation was flawed because:", o: ["He didn't wait long enough", "He didn't control for mice entering from outside", "Used wrong shirt", "Wheat doesn't attract mice"], a: 1 },
+                { q: "The shift from Spontaneous Generation to Biogenesis required:", o: ["Rigorous application of Scientific Method", "Less observation", "Computer invention", "Ignoring insects"], a: 0 },
+                { q: "Which variable did Redi manipulate (the independent variable)?", o: ["Type of meat", "Temperature", "Access flies had to meat", "Time of day"], a: 2 },
+                { q: "Why was 'common sense' an obstacle to science in the middle ages?", o: ["Common sense is always right", "Observations were misinterpreted without testing", "Scientists were too smart", "Relied on math"], a: 1 },
+                { q: "'Omne vivum ex vivo' translates to:", o: ["All life comes from life", "Life comes from void", "Cell is unit of life", "Evolution is constant"], a: 0 },
+                { q: "Indigenous ecological knowledge is considered scientific because:", o: ["Relies on long-term observation/pattern recognition", "Written in textbooks", "Uses test tubes", "Focuses on chemistry"], a: 0 },
+                // Scenarios 1.3
+                { s: "Student leaves sealed protein shake in locker. It smells, but no bugs. Another student leaves sandwich in unzipped bag; ants appear.", q: "Why were there no bugs in the sealed protein shake?", o: ["Need light", "Seal prevented organisms (parents) from entering", "Not food", "Smell killed bugs"], a: 1 },
+                { s: "Student leaves sealed protein shake in locker. It smells, but no bugs. Another student leaves sandwich in unzipped bag; ants appear.", q: "The appearance of ants in the backpack is an example of:", o: ["Spontaneous generation", "Biogenesis (ants entered and reproduced)", "Chemical evolution", "Abiogenesis"], a: 1 },
+                { s: "Student leaves sealed protein shake in locker. It smells, but no bugs. Another student leaves sandwich in unzipped bag; ants appear.", q: "If the student believed the sandwich CREATED the ants, they would be agreeing with:", o: ["Redi", "Pasteur", "Van Helmont", "Indigenous Elders"], a: 2 },
+                { s: "A gardener notices weeds appear in cleared dirt. They claim, 'The soil just turns into weeds.'", q: "To prove this gardener wrong using Redi's logic, you should:", o: ["Dig up soil to look for roots/seeds", "Agree with them", "Spray with water", "Cover with plastic for sunlight test"], a: 0 },
+                { s: "A gardener notices weeds appear in cleared dirt. They claim, 'The soil just turns into weeds.'", q: "The gardener's claim is a modern example of belief in:", o: ["Photosynthesis", "Abiogenesis", "Homeostasis", "Adaptation"], a: 1 }
+            ],
+            3: [ // 1.4 Gray Area
+                { q: "Why is a virus often described as being on the 'edge' of life?", o: ["Can move but not reproduce", "Has DNA/RNA but requires host to reproduce, no metabolism", "Made of rock", "Too large"], a: 1 },
+                { q: "What are the two main components of a virus?", o: ["Nucleus and cytoplasm", "Genetic material and protein coat", "Cell wall and mitochondria", "RNA and sugar"], a: 1 },
+                { q: "Which term refers to a virus's inability to reproduce outside a host cell?", o: ["Facultative aerobe", "Obligate intracellular parasite", "Independent organism", "Autotrophic producer"], a: 1 },
+                { q: "A Viroid differs from a Virus because a Viroid:", o: ["Has protein coat but no DNA", "Is larger", "Is a short strand of RNA without a protein coat", "Only infects animals"], a: 2 },
+                { q: "Viroids primarily infect:", o: ["Humans", "Bacteria", "Plants", "Fungi"], a: 2 },
+                { q: "Prions are unique among infectious agents because they contain:", o: ["No genetic material (DNA/RNA)", "Both DNA and RNA", "Complex cell membrane", "Mitochondria"], a: 0 },
+                { q: "How do prions 'replicate'?", o: ["Mitosis", "Binary Fission", "Inducing normal proteins to misfold", "Laying eggs"], a: 2 },
+                { q: "Chronic Wasting Disease (CWD) in Saskatchewan deer and elk is caused by:", o: ["Virus", "Bacteria", "Prion", "Viroid"], a: 2 },
+                { q: "Why is CWD particularly difficult to manage in the environment?", o: ["Dies in air", "Prions persist in soil for years", "Deer are immune", "Only affects males"], a: 1 },
+                { q: "Which of the following diseases is caused by a viroid?", o: ["Influenza", "Potato spindle tuber disease", "Mad Cow Disease", "COVID-19"], a: 1 },
+                { q: "If a scientist found an entity that had DNA but no metabolism, it would most likely be:", o: ["Bacteria", "Virus", "Prion", "Rock"], a: 1 },
+                { q: "Prions cause disease primarily by affecting the:", o: ["Respiratory system", "Digestive system", "Nervous system (brain)", "Circulatory system"], a: 2 },
+                { q: "Which of the three 'Gray Area' entities is the simplest (composed of only one type of molecule)?", o: ["Virus", "Bacteria", "Prion (Protein only)", "All equal"], a: 2 },
+                { q: "Why do antibiotics (which kill living bacteria) not work on viruses?", o: ["Viruses are too fast", "Viruses lack metabolic machinery that antibiotics target", "Viruses are too big", "Viruses have cell wall"], a: 1 },
+                { q: "The 'Zombie Deer' appearance in CWD is a result of:", o: ["Muscle growth", "Wasting (weight loss) and neurological damage", "Camouflage", "Bacterial infection"], a: 1 },
+                // Scenarios 1.4
+                { s: "Lab isolates pathogen. Treated with DNA/RNA destroyers -> still infectious. Treated with protein destroyers -> harmless.", q: "Based on these results, the pathogen is most likely a:", o: ["Virus", "Viroid", "Prion", "Bacteria"], a: 2 },
+                { s: "Lab isolates pathogen. Treated with DNA/RNA destroyers -> still infectious. Treated with protein destroyers -> harmless.", q: "Why did the DNA-destroying enzyme fail to stop the infection?", o: ["Pathogen protected its DNA", "Pathogen does not use DNA/RNA to transmit infection", "Enzyme expired", "Pathogen repaired DNA"], a: 1 },
+                { s: "Lab isolates pathogen. Treated with DNA/RNA destroyers -> still infectious. Treated with protein destroyers -> harmless.", q: "If this pathogen behaves like the one causing CWD, how should the lab dispose of tools?", o: ["Wash with water", "Leave in sun", "Extreme sterilization (proteins are stable)", "Burial"], a: 2 },
+                { s: "Scientists discover Agent Z in tobacco. Just a loop of RNA. Makes leaves curl.", q: "Agent Z is best classified as a:", o: ["Viroid", "Prion", "Virus", "Fungus"], a: 0 },
+                { s: "Scientists discover Agent Z in tobacco. Just a loop of RNA. Makes leaves curl.", q: "Does Agent Z meet the definition of life?", o: ["Yes, causes change", "Yes, made of RNA", "No, lacks cell, metabolism, protein coat", "No, infects plants"], a: 2 }
+            ],
+            4: [ // 1.5 Giants
+                { q: "Which scientist is credited with the Swan-Neck Flask experiment?", o: ["Francesco Redi", "Louis Pasteur", "Lynn Margulis", "Stanley Miller"], a: 1 },
+                { q: "What was the critical design feature of Pasteur's flask?", o: ["Unbreakable glass", "Curved neck allowed air in but trapped dust/microbes", "Sealed no oxygen", "Chemical killer"], a: 1 },
+                { q: "Pasteur's experiment finally put an end to the debate over:", o: ["Evolution", "Cell Theory", "Spontaneous Generation", "Gravity"], a: 2 },
+                { q: "The Miller-Urey experiment (1953) was designed to simulate:", o: ["Volcano conditions", "Earth's primordial atmosphere and origin of organic molecules", "Mars environment", "Stomach digestion"], a: 1 },
+                { q: "What 'spark' did Miller and Urey use to drive their chemical reactions?", o: ["Fire", "Sunlight", "Electricity (simulated lightning)", "Nuclear radiation"], a: 2 },
+                { q: "What complex molecules did Miller and Urey find after a week?", o: ["Living cells", "DNA strands", "Amino acids", "Viruses"], a: 2 },
+                { q: "Lynn Margulis is famous for proposing which theory?", o: ["Germ Theory", "Endosymbiosis Theory", "Natural Selection", "Big Bang"], a: 1 },
+                { q: "According to Endosymbiosis, mitochondria were originally:", o: ["Viruses", "Free-living bacteria engulfed by larger cell", "Crystals", "Blood cells"], a: 1 },
+                { q: "Which evidence supports Margulis's theory?", o: ["Mitochondria have their own DNA", "Mitochondria are green", "Mitochondria live outside body", "Cells cannot divide"], a: 0 },
+                { q: "Redi's contribution (1668) focused on _________, while Pasteur (1859) focused on _________.", o: ["Plants; Animals", "Macroscopic life (flies); Microscopic life (bacteria)", "Bacteria; Flies", "Chemistry; Physics"], a: 1 },
+                { q: "The phrase 'Omne vivum ex vivo' is most closely associated with:", o: ["Miller", "Urey", "Pasteur", "Margulis"], a: 2 },
+                { q: "The Miller-Urey experiment suggests that:", o: ["Life formed instantly", "Building blocks (organic compounds) can form from inorganic chemicals", "Life from aliens", "Lightning destroys matter"], a: 1 },
+                { q: "Endosymbiosis suggests that evolution is driven not just by competition, but by:", o: ["Cooperation (Partnership)", "Isolation", "Destruction", "Luck"], a: 0 },
+                { q: "Before Pasteur, people argued boiling broth killed 'vital force'. How did swan-neck flask address this?", o: ["It didn't", "Allowed air (vital force) to enter, proving air wasn't cause", "Added new vital force", "Kept broth cold"], a: 1 },
+                { q: "Francesco Redi is significant because he was one of the first to:", o: ["Use microscope", "Use a controlled variable in an experiment", "Discover DNA", "Travel to space"], a: 1 },
+                // Scenarios 1.5
+                { s: "Paleontologist finds fossil of single-celled organism containing a structure looking like a different bacteria living inside.", q: "This fossil discovery would best support the work of:", o: ["Redi", "Margulis", "Miller", "Pasteur"], a: 1 },
+                { s: "Paleontologist finds fossil of single-celled organism containing a structure looking like a different bacteria living inside.", q: "The relationship observed in the fossil is known as:", o: ["Parasitism", "Endosymbiosis", "Spontaneous Generation", "Abiogenesis"], a: 1 },
+                { s: "Paleontologist finds fossil of single-celled organism containing a structure looking like a different bacteria living inside.", q: "If the smaller internal structure eventually became an organelle involved in photosynthesis, it is likely a:", o: ["Mitochondria", "Ribosome", "Chloroplast", "Nucleus"], a: 2 },
+                { s: "Student mixes methane, ammonia, and hydrogen. Exposes to UV light. Finds amino acids.", q: "This student is replicating the work of:", o: ["Redi", "Pasteur", "Miller and Urey", "Margulis"], a: 2 },
+                { s: "Student mixes methane, ammonia, and hydrogen. Exposes to UV light. Finds amino acids.", q: "This experiment attempts to explain:", o: ["Cell division", "Fly reproduction", "How first organic building blocks formed (Chemical Evolution)", "Virus infection"], a: 2 }
+            ],
+            5: [ // 1.6 Technology
+                { q: "Before the invention of the microscope, the definition of life was limited to:", o: ["Things seen with naked eye", "Things in water", "Things with blood", "Things that speak"], a: 0 },
+                { q: "Who is credited with discovering the microscopic world in pond water ('animalcules')?", o: ["Hooke / Van Leeuwenhoek", "Aristotle", "Miller", "Darwin"], a: 0 },
+                { q: "Which of the following is NOT a component of the Cell Theory?", o: ["All living things composed of cells", "Cell is basic unit", "All cells come from pre-existing cells", "All cells must have a nucleus"], a: 3 },
+                { q: "The invention of the Electron Microscope in the 1930s allowed scientists to:", o: ["See color", "See much smaller structures like viruses and organelles", "See life in real-time", "See through lead"], a: 1 },
+                { q: "How did the electron microscope complicate the definition of life?", o: ["Cells are empty", "Revealed complex structures (viruses) that blur line between chemical and biological", "Proved spontaneous generation", "Rocks have cells"], a: 1 },
+                { q: "What is the Canadian Light Source (CLS) located in Saskatoon?", o: ["Telescope", "Synchrotron particle accelerator used for microscopy", "Biological containment", "Museum"], a: 1 },
+                { q: "How does the CLS help biological research?", o: ["Creates life", "Produces brilliant light to image molecular structures", "Freezes samples", "Simulates sun"], a: 1 },
+                { q: "If a cell is the 'basic unit of life,' does a single ribosome count as alive?", o: ["Yes, part of cell", "No, it is a functional part, but cannot sustain life independently", "Yes, it moves", "No, made of plastic"], a: 1 },
+                { q: "Which technology revealed that DNA looks like a double helix?", o: ["Hand lens", "Light microscope", "X-ray crystallography/Electron microscopy", "Telescope"], a: 2 },
+                { q: "Why can't a standard light microscope see a virus clearly?", o: ["Invisible", "Viruses are smaller than wavelength of visible light", "Move too fast", "Light kills viruses"], a: 1 },
+                { q: "Technology changes science because:", o: ["Allows observation beyond natural senses", "Makes things expensive", "Replaces thinking", "Proves everything old wrong"], a: 0 },
+                { q: "The discovery of the cell shifted the definition of life from 'movement' to:", o: ["Structural organization (cellularity)", "Intelligence", "Size", "Colour"], a: 0 },
+                { q: "A synchrotron accelerates ________ to near light speed.", o: ["Protons", "Electrons", "Neutrons", "Photons"], a: 1 },
+                { q: "Understanding the molecular structure of wheat proteins at the CLS helps:", o: ["Robotic wheat", "Improve agriculture and food security", "Disprove cell theory", "Create viruses"], a: 1 },
+                { q: "Which scientist would have been most surprised by the discovery of the virus?", o: ["One who believes life requires a cell (Cell Theory)", "Believer in spontaneous generation", "Astronomer", "Geologist"], a: 0 },
+                // Scenarios 1.6
+                { s: "Scientist uses 'Nano-Scanner'. Reveals rock has vibrating lattice responding to sound. Argues rock is 'alive'.", q: "This scenario parallels how the invention of the ___________ changed our understanding of pond water.", o: ["Telescope", "Microscope", "Thermometer", "Scale"], a: 1 },
+                { s: "Scientist uses 'Nano-Scanner'. Reveals rock has vibrating lattice responding to sound. Argues rock is 'alive'.", q: "If the scientific community accepts this new data, what must happen to the definition of life?", o: ["Remains same", "Must be revised to include 'energy response' without cells", "Discarded", "Only applies to rocks"], a: 1 },
+                { s: "Scientist uses 'Nano-Scanner'. Reveals rock has vibrating lattice responding to sound. Argues rock is 'alive'.", q: "Why would a biologist currently reject the scientist's claim about the rock?", o: ["Energy vibration is not the same as Metabolism or Reproduction", "Rocks are heavy", "Too expensive", "Sound waves not real"], a: 0 },
+                { s: "Investigating mysterious illness. Nothing in blood under light microscope (1000x). Patient is sick.", q: "What is the most logical next step given the technology available?", o: ["Patient is faking", "Use Electron Microscope to look for smaller agents", "Treat for bacteria", "Use magnifying glass"], a: 1 },
+                { s: "Investigating mysterious illness. Nothing in blood under light microscope (1000x). Patient is sick.", q: "If you find a tiny protein-coated DNA strand under the Electron Microscope, you have found:", o: ["Bacteria", "Virus", "Fungus", "Parasitic Worm"], a: 1 }
+            ]
+        };
+
+        // --- GAME STATE ---
+        let numPlayers = 1;
+        let totalRounds = 1;
+        let currentRound = 1;
+        let currentPlayer = 0; // 0 for P1, 1 for P2
+        let scores = [0, 0];
+        let currentBoardQuestions = {}; // Mapped by "categoryIndex_pointIndex" -> QuestionObject
+        let answeredCount = 0;
+        let totalQuestionsPerRound = 30; // 6 cats * 5 qs
+
+        // --- SETUP LOGIC ---
+        function selectPlayers(n) {
+            numPlayers = n;
+            document.getElementById('btn-p1').classList.toggle('bg-green-600', n===1);
+            document.getElementById('btn-p1').classList.toggle('text-white', n===1);
+            document.getElementById('btn-p1').classList.toggle('bg-gray-200', n===2);
+            
+            document.getElementById('btn-p2').classList.toggle('bg-green-600', n===2);
+            document.getElementById('btn-p2').classList.toggle('text-white', n===2);
+            document.getElementById('btn-p2').classList.toggle('bg-gray-200', n===1);
+        }
+
+        function selectRounds(n) {
+            totalRounds = n;
+            document.querySelectorAll('.round-btn').forEach(btn => {
+                const val = parseInt(btn.dataset.val);
+                if(val === n) {
+                    btn.classList.add('bg-green-600', 'text-white');
+                    btn.classList.remove('bg-gray-200', 'text-gray-700');
+                } else {
+                    btn.classList.remove('bg-green-600', 'text-white');
+                    btn.classList.add('bg-gray-200', 'text-gray-700');
+                }
+            });
+        }
+
+        function startGame() {
+            document.getElementById('setup-screen').classList.add('hidden');
+            document.getElementById('game-screen').classList.remove('hidden');
+            document.getElementById('game-screen').classList.add('flex');
+            
+            if(numPlayers === 1) {
+                document.getElementById('p2-score-box').classList.add('hidden');
+                document.getElementById('turn-indicator').classList.add('hidden');
+            } else {
+                document.getElementById('p2-score-box').classList.remove('hidden');
+            }
+
+            scores = [0, 0];
+            currentPlayer = 0;
+            currentRound = 1;
+            
+            initRound();
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function initRound() {
+            currentBoardQuestions = {};
+            answeredCount = 0;
+            document.getElementById('current-round-display').innerText = currentRound;
+            document.getElementById('end-round-btn').classList.add('hidden');
+            
+            // Build Grid
+            const board = document.getElementById('board');
+            board.innerHTML = '';
+
+            // 1. Headers
+            categories.forEach(cat => {
+                const div = document.createElement('div');
+                div.className = 'category-header';
+                div.innerText = cat;
+                board.appendChild(div);
+            });
+
+            // 2. Questions (Rows 100-500)
+            // We need to pick 5 unique questions per category from the DB
+            for(let pointLevel = 1; pointLevel <= 5; pointLevel++) {
+                for(let catIndex = 0; catIndex < 6; catIndex++) {
+                    const cellId = `${catIndex}_${pointLevel}`;
+                    
+                    // Logic to ensure randomization but consistency within a round
+                    // We grab the full array for the category, shuffle it, then pop 5.
+                    // Ideally we'd do this once per round start, not per cell.
+                }
+            }
+
+            // Better approach: Pre-select questions for the round
+            const points = [100, 200, 300, 400, 500];
+            let gridHTML = "";
+            
+            // First headers
+            categories.forEach(cat => {
+                gridHTML += `<div class="category-header">${cat}</div>`;
+            });
+
+            // Prepare columns data
+            let roundData = [];
+            for(let c = 0; c < 6; c++) {
+                let availableQs = [...db[c]]; 
+                shuffleArray(availableQs);
+                roundData[c] = availableQs.slice(0, 5); // Take first 5
+            }
+
+            // Create rows
+            for(let r = 0; r < 5; r++) {
+                for(let c = 0; c < 6; c++) {
+                    const q = roundData[c][r];
+                    const id = `${c}_${r}`; // col_row
+                    const pointsVal = points[r];
+                    currentBoardQuestions[id] = { ...q, value: pointsVal };
+                    
+                    gridHTML += `<div id="cell-${id}" class="question-cell" onclick="handleCellClick('${id}')">$${pointsVal}</div>`;
+                }
+            }
+
+            board.innerHTML = gridHTML;
+            updateTurnIndicator();
+        }
+
+        // --- GAMEPLAY ---
+
+        function updateTurnIndicator() {
+            if(numPlayers === 1) return;
+            const ind = document.getElementById('turn-indicator');
+            const p1Box = document.getElementById('p1-score-box');
+            const p2Box = document.getElementById('p2-score-box');
+
+            if(currentPlayer === 0) {
+                ind.innerText = "Player 1's Turn";
+                ind.classList.remove('bg-blue-400', 'text-blue-900');
+                ind.classList.add('bg-yellow-400', 'text-yellow-900');
+                p1Box.classList.add('border-green-500', 'bg-green-100');
+                p1Box.classList.remove('opacity-50');
+                p2Box.classList.remove('border-green-500', 'bg-green-100');
+                p2Box.classList.add('opacity-50');
+            } else {
+                ind.innerText = "Player 2's Turn";
+                ind.classList.remove('bg-yellow-400', 'text-yellow-900');
+                ind.classList.add('bg-blue-400', 'text-blue-900');
+                p2Box.classList.add('border-green-500', 'bg-green-100');
+                p2Box.classList.remove('opacity-50');
+                p1Box.classList.remove('border-green-500', 'bg-green-100');
+                p1Box.classList.add('opacity-50');
+            }
+        }
+
+        let currentQuestionId = null;
+
+        function handleCellClick(id) {
+            const cell = document.getElementById(`cell-${id}`);
+            if(cell.classList.contains('disabled')) return;
+
+            currentQuestionId = id;
+            const qData = currentBoardQuestions[id];
+
+            // Populate Modal
+            document.getElementById('modal-value').innerText = "$" + qData.value;
+            // Parse category index from ID
+            const catIndex = parseInt(id.split('_')[0]);
+            document.getElementById('modal-category').innerText = categories[catIndex];
+            
+            // Scenario
+            const scenBox = document.getElementById('modal-scenario');
+            if(qData.s) {
+                scenBox.classList.remove('hidden');
+                scenBox.innerText = qData.s;
+            } else {
+                scenBox.classList.add('hidden');
+            }
+
+            document.getElementById('modal-question').innerText = qData.q;
+
+            // Options
+            const optContainer = document.getElementById('modal-options');
+            optContainer.innerHTML = '';
+            qData.o.forEach((optText, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "p-4 bg-gray-100 hover:bg-green-100 border-2 border-gray-200 hover:border-green-500 rounded-lg text-left transition font-semibold text-gray-700";
+                btn.innerText = optText;
+                btn.onclick = () => checkAnswer(idx);
+                optContainer.appendChild(btn);
+            });
+
+            // Reset Feedback UI
+            document.getElementById('modal-feedback').classList.add('hidden');
+            document.getElementById('modal-continue').classList.add('hidden');
+            document.getElementById('modal-options').classList.remove('hidden');
+
+            // Show Modal
+            document.getElementById('question-modal').classList.remove('hidden');
+        }
+
+        function checkAnswer(selectedIndex) {
+            const qData = currentBoardQuestions[currentQuestionId];
+            const isCorrect = (selectedIndex === qData.a);
+            
+            // Feedback UI
+            const feedback = document.getElementById('modal-feedback');
+            feedback.classList.remove('hidden');
+            
+            const optDiv = document.getElementById('modal-options');
+            
+            // Highlight Correct/Wrong
+            const buttons = optDiv.getElementsByTagName('button');
+            for(let i=0; i<buttons.length; i++) {
+                buttons[i].disabled = true;
+                if(i === qData.a) {
+                    buttons[i].classList.add('bg-green-500', 'text-white', 'border-green-600');
+                    buttons[i].classList.remove('bg-gray-100', 'text-gray-700');
+                } else if(i === selectedIndex && !isCorrect) {
+                    buttons[i].classList.add('bg-red-500', 'text-white', 'border-red-600');
+                    buttons[i].classList.remove('bg-gray-100', 'text-gray-700');
+                }
+            }
+
+            if(isCorrect) {
+                feedback.innerHTML = "CORRECT!";
+                feedback.className = "p-4 text-center text-white font-bold text-lg bg-green-600 rounded mb-4";
+                scores[currentPlayer] += qData.value;
+            } else {
+                feedback.innerHTML = "INCORRECT";
+                feedback.className = "p-4 text-center text-white font-bold text-lg bg-red-600 rounded mb-4";
+                // Optional: Deduct points? Jeopardy usually does, but school games often don't. 
+                // Let's keep it positive (no deduction) for this style unless specified.
+            }
+
+            // Update Scoreboard
+            document.getElementById('score-1').innerText = scores[0];
+            document.getElementById('score-2').innerText = scores[1];
+
+            document.getElementById('modal-continue').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('question-modal').classList.add('hidden');
+            
+            // Disable cell
+            const cell = document.getElementById(`cell-${currentQuestionId}`);
+            cell.classList.add('disabled');
+            cell.innerText = ""; // Clear value
+
+            answeredCount++;
+
+            // Switch Player
+            if(numPlayers === 2) {
+                currentPlayer = currentPlayer === 0 ? 1 : 0;
+                updateTurnIndicator();
+            }
+
+            // Check End of Round
+            if(answeredCount >= 30) {
+                if(currentRound < totalRounds) {
+                    document.getElementById('end-round-btn').classList.remove('hidden');
+                } else {
+                    document.getElementById('end-game-btn').classList.remove('hidden');
+                }
+            }
+        }
+
+        function nextRound() {
+            currentRound++;
+            initRound();
+        }
+
+        function finishGame() {
+            document.getElementById('game-screen').classList.add('hidden');
+            document.getElementById('end-screen').classList.remove('hidden');
+            document.getElementById('end-screen').classList.add('flex');
+
+            document.getElementById('final-score-1').innerText = scores[0];
+            
+            const banner = document.getElementById('winner-banner');
+
+            if(numPlayers === 1) {
+                banner.innerText = `Final Score: ${scores[0]}`;
+            } else {
+                document.getElementById('final-p2-container').classList.remove('hidden');
+                document.getElementById('final-score-2').innerText = scores[1];
+
+                if(scores[0] > scores[1]) {
+                    banner.innerText = "PLAYER 1 WINS!";
+                } else if (scores[1] > scores[0]) {
+                    banner.innerText = "PLAYER 2 WINS!";
+                } else {
+                    banner.innerText = "IT'S A TIE!";
+                }
+            }
+        }
+
+    </script>
+</body>
+</html>
