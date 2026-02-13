@@ -884,17 +884,26 @@
                     <h4 class="font-bold text-green-800 mb-2">Saskatchewan Connection: Fertilizer Burn</h4>
                     <p class="text-slate-700">Too much nitrogen fertilizer creates a hypertonic environment in the soil, drawing water <em>out</em> of plant roots via osmosis, "burning" the crop.</p>
                 </div>
+                
+                <!-- Digital Feature: Membrane Game -->
                 <div class="feature-box">
                     <h4 class="font-bold text-slate-800 mb-2 flex items-center gap-2">
                         <i data-lucide="gamepad-2" class="w-5 h-5 text-blue-600"></i>
                         Interactive Feature: Membrane Gatekeeper Game
                     </h4>
                     <span class="feature-tag tag-interactive">Game</span>
-                    <p class="text-sm text-slate-600">Arcade game: Select the correct transport method for incoming particles.</p>
-                    <div class="design-prompt">
-                        <strong>Code Prompt:</strong> An arcade-style game. You control a section of cell membrane. Particles approach (Oxygen, Sodium, Glucose, Water). Action: Select correct transport method (Diffusion, Active Pump, Channel). Fail State: Toxins enter or water balance lost.
+                    <p class="text-sm text-slate-600 mb-4">Play this arcade-style game to test your knowledge of membrane transport. Select the correct method to let particles pass safely!</p>
+                    <div class="w-full h-96 bg-black rounded-lg overflow-hidden border border-slate-300 shadow-sm relative">
+                        <iframe 
+                            class="absolute top-0 left-0 w-full h-full"
+                            src="https://scareysci.github.io/b30text/Unit2/Chapter2/game.html" 
+                            title="Membrane Gatekeeper Game" 
+                            frameborder="0" 
+                            allowfullscreen>
+                        </iframe>
                     </div>
                 </div>
+
                  <div class="note-taking">
                     <h4 class="font-bold text-yellow-800 mb-2 flex items-center gap-2">
                         <i data-lucide="pencil" class="w-4 h-4"></i> Note-Taking Prompts
