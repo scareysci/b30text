@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Membrane Defender | Cell Transport Arcade</title>
+    <style>
+        :root {
+            --bg-color: #0d1b2a;
+            --ui-color: #e0e1dd;
+            --accent-diffusion: #4cc9f0;
+            --accent-channel: #f72585;
+            --accent-pump: #fee440;
+            --font-family: 'Courier New', Courier, monospace;
+        }
+
+        /* Ensure padding doesn't affect width/height calculations globally */
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--ui-color);
+            font-family: var(--font-family);
+            overflow: hidden; /* Prevent scrolling on mobile */
+            touch-action: none; /* Prevent zoom/scroll gestures */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        #game-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px; /* Tablet/Desktop constraint */
+            height: 100%;
+            max-height: 900px;
+            background: linear-gradient(to bottom, #001219, #001824);
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Canvas Layer */
+        canvas {
+            display: block;
+            width: 100%;
+            flex-grow: 1;
+            /* Critical fix: allows canvas to shrink so buttons fit */
+            min-height: 0; 
+            z-index: 1;
+        }
+
+        /* UI Overlays */
+        .hud {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            font-size: 1.2rem;
+            z-index: 2;
+            text-shadow: 1px 1px 0 #000;
+            pointer-events: none;
+        }
+
+        .hud-stat {
+            background: rgba(0,0,0,0.5);
+            padding: 5px 10px;
+            border-radius: 4px;
+        }
+
+        #score-display { color: #fff; }
+        #health-display { color: #ff5555; }
+
+        /* Controls Area */
+        .controls {
+            display: flex;
+            justify-content: space-around;
+            padding: 15px 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-top: 2px solid rgba(255, 255, 255, 0.1);
+            height: 100px;
+            z-index: 2;
+            /* Critical fix: prevents controls from being squashed */
+            flex-shrink: 0; 
+        }
+
+        .btn {
+            flex: 1;
+            margin: 0 5px;
+            border: none;
+            border-radius: 8px;
+            color: #000;
+            font-weight: 900;
+            font-family: inherit;
+            font-size: 1rem;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: transform 0.1s, filter 0.1s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.3);
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .btn:active, .btn.active {
+            transform: translateY(4px);
+            box-shadow: 0 0 0 transparent;
+            filter: brightness(1.2);
+        }
+
+        /* Button Colors */
+        .btn-diffusion { background-color: var(--accent-diffusion); }
+        .btn-channel { background-color: var(--accent-channel); color: white; }
+        .btn-pump { background-color: var(--accent-pump); }
+
+        .key-hint {
+            font-size: 0.7rem;
+            opacity: 0.7;
+            margin-top: 4px;
+        }
+
+        /* Screens (Start/Game Over) */
+        .screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(13, 27, 42, 0.95);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .screen h1 {
+            font-size: 2.5rem;
+            color: var(--accent-diffusion);
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px var(--accent-diffusion);
+        }
+
+        .screen p {
+            margin: 10px 0;
+            max-width: 400px;
+            line-height: 1.5;
+        }
+
+        .start-btn {
+            margin-top: 30px;
+            padding: 15px 40px;
+            font-size: 1.5rem;
+            background: linear-gradient(45deg, var(--accent-channel), #ff5c8a);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 0 20px var(--accent-channel);
+            animation: pulse 1.5s infinite;
+        }
+
+        .legend {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            text-align: left;
+            margin-top: 20px;
+            font-size: 0.9rem;
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .legend-item { display: flex; align-items: center; gap: 10px; }
+        .dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .hidden { display: none !important; }
+
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <!-- Heads Up Display -->
+    <div class="hud">
+        <div class="hud-stat">INTEGRITY: <span id="health-display">100%</span></div>
+        <div class="hud-stat">SCORE: <span id="score-display">0</span></div>
+    </div>
+
+    <!-- Game Canvas -->
+    <canvas id="gameCanvas"></canvas>
+
+    <!-- Controls -->
+    <div class="controls">
+        <button class="btn btn-diffusion" id="btn-diffusion" ontouchstart="handleInput('diffusion')" onmousedown="handleInput('diffusion')">
+            Diffusion
+            <span class="key-hint">(Q / 1)</span>
+        </button>
+        <button class="btn btn-channel" id="btn-channel" ontouchstart="handleInput('channel')" onmousedown="handleInput('channel')">
+            Channel
+            <span class="key-hint">(W / 2)</span>
+        </button>
+        <button class="btn btn-pump" id="btn-pump" ontouchstart="handleInput('pump')" onmousedown="handleInput('pump')">
+            Active Pump
+            <span class="key-hint">(E / 3)</span>
+        </button>
+    </div>
+
+    <!-- Start Screen -->
+    <div id="start-screen" class="screen">
+        <h1>MEMBRANE DEFENDER</h1>
+        <p>You are the Gatekeeper of the Cell.</p>
+        <p>Allow nutrients in. Keep toxins out.</p>
+        
+        <div class="legend">
+            <div class="legend-item"><span class="dot" style="background:#4cc9f0"></span> Oxygen &rarr; Diffusion</div>
+            <div class="legend-item"><span class="dot" style="background:#f72585"></span> Glucose &rarr; Channel</div>
+            <div class="legend-item"><span class="dot" style="background:#fee440"></span> Sodium &rarr; Active Pump</div>
+            <div class="legend-item"><span class="dot" style="background:#38b000; clip-path: polygon(50% 0%, 0% 100%, 100% 100%);"></span> Toxin &rarr; DO NOTHING</div>
+        </div>
+
+        <button class="start-btn" onclick="startGame()">START GAME</button>
+    </div>
+
+    <!-- Game Over Screen -->
+    <div id="game-over-screen" class="screen hidden">
+        <h1>MEMBRANE RUPTURED</h1>
+        <p>The cell has reached equilibrium with the environment... in a bad way.</p>
+        <h2 id="final-score">Score: 0</h2>
+        <button class="start-btn" onclick="resetGame()">TRY AGAIN</button>
+    </div>
+</div>
+
+<script>
+    /** * CELL MEMBRANE ARCADE 
+     * Core Logic: Rhythm game style. Particles fall to a target line.
+     */
+
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Game State
+    let isPlaying = false;
+    let score = 0;
+    let health = 100;
+    let frameCount = 0;
+    let particles = [];
+    let gameSpeed = 2;
+    let spawnRate = 100; // Frames between spawns
+    
+    // Dimensions
+    let width, height;
+    let membraneY; // Y position of the "Active Zone"
+
+    // Feedback Visuals
+    let feedback = { text: "", color: "", timer: 0, x: 0, y: 0 };
+    let activeZonePulse = 0;
+
+    // Particle Types
+    const TYPES = {
+        OXYGEN:   { id: 'oxygen',   color: '#4cc9f0', label: 'O2',  method: 'diffusion', shape: 'circle' },
+        GLUCOSE:  { id: 'glucose',  color: '#f72585', label: 'C6',  method: 'channel',   shape: 'hex' },
+        WATER:    { id: 'water',    color: '#b5179e', label: 'H2O', method: 'channel',   shape: 'circle' },
+        SODIUM:   { id: 'sodium',   color: '#fee440', label: 'Na+', method: 'pump',      shape: 'square' },
+        TOXIN:    { id: 'toxin',    color: '#38b000', label: '☠️',  method: 'avoid',     shape: 'spike' }
+    };
+
+    // Resize Handler
+    function resize() {
+        // Fix: Use the canvas's actual client dimensions (set by CSS flexbox)
+        // instead of the container's full height.
+        canvas.width = canvas.clientWidth;
+        canvas.height = canvas.clientHeight;
+        
+        width = canvas.width;
+        height = canvas.height;
+        membraneY = height - 80; // Zone is near bottom
+    }
+    window.addEventListener('resize', resize);
+    
+    // Call resize after a brief delay to ensure DOM is ready
+    setTimeout(resize, 10);
+
+    // --- Input Handling ---
+    document.addEventListener('keydown', (e) => {
+        if (!isPlaying) return;
+        const key = e.key.toLowerCase();
+        
+        // Remove active class from all first
+        clearBtnActive();
+
+        if (key === 'q' || key === '1') handleInput('diffusion');
+        if (key === 'w' || key === '2') handleInput('channel');
+        if (key === 'e' || key === '3') handleInput('pump');
+    });
+
+    document.addEventListener('keyup', () => {
+        setTimeout(clearBtnActive, 150); // Visual feedback delay
+    });
+
+    function clearBtnActive() {
+        document.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+    }
+
+    function handleInput(method) {
+        if (!isPlaying) return;
+
+        // Visual button press
+        document.getElementById(`btn-${method}`).classList.add('active');
+        setTimeout(() => document.getElementById(`btn-${method}`).classList.remove('active'), 100);
+
+        checkCollision(method);
+    }
+
+    // --- Game Logic ---
+
+    class Particle {
+        constructor() {
+            // Pick random type
+            const rand = Math.random();
+            if (rand < 0.25) this.type = TYPES.OXYGEN;
+            else if (rand < 0.5) this.type = TYPES.GLUCOSE;
+            else if (rand < 0.65) this.type = TYPES.WATER; // Less frequent
+            else if (rand < 0.85) this.type = TYPES.SODIUM;
+            else this.type = TYPES.TOXIN;
+
+            this.x = width / 2; // Center spawn
+            this.y = -30;
+            this.r = 20; // Radius
+            this.speed = gameSpeed + (Math.random() * 0.5);
+            this.active = true;
+            this.wobble = Math.random() * Math.PI * 2;
+        }
+
+        update() {
+            this.y += this.speed;
+            // Slight sine wave movement for fluid feel
+            this.x += Math.sin(this.y * 0.02 + this.wobble) * 0.5;
+        }
+
+        draw() {
+            ctx.save();
+            ctx.translate(this.x, this.y);
+            
+            // Draw shape based on type
+            ctx.fillStyle = this.type.color;
+            ctx.shadowColor = this.type.color;
+            ctx.shadowBlur = 10;
+
+            if (this.type.shape === 'circle') {
+                ctx.beginPath();
+                ctx.arc(0, 0, this.r, 0, Math.PI * 2);
+                ctx.fill();
+            } else if (this.type.shape === 'square') {
+                ctx.fillRect(-this.r, -this.r, this.r*2, this.r*2);
+            } else if (this.type.shape === 'hex') {
+                ctx.beginPath();
+                for (let i = 0; i < 6; i++) {
+                    ctx.lineTo(this.r * Math.cos(i * Math.PI / 3), this.r * Math.sin(i * Math.PI / 3));
+                }
+                ctx.fill();
+            } else if (this.type.shape === 'spike') {
+                ctx.beginPath();
+                for (let i = 0; i < 5; i++) { // Star shape
+                    ctx.lineTo(Math.cos((18 + i * 72) * Math.PI / 180) * this.r,
+                                -Math.sin((18 + i * 72) * Math.PI / 180) * this.r);
+                    ctx.lineTo(Math.cos((54 + i * 72) * Math.PI / 180) * (this.r/2),
+                                -Math.sin((54 + i * 72) * Math.PI / 180) * (this.r/2));
+                }
+                ctx.fill();
+            }
+
+            // Text Label
+            ctx.fillStyle = '#000';
+            ctx.shadowBlur = 0;
+            ctx.font = 'bold 12px Courier New';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(this.type.label, 0, 0);
+
+            ctx.restore();
+        }
+    }
+
+    function spawnParticle() {
+        particles.push(new Particle());
+    }
+
+    function checkCollision(inputMethod) {
+        // Find particles in the "Active Zone" (membraneY +/- tolerance)
+        const hitZoneTop = membraneY - 40;
+        const hitZoneBottom = membraneY + 40;
+
+        let hit = false;
+
+        // Check closest particle first
+        for (let i = 0; i < particles.length; i++) {
+            let p = particles[i];
+            
+            // Check if particle is in zone
+            if (p.active && p.y > hitZoneTop && p.y < hitZoneBottom) {
+                
+                // Logic:
+                // 1. If Toxin: Any interaction is BAD.
+                // 2. If Nutrient: Method must MATCH.
+                
+                if (p.type.id === 'toxin') {
+                    // Played a card on a toxin -> Bad
+                    triggerFeedback("TOXIN ENTERED!", "#ff0000", p.x, p.y);
+                    damage(15);
+                    p.active = false;
+                    hit = true;
+                } else {
+                    if (inputMethod === p.type.method) {
+                        // Correct!
+                        triggerFeedback("ACCEPTED", "#00ff00", p.x, p.y);
+                        addScore(100);
+                        p.active = false;
+                        hit = true;
+                    } else {
+                        // Wrong method
+                        triggerFeedback("WRONG METHOD", "#ffaa00", p.x, p.y);
+                        damage(5);
+                        p.active = false; // Destroyed but failed
+                        hit = true;
+                    }
+                }
+                break; // Only handle one particle per keypress to prevent spamming
+            }
+        }
+
+        if (!hit) {
+            // Misfire penalty (prevent button mashing)
+            score = Math.max(0, score - 5);
+            updateUI();
+        }
+    }
+
+    function update() {
+        if (!isPlaying) return;
+
+        // Clear Canvas
+        ctx.clearRect(0, 0, width, height);
+
+        // Draw Membrane/Active Zone
+        drawMembrane();
+
+        // Spawn Logic
+        frameCount++;
+        if (frameCount % spawnRate === 0) {
+            spawnParticle();
+            // Increase difficulty over time
+            if (spawnRate > 40) spawnRate -= 1; 
+            if (gameSpeed < 5) gameSpeed += 0.05;
+        }
+
+        // Update Particles
+        for (let i = particles.length - 1; i >= 0; i--) {
+            let p = particles[i];
+            p.update();
+            p.draw();
+
+            // Screen bottom cleanup
+            if (p.y > height + 20) {
+                // If it was a Toxin, passing is GOOD.
+                // If it was a Nutrient, passing is BAD (Missed).
+                if (p.active) {
+                    if (p.type.id !== 'toxin') {
+                        damage(10); // Missed nutrient
+                        triggerFeedback("MISSED!", "#ff5555", p.x, height-50);
+                    } else {
+                        score += 20; // Successfully avoided toxin
+                    }
+                }
+                particles.splice(i, 1);
+            }
+        }
+
+        // Draw Feedback text
+        drawFeedback();
+
+        // Loop
+        requestAnimationFrame(update);
+    }
+
+    function drawMembrane() {
+        // Draw the line
+        ctx.strokeStyle = `rgba(255, 255, 255, ${0.3 + Math.sin(Date.now()/200)*0.1})`;
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.moveTo(0, membraneY);
+        ctx.lineTo(width, membraneY);
+        ctx.stroke();
+
+        // Draw "Heads" of phospholipid bilayer
+        const headRadius = 8;
+        const spacing = 20;
+        ctx.fillStyle = "#888";
+        for (let x = 0; x < width + spacing; x += spacing) {
+            // Top layer
+            ctx.beginPath();
+            ctx.arc(x, membraneY - 10, headRadius, 0, Math.PI*2);
+            ctx.fill();
+            // Bottom layer
+            ctx.beginPath();
+            ctx.arc(x, membraneY + 10, headRadius, 0, Math.PI*2);
+            ctx.fill();
+        }
+
+        // Active Zone Indicator (Center)
+        ctx.fillStyle = "rgba(255, 255, 255, 0.1)";
+        ctx.fillRect(0, membraneY - 40, width, 80);
+        
+        ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
+        ctx.font = "14px Courier New";
+        ctx.textAlign = "right";
+        ctx.fillText("MEMBRANE SURFACE", width - 10, membraneY - 50);
+    }
+
+    function triggerFeedback(text, color, x, y) {
+        feedback = { text: text, color: color, timer: 30, x: x, y: y };
+    }
+
+    function drawFeedback() {
+        if (feedback.timer > 0) {
+            ctx.fillStyle = feedback.color;
+            ctx.font = "bold 20px Courier New";
+            ctx.textAlign = "center";
+            ctx.fillText(feedback.text, feedback.x, feedback.y);
+            feedback.y -= 1; // Float up
+            feedback.timer--;
+        }
+    }
+
+    function damage(amount) {
+        health -= amount;
+        if (health <= 0) {
+            health = 0;
+            gameOver();
+        }
+        
+        // Shake effect on canvas
+        const container = document.getElementById('game-container');
+        container.style.transform = `translate(${Math.random()*10-5}px, ${Math.random()*10-5}px)`;
+        setTimeout(() => container.style.transform = 'none', 100);
+        
+        updateUI();
+    }
+
+    function addScore(amount) {
+        score += amount;
+        updateUI();
+    }
+
+    function updateUI() {
+        document.getElementById('score-display').innerText = score;
+        document.getElementById('health-display').innerText = Math.floor(health) + "%";
+        
+        // Change health color if low
+        if(health < 30) document.getElementById('health-display').style.color = 'red';
+        else document.getElementById('health-display').style.color = '#ff5555';
+    }
+
+    // --- State Management ---
+
+    function startGame() {
+        document.getElementById('start-screen').classList.add('hidden');
+        document.getElementById('game-over-screen').classList.add('hidden');
+        
+        // Reset Variables
+        score = 0;
+        health = 100;
+        gameSpeed = 2;
+        spawnRate = 100;
+        frameCount = 0;
+        particles = [];
+        isPlaying = true;
+        
+        updateUI();
+        resize(); // Ensure canvas is correct size
+        update(); // Start loop
+    }
+
+    function gameOver() {
+        isPlaying = false;
+        document.getElementById('game-over-screen').classList.remove('hidden');
+        document.getElementById('final-score').innerText = "Final Score: " + score;
+    }
+
+    function resetGame() {
+        startGame();
+    }
+
+    // Initial Resize
+    window.onload = function() {
+        resize();
+    }
+
+</script>
+</body>
+</html>
