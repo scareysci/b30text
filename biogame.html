@@ -326,7 +326,7 @@ const LEVELS = [
         introText: "<p><strong>Structure:</strong> Proteins start as a linear sequence of amino acids (Primary structure). But to do their job, they must fold into complex 3D shapes (Tertiary structure) based on the chemistry of their side chains.</p><br><p><strong>Function:</strong> A protein's shape dictates its exact function. Enzymes have precise 'active sites' to catch molecules. If a protein loses its shape (denatures), it is completely useless!</p>",
         dialogue: "Link Amino Acids via peptide bonds to form the primary structure. Then, we will fold it!",
         secondaryTitle: "Secondary Structure",
-        secondaryText: "<p>The chain begins to coil and fold due to <strong>Hydrogen Bonds</strong> forming along the backbone.</p><br><p>This creates shapes like the <strong>Alpha Helix</strong> (which you just saw) or the Beta Pleated Sheet.</p>",
+        secondaryText: "<p>The chain begins to fold back on itself due to <strong>Hydrogen Bonds</strong> forming along the backbone.</p><br><p>This creates a zig-zag pattern called a <strong>Beta Pleated Sheet</strong> (which you just saw), or sometimes a coiled Alpha Helix.</p>",
         tertiaryTitle: "Tertiary Structure",
         tertiaryText: "<p>The 3D shape is locked in! This final, functional shape is formed by the interactions of the amino acid side chains (R-groups).</p>",
         denatureTitle: "Denaturation (Heat)",
@@ -470,14 +470,20 @@ function triggerFolding() {
     centerControls.classList.remove('hidden');
     btnAction1.classList.remove('hidden');
     btnAction2.classList.add('hidden'); // Hide the tertiary button for now
-    btnAction1.innerText = "Form Alpha Helix";
+    btnAction1.innerText = "Form Beta Sheet";
     
     btnAction1.onclick = () => {
         isAnimating = true; centerControls.classList.add('hidden');
-        dialogueText.innerText = "Hydrogen bonds forming Alpha Helix...";
+        dialogueText.innerText = "Hydrogen bonds forming Beta Pleated Sheet...";
         monomers.forEach((m, index) => {
-            m.tx = width/2 + Math.cos(index * 0.8) * 50 + (index * 15) - 100;
-            m.ty = height/2 + Math.sin(index * 0.8) * 50;
+            // Beta Pleated Sheet Math: Snake back and forth in rows with a zig-zag pleat
+            let row = Math.floor(index / 5);
+            let col = index % 5;
+            let xPos = (row % 2 === 0) ? col : (4 - col); // Alternate direction per row
+            let zigZag = (index % 2 === 0) ? -15 : 15;   // The "pleat" up and down
+            
+            m.tx = (width / 2) - 100 + (xPos * 50);
+            m.ty = (height / 2) - 60 + (row * 60) + zigZag;
         });
         setTimeout(() => {
             isAnimating = false;
@@ -781,7 +787,8 @@ function draw() {
     ctx.fillStyle = '#0f172a';
     ctx.fillRect(0, 0, width, height);
 
-    if (gameMode === 'LEARN_PLAY' || gameMode === 'LEARN_INFO') {
+    // FIX: Added 'LEARN_TRANSITION' to ensure it keeps drawing while waiting for the folding button!
+    if (gameMode === 'LEARN_PLAY' || gameMode === 'LEARN_INFO' || gameMode === 'LEARN_TRANSITION') {
         // Draw Bonds
         ctx.lineWidth = 4;
         for (let b of bonds) {
