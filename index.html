@@ -156,14 +156,23 @@
                     </div>
                 </div>
                 <div class="p-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                    <!-- Chapter 2 (Updated Link) -->
-                    <a href="https://scareysci.github.io/b30text/Unit2/Chapter2/index.html" class="flex flex-col p-4 bg-white border-2 border-blue-500 rounded-lg hover:bg-blue-50 transition-colors group">
-                        <span class="text-xs font-bold text-blue-600 uppercase tracking-wide mb-1">Chapter 2</span>
-                        <h3 class="font-bold text-slate-900 mb-2 group-hover:text-blue-800">Cell Structure and Processes</h3>
-                        <div class="mt-auto flex items-center text-sm font-semibold text-blue-600">
-                            Read Chapter <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i>
-                        </div>
-                    </a>
+                    
+                    <!-- Chapter 2 Group -->
+                    <div class="flex flex-col gap-2">
+                        <!-- Chapter 2 Main Link -->
+                        <a href="https://scareysci.github.io/b30text/Unit2/Chapter2/index.html" class="flex flex-col h-full p-4 bg-white border-2 border-blue-500 rounded-lg hover:bg-blue-50 transition-colors group">
+                            <span class="text-xs font-bold text-blue-600 uppercase tracking-wide mb-1">Chapter 2</span>
+                            <h3 class="font-bold text-slate-900 mb-2 group-hover:text-blue-800">Cell Structure and Processes</h3>
+                            <div class="mt-auto flex items-center text-sm font-semibold text-blue-600">
+                                Read Chapter <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i>
+                            </div>
+                        </a>
+                        
+                        <!-- Bio Game Button -->
+                        <a href="https://scareysci.github.io/b30text/biogame.html" class="block w-full py-2 px-4 bg-blue-50 border border-blue-300 rounded-lg text-center text-blue-700 font-bold hover:bg-blue-100 transition-colors text-sm">
+                            Bio Game
+                        </a>
+                    </div>
                     
                     <!-- Chapter 3 -->
                     <div class="flex flex-col p-4 bg-slate-50 border border-slate-200 rounded-lg opacity-75">
@@ -273,8 +282,6 @@
         // --- SEARCH FUNCTIONALITY ---
         
         // 1. define the content to search. 
-        // Note: To search files in subfolders on a static site, you must manually list them here 
-        // or generate a JSON index file. This list mirrors the links currently available.
         const searchIndex = [
             {
                 title: "Chapter 1: The Changing Scientific Understandings of Life",
@@ -289,9 +296,15 @@
                 keywords: "cell, structure, processes, organelles, membrane"
             },
             {
+                title: "Bio Game",
+                unit: "Unit 2: The Organization of Life",
+                url: "https://scareysci.github.io/b30text/biogame.html",
+                keywords: "game, biology, cell game, study tool"
+            },
+            {
                 title: "Chapter 3: Biological Classification",
                 unit: "Unit 2: The Organization of Life",
-                url: "#", // Add URL when available
+                url: "#", 
                 keywords: "taxonomy, classification, species, kingdom"
             },
             {
@@ -338,21 +351,18 @@
         searchInput.addEventListener('input', (e) => {
             const query = e.target.value.toLowerCase();
             
-            // Clear results if empty
             if (query.length === 0) {
                 searchResults.classList.add('hidden');
                 searchResults.innerHTML = '';
                 return;
             }
 
-            // Filter the index
             const results = searchIndex.filter(item => 
                 item.title.toLowerCase().includes(query) || 
                 item.unit.toLowerCase().includes(query) ||
                 item.keywords.toLowerCase().includes(query)
             );
 
-            // Display results
             if (results.length > 0) {
                 searchResults.innerHTML = results.map(item => `
                     <a href="${item.url}" class="block p-4 hover:bg-slate-50 transition-colors">
@@ -372,7 +382,6 @@
             }
         });
 
-        // Close search when clicking outside
         document.addEventListener('click', (e) => {
             if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
                 searchResults.classList.add('hidden');
