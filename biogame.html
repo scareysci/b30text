@@ -438,7 +438,8 @@ function handleLearnClick(mx, my) {
                 spawnParticles(bx, height/2, "H₂O Lost!", "#3b82f6", 15);
             }
 
-            if (currentLevelData.linked >= currentLevelData.target) {
+            if (currentLevelData.linked === currentLevelData.target) {
+                gameMode = 'LEARN_TRANSITION'; // Prevent extra clicks from queuing up level skips
                 if (type === 'protein_build') {
                     // Trigger protein folding sequence before finishing
                     setTimeout(triggerFolding, 1000);
@@ -456,7 +457,8 @@ function handleLearnClick(mx, my) {
             bonds.push({ m1: targetBase, m2: clicked, type: 'branch' });
             spawnParticles(clicked.tx, clicked.ty + 30, "H₂O Lost!", "#3b82f6", 15);
 
-            if (currentLevelData.linked >= currentLevelData.target) {
+            if (currentLevelData.linked === currentLevelData.target) {
+                gameMode = 'LEARN_TRANSITION'; // Prevent extra clicks from queuing up level skips
                 setTimeout(() => showInfoModal(LEVELS[gameState].outroTitle, LEVELS[gameState].outroText, false), 1500);
             }
         }
@@ -642,7 +644,28 @@ function updateArcade() {
             
             if (Math.hypot(b.x - bx, b.y - by) < 30) {
                 bond.broken = true; hit = true;
-                bond.m1.vx = -2; bond.m2.vx = 2; // push apart
+                
+                // FIX: Push the entire sub-chains apart so they don't stretch unnaturally!
+                const pushChain = (startM, vx) => {
+                    let visited = new Set();
+                    let q = [startM];
+                    while(q.length > 0) {
+                        let curr = q.pop();
+                        if(!visited.has(curr)) {
+                            visited.add(curr);
+                            curr.vx = vx;
+                            bonds.forEach(bo => {
+                                if(!bo.broken) {
+                                    if(bo.m1 === curr) q.push(bo.m2);
+                                    if(bo.m2 === curr) q.push(bo.m1);
+                                }
+                            });
+                        }
+                    }
+                };
+                
+                pushChain(bond.m1, -1.5);
+                pushChain(bond.m2, 1.5);
                 
                 // Check if monomers are now completely free
                 let m1Links = bonds.filter(bo => !bo.broken && (bo.m1===bond.m1 || bo.m2===bond.m1)).length;
@@ -666,6 +689,35 @@ function updateArcade() {
         spawnArcadeEnemy();
         // Starts with a long delay (160 frames) and gets faster (caps at 30 frames)
         spawnTimer = 160 - Math.min(130, (arcadeScore / 5)); 
+    }
+
+    // Handle wall bouncing for connected chains to keep them on screen
+    let visitedGroup = new Set();
+    for (let m of monomers) {
+        if (visitedGroup.has(m)) continue;
+        
+        // Group all connected monomers together
+        let chain = [];
+        let q = [m];
+        while (q.length > 0) {
+            let curr = q.pop();
+            if (!visitedGroup.has(curr)) {
+                visitedGroup.add(curr);
+                chain.push(curr);
+                bonds.forEach(bo => {
+                    if (!bo.broken) {
+                        if (bo.m1 === curr) q.push(bo.m2);
+                        if (bo.m2 === curr) q.push(bo.m1);
+                    }
+                });
+            }
+        }
+        
+        // If any part of the chain hits the left or right edge, reverse the horizontal velocity for the whole chain
+        let hitWall = chain.some(c => (c.x <= c.radius && c.vx < 0) || (c.x >= width - c.radius && c.vx > 0));
+        if (hitWall) {
+            chain.forEach(c => c.vx *= -1);
+        }
     }
 
     for (let i = monomers.length - 1; i >= 0; i--) {
