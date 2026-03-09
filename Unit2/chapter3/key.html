@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saskatchewan Conifer Identifier - Digital Dichotomous Key</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Three.js for 3D generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700;1,400&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        forest: {
+                            100: '#e6f0e9',
+                            200: '#c2dcd6',
+                            800: '#2c4c3b',
+                            900: '#1a3326',
+                        },
+                        wood: {
+                            100: '#f4f1ea',
+                            800: '#5c4033',
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['Merriweather', 'serif'],
+                        sans: ['Open Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #f4f1ea; color: #1a3326; }
+        #canvas-container { cursor: grab; }
+        #canvas-container:active { cursor: grabbing; }
+        .fade-in { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .btn-option {
+            transition: all 0.2s;
+        }
+        .btn-option:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        /* Custom Scrollbar for info panel */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #e6f0e9; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb { background: #2c4c3b; border-radius: 4px; }
+    </style>
+</head>
+<body class="h-screen flex flex-col font-sans overflow-hidden">
+
+    <!-- Header -->
+    <header class="bg-forest-900 text-wood-100 p-4 shadow-md z-10">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-serif font-bold tracking-wide">Saskatchewan Conifer Identifier</h1>
+                <p class="text-sm opacity-80 italic">Digital Dichotomous Key & 3D Specimen Viewer</p>
+            </div>
+            <div class="hidden md:flex items-center space-x-2 text-sm bg-forest-800 px-3 py-1 rounded-full">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <span>Drag to rotate, scroll to zoom</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col md:flex-row w-full max-w-7xl mx-auto overflow-hidden">
+        
+        <!-- Left Column: 3D Viewer -->
+        <section class="flex-1 relative bg-gradient-to-b from-gray-800 to-gray-900 shadow-inner flex flex-col h-1/2 md:h-full">
+            
+            <!-- Specimen Selector Tabs -->
+            <div class="absolute top-4 left-0 right-0 flex justify-center space-x-4 z-10 px-4">
+                <button onclick="selectSpecimen('A')" id="tab-A" class="specimen-tab px-4 py-2 bg-white text-forest-900 font-bold rounded shadow hover:bg-forest-100 transition border-2 border-transparent focus:outline-none">Specimen A</button>
+                <button onclick="selectSpecimen('B')" id="tab-B" class="specimen-tab px-4 py-2 bg-white text-forest-900 font-bold rounded shadow hover:bg-forest-100 transition border-2 border-transparent focus:outline-none">Specimen B</button>
+                <button onclick="selectSpecimen('C')" id="tab-C" class="specimen-tab px-4 py-2 bg-white text-forest-900 font-bold rounded shadow hover:bg-forest-100 transition border-2 border-transparent focus:outline-none">Specimen C</button>
+            </div>
+
+            <!-- Canvas Container -->
+            <div id="canvas-container" class="w-full h-full outline-none" tabindex="0"></div>
+
+            <!-- Loading Overlay -->
+            <div id="loading-overlay" class="absolute inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-20 pointer-events-none transition-opacity duration-300">
+                <div class="text-white text-lg font-serif animate-pulse">Generating 3D Biological Model...</div>
+            </div>
+            
+            <!-- Floating ID Badge (Hidden initially) -->
+            <div id="id-badge" class="absolute bottom-6 left-6 right-6 md:right-auto bg-white/95 backdrop-blur p-4 rounded-lg shadow-xl border-l-4 border-forest-800 hidden fade-in max-w-sm">
+                <h3 class="font-serif font-bold text-lg text-forest-900" id="badge-name">Common Name</h3>
+                <p class="text-sm italic text-gray-600 mb-2" id="badge-sci">Scientific Name</p>
+                <p class="text-sm text-gray-800" id="badge-desc">Description goes here.</p>
+            </div>
+        </section>
+
+        <!-- Right Column: Dichotomous Key Interface -->
+        <section class="w-full md:w-1/3 lg:w-2/5 bg-wood-100 p-6 md:p-8 flex flex-col border-l border-gray-300 shadow-xl z-10 h-1/2 md:h-full overflow-y-auto">
+            
+            <div class="mb-6 pb-4 border-b border-gray-300">
+                <h2 class="text-xl font-serif font-bold text-forest-900 flex items-center">
+                    <svg class="w-6 h-6 mr-2 text-forest-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                    Field Biologist Log
+                </h2>
+                <p class="text-sm mt-2 text-gray-700 leading-relaxed">Examine the 3D model carefully. Look closely at how the needles are attached to the twig and note the shape of the cones. Answer the questions below to identify the species.</p>
+            </div>
+
+            <!-- Question Container -->
+            <div id="key-container" class="flex-1 flex flex-col justify-center min-h-[300px]">
+                <div id="instruction-panel" class="text-center text-gray-500 italic">
+                    Select a specimen from the tabs on the left to begin identification.
+                </div>
+                
+                <div id="question-panel" class="hidden fade-in">
+                    <div class="bg-forest-100 text-forest-900 text-sm font-bold uppercase tracking-wider px-3 py-1 inline-block rounded-full mb-3 shadow-sm border border-forest-200" id="q-step">Step 1</div>
+                    <h3 class="text-lg font-bold text-gray-900 mb-4 leading-snug" id="q-text">Question Text?</h3>
+                    
+                    <div class="space-y-3" id="q-options">
+                        <!-- Options generated here -->
+                    </div>
+                </div>
+
+                <!-- Feedback Message -->
+                <div id="feedback-panel" class="hidden mt-6 p-4 rounded bg-red-50 text-red-800 border-l-4 border-red-500 fade-in text-sm font-medium">
+                    Incorrect. Take a closer look at the 3D model!
+                </div>
+            </div>
+
+            <!-- Reset Button -->
+            <div class="mt-6 pt-4 border-t border-gray-300 text-center">
+                <button onclick="resetKey()" class="text-sm text-forest-800 hover:text-forest-900 underline font-semibold transition">Reset Key</button>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        /**
+         * APPLICATION STATE & DATA
+         */
+        const speciesData = {
+            'A': { id: 'jackPine', name: 'Jack Pine', sci: 'Pinus banksiana', trait: 'bundles of 2', desc: 'Needles are in bundles of 2, short, stout, and twisted. Cones are asymmetrical, curved, and point forward along the branch.' },
+            'B': { id: 'blackSpruce', name: 'Black Spruce', sci: 'Picea mariana', trait: 'attached singly', desc: 'Needles are attached singly, short, stiff, and four-sided (can be rolled between fingers). Small, egg-shaped cones often cluster at the top.' },
+            'C': { id: 'tamarack', name: 'Tamarack', sci: 'Larix laricina', trait: 'large clusters', desc: 'Needles are in large clusters (10-20+) on short woody pegs. They are soft and flexible. It is a deciduous conifer, losing needles in winter. Cones are very small and upright.' }
+        };
+
+        const keyLogic = {
+            start: {
+                step: 'Step 1: Arrangement',
+                text: 'Rotate and zoom to examine the needle arrangement on the twig. How are the needles attached?',
+                options: [
+                    { text: 'A) Needles are attached individually (singly) directly to the twig.', next: 'spruce_check', correctFor: ['B'] },
+                    { text: 'B) Needles are attached in groups, bundles, or clusters.', next: 'q2', correctFor: ['A', 'C'] }
+                ]
+            },
+            q2: {
+                step: 'Step 2: Cluster Size',
+                text: 'You noted the needles are grouped. Look closely at the size of these groups. Are they in small pairs or large clusters?',
+                options: [
+                    { text: 'A) Needles are in small bundles of exactly 2, appearing stout and slightly twisted.', next: 'pine_check', correctFor: ['A'] },
+                    { text: 'B) Needles are in large clusters of 10 to 20+, radiating from short, thick woody pegs.', next: 'tamarack_check', correctFor: ['C'] }
+                ]
+            }
+        };
+
+        let currentSpecimen = null;
+        let currentStep = 'start';
+        let isIdentified = false;
+
+        /**
+         * THREE.JS SETUP & PROCEDURAL GENERATION
+         */
+        let scene, camera, renderer, controls;
+        let currentModel = null;
+        let animationId;
+
+        function initThreeJS() {
+            const container = document.getElementById('canvas-container');
+            
+            scene = new THREE.Scene();
+            scene.background = null; // transparent to show CSS gradient
+            
+            // Camera
+            camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
+            camera.position.set(0, 0, 15);
+            
+            // Renderer
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            // Shadow map enabled for depth
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            container.appendChild(renderer.domElement);
+            
+            // Controls
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.minDistance = 3;
+            controls.maxDistance = 25;
+            controls.autoRotate = true;
+            controls.autoRotateSpeed = 1.5;
+
+            // Stop auto-rotate on interaction
+            controls.addEventListener('start', () => { controls.autoRotate = false; });
+            
+            // Lighting
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            scene.add(ambientLight);
+            
+            const dirLight = new THREE.DirectionalLight(0xfffae6, 0.8);
+            dirLight.position.set(10, 15, 10);
+            dirLight.castShadow = true;
+            dirLight.shadow.mapSize.width = 1024;
+            dirLight.shadow.mapSize.height = 1024;
+            scene.add(dirLight);
+
+            const fillLight = new THREE.DirectionalLight(0xaaccff, 0.3);
+            fillLight.position.set(-10, -10, -10);
+            scene.add(fillLight);
+            
+            // Handle Resize
+            window.addEventListener('resize', onWindowResize, false);
+            
+            animate();
+        }
+
+        function onWindowResize() {
+            const container = document.getElementById('canvas-container');
+            camera.aspect = container.clientWidth / container.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(container.clientWidth, container.clientHeight);
+        }
+
+        function animate() {
+            animationId = requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        // --- PROCEDURAL BIOLOGICAL MODELS ---
+
+        // Material Presets
+        const woodMat = new THREE.MeshStandardMaterial({ color: 0x4a3b2c, roughness: 0.9, bumpScale: 0.02 });
+        const pineNeedleMat = new THREE.MeshStandardMaterial({ color: 0x2d4c1e, roughness: 0.7 });
+        const spruceNeedleMat = new THREE.MeshStandardMaterial({ color: 0x1a4533, roughness: 0.8 }); // darker, bluish
+        const tamarackNeedleMat = new THREE.MeshStandardMaterial({ color: 0x5c8a3f, roughness: 0.6 }); // lighter, softer
+        const coneMat = new THREE.MeshStandardMaterial({ color: 0x3d2817, roughness: 1.0 });
+
+        function clearModel() {
+            if (currentModel) {
+                scene.remove(currentModel);
+                // Basic cleanup
+                currentModel.traverse((child) => {
+                    if (child.isMesh) {
+                        child.geometry.dispose();
+                    }
+                });
+                currentModel = null;
+            }
+        }
+
+        function buildJackPine() {
+            const group = new THREE.Group();
+            
+            // Main Twig
+            const twigGeo = new THREE.CylinderGeometry(0.2, 0.25, 12, 8);
+            const twig = new THREE.Mesh(twigGeo, woodMat);
+            twig.castShadow = true;
+            twig.receiveShadow = true;
+            group.add(twig);
+
+            // Needles: Bundles of 2, slightly twisted
+            const needleGeo = new THREE.CylinderGeometry(0.04, 0.04, 3, 5);
+            needleGeo.translate(0, 1.5, 0); // Pivot at base
+
+            for (let i = 0; i < 60; i++) {
+                const bundle = new THREE.Group();
+                const yPos = (Math.random() - 0.5) * 10;
+                const angle = Math.random() * Math.PI * 2;
+                
+                bundle.position.set(Math.cos(angle)*0.22, yPos, Math.sin(angle)*0.22);
+                bundle.rotation.y = angle;
+                bundle.rotation.x = Math.PI/2 - 0.3; // Angle outward
+
+                // Needle 1
+                const n1 = new THREE.Mesh(needleGeo, pineNeedleMat);
+                n1.rotation.z = 0.15; // Spread
+                n1.rotation.y = 0.2; // Twist
+                n1.castShadow = true;
+                
+                // Needle 2
+                const n2 = new THREE.Mesh(needleGeo, pineNeedleMat);
+                n2.rotation.z = -0.15; // Spread
+                n2.rotation.y = -0.2; // Twist
+                n2.castShadow = true;
+
+                // Little sheath at base
+                const sheathGeo = new THREE.CylinderGeometry(0.06, 0.05, 0.3, 5);
+                sheathGeo.translate(0, 0.15, 0);
+                const sheath = new THREE.Mesh(sheathGeo, woodMat);
+
+                bundle.add(n1);
+                bundle.add(n2);
+                bundle.add(sheath);
+                group.add(bundle);
+            }
+
+            // Jack Pine Cone (asymmetrical, curved, tightly closed, pointing forward)
+            const coneGeo = new THREE.ConeGeometry(0.8, 2.5, 8, 4);
+            // Distort cone geometry slightly for asymmetry
+            const positions = coneGeo.attributes.position;
+            for(let i=0; i<positions.count; i++) {
+                let py = positions.getY(i);
+                if(py > 0) {
+                    positions.setX(i, positions.getX(i) + py*0.15); // curve it
+                }
+            }
+            coneGeo.computeVertexNormals();
+
+            const cone = new THREE.Mesh(coneGeo, coneMat);
+            cone.position.set(0.4, 3, 0);
+            cone.rotation.set(0, 0, -0.4); // Hugging the branch, pointing forward
+            cone.castShadow = true;
+            group.add(cone);
+
+            // Rotate entire model slightly for natural presentation
+            group.rotation.z = -Math.PI / 4;
+            return group;
+        }
+
+        function buildBlackSpruce() {
+            const group = new THREE.Group();
+            
+            // Main Twig (slightly thinner, rougher)
+            const twigGeo = new THREE.CylinderGeometry(0.15, 0.2, 12, 8);
+            const twig = new THREE.Mesh(twigGeo, woodMat);
+            twig.castShadow = true;
+            twig.receiveShadow = true;
+            group.add(twig);
+
+            // Needles: Attached singly, short, stiff, 4-sided (BoxGeometry!)
+            // A hallmark of spruce is the woody peg (sterigma) left behind, but we'll focus on the single attachment.
+            const needleGeo = new THREE.BoxGeometry(0.07, 1.2, 0.07);
+            needleGeo.translate(0, 0.6, 0); // Pivot at base
+
+            for (let i = 0; i < 200; i++) {
+                const yPos = (Math.random() - 0.5) * 11;
+                const angle = i * 2.39996; // Golden ratio spiral for natural distribution
+                
+                const n = new THREE.Mesh(needleGeo, spruceNeedleMat);
+                n.position.set(Math.cos(angle)*0.16, yPos, Math.sin(angle)*0.16);
+                
+                // Calculate rotation to point straight out from the branch cylinder
+                n.rotation.y = -angle + Math.PI/2; 
+                n.rotation.z = -Math.PI/2 + (Math.random()*0.2 - 0.1); // Stick out roughly 90 deg, slight random variation
+                n.rotation.x = Math.random()*0.2;
+                
+                n.castShadow = true;
+                group.add(n);
+            }
+
+            // Black Spruce Cones (small, egg-shaped, clustered at top/end)
+            const coneGeo = new THREE.SphereGeometry(0.5, 8, 8);
+            coneGeo.scale(1, 1.4, 1); // Make it ovate/egg-shaped
+            
+            for(let i=0; i<3; i++) {
+                const cone = new THREE.Mesh(coneGeo, coneMat);
+                const cAngle = (i/3) * Math.PI * 2;
+                cone.position.set(Math.cos(cAngle)*0.5, 5.5 + Math.random()*0.5, Math.sin(cAngle)*0.5);
+                // Hang downwards
+                cone.rotation.set(Math.PI + 0.2, cAngle, 0.2);
+                cone.castShadow = true;
+                group.add(cone);
+            }
+
+            group.rotation.z = -Math.PI / 4;
+            return group;
+        }
+
+        function buildTamarack() {
+            const group = new THREE.Group();
+            
+            // Main Twig
+            const twigGeo = new THREE.CylinderGeometry(0.18, 0.22, 12, 8);
+            const twig = new THREE.Mesh(twigGeo, woodMat);
+            twig.castShadow = true;
+            twig.receiveShadow = true;
+            group.add(twig);
+
+            // Tamarack structure: short woody spurs, then bursts of many soft needles
+            const spurGeo = new THREE.CylinderGeometry(0.1, 0.1, 0.4, 6);
+            spurGeo.translate(0, 0.2, 0);
+            
+            const needleGeo = new THREE.CylinderGeometry(0.02, 0.02, 2.5, 3);
+            needleGeo.translate(0, 1.25, 0);
+
+            // Create spurs scattered along branch
+            for (let i = 0; i < 25; i++) {
+                const spurGroup = new THREE.Group();
+                const yPos = (Math.random() - 0.5) * 10;
+                const angle = Math.random() * Math.PI * 2;
+                
+                spurGroup.position.set(Math.cos(angle)*0.18, yPos, Math.sin(angle)*0.18);
+                spurGroup.rotation.y = angle;
+                spurGroup.rotation.x = Math.PI/2;
+
+                const spur = new THREE.Mesh(spurGeo, woodMat);
+                spurGroup.add(spur);
+
+                // Add 15-20 needles radiating from the end of the spur
+                const numNeedles = 15 + Math.floor(Math.random() * 5);
+                for(let j=0; j<numNeedles; j++) {
+                    const n = new THREE.Mesh(needleGeo, tamarackNeedleMat);
+                    n.position.set(0, 0.4, 0); // Position at tip of spur
+                    
+                    // Fountain spread
+                    const spreadAngle = (j / numNeedles) * Math.PI * 2;
+                    const spreadTilt = 0.2 + Math.random() * 0.4;
+                    
+                    // Apply rotation via Euler
+                    n.rotation.set(Math.cos(spreadAngle)*spreadTilt, 0, Math.sin(spreadAngle)*spreadTilt);
+                    n.castShadow = true;
+                    spurGroup.add(n);
+                }
+                
+                group.add(spurGroup);
+            }
+
+            // Tamarack Cones (very small, upright, sparse)
+            const coneGeo = new THREE.CylinderGeometry(0.05, 0.3, 0.5, 6);
+            coneGeo.translate(0, 0.25, 0);
+            for(let i=0; i<4; i++) {
+                const yPos = (Math.random() - 0.5) * 8;
+                const angle = Math.random() * Math.PI * 2;
+                const cone = new THREE.Mesh(coneGeo, coneMat);
+                // Position directly on branch pointing UP
+                cone.position.set(Math.cos(angle)*0.2, yPos, Math.sin(angle)*0.2);
+                cone.rotation.set(0,0,0); // Pointing along Y axis (up) relative to branch... 
+                // Wait, if branch is rotated later, we need it to point up relative to world or branch?
+                // Tamarack cones usually point upward relative to the branch.
+                cone.rotation.x = 0;
+                cone.rotation.z = 0;
+                cone.castShadow = true;
+                group.add(cone);
+            }
+
+            group.rotation.z = -Math.PI / 4;
+            return group;
+        }
+
+        function loadSpecimenModel(id) {
+            clearModel();
+            const loader = document.getElementById('loading-overlay');
+            loader.style.opacity = '1';
+
+            // Simulate slight delay for dramatic effect / generation time
+            setTimeout(() => {
+                if (id === 'A') currentModel = buildJackPine();
+                else if (id === 'B') currentModel = buildBlackSpruce();
+                else if (id === 'C') currentModel = buildTamarack();
+                
+                if (currentModel) {
+                    scene.add(currentModel);
+                    // Reset camera and controls
+                    camera.position.set(0, 0, 15);
+                    controls.target.set(0, 0, 0);
+                    controls.autoRotate = true;
+                }
+                loader.style.opacity = '0';
+            }, 300);
+        }
+
+
+        /**
+         * UI LOGIC & DICHOTOMOUS KEY INTERACTION
+         */
+
+        function selectSpecimen(id) {
+            currentSpecimen = id;
+            
+            // Update UI Tabs
+            document.querySelectorAll('.specimen-tab').forEach(tab => {
+                tab.classList.remove('bg-forest-800', 'text-white', 'border-forest-900');
+                tab.classList.add('bg-white', 'text-forest-900', 'border-transparent');
+            });
+            const activeTab = document.getElementById(`tab-${id}`);
+            activeTab.classList.remove('bg-white', 'text-forest-900', 'border-transparent');
+            activeTab.classList.add('bg-forest-800', 'text-white', 'border-forest-900');
+
+            // Load 3D Model
+            loadSpecimenModel(id);
+
+            // Reset Key UI
+            resetKeyUI();
+            
+            // Hide intro, show question
+            document.getElementById('instruction-panel').classList.add('hidden');
+            document.getElementById('question-panel').classList.remove('hidden');
+            document.getElementById('id-badge').classList.add('hidden');
+            
+            renderStep('start');
+        }
+
+        function renderStep(stepKey) {
+            currentStep = stepKey;
+            const stepData = keyLogic[stepKey];
+            const qOptions = document.getElementById('q-options');
+            
+            document.getElementById('q-step').innerText = stepData.step;
+            document.getElementById('q-text').innerText = stepData.text;
+            document.getElementById('feedback-panel').classList.add('hidden');
+            
+            qOptions.innerHTML = '';
+            
+            stepData.options.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'btn-option w-full text-left p-4 rounded-lg border border-gray-300 bg-white hover:border-forest-800 hover:bg-forest-100 text-gray-800 focus:outline-none focus:ring-2 focus:ring-forest-500';
+                btn.innerHTML = `<span class="font-bold mr-2 text-forest-800">${index + 1}.</span> ${opt.text}`;
+                btn.onclick = () => handleAnswer(opt);
+                qOptions.appendChild(btn);
+            });
+        }
+
+        function handleAnswer(option) {
+            // Validation Logic
+            if (option.correctFor && !option.correctFor.includes(currentSpecimen)) {
+                // Wrong path based on the actual specimen loaded
+                showFeedback(getHint(currentSpecimen, currentStep));
+                return;
+            }
+
+            // Correct Path
+            if (option.next.endsWith('_check')) {
+                // Final Identification reached
+                identifySpecimen(option.next.split('_')[0]);
+            } else {
+                // Go to next question
+                renderStep(option.next);
+            }
+        }
+
+        function getHint(specimen, step) {
+            if (step === 'start') {
+                if (specimen === 'B') return "Incorrect. Zoom in close to the branch. You'll see the needles are not clustered; they are attached individually to the twig.";
+                if (specimen === 'A' || specimen === 'C') return "Incorrect. Look closely at where the needles meet the branch. They sprout together in groups from a single point.";
+            }
+            if (step === 'q2') {
+                if (specimen === 'A') return "Look at the number of needles per group. There are exactly two distinct needles twisted together, not a large bunch.";
+                if (specimen === 'C') return "Count the needles in one group. There are many more than two (usually 15-20) radiating out from the short peg.";
+            }
+            return "Take another close look and rotate the 3D model.";
+        }
+
+        function showFeedback(message) {
+            const panel = document.getElementById('feedback-panel');
+            panel.innerText = message;
+            panel.classList.remove('hidden');
+            // Slight shake animation on the model container to indicate an error
+            const canvas = document.getElementById('canvas-container');
+            canvas.style.transform = 'translateX(5px)';
+            setTimeout(() => canvas.style.transform = 'translateX(-5px)', 100);
+            setTimeout(() => canvas.style.transform = 'translateX(5px)', 200);
+            setTimeout(() => canvas.style.transform = 'translateX(0)', 300);
+        }
+
+        function identifySpecimen(type) {
+            isIdentified = true;
+            document.getElementById('question-panel').classList.add('hidden');
+            
+            // Show Success UI in right panel
+            const keyContainer = document.getElementById('key-container');
+            const data = speciesData[currentSpecimen];
+            
+            const successHTML = `
+                <div class="fade-in text-center">
+                    <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 text-green-600 mb-4 shadow-inner">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                    </div>
+                    <h2 class="text-2xl font-serif font-bold text-forest-900 mb-1">Specimen Identified!</h2>
+                    <p class="text-lg text-forest-800 font-semibold mb-6">${data.name} <span class="text-sm italic font-normal text-gray-600 ml-1">(${data.sci})</span></p>
+                    
+                    <div class="text-left bg-white p-5 rounded-lg shadow-sm border border-gray-200">
+                        <h4 class="font-bold text-gray-800 mb-2 border-b pb-1">Identification Features:</h4>
+                        <p class="text-sm text-gray-700 leading-relaxed">${data.desc}</p>
+                    </div>
+                </div>
+            `;
+            
+            // Clear existing and append success
+            const existingSuccess = document.getElementById('success-panel');
+            if(existingSuccess) existingSuccess.remove();
+            
+            const successDiv = document.createElement('div');
+            successDiv.id = 'success-panel';
+            successDiv.innerHTML = successHTML;
+            keyContainer.appendChild(successDiv);
+
+            // Show Floating Badge over 3D model
+            const badge = document.getElementById('id-badge');
+            document.getElementById('badge-name').innerText = data.name;
+            document.getElementById('badge-sci').innerText = data.sci;
+            document.getElementById('badge-desc').innerText = "Key feature: " + data.trait;
+            badge.classList.remove('hidden');
+
+            // Stop auto-rotate so user can examine it peacefully
+            if(controls) controls.autoRotate = false;
+        }
+
+        function resetKeyUI() {
+            isIdentified = false;
+            const successPanel = document.getElementById('success-panel');
+            if(successPanel) successPanel.remove();
+            document.getElementById('feedback-panel').classList.add('hidden');
+        }
+
+        function resetKey() {
+            currentSpecimen = null;
+            document.querySelectorAll('.specimen-tab').forEach(tab => {
+                tab.classList.remove('bg-forest-800', 'text-white', 'border-forest-900');
+                tab.classList.add('bg-white', 'text-forest-900', 'border-transparent');
+            });
+            
+            clearModel();
+            
+            document.getElementById('instruction-panel').classList.remove('hidden');
+            document.getElementById('question-panel').classList.add('hidden');
+            document.getElementById('id-badge').classList.add('hidden');
+            resetKeyUI();
+        }
+
+        // Initialize on load
+        window.onload = () => {
+            initThreeJS();
+        };
+
+    </script>
+</body>
+</html>
