@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biology 30 Saskatchewan - Chapter 3</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400&family=Inter:wght@300;400;600;800&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Merriweather', serif;
+        }
+
+        .feature-box {
+            border: 2px dashed #cbd5e1;
+            background-color: #f1f5f9;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            position: relative;
+        }
+
+        .feature-tag {
+            position: absolute;
+            top: -12px;
+            left: 1rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .tag-interactive { background-color: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+
+        .sask-context {
+            border-left: 4px solid #16a34a;
+            background-color: #f0fdf4;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 0 0.5rem 0.5rem 0;
+        }
+
+        .learning-objective {
+            background-color: #eff6ff;
+            border-left: 4px solid #2563eb;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+        }
+        
+        .formative-check {
+            background-color: #fff7ed;
+            border: 1px solid #fed7aa;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            border-radius: 0.5rem;
+        }
+
+        .note-taking {
+            margin-top: 2rem;
+            background-color: #fefce8;
+            border-left: 4px solid #facc15;
+            padding: 1rem;
+        }
+
+        .img-placeholder {
+            background-color: #e2e8f0;
+            border: 2px solid #cbd5e1;
+            border-radius: 0.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            aspect-ratio: 16/9;
+            margin: 1.5rem 0;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .img-prompt {
+            font-family: monospace;
+            font-size: 0.75rem;
+            color: #475569;
+            background: #f1f5f9;
+            padding: 0.5rem;
+            margin-top: 0.5rem;
+            border-radius: 0.25rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+        }
+        th, td {
+            border: 1px solid #e2e8f0;
+            padding: 0.75rem;
+            text-align: left;
+        }
+        th {
+            background-color: #f1f5f9;
+            font-weight: 600;
+        }
+
+        @media print {
+            nav, footer, button, .print-hidden { display: none !important; }
+            .feature-box { display: none !important; }
+            body { background-color: white; color: black; font-size: 12pt; }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50 print-hidden">
+        <div class="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center gap-4">
+            <div class="flex items-center gap-4">
+                <a href="#" class="flex items-center gap-2 text-slate-500 hover:text-green-700 transition-colors">
+                    <i data-lucide="arrow-left" class="w-5 h-5"></i>
+                </a>
+                <span class="font-bold text-xl text-green-700 tracking-tight">Biology 30</span>
+            </div>
+            <div class="text-sm text-slate-500 font-medium hidden md:block">
+                Unit 2: The Organization of Life
+            </div>
+            <div class="relative flex-grow max-w-xs">
+                <input type="text" placeholder="Search chapter..." class="block w-full pl-10 pr-3 py-1.5 border border-slate-300 rounded-md text-sm">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i data-lucide="search" class="w-4 h-4 text-slate-400"></i>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-4 py-12">
+        
+        <header class="mb-16">
+            <h1 class="text-4xl md:text-5xl font-black text-slate-900 mb-6">Chapter 3: Biological Classification</h1>
+            
+            <div class="prose prose-lg text-slate-600 mb-8">
+                <p>Earth is home to an estimated 8.7 million species, yet we have named only about 1.2 million. How do we make sense of this staggering diversity? Classification is the process of grouping organisms based on shared characteristics. It is not just a scientific exercise; it is a human fundamental. In this chapter, we will explore how classification systems serve our needs, how Indigenous knowledge provides alternative ways of viewing relationships, and the modern tools biologists use to map the tree of life.</p>
+            </div>
+
+            <!-- Image 3.1: The Diversity of Life -->
+            <figure class="mb-8">
+                <div class="img-placeholder">
+                    <i data-lucide="image" class="w-12 h-12 text-slate-400 mb-2"></i>
+                    <p class="font-bold">Figure 3.1: A Visual Collage of Saskatchewan Biodiversity</p>
+                    <div class="img-prompt"><strong>Imagen Prompt:</strong> A professional high-resolution scientific collage showing diverse Saskatchewan species: a Prairie Lily, a Great Horned Owl, a Bison, and a Walleye fish. Realistic textbook photography style, clean white background sections.</div>
+                </div>
+                <figcaption class="text-center text-sm text-slate-500 italic mt-2">Figure 3.1: Saskatchewan's biodiversity spans several kingdoms, each requiring a place in our classification systems.</figcaption>
+            </figure>
+
+            <!-- Schema Activator Feature -->
+            <div class="feature-box">
+                <h4 class="font-bold text-slate-800 mb-2 flex items-center gap-2">
+                    <i data-lucide="layers" class="w-5 h-5 text-blue-600"></i>
+                    Schema Activator: The Library of Life
+                </h4>
+                <span class="feature-tag tag-interactive">Interactive</span>
+                <p class="text-sm text-slate-600 mb-4">Imagine you are a librarian in a library with 8 million books, but no shelves, labels, or categories. How would you find a specific book on Saskatchewan birds? Drag and drop items into categories to see how organization creates meaning.</p>
+                <div class="bg-slate-200 h-48 rounded flex items-center justify-center text-slate-500 italic">
+                    [Interactive: Sorting Game - Organize species by Habitat, Diet, and Ancestry]
+                </div>
+            </div>
+        </header>
+
+        <!-- Section 3.1 -->
+        <section class="mb-16" id="section-3-1">
+            <h3 class="text-2xl font-bold text-slate-800 mb-4">3.1 Human Design in Classification [BI30-OL3a]</h3>
+            
+            <div class="learning-objective">
+                <strong>Learning Objective:</strong> Discuss how classification systems are designed by humans to meet various needs, recognizing that these systems are tools rather than absolute truths.
+            </div>
+
+            <!-- Image 3.1a: Functional vs Phylogenetic -->
+            <figure class="mb-8">
+                <div class="img-placeholder">
+                    <i data-lucide="image" class="w-12 h-12 text-slate-400 mb-2"></i>
+                    <p class="font-bold">Figure 3.1a: Two Ways of Sorting the Same Field</p>
+                    <div class="img-prompt"><strong>Imagen Prompt:</strong> Split-screen illustration. Left side: A farmer's view of a field, labeling plants as "Crop" (wheat) and "Weed" (wild oat). Right side: A botanist's view, showing both plants share a common ancestor in the grass family (Poaceae). Scientific infographic style.</div>
+                </div>
+            </figure>
+
+            <div class="prose prose-lg text-slate-700">
+                <p class="mb-4">Classification is a human construct. We organize the world to make it predictable and manageable. The way we group organisms often depends on our <strong>context</strong> and our <strong>needs</strong>.</p>
+                
+                <ul class="list-disc pl-6 space-y-4 mb-6">
+                    <li><strong>Functional Classification:</strong> This is based on how we <em>use</em> an organism. A farmer might classify plants as "crops," "weeds," or "forage." This system isn't concerned with DNA; it's concerned with utility.</li>
+                    <li><strong>Morphological Classification:</strong> This groups organisms by <em>physical appearance</em>. Early naturalists grouped all flying animals (birds, bats, butterflies) together. We now know these animals aren't closely related, but the grouping was useful for describing movement.</li>
+                    <li><strong>Phylogenetic Classification:</strong> The modern scientific standard. It groups organisms based on <em>evolutionary ancestry</em>. This is the "true" biological relationship, often revealed through genetic sequencing.</li>
+                </ul>
+
+                <p>Because our knowledge is always growing, classification systems must be <strong>dynamic</strong>. As we discover new species or sequence new genomes, we often have to "move the furniture" in our biological house, renaming or regrouping organisms to reflect the most current evidence.</p>
+            </div>
+
+            <div class="sask-context">
+                <h4 class="font-bold text-green-800 mb-2">Saskatchewan Connection: Agricultural Classification</h4>
+                <p class="text-slate-700">In Saskatchewan, we use functional classification every day in the "Seeds Act." Plants are classified by their impact on the economy. For example, <strong>Wild Oats</strong> (<em>Avena fatua</em>) are biologically very similar to domestic oats, but in an agricultural context, they are classified as a "Noxious Weed" because they compete with high-value crops.</p>
+            </div>
+        </section>
+
+        <!-- Section 3.2 -->
+        <section class="mb-16" id="section-3-2">
+            <h3 class="text-2xl font-bold text-slate-800 mb-4">3.2 Indigenous Knowledge Systems [BI30-OL3b]</h3>
+            
+            <div class="learning-objective">
+                <strong>Learning Objective:</strong> Research how First Nations, Métis, and Inuit peoples represent their understandings of relationships among living things, and compare these to Linnaean systems.
+            </div>
+
+            <!-- Image 3.2a: Medicine Wheel -->
+            <figure class="mb-8">
+                <div class="img-placeholder">
+                    <i data-lucide="image" class="w-12 h-12 text-slate-400 mb-2"></i>
+                    <p class="font-bold">Figure 3.2a: The Medicine Wheel as a Classification Tool</p>
+                    <div class="img-prompt"><strong>Imagen Prompt:</strong> A beautiful, traditional Medicine Wheel illustration. Each of the four quadrants (Yellow, Red, Black, White) contains a Saskatchewan animal and plant associated with that direction and season (e.g., Eagle in the East/Spring). Soft, artistic style with high detail.</div>
+                </div>
+            </figure>
+
+            <div class="prose prose-lg text-slate-700">
+                <p class="mb-4">For thousands of years before the invention of modern taxonomy, Indigenous peoples developed sophisticated systems for classifying the natural world. These systems are often <strong>holistic</strong> and <strong>relational</strong>.</p>
+
+                <h4 class="font-bold text-slate-800 mt-6 mb-2">Kinship and Connection</h4>
+                <p class="mb-4">In many Indigenous worldviews, classification is not just about what an organism <em>is</em>, but who its <em>relations</em> are. This is often described through the concept of <strong>Wâhkôhtowin</strong>. Relationships are tracked not just through physical traits, but through ecological roles, seasonal timing, and spiritual significance.</p>
+
+                <!-- Image 3.2b: Relational Web -->
+                <figure class="my-8">
+                    <div class="img-placeholder">
+                        <i data-lucide="image" class="w-12 h-12 text-slate-400 mb-2"></i>
+                        <p class="font-bold">Figure 3.2b: The Web of Wâhkôhtowin</p>
+                        <div class="img-prompt"><strong>Imagen Prompt:</strong> A conceptual web diagram connecting a human to the Sun, Water, Soil, Grass, Bison, and Bear. Instead of a hierarchy, use glowing lines to show interdependence. Organic, hand-drawn aesthetic.</div>
+                    </div>
+                </figure>
+
+                <table class="text-sm">
+                    <thead>
+                        <tr>
+                            <th>Feature</th>
+                            <th>Linnaean Taxonomy (Western)</th>
+                            <th>Indigenous Knowledge Systems</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Primary Goal</strong></td>
+                            <td>Identify and categorize by ancestry.</td>
+                            <td>Understand relationships and responsibilities.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Structure</strong></td>
+                            <td>Hierarchical (Kingdom &rarr; Species).</td>
+                            <td>Circular/Web-like (Interconnectedness).</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Criteria</strong></td>
+                            <td>Physical traits, DNA, Reproductive isolation.</td>
+                            <td>Ecological role, medicinal use, spiritual connection.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Language</strong></td>
+                            <td>Latin (Static, universal).</td>
+                            <td>Local Languages (Dynamic, place-based).</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Section 3.3 -->
+        <section class="mb-16" id="section-3-3">
+            <h3 class="text-2xl font-bold text-slate-800 mb-4">3.3 Naming the Natural World [BI30-OL3c]</h3>
+            
+            <div class="learning-objective">
+                <strong>Learning Objective:</strong> Research the contributions of Carl Linnaeus in developing accepted scientific conventions for the naming of organisms.
+            </div>
+
+            <!-- Image 3.3a: Linnaeus Portrait -->
+            <figure class="mb-8">
+                <div class="img-placeholder">
+                    <i data-lucide="image" class="w-12 h-12 text-slate-400 mb-2"></i>
+                    <p class="font-bold">Figure 3.3a: Carl Linnaeus and the Systema Naturae</p>
+                    <div class="img-prompt"><strong>Imagen Prompt:</strong> Historical oil painting style portrait of Carl Linnaeus in his 18th-century attire, holding a Twinflower (Linnaea borealis). In the background, a faint antique page of his book "Systema Naturae" with Latin lists.</div>
+                </div>
+            </figure>
+
+            <div class="prose prose-lg text-slate-700">
+                <p class="mb-4">In the 18th century, a Swedish botanist named <strong>Carl Linnaeus</strong> revolutionized biology by creating a standardized naming system. Before Linnaeus, a plant might have a name ten words long that changed from one town to the next.</p>
+                
+                <h4 class="font-bold text-slate-800 mt-6 mb-2">Binomial Nomenclature</h4>
+                <p class="mb-4">Linnaeus gave every species a two-part name (the "scientific name") using Latin:</p>
+                <ol class="list-decimal pl-6 space-y-2 mb-6">
+                    <li><strong>Genus:</strong> The first name, always capitalized (e.g., <em>Homo</em>). It represents a group of closely related species.</li>
+                    <li><strong>Specific Epithet:</strong> The second name, always lowercase (e.g., <em>sapiens</em>). It identifies the specific species within that genus.</li>
+                </ol>
+
+                <!-- Image 3.3b: Binomial Example -->
+                <figure class="my-8">
+                    <div class="img-placeholder">
+                        <i data-lucide="image" class="w-12 h-12 text-slate-400 mb-2"></i>
+                        <p class="font-bold">Figure 3.3b: Anatomy of a Scientific Name</p>
+                        <div class="img-prompt"><strong>Imagen Prompt:</strong> Macro photo of a North American Beaver (Castor canadensis). Overlay text showing "Castor" (Genus) and "canadensis" (Species) with arrows explaining the rules of capitalization and italics. Clean, modern textbook graphic.</div>
+                    </div>
+                </figure>
+            </div>
+
+            <!-- Digital Feature: Naming Tool -->
+            <div class="feature-box">
+                <h4 class="font-bold text-slate-800 mb-2 flex items-center gap-2">
+                    <i data-lucide="languages" class="w-5 h-5 text-purple-600"></i>
+                    Interactive Feature: The Latin Name Generator
+                </h4>
+                <span class="feature-tag tag-interactive">Digital Tool</span>
+                <p class="text-sm text-slate-600">Enter physical traits or locations to see how Linnaeus might have named a new Saskatchewan discovery.</p>
+                <div class="design-prompt">
+                    <strong>Code Prompt:</strong> An input field where students type "Red" and "Prairie" and it outputs "Pratensis rubra."
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3.4 -->
+        <section class="mb-16" id="section-3-4">
+            <h3 class="text-2xl font-bold text-slate-800 mb-4">3.4 The Taxonomic Hierarchy [BI30-OL3d]</h3>
+            
+            <div class="learning-objective">
+                <strong>Learning Objective:</strong> Discuss how the characteristics of the taxonomic hierarchy represent relationships among organisms.
+            </div>
+
+            <!-- Image 3.4a: Hierarchy Inversion -->
+            <figure class="mb-8">
+                <div class="img-placeholder">
+                    <i data-lucide="image" class="w-12 h-12 text-slate-400 mb-2"></i>
+                    <p class="font-bold">Figure 3.4a: The Nesting Hierarchy of the Red Fox</p>
+                    <div class="img-prompt"><strong>Imagen Prompt:</strong> A nested diagram (like Russian nesting dolls) showing the classification of a Red Fox (Vulpes vulpes). The outer layer is Eukarya (many organisms), zooming in through Kingdom, Phylum, etc., until the smallest doll is the individual fox. Bright, educational colors.</div>
+                </div>
+            </figure>
+
+            <div class="prose prose-lg text-slate-700">
+                <p class="mb-4">Taxonomy is organized like a set of nesting dolls. As you move from the top (Domain) to the bottom (Species), the groups become more specific and the members more similar.</p>
+                
+                <div class="flex flex-col gap-2 max-w-md mx-auto my-8">
+                    <div class="bg-blue-900 text-white p-2 text-center rounded">Domain (Most Inclusive)</div>
+                    <div class="bg-blue-800 text-white p-2 text-center rounded">Kingdom</div>
+                    <div class="bg-blue-700 text-white p-2 text-center rounded">Phylum</div>
+                    <div class="bg-blue-600 text-white p-2 text-center rounded">Class</div>
+                    <div class="bg-blue-500 text-white p-2 text-center rounded">Order</div>
+                    <div class="bg-blue-400 text-white p-2 text-center rounded">Family</div>
+                    <div class="bg-blue-300 text-slate-900 p-2 text-center rounded">Genus</div>
+                    <div class="bg-blue-200 text-slate-900 p-2 text-center rounded font-bold italic">Species (Most Specific)</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3.5 -->
+        <section class="mb-16" id="section-3-5">
+            <h3 class="text-2xl font-bold text-slate-800 mb-4">3.5 Challenges in Classification [BI30-OL3e]</h3>
+            
+            <div class="learning-objective">
+                <strong>Learning Objective:</strong> Discuss the challenges associated with classification, including defining taxa and classifying certain organisms like protists.
+            </div>
+
+            <!-- Image 3.5a: Protist Junk Drawer -->
+            <figure class="mb-8">
+                <div class="img-placeholder">
+                    <i data-lucide="image" class="w-12 h-12 text-slate-400 mb-2"></i>
+                    <p class="font-bold">Figure 3.5a: The Protist "Junk Drawer"</p>
+                    <div class="img-prompt"><strong>Imagen Prompt:</strong> A creative illustration of a desk drawer labeled "Protista" containing unrelated microscopic organisms: an Amoeba (animal-like), an Algae (plant-like), and a Slime Mold (fungi-like). Modern infographic style.</div>
+                </div>
+            </figure>
+
+            <div class="prose prose-lg text-slate-700">
+                <p class="mb-4">Nature does not always respect our neat categories. Some organisms defy simple classification, leading to "Taxonomic Headaches."</p>
+                
+                <ul class="list-disc pl-6 space-y-4">
+                    <li><strong>The Protist Problem:</strong> Kingdom Protista is often called the "taxonomic junk drawer."</li>
+                    <li><strong>Horizontal Gene Transfer:</strong> Bacteria can swap DNA with unrelated species.</li>
+                    <li><strong>Hybrids:</strong> The biological species concept relies on reproductive isolation, which isn't always absolute.</li>
+                </ul>
+
+                <!-- Image 3.5b: Hybrid Pizzly -->
+                <figure class="my-8">
+                    <div class="img-placeholder">
+                        <i data-lucide="image" class="w-12 h-12 text-slate-400 mb-2"></i>
+                        <p class="font-bold">Figure 3.5b: The "Pizzly" Hybrid</p>
+                        <div class="img-prompt"><strong>Imagen Prompt:</strong> A realistic photo of a hybrid bear (Grizzly-Polar bear cross). Show characteristics of both: thick white fur with brown patches and the hump of a grizzly. Artistic wildlife photography style.</div>
+                    </div>
+                </figure>
+            </div>
+        </section>
+
+        <!-- Section 3.6 -->
+        <section class="mb-16" id="section-3-6">
+            <h3 class="text-2xl font-bold text-slate-800 mb-4">3.6 Tools for Identification [BI30-OL3f, BI30-OL3g]</h3>
+            
+            <div class="learning-objective">
+                <strong>Learning Objective:</strong> Create and use dichotomous keys and cladograms to identify and determine relationships among organisms.
+            </div>
+
+            <!-- Image 3.6a: Visual Dichotomous Key -->
+            <figure class="mb-8">
+                <div class="img-placeholder">
+                    <i data-lucide="image" class="w-12 h-12 text-slate-400 mb-2"></i>
+                    <p class="font-bold">Figure 3.6a: Visual Identification of Prairie Leaves</p>
+                    <div class="img-prompt"><strong>Imagen Prompt:</strong> A clean diagram showing three different Saskatchewan leaves: Aspen (round), Willow (long), and Birch (serrated). Lines and choices (a/b) leading to names. Textbook diagram style.</div>
+                </div>
+            </figure>
+
+            <div class="prose prose-lg text-slate-700">
+                <h4 class="font-bold text-slate-800 mt-6 mb-2">1. Dichotomous Keys</h4>
+                <p class="mb-4">A dichotomous key is a step-by-step guide where you choose between two opposing physical traits until the organism is identified.</p>
+                
+                <h4 class="font-bold text-slate-800 mt-8 mb-2">2. Cladograms</h4>
+                <p class="mb-4">A cladogram is a diagram showing evolutionary relationships. It focuses on <strong>derived characters</strong>—traits that appeared in a common ancestor and were passed to descendants.</p>
+
+                <!-- Image 3.6b: Vertebrate Cladogram -->
+                <figure class="my-8">
+                    <div class="img-placeholder">
+                        <i data-lucide="image" class="w-12 h-12 text-slate-400 mb-2"></i>
+                        <p class="font-bold">Figure 3.6b: Cladogram of Saskatchewan Vertebrates</p>
+                        <div class="img-prompt"><strong>Imagen Prompt:</strong> A professional cladogram showing a Perch, a Frog, a Garter Snake, and a Deer. Mark derived traits along the trunk: "Jaws," "Four Limbs," "Amniotic Egg," and "Fur." High-contrast, clean lines.</div>
+                    </div>
+                </figure>
+            </div>
+
+            <!-- Digital Feature: Conifer Key -->
+            <div class="feature-box">
+                <h4 class="font-bold text-slate-800 mb-2 flex items-center gap-2">
+                    <i data-lucide="tree-pine" class="w-5 h-5 text-green-600"></i>
+                    Activity: Digital Dichotomous Key for Saskatchewan Conifers
+                </h4>
+                <span class="feature-tag tag-interactive">Interactive Lab</span>
+                <p class="text-sm text-slate-600 mb-4">Examine the needles and cones of Saskatchewan trees. Is it a White Spruce, a Tamarack, or a Jack Pine?</p>
+                <div class="bg-black text-white p-8 rounded text-center">
+                    [Simulation: 3D Tree Needle Viewer with choice-based identification logic]
+                </div>
+            </div>
+        </section>
+
+        <!-- Chapter Review -->
+        <section class="bg-slate-900 text-white p-8 rounded-lg shadow-xl">
+            <h3 class="text-2xl font-bold mb-4">Chapter 3 Review: Narrative Lab Report</h3>
+            <p class="mb-4 text-slate-300">Activity: Classifying Local Conifers.</p>
+            <ol class="list-decimal pl-6 space-y-4">
+                <li><strong>What was I looking for?</strong> (Determining the species of unknown coniferous trees found in the Boreal forest).</li>
+                <li><strong>How did I look for it?</strong> (I used a dichotomous key to observe needle arrangement—single vs. clusters—and cone shape).</li>
+                <li><strong>What did I find?</strong> (I identified the Black Spruce by its short, blunt needles and small round cones).</li>
+                <li><strong>What do these findings mean?</strong> (Biological identification tools allow us to accurately inventory local biodiversity).</li>
+            </ol>
+        </section>
+
+    </main>
+
+    <footer class="bg-slate-100 py-8 mt-12 border-t border-slate-200">
+        <div class="max-w-4xl mx-auto px-4 text-center text-slate-500 text-sm">
+            <p>Biology 30 Saskatchewan Digital Textbook - Unit 2, Chapter 3</p>
+            <button onclick="window.print()" class="mt-4 bg-slate-800 text-white px-4 py-2 rounded-lg text-xs">Print to PDF</button>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        });
+    </script>
+</body>
+</html>
