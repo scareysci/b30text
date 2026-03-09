@@ -13,6 +13,7 @@
             font-family: 'Inter', sans-serif;
             background-color: #f8fafc;
             color: #1e293b;
+            line-height: 1.6;
         }
 
         h1, h2, h3, h4, h5, h6 {
@@ -66,11 +67,18 @@
             border-radius: 0.5rem;
         }
 
-        .note-taking {
-            margin-top: 2rem;
-            background-color: #fefce8;
-            border-left: 4px solid #facc15;
-            padding: 1rem;
+        .img-container {
+            margin: 2rem 0;
+            background-color: #f1f5f9;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+        }
+
+        .img-container img {
+            width: 100%;
+            height: auto;
+            display: block;
         }
 
         .img-placeholder {
@@ -81,26 +89,29 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            aspect-ratio: 16/9;
-            margin: 1.5rem 0;
-            padding: 1rem;
+            min-height: 350px;
+            margin: 2rem 0;
+            padding: 2rem;
             text-align: center;
         }
 
         .img-prompt {
-            font-family: monospace;
-            font-size: 0.75rem;
-            color: #475569;
-            background: #f1f5f9;
-            padding: 0.5rem;
-            margin-top: 0.5rem;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.85rem;
+            color: #334155;
+            background: #ffffff;
+            padding: 1rem;
+            margin-top: 1rem;
             border-radius: 0.25rem;
+            border: 1px solid #cbd5e1;
+            max-width: 90%;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
             margin: 1.5rem 0;
+            font-size: 0.95rem;
         }
         th, td {
             border: 1px solid #e2e8f0;
@@ -109,7 +120,16 @@
         }
         th {
             background-color: #f1f5f9;
-            font-weight: 600;
+            font-weight: 700;
+            color: #334155;
+        }
+        tr:nth-child(even) { background-color: #f8fafc; }
+
+        .note-taking {
+            margin-top: 2rem;
+            background-color: #fefce8;
+            border-left: 4px solid #facc15;
+            padding: 1rem;
         }
 
         @media print {
@@ -149,20 +169,14 @@
             <h1 class="text-4xl md:text-5xl font-black text-slate-900 mb-6">Chapter 3: Biological Classification</h1>
             
             <div class="prose prose-lg text-slate-600 mb-8">
-                <p>Earth is home to an estimated 8.7 million species, yet we have named only about 1.2 million. How do we make sense of this staggering diversity? Classification is the process of grouping organisms based on shared characteristics. It is not just a scientific exercise; it is a human fundamental. In this chapter, we will explore how classification systems serve our needs, how Indigenous knowledge provides alternative ways of viewing relationships, and the modern tools biologists use to map the tree of life.</p>
+                <p>Earth is home to an estimated 8.7 million species, yet we have named only about 1.2 million. How do we make sense of this staggering diversity? Classification is the process of grouping organisms based on shared characteristics. It is not just a scientific exercise; it is a human fundamental. In this chapter, we explore how classification systems serve our needs, how Indigenous knowledge provides alternative ways of viewing relationships, and the modern tools biologists use to map the tree of life.</p>
             </div>
 
-            <!-- Image 3.1: The Diversity of Life -->
-            <figure class="mb-8">
-                <div class="img-placeholder">
-                    <i data-lucide="image" class="w-12 h-12 text-slate-400 mb-2"></i>
-                    <p class="font-bold">Figure 3.1: A Visual Collage of Saskatchewan Biodiversity</p>
-                    <div class="img-prompt"><strong>Imagen Prompt:</strong> A professional high-resolution scientific collage showing diverse Saskatchewan species: a Prairie Lily, a Great Horned Owl, a Bison, and a Walleye fish. Realistic textbook photography style, clean white background sections.</div>
-                </div>
-                <figcaption class="text-center text-sm text-slate-500 italic mt-2">Figure 3.1: Saskatchewan's biodiversity spans several kingdoms, each requiring a place in our classification systems.</figcaption>
+            <figure class="img-container">
+                <img src="https://scareysci.github.io/b30text/Unit2/Unit2/chapter3/images/figure3-1.png" alt="Saskatchewan Biodiversity Overview" onerror="this.parentElement.innerHTML='<div class=\'img-placeholder\'><p class=\'font-bold\'>Figure 3.1: Saskatchewan Biodiversity Overview</p><p class=\'text-xs text-slate-500 mt-2\'>Image failed to load from remote source.</p></div>'">
+                <figcaption class="p-3 text-center text-sm text-slate-500 italic bg-white border-t">Figure 3.1: Saskatchewan's biodiversity spans several kingdoms, each requiring a place in our classification systems.</figcaption>
             </figure>
 
-            <!-- Schema Activator Feature -->
             <div class="feature-box">
                 <h4 class="font-bold text-slate-800 mb-2 flex items-center gap-2">
                     <i data-lucide="layers" class="w-5 h-5 text-blue-600"></i>
@@ -171,7 +185,7 @@
                 <span class="feature-tag tag-interactive">Interactive</span>
                 <p class="text-sm text-slate-600 mb-4">Imagine you are a librarian in a library with 8 million books, but no shelves, labels, or categories. How would you find a specific book on Saskatchewan birds? Drag and drop items into categories to see how organization creates meaning.</p>
                 <div class="bg-slate-200 h-48 rounded flex items-center justify-center text-slate-500 italic">
-                    [Interactive: Sorting Game - Organize species by Habitat, Diet, and Ancestry]
+                    [Digital Feature: Interactive Sorting Game - Students organize species by Habitat, Diet, and Ancestry]
                 </div>
             </div>
         </header>
@@ -184,30 +198,29 @@
                 <strong>Learning Objective:</strong> Discuss how classification systems are designed by humans to meet various needs, recognizing that these systems are tools rather than absolute truths.
             </div>
 
-            <!-- Image 3.1a: Functional vs Phylogenetic -->
-            <figure class="mb-8">
-                <div class="img-placeholder">
-                    <i data-lucide="image" class="w-12 h-12 text-slate-400 mb-2"></i>
-                    <p class="font-bold">Figure 3.1a: Two Ways of Sorting the Same Field</p>
-                    <div class="img-prompt"><strong>Imagen Prompt:</strong> Split-screen illustration. Left side: A farmer's view of a field, labeling plants as "Crop" (wheat) and "Weed" (wild oat). Right side: A botanist's view, showing both plants share a common ancestor in the grass family (Poaceae). Scientific infographic style.</div>
-                </div>
-            </figure>
-
             <div class="prose prose-lg text-slate-700">
                 <p class="mb-4">Classification is a human construct. We organize the world to make it predictable and manageable. The way we group organisms often depends on our <strong>context</strong> and our <strong>needs</strong>.</p>
                 
                 <ul class="list-disc pl-6 space-y-4 mb-6">
-                    <li><strong>Functional Classification:</strong> This is based on how we <em>use</em> an organism. A farmer might classify plants as "crops," "weeds," or "forage." This system isn't concerned with DNA; it's concerned with utility.</li>
-                    <li><strong>Morphological Classification:</strong> This groups organisms by <em>physical appearance</em>. Early naturalists grouped all flying animals (birds, bats, butterflies) together. We now know these animals aren't closely related, but the grouping was useful for describing movement.</li>
-                    <li><strong>Phylogenetic Classification:</strong> The modern scientific standard. It groups organisms based on <em>evolutionary ancestry</em>. This is the "true" biological relationship, often revealed through genetic sequencing.</li>
+                    <li><strong>Functional Classification:</strong> Based on utility. A farmer classifies plants as "crops" or "weeds" regardless of genetic relation.</li>
+                    <li><strong>Morphological Classification:</strong> Based on physical appearance. While useful for field identification, it can be misleading due to convergent evolution (e.g., grouping bats and birds).</li>
+                    <li><strong>Phylogenetic Classification:</strong> The modern biological standard, grouping organisms based on shared evolutionary ancestry revealed through DNA and fossils.</li>
                 </ul>
 
-                <p>Because our knowledge is always growing, classification systems must be <strong>dynamic</strong>. As we discover new species or sequence new genomes, we often have to "move the furniture" in our biological house, renaming or regrouping organisms to reflect the most current evidence.</p>
+                <figure class="img-container">
+                    <img src="https://scareysci.github.io/b30text/Unit2/Unit2/chapter3/images/figure3-1a.png" alt="Functional vs. Phylogenetic Comparison">
+                    <figcaption class="p-3 text-center text-sm text-slate-500 italic bg-white border-t">Figure 3.1a: Two ways of viewing the same species based on human intent vs evolutionary history.</figcaption>
+                </figure>
+
+                <figure class="img-container">
+                    <img src="https://scareysci.github.io/b30text/Unit2/Unit2/chapter3/images/figure3-1b.png" alt="Artificial vs Natural Systems">
+                    <figcaption class="p-3 text-center text-sm text-slate-500 italic bg-white border-t">Figure 3.1b: Artificial systems (e.g. color sorting) vs Natural systems (skeletal similarity).</figcaption>
+                </figure>
             </div>
 
             <div class="sask-context">
-                <h4 class="font-bold text-green-800 mb-2">Saskatchewan Connection: Agricultural Classification</h4>
-                <p class="text-slate-700">In Saskatchewan, we use functional classification every day in the "Seeds Act." Plants are classified by their impact on the economy. For example, <strong>Wild Oats</strong> (<em>Avena fatua</em>) are biologically very similar to domestic oats, but in an agricultural context, they are classified as a "Noxious Weed" because they compete with high-value crops.</p>
+                <h4 class="font-bold text-green-800 mb-2">Saskatchewan Connection: Wild Oats</h4>
+                <p class="text-slate-700">In the Saskatchewan "Seeds Act," Wild Oats (<em>Avena fatua</em>) are classified as a "Noxious Weed." Biologically, they are cousins to domestic oats, but in our provincial agricultural system, their classification is based entirely on their negative economic impact on grain production.</p>
             </div>
         </section>
 
@@ -219,61 +232,21 @@
                 <strong>Learning Objective:</strong> Research how First Nations, Métis, and Inuit peoples represent their understandings of relationships among living things, and compare these to Linnaean systems.
             </div>
 
-            <!-- Image 3.2a: Medicine Wheel -->
-            <figure class="mb-8">
-                <div class="img-placeholder">
-                    <i data-lucide="image" class="w-12 h-12 text-slate-400 mb-2"></i>
-                    <p class="font-bold">Figure 3.2a: The Medicine Wheel as a Classification Tool</p>
-                    <div class="img-prompt"><strong>Imagen Prompt:</strong> A beautiful, traditional Medicine Wheel illustration. Each of the four quadrants (Yellow, Red, Black, White) contains a Saskatchewan animal and plant associated with that direction and season (e.g., Eagle in the East/Spring). Soft, artistic style with high detail.</div>
-                </div>
-            </figure>
-
             <div class="prose prose-lg text-slate-700">
-                <p class="mb-4">For thousands of years before the invention of modern taxonomy, Indigenous peoples developed sophisticated systems for classifying the natural world. These systems are often <strong>holistic</strong> and <strong>relational</strong>.</p>
+                <p class="mb-6">Indigenous knowledge systems (IKS) provide a holistic perspective on classification. Unlike Western taxonomy, which often seeks to isolate and label individual species in a hierarchy, IKS emphasizes <strong>relationality</strong> and <strong>interconnectedness</strong>.</p>
 
-                <h4 class="font-bold text-slate-800 mt-6 mb-2">Kinship and Connection</h4>
-                <p class="mb-4">In many Indigenous worldviews, classification is not just about what an organism <em>is</em>, but who its <em>relations</em> are. This is often described through the concept of <strong>Wâhkôhtowin</strong>. Relationships are tracked not just through physical traits, but through ecological roles, seasonal timing, and spiritual significance.</p>
-
-                <!-- Image 3.2b: Relational Web -->
-                <figure class="my-8">
-                    <div class="img-placeholder">
-                        <i data-lucide="image" class="w-12 h-12 text-slate-400 mb-2"></i>
-                        <p class="font-bold">Figure 3.2b: The Web of Wâhkôhtowin</p>
-                        <div class="img-prompt"><strong>Imagen Prompt:</strong> A conceptual web diagram connecting a human to the Sun, Water, Soil, Grass, Bison, and Bear. Instead of a hierarchy, use glowing lines to show interdependence. Organic, hand-drawn aesthetic.</div>
-                    </div>
+                <figure class="img-container">
+                    <img src="https://scareysci.github.io/b30text/Unit2/Unit2/chapter3/images/figure3-2a.png" alt="The Medicine Wheel Framework">
+                    <figcaption class="p-3 text-center text-sm text-slate-500 italic bg-white border-t">Figure 3.2a: The Medicine Wheel as a system for organizing seasonal and directional life cycles.</figcaption>
                 </figure>
 
-                <table class="text-sm">
-                    <thead>
-                        <tr>
-                            <th>Feature</th>
-                            <th>Linnaean Taxonomy (Western)</th>
-                            <th>Indigenous Knowledge Systems</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><strong>Primary Goal</strong></td>
-                            <td>Identify and categorize by ancestry.</td>
-                            <td>Understand relationships and responsibilities.</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Structure</strong></td>
-                            <td>Hierarchical (Kingdom &rarr; Species).</td>
-                            <td>Circular/Web-like (Interconnectedness).</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Criteria</strong></td>
-                            <td>Physical traits, DNA, Reproductive isolation.</td>
-                            <td>Ecological role, medicinal use, spiritual connection.</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Language</strong></td>
-                            <td>Latin (Static, universal).</td>
-                            <td>Local Languages (Dynamic, place-based).</td>
-                        </tr>
-                    </tbody>
-                </table>
+                <h4 class="font-bold text-slate-800 mb-2">Wâhkôhtowin: Kinship Systems</h4>
+                <p class="mb-4">In many Plains Cree traditions, the concept of <strong>wâhkôhtowin</strong> refers to the interconnectedness of all things. Classification here is about understanding one's responsibilities toward "all my relations." Animals and plants are categorized by their roles in the ecosystem, their medicinal properties, or their seasonal appearance, rather than just their DNA.</p>
+
+                <figure class="img-container">
+                    <img src="https://scareysci.github.io/b30text/Unit2/Unit2/chapter3/images/figure3-2b.png" alt="Relational Web of Life">
+                    <figcaption class="p-3 text-center text-sm text-slate-500 italic bg-white border-t">Figure 3.2b: Relationality emphasizes interdependence over hierarchy.</figcaption>
+                </figure>
             </div>
         </section>
 
@@ -282,49 +255,21 @@
             <h3 class="text-2xl font-bold text-slate-800 mb-4">3.3 Naming the Natural World [BI30-OL3c]</h3>
             
             <div class="learning-objective">
-                <strong>Learning Objective:</strong> Research the contributions of Carl Linnaeus in developing accepted scientific conventions for the naming of organisms.
+                <strong>Learning Objective:</strong> Research the contributions of Carl Linnaeus in developing accepted scientific conventions for naming organisms.
             </div>
-
-            <!-- Image 3.3a: Linnaeus Portrait -->
-            <figure class="mb-8">
-                <div class="img-placeholder">
-                    <i data-lucide="image" class="w-12 h-12 text-slate-400 mb-2"></i>
-                    <p class="font-bold">Figure 3.3a: Carl Linnaeus and the Systema Naturae</p>
-                    <div class="img-prompt"><strong>Imagen Prompt:</strong> Historical oil painting style portrait of Carl Linnaeus in his 18th-century attire, holding a Twinflower (Linnaea borealis). In the background, a faint antique page of his book "Systema Naturae" with Latin lists.</div>
-                </div>
-            </figure>
 
             <div class="prose prose-lg text-slate-700">
-                <p class="mb-4">In the 18th century, a Swedish botanist named <strong>Carl Linnaeus</strong> revolutionized biology by creating a standardized naming system. Before Linnaeus, a plant might have a name ten words long that changed from one town to the next.</p>
+                <p class="mb-4">Standardization is key to global scientific communication. Carl Linnaeus, the "Father of Taxonomy," introduced <strong>Binomial Nomenclature</strong> to replace long, descriptive phrases with a concise two-part Latin name consisting of the Genus and the Specific Epithet.</p>
                 
-                <h4 class="font-bold text-slate-800 mt-6 mb-2">Binomial Nomenclature</h4>
-                <p class="mb-4">Linnaeus gave every species a two-part name (the "scientific name") using Latin:</p>
-                <ol class="list-decimal pl-6 space-y-2 mb-6">
-                    <li><strong>Genus:</strong> The first name, always capitalized (e.g., <em>Homo</em>). It represents a group of closely related species.</li>
-                    <li><strong>Specific Epithet:</strong> The second name, always lowercase (e.g., <em>sapiens</em>). It identifies the specific species within that genus.</li>
-                </ol>
-
-                <!-- Image 3.3b: Binomial Example -->
-                <figure class="my-8">
-                    <div class="img-placeholder">
-                        <i data-lucide="image" class="w-12 h-12 text-slate-400 mb-2"></i>
-                        <p class="font-bold">Figure 3.3b: Anatomy of a Scientific Name</p>
-                        <div class="img-prompt"><strong>Imagen Prompt:</strong> Macro photo of a North American Beaver (Castor canadensis). Overlay text showing "Castor" (Genus) and "canadensis" (Species) with arrows explaining the rules of capitalization and italics. Clean, modern textbook graphic.</div>
-                    </div>
+                <figure class="img-container">
+                    <img src="https://scareysci.github.io/b30text/Unit2/Unit2/chapter3/images/figure3-3a.png" alt="Linnaeus and the Systema Naturae">
+                    <figcaption class="p-3 text-center text-sm text-slate-500 italic bg-white border-t">Figure 3.3a: Historical representation of Carl Linnaeus and his foundational work.</figcaption>
                 </figure>
-            </div>
 
-            <!-- Digital Feature: Naming Tool -->
-            <div class="feature-box">
-                <h4 class="font-bold text-slate-800 mb-2 flex items-center gap-2">
-                    <i data-lucide="languages" class="w-5 h-5 text-purple-600"></i>
-                    Interactive Feature: The Latin Name Generator
-                </h4>
-                <span class="feature-tag tag-interactive">Digital Tool</span>
-                <p class="text-sm text-slate-600">Enter physical traits or locations to see how Linnaeus might have named a new Saskatchewan discovery.</p>
-                <div class="design-prompt">
-                    <strong>Code Prompt:</strong> An input field where students type "Red" and "Prairie" and it outputs "Pratensis rubra."
-                </div>
+                <figure class="img-container">
+                    <img src="https://scareysci.github.io/b30text/Unit2/Unit2/chapter3/images/figure3-3b.png" alt="Binomial Anatomy">
+                    <figcaption class="p-3 text-center text-sm text-slate-500 italic bg-white border-t">Figure 3.3b: The rules of binomial nomenclature applied to the North American Beaver.</figcaption>
+                </figure>
             </div>
         </section>
 
@@ -333,31 +278,80 @@
             <h3 class="text-2xl font-bold text-slate-800 mb-4">3.4 The Taxonomic Hierarchy [BI30-OL3d]</h3>
             
             <div class="learning-objective">
-                <strong>Learning Objective:</strong> Discuss how the characteristics of the taxonomic hierarchy represent relationships among organisms.
+                <strong>Learning Objective:</strong> Discuss how the characteristics of the taxonomic hierarchy represent relationships among organisms, moving from general commonalities to specific evolutionary distinctness.
             </div>
 
-            <!-- Image 3.4a: Hierarchy Inversion -->
-            <figure class="mb-8">
-                <div class="img-placeholder">
-                    <i data-lucide="image" class="w-12 h-12 text-slate-400 mb-2"></i>
-                    <p class="font-bold">Figure 3.4a: The Nesting Hierarchy of the Red Fox</p>
-                    <div class="img-prompt"><strong>Imagen Prompt:</strong> A nested diagram (like Russian nesting dolls) showing the classification of a Red Fox (Vulpes vulpes). The outer layer is Eukarya (many organisms), zooming in through Kingdom, Phylum, etc., until the smallest doll is the individual fox. Bright, educational colors.</div>
-                </div>
-            </figure>
-
             <div class="prose prose-lg text-slate-700">
-                <p class="mb-4">Taxonomy is organized like a set of nesting dolls. As you move from the top (Domain) to the bottom (Species), the groups become more specific and the members more similar.</p>
-                
-                <div class="flex flex-col gap-2 max-w-md mx-auto my-8">
-                    <div class="bg-blue-900 text-white p-2 text-center rounded">Domain (Most Inclusive)</div>
-                    <div class="bg-blue-800 text-white p-2 text-center rounded">Kingdom</div>
-                    <div class="bg-blue-700 text-white p-2 text-center rounded">Phylum</div>
-                    <div class="bg-blue-600 text-white p-2 text-center rounded">Class</div>
-                    <div class="bg-blue-500 text-white p-2 text-center rounded">Order</div>
-                    <div class="bg-blue-400 text-white p-2 text-center rounded">Family</div>
-                    <div class="bg-blue-300 text-slate-900 p-2 text-center rounded">Genus</div>
-                    <div class="bg-blue-200 text-slate-900 p-2 text-center rounded font-bold italic">Species (Most Specific)</div>
+                <p class="mb-6">The Linnaean system of classification is <strong>hierarchical</strong>, meaning it consists of a series of levels that increase in specificity as you move downward. Think of this system as a series of narrowing filters. At the highest level, the filter is very wide, including billions of diverse organisms that share only the most basic cellular features. As you move through the levels, the requirements for entry become stricter, filtering out organisms until only one specific species remains.</p>
+
+                <figure class="img-container">
+                    <img src="https://scareysci.github.io/b30text/Unit2/Unit2/chapter3/images/figure3-4a.png" alt="The Nesting Levels of Life">
+                    <figcaption class="p-3 text-center text-sm text-slate-500 italic bg-white border-t">Figure 3.4a: Visualizing the hierarchy as a set of nested relationships.</figcaption>
+                </figure>
+
+                <p class="mb-6">As illustrated in <strong>Figure 3.4a</strong>, each level is called a <strong>taxon</strong> (plural: taxa). To understand how this works in a local context, let’s examine the classification of the <strong>Red Fox</strong> (*Vulpes vulpes*), a common inhabitant of the Saskatchewan prairie and boreal forest.</p>
+
+                <h4 class="font-bold text-slate-800 mb-4">Table 3.1: Hierarchical Classification of the Red Fox</h4>
+                <div class="overflow-x-auto">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Taxon Level</th>
+                                <th>Classification</th>
+                                <th>Characteristics / Common Features</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Domain</strong></td>
+                                <td>Eukarya</td>
+                                <td>Cells contain a nucleus and membrane-bound organelles. Includes all plants, animals, fungi, and protists.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Kingdom</strong></td>
+                                <td>Animalia</td>
+                                <td>Multicellular, heterotrophic organisms that lack cell walls and are typically motile at some stage of life.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Phylum</strong></td>
+                                <td>Chordata</td>
+                                <td>Possess a notochord, a dorsal hollow nerve cord, and pharyngeal slits at some point in development (includes vertebrates).</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Class</strong></td>
+                                <td>Mammalia</td>
+                                <td>Endothermic vertebrates with hair or fur, and mammary glands that produce milk for their young.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Order</strong></td>
+                                <td>Carnivora</td>
+                                <td>Primarily meat-eating mammals with specialized teeth (canines) for tearing flesh.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Family</strong></td>
+                                <td>Canidae</td>
+                                <td>Dog-like carnivores, including wolves, coyotes, and domestic dogs.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Genus</strong></td>
+                                <td><em>Vulpes</em></td>
+                                <td>"True" foxes, distinguished by their flatter skulls and smaller size compared to the genus <em>Canis</em>.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Species</strong></td>
+                                <td><em>Vulpes vulpes</em></td>
+                                <td>The Red Fox: specific individual population that can interbreed to produce fertile offspring.</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
+
+                <p class="mt-6">At the <strong>Domain</strong> level (see <strong>Figure 3.4b</strong>), a Red Fox is grouped with maple trees and mushrooms because they all have eukaryotic cells. However, by the time we reach the <strong>Family</strong> level, the fox is only grouped with other "canids." This hierarchy allows biologists to instantly know an organism's fundamental biology based on its name alone.</p>
+
+                <figure class="img-container">
+                    <img src="https://scareysci.github.io/b30text/Unit2/Unit2/chapter3/images/figure3-4b.png" alt="Comparing Domains">
+                    <figcaption class="p-3 text-center text-sm text-slate-500 italic bg-white border-t">Figure 3.4b: The three domains of life: Bacteria, Archaea, and Eukarya.</figcaption>
+                </figure>
             </div>
         </section>
 
@@ -366,35 +360,34 @@
             <h3 class="text-2xl font-bold text-slate-800 mb-4">3.5 Challenges in Classification [BI30-OL3e]</h3>
             
             <div class="learning-objective">
-                <strong>Learning Objective:</strong> Discuss the challenges associated with classification, including defining taxa and classifying certain organisms like protists.
+                <strong>Learning Objective:</strong> Discuss the challenges associated with classification, including the "taxonomic junk drawer" of protists and the blurred lines of the biological species concept.
             </div>
 
-            <!-- Image 3.5a: Protist Junk Drawer -->
-            <figure class="mb-8">
+            <div class="prose prose-lg text-slate-700">
+                <p class="mb-6">While the Linnaean system provides a robust framework, nature often refuses to be placed in neat boxes. One of the greatest challenges in modern biology is <strong>Kingdom Protista</strong>. As seen in <strong>Figure 3.5a</strong>, Protista has historically been a "junk drawer" for any eukaryotic organism that didn't quite fit the criteria for plants, animals, or fungi.</p>
+                
                 <div class="img-placeholder">
                     <i data-lucide="image" class="w-12 h-12 text-slate-400 mb-2"></i>
-                    <p class="font-bold">Figure 3.5a: The Protist "Junk Drawer"</p>
-                    <div class="img-prompt"><strong>Imagen Prompt:</strong> A creative illustration of a desk drawer labeled "Protista" containing unrelated microscopic organisms: an Amoeba (animal-like), an Algae (plant-like), and a Slime Mold (fungi-like). Modern infographic style.</div>
-                </div>
-            </figure>
-
-            <div class="prose prose-lg text-slate-700">
-                <p class="mb-4">Nature does not always respect our neat categories. Some organisms defy simple classification, leading to "Taxonomic Headaches."</p>
-                
-                <ul class="list-disc pl-6 space-y-4">
-                    <li><strong>The Protist Problem:</strong> Kingdom Protista is often called the "taxonomic junk drawer."</li>
-                    <li><strong>Horizontal Gene Transfer:</strong> Bacteria can swap DNA with unrelated species.</li>
-                    <li><strong>Hybrids:</strong> The biological species concept relies on reproductive isolation, which isn't always absolute.</li>
-                </ul>
-
-                <!-- Image 3.5b: Hybrid Pizzly -->
-                <figure class="my-8">
-                    <div class="img-placeholder">
-                        <i data-lucide="image" class="w-12 h-12 text-slate-400 mb-2"></i>
-                        <p class="font-bold">Figure 3.5b: The "Pizzly" Hybrid</p>
-                        <div class="img-prompt"><strong>Imagen Prompt:</strong> A realistic photo of a hybrid bear (Grizzly-Polar bear cross). Show characteristics of both: thick white fur with brown patches and the hump of a grizzly. Artistic wildlife photography style.</div>
+                    <p class="font-bold">Figure 3.5a: The "Protist" Complexity</p>
+                    <div class="img-prompt">
+                        <strong>Nano Banana Prompt:</strong> A creative illustration of a desk drawer labeled 'Protista' containing unrelated microscopic organisms: an Amoeba, an Algae, and a Slime Mold. Modern infographic style explaining why 'Kingdom Protista' is being redefined into multiple supergroups.
                     </div>
-                </figure>
+                </div>
+
+                <p class="mb-6">Modern genetic analysis shows that some protists are more closely related to animals than they are to other protists! This has led many scientists to abandon the "Kingdom Protista" in favor of "Supergroups." This reflects the <strong>dynamic nature of science</strong>: as our tools (like DNA sequencing) improve, our classification systems must change to remain accurate.</p>
+
+                <h4 class="font-bold text-slate-800 mb-2">When Species Blur: The Hybrid Problem</h4>
+                <p class="mb-6">Another challenge is the <strong>Biological Species Concept</strong>, which states that a species is a group of organisms that can interbreed and produce fertile offspring. But what happens when two different species cross-breed? In the north, climate change is bringing Grizzly bears and Polar bears into the same territories, resulting in the "Pizzly" or "Grolar" bear (<strong>Figure 3.5b</strong>).</p>
+
+                <div class="img-placeholder">
+                    <i data-lucide="image" class="w-12 h-12 text-slate-400 mb-2"></i>
+                    <p class="font-bold">Figure 3.5b: Natural Hybrids</p>
+                    <div class="img-prompt">
+                        <strong>Nano Banana Prompt:</strong> A realistic photo of a hybrid bear (Grizzly-Polar bear cross). Show characteristics of both: thick white fur with brown patches and the hump of a grizzly. Artistic wildlife photography style.
+                    </div>
+                </div>
+
+                <p>If these hybrids are fertile, does it mean Grizzlies and Polar bears are actually the same species? These edge cases force biologists to debate whether classification should be based on <em>reproduction</em>, <em>physical traits</em>, or <em>ancestry</em>.</p>
             </div>
         </section>
 
@@ -403,46 +396,54 @@
             <h3 class="text-2xl font-bold text-slate-800 mb-4">3.6 Tools for Identification [BI30-OL3f, BI30-OL3g]</h3>
             
             <div class="learning-objective">
-                <strong>Learning Objective:</strong> Create and use dichotomous keys and cladograms to identify and determine relationships among organisms.
+                <strong>Learning Objective:</strong> Master the use of dichotomous keys and cladograms to identify species and interpret evolutionary lineages.
             </div>
-
-            <!-- Image 3.6a: Visual Dichotomous Key -->
-            <figure class="mb-8">
-                <div class="img-placeholder">
-                    <i data-lucide="image" class="w-12 h-12 text-slate-400 mb-2"></i>
-                    <p class="font-bold">Figure 3.6a: Visual Identification of Prairie Leaves</p>
-                    <div class="img-prompt"><strong>Imagen Prompt:</strong> A clean diagram showing three different Saskatchewan leaves: Aspen (round), Willow (long), and Birch (serrated). Lines and choices (a/b) leading to names. Textbook diagram style.</div>
-                </div>
-            </figure>
 
             <div class="prose prose-lg text-slate-700">
-                <h4 class="font-bold text-slate-800 mt-6 mb-2">1. Dichotomous Keys</h4>
-                <p class="mb-4">A dichotomous key is a step-by-step guide where you choose between two opposing physical traits until the organism is identified.</p>
-                
-                <h4 class="font-bold text-slate-800 mt-8 mb-2">2. Cladograms</h4>
-                <p class="mb-4">A cladogram is a diagram showing evolutionary relationships. It focuses on <strong>derived characters</strong>—traits that appeared in a common ancestor and were passed to descendants.</p>
+                <p class="mb-6">Biologists rely on two primary tools to make sense of the natural world: one for <strong>identification</strong> (the Dichotomous Key) and one for <strong>ancestry</strong> (the Cladogram).</p>
 
-                <!-- Image 3.6b: Vertebrate Cladogram -->
-                <figure class="my-8">
-                    <div class="img-placeholder">
-                        <i data-lucide="image" class="w-12 h-12 text-slate-400 mb-2"></i>
-                        <p class="font-bold">Figure 3.6b: Cladogram of Saskatchewan Vertebrates</p>
-                        <div class="img-prompt"><strong>Imagen Prompt:</strong> A professional cladogram showing a Perch, a Frog, a Garter Snake, and a Deer. Mark derived traits along the trunk: "Jaws," "Four Limbs," "Amniotic Egg," and "Fur." High-contrast, clean lines.</div>
+                <h4 class="font-bold text-slate-800 mb-2">Dichotomous Keys: The Path to Identification</h4>
+                <p class="mb-6">A <strong>dichotomous key</strong> is a tool that allows the user to determine the identity of items in the natural world. "Dichotomous" means "divided into two parts." Therefore, a dichotomous key always presents two choices based on observable physical traits. By following the path of correct choices, you eventually reach the name of the organism, as shown with the Saskatchewan leaf examples in <strong>Figure 3.6a</strong>.</p>
+
+                <div class="img-placeholder">
+                    <i data-lucide="image" class="w-12 h-12 text-slate-400 mb-2"></i>
+                    <p class="font-bold">Figure 3.6a: Identifying Prairie Leaves</p>
+                    <div class="img-prompt">
+                        <strong>Nano Banana Prompt:</strong> A clean diagram showing three different Saskatchewan leaves: Aspen (round), Willow (long), and Birch (serrated). Lines and choices (a/b) leading to names in a dichotomous key format. Textbook diagram style.
                     </div>
-                </figure>
+                </div>
+
+                <h4 class="font-bold text-slate-800 mb-2">Cladograms: Mapping the Tree of Life</h4>
+                <p class="mb-6">While a key identifies what an organism <em>is</em>, a <strong>cladogram</strong> shows where it <em>came from</em>. Cladograms are diagrams that show the evolutionary relationships among a group of organisms based on <strong>derived characters</strong>—new traits that evolved in the lineage and were passed on to descendants but were not present in distant ancestors. In <strong>Figure 3.6b</strong>, we see how the development of "Fur" separates mammals from other vertebrates.</p>
+
+                <div class="img-placeholder">
+                    <i data-lucide="image" class="w-12 h-12 text-slate-400 mb-2"></i>
+                    <p class="font-bold">Figure 3.6b: Vertebrate Cladogram</p>
+                    <div class="img-prompt">
+                        <strong>Nano Banana Prompt:</strong> A professional cladogram showing a Perch, a Frog, a Garter Snake, and a Deer. Mark derived traits along the trunk: 'Jaws', 'Four Limbs', 'Amniotic Egg', and 'Fur'. High-contrast, clean lines.
+                    </div>
+                </div>
             </div>
 
-            <!-- Digital Feature: Conifer Key -->
             <div class="feature-box">
                 <h4 class="font-bold text-slate-800 mb-2 flex items-center gap-2">
                     <i data-lucide="tree-pine" class="w-5 h-5 text-green-600"></i>
-                    Activity: Digital Dichotomous Key for Saskatchewan Conifers
+                    [Digital Feature]: Digital Dichotomous Key
                 </h4>
-                <span class="feature-tag tag-interactive">Interactive Lab</span>
-                <p class="text-sm text-slate-600 mb-4">Examine the needles and cones of Saskatchewan trees. Is it a White Spruce, a Tamarack, or a Jack Pine?</p>
-                <div class="bg-black text-white p-8 rounded text-center">
-                    [Simulation: 3D Tree Needle Viewer with choice-based identification logic]
+                <span class="feature-tag tag-interactive">Interactive Activity</span>
+                <p class="text-sm text-slate-600">Think like a field biologist. Use this interactive tool to identify unknown Saskatchewan conifers by examining 3D models of their needles and cones.</p>
+                <div class="bg-slate-200 h-40 rounded flex items-center justify-center text-slate-500 italic">
+                    [Simulation: 3D Needle Viewer with branching logic for Black Spruce, Jack Pine, and Tamarack]
                 </div>
+            </div>
+
+            <div class="formative-check">
+                <h4 class="font-bold text-orange-800 mb-3"><i data-lucide="check-circle-2" class="inline w-5 h-5 mr-1"></i> Formative Check</h4>
+                <ul class="space-y-3 text-slate-700">
+                    <li>1. Using Table 3.1, identify which taxon level is the first to exclude a domestic dog (<em>Canis familiaris</em>) from being grouped with a Red Fox. Explain why.</li>
+                    <li>2. Why is "reproduction" a problematic criteria for the biological species concept when discussing asexual bacteria or grizzly-polar hybrids?</li>
+                    <li>3. In Figure 3.6b, which trait is shared by the Frog, Snake, and Deer, but NOT the Perch?</li>
+                </ul>
             </div>
         </section>
 
@@ -451,10 +452,10 @@
             <h3 class="text-2xl font-bold mb-4">Chapter 3 Review: Narrative Lab Report</h3>
             <p class="mb-4 text-slate-300">Activity: Classifying Local Conifers.</p>
             <ol class="list-decimal pl-6 space-y-4">
-                <li><strong>What was I looking for?</strong> (Determining the species of unknown coniferous trees found in the Boreal forest).</li>
-                <li><strong>How did I look for it?</strong> (I used a dichotomous key to observe needle arrangement—single vs. clusters—and cone shape).</li>
-                <li><strong>What did I find?</strong> (I identified the Black Spruce by its short, blunt needles and small round cones).</li>
-                <li><strong>What do these findings mean?</strong> (Biological identification tools allow us to accurately inventory local biodiversity).</li>
+                <li><strong>What was I looking for?</strong> (Determining the species of unknown coniferous trees found in the Saskatchewan Boreal forest).</li>
+                <li><strong>How did I look for it?</strong> (I used a dichotomous key to observe physical characteristics, specifically focusing on whether needles were in clusters or attached singly to the branch).</li>
+                <li><strong>What did I find?</strong> (I identified the <strong>Black Spruce</strong> by its short, four-sided needles that roll easily between the fingers, and the <strong>Jack Pine</strong> by its needles grouped in pairs).</li>
+                <li><strong>What do these findings mean?</strong> (Accurate identification is the first step in ecological research. By using these tools, we can track how Saskatchewan's forest composition changes in response to factors like climate change or pest outbreaks, such as the Mountain Pine Beetle).</li>
             </ol>
         </section>
 
