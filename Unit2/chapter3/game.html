@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classification Combat - Biology 30</title>
+    <style>
+        :root {
+            --primary: #4ade80;
+            --bg: #0f172a;
+            --text: #f8fafc;
+            --danger: #ef4444;
+            --warning: #fbbf24;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+        }
+
+        #game-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            height: 600px;
+            background: radial-gradient(circle, #1e293b 0%, #0f172a 100%);
+            border: 4px solid #334155;
+            border-radius: 8px;
+            margin-top: 20px;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+            cursor: crosshair;
+        }
+
+        canvas {
+            display: block;
+        }
+
+        #ui {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            display: flex;
+            justify-content: space-between;
+            pointer-events: none;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+        }
+
+        .stat {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        #mission-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(15, 23, 42, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            border: 2px solid var(--primary);
+            text-align: center;
+            z-index: 100;
+            max-width: 80%;
+        }
+
+        button {
+            background: var(--primary);
+            color: #000;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: transform 0.1s;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            filter: brightness(1.1);
+        }
+
+        #hud-mission {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            text-align: center;
+            font-size: 1.5rem;
+            color: var(--primary);
+            font-weight: bold;
+            text-transform: uppercase;
+            pointer-events: none;
+        }
+
+        .floating-msg {
+            position: absolute;
+            pointer-events: none;
+            animation: floatUp 1s ease-out forwards;
+            font-weight: bold;
+            z-index: 10;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0); opacity: 1; }
+            100% { transform: translateY(-50px); opacity: 0; }
+        }
+
+        #title-screen {
+            text-align: center;
+            padding: 20px;
+        }
+
+        h1 { margin: 0; color: var(--primary); }
+        .kb-hint { font-size: 0.8rem; opacity: 0.7; margin-top: 5px; }
+    </style>
+</head>
+<body>
+
+    <div id="title-screen">
+        <h1>CLASSIFICATION COMBAT</h1>
+        <div class="stat">Unit 2: Chapter 3 - Biological Classification</div>
+    </div>
+
+    <div id="game-container">
+        <canvas id="gameCanvas"></canvas>
+        
+        <div id="ui">
+            <div class="stat">SCORE: <span id="score">0</span></div>
+            <div class="stat">HP: <span id="hp">100</span>%</div>
+            <div class="stat">LEVEL: <span id="level">1</span></div>
+        </div>
+
+        <div id="hud-mission"></div>
+
+        <div id="mission-overlay">
+            <h2 id="overlay-title">Ready for Classification?</h2>
+            <p id="overlay-desc">Use your mouse to aim and click to shoot. Avoid the wrong targets!</p>
+            <button id="start-btn">START MISSION</button>
+        </div>
+    </div>
+
+    <div class="kb-hint">Click on a specific target to LOCK ON. Laser will pass through obstacles.</div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreEl = document.getElementById('score');
+        const hpEl = document.getElementById('hp');
+        const levelEl = document.getElementById('level');
+        const missionEl = document.getElementById('hud-mission');
+        const overlay = document.getElementById('mission-overlay');
+        const overlayTitle = document.getElementById('overlay-title');
+        const overlayDesc = document.getElementById('overlay-desc');
+        const startBtn = document.getElementById('start-btn');
+
+        // Game State
+        let score = 0;
+        let hp = 100;
+        let level = 1;
+        let gameActive = false;
+        let enemies = [];
+        let particles = [];
+        let bullets = [];
+        let lastSpawnTime = 0;
+        let spawnRate = 2000;
+        let missionText = "";
+        let level3SpeedBonus = 0; // Specifically for Level 3 ramping
+
+        // Content Data from Chapter 3 + Expanded Diversity
+        const levels = [
+            {
+                num: 1,
+                title: "The Three Domains",
+                mission: "SHOOT THE EUKARYOTES",
+                desc: "Identify Eukarya (Cells with a Nucleus). Protect the Bacteria and Archaea!",
+                targets: [
+                    { text: "Bison", isCorrect: true, emoji: "🦬" },
+                    { text: "Spruce", isCorrect: true, emoji: "🌲" },
+                    { text: "Mushroom", isCorrect: true, emoji: "🍄" },
+                    { text: "Yeast", isCorrect: true, emoji: "🍞" },
+                    { text: "Amoeba", isCorrect: true, emoji: "💧" },
+                    { text: "Human", isCorrect: true, emoji: "👤" },
+                    { text: "Eagle", isCorrect: true, emoji: "🦅" },
+                    { text: "Oak Tree", isCorrect: true, emoji: "🌳" },
+                    { text: "E. coli", isCorrect: false, emoji: "🦠" },
+                    { text: "Thermophile", isCorrect: false, emoji: "🌋" },
+                    { text: "Strep", isCorrect: false, emoji: "🧬" },
+                    { text: "Cyanobacteria", isCorrect: false, emoji: "🌊" },
+                    { text: "Methanogen", isCorrect: false, emoji: "💨" },
+                    { text: "Salmonella", isCorrect: false, emoji: "🍗" }
+                ],
+                winScore: 120
+            },
+            {
+                num: 2,
+                title: "Kingdom Animalia",
+                mission: "SHOOT THE VERTEBRATES",
+                desc: "Blast members of Phylum Chordata (with backbones). Don't hit the Invertebrates!",
+                targets: [
+                    { text: "Red Fox", isCorrect: true, emoji: "🦊" },
+                    { text: "Beaver", isCorrect: true, emoji: "🦫" },
+                    { text: "Walleye", isCorrect: true, emoji: "🐟" },
+                    { text: "Grizzly Bear", isCorrect: true, emoji: "🐻" },
+                    { text: "Garter Snake", isCorrect: true, emoji: "🐍" },
+                    { text: "Salamander", isCorrect: true, emoji: "🦎" },
+                    { text: "Owl", isCorrect: true, emoji: "🦉" },
+                    { text: "Wasp", isCorrect: false, emoji: "🐝" },
+                    { text: "Earthworm", isCorrect: false, emoji: "🪱" },
+                    { text: "Spider", isCorrect: false, emoji: "🕷️" },
+                    { text: "Octopus", isCorrect: false, emoji: "🐙" },
+                    { text: "Jellyfish", isCorrect: false, emoji: "🎐" },
+                    { text: "Crab", isCorrect: false, emoji: "🦀" },
+                    { text: "Butterfly", isCorrect: false, emoji: "🦋" }
+                ],
+                winScore: 300
+            },
+            {
+                num: 3,
+                title: "Binomial Speed Run",
+                mission: "SHOOT THE GENUS NAME",
+                desc: "GENUS is capitalized. WARNING: The more you hit, the faster it gets!",
+                targets: [
+                    { text: "Vulpes", isCorrect: true, emoji: "🦊" },
+                    { text: "Castor", isCorrect: true, emoji: "🦫" },
+                    { text: "Homo", isCorrect: true, emoji: "👤" },
+                    { text: "Panthera", isCorrect: true, emoji: "🐆" },
+                    { text: "Ursus", isCorrect: true, emoji: "🐻" },
+                    { text: "Canis", isCorrect: true, emoji: "🐕" },
+                    { text: "Aquila", isCorrect: true, emoji: "🦅" },
+                    { text: "Acer", isCorrect: true, emoji: "🍁" },
+                    { text: "vulpes", isCorrect: false, emoji: "❌" },
+                    { text: "canadensis", isCorrect: false, emoji: "❌" },
+                    { text: "sapiens", isCorrect: false, emoji: "❌" },
+                    { text: "leo", isCorrect: false, emoji: "❌" },
+                    { text: "arctos", isCorrect: false, emoji: "❌" },
+                    { text: "familiaris", isCorrect: false, emoji: "❌" },
+                    { text: "rubra", isCorrect: false, emoji: "❌" }
+                ],
+                winScore: 500
+            },
+            {
+                num: 4,
+                title: "Hierarchy Hunter",
+                mission: "SHOOT HIGHER TAXA",
+                desc: "Target broad levels (Domain to Family). Avoid specific Genus/Species!",
+                targets: [
+                    { text: "Domain", isCorrect: true, emoji: "🌎" },
+                    { text: "Kingdom", isCorrect: true, emoji: "👑" },
+                    { text: "Phylum", isCorrect: true, emoji: "📂" },
+                    { text: "Class", isCorrect: true, emoji: "🏫" },
+                    { text: "Order", isCorrect: true, emoji: "📜" },
+                    { text: "Family", isCorrect: true, emoji: "👨‍👩‍👦" },
+                    { text: "vulpes", isCorrect: false, emoji: "🧬" },
+                    { text: "sapiens", isCorrect: false, emoji: "🧬" },
+                    { text: "canadensis", isCorrect: false, emoji: "🧬" },
+                    { text: "Population", isCorrect: false, emoji: "👥" },
+                    { text: "Community", isCorrect: false, emoji: "🏘️" },
+                    { text: "Ecosystem", isCorrect: false, emoji: "🌲" }
+                ],
+                winScore: 750
+            },
+            {
+                num: 5,
+                title: "Protist Purge",
+                mission: "CLEAR THE PROTISTS",
+                desc: "Kingdom Protista is the 'junk drawer'. Clear out the single-celled oddballs!",
+                targets: [
+                    { text: "Amoeba", isCorrect: true, emoji: "💧" },
+                    { text: "Paramecium", isCorrect: true, emoji: "💊" },
+                    { text: "Euglena", isCorrect: true, emoji: "🧪" },
+                    { text: "Slime Mold", isCorrect: true, emoji: "🍄" },
+                    { text: "Diatom", isCorrect: true, emoji: "💎" },
+                    { text: "Algae", isCorrect: true, emoji: "🌿" },
+                    { text: "Wheat", isCorrect: false, emoji: "🌾" },
+                    { text: "E. coli", isCorrect: false, emoji: "🦠" },
+                    { text: "Yeast", isCorrect: false, emoji: "🍞" },
+                    { text: "Oak", isCorrect: false, emoji: "🌳" },
+                    { text: "Moss", isCorrect: false, emoji: "🥦" }
+                ],
+                winScore: 1050
+            }
+        ];
+
+        function resize() {
+            const container = document.getElementById('game-container');
+            if (container) {
+                canvas.width = container.clientWidth;
+                canvas.height = container.clientHeight;
+            }
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Particle {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.size = Math.random() * 5 + 2;
+                this.speedX = Math.random() * 6 - 3;
+                this.speedY = Math.random() * 6 - 3;
+                this.color = color;
+                this.life = 1.0;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.life -= 0.02;
+            }
+            draw() {
+                ctx.globalAlpha = this.life;
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.globalAlpha = 1.0;
+            }
+        }
+
+        class Bullet {
+            constructor(startX, startY, targetEnemy, tx, ty) {
+                this.x = startX;
+                this.y = startY;
+                this.targetEnemy = targetEnemy; 
+                this.tx = tx; 
+                this.ty = ty;
+                
+                const angle = Math.atan2(ty - startY, tx - startX);
+                this.speed = 18;
+                this.speedX = Math.cos(angle) * this.speed;
+                this.speedY = Math.sin(angle) * this.speed;
+                this.active = true;
+            }
+            update() {
+                if (this.targetEnemy && this.targetEnemy.dead) {
+                    this.active = false;
+                    return;
+                }
+
+                if (this.targetEnemy) {
+                    const angle = Math.atan2(this.targetEnemy.y - this.y, this.targetEnemy.x - this.x);
+                    this.speedX = Math.cos(angle) * this.speed;
+                    this.speedY = Math.sin(angle) * this.speed;
+                }
+
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                if (this.targetEnemy) {
+                    const dist = Math.hypot(this.x - this.targetEnemy.x, this.y - this.targetEnemy.y);
+                    if (dist < 22) {
+                        this.hit(this.targetEnemy);
+                        this.active = false;
+                    }
+                } else {
+                    if (this.y < 0 || this.x < 0 || this.x > canvas.width || this.y > canvas.height) {
+                        this.active = false;
+                    }
+                }
+            }
+            hit(enemy) {
+                for (let k = 0; k < 15; k++) {
+                    particles.push(new Particle(enemy.x, enemy.y, enemy.isCorrect ? '#4ade80' : '#ef4444'));
+                }
+
+                if (enemy.isCorrect) {
+                    score += 10;
+                    scoreEl.innerText = score;
+                    createFloatingMsg("+10 Classified", enemy.x, enemy.y, "#4ade80");
+
+                    // Ramping logic for Level 3
+                    if (level === 3) {
+                        level3SpeedBonus += 0.2;
+                        spawnRate = Math.max(400, spawnRate - 100);
+                        createFloatingMsg("SPEED UP!", canvas.width/2, canvas.height/2 + 40, "#fbbf24");
+                    }
+
+                    if (score >= levels[level - 1].winScore) winLevel();
+                } else {
+                    takeDamage(15, "Wrong Taxon!");
+                }
+                enemy.dead = true;
+            }
+            draw() {
+                ctx.strokeStyle = this.targetEnemy ? '#fbbf24' : '#4ade80';
+                ctx.lineWidth = 4;
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = ctx.strokeStyle;
+                ctx.beginPath();
+                ctx.moveTo(this.x, this.y);
+                ctx.lineTo(this.x - (this.speedX * 0.5), this.y - (this.speedY * 0.5));
+                ctx.stroke();
+                ctx.shadowBlur = 0;
+            }
+        }
+
+        class Enemy {
+            constructor(data) {
+                this.id = Math.random().toString(36).substr(2, 9);
+                this.x = Math.random() * (canvas.width - 120) + 60;
+                this.y = -60;
+                this.text = data.text;
+                this.emoji = data.emoji;
+                this.isCorrect = data.isCorrect;
+                // Apply speed bonus for Level 3
+                const baseSpeed = Math.random() * 1.5 + (level * 0.4);
+                this.speed = level === 3 ? baseSpeed + level3SpeedBonus : baseSpeed;
+                this.radius = 50;
+                this.rotation = 0;
+                this.rotSpeed = Math.random() * 0.06 - 0.03;
+                this.dead = false;
+                this.isLocked = false;
+            }
+            update() {
+                this.y += this.speed;
+                this.rotation += this.rotSpeed;
+                if (this.y > canvas.height + 60) {
+                    if (this.isCorrect) {
+                        takeDamage(10, "Missed a " + this.text);
+                    }
+                    return true;
+                }
+                return this.dead;
+            }
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.rotation);
+                
+                if (this.isLocked) {
+                    ctx.beginPath();
+                    ctx.arc(0, 0, this.radius + 6, 0, Math.PI * 2);
+                    ctx.strokeStyle = '#fbbf24';
+                    ctx.setLineDash([5, 5]);
+                    ctx.lineWidth = 3;
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                }
+
+                ctx.beginPath();
+                ctx.arc(0, 0, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = this.isLocked ? 'rgba(251, 191, 36, 0.25)' : 'rgba(255, 255, 255, 0.08)';
+                ctx.strokeStyle = this.isLocked ? '#fbbf24' : 'rgba(255, 255, 255, 0.2)';
+                ctx.lineWidth = 2;
+                ctx.fill();
+                ctx.stroke();
+
+                ctx.fillStyle = '#fff';
+                ctx.font = '32px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(this.emoji, 0, 8);
+                
+                ctx.font = 'bold 13px sans-serif';
+                ctx.shadowBlur = 4;
+                ctx.shadowColor = 'black';
+                ctx.fillText(this.text, 0, 30);
+                
+                ctx.restore();
+            }
+        }
+
+        function takeDamage(amt, reason) {
+            hp -= amt;
+            if (hp < 0) hp = 0;
+            hpEl.innerText = hp;
+            createFloatingMsg(reason || "ERROR", canvas.width/2, canvas.height/2, "#ef4444");
+            if (hp <= 0) gameOver();
+        }
+
+        function createFloatingMsg(text, x, y, color) {
+            const div = document.createElement('div');
+            div.className = 'floating-msg';
+            div.innerText = text;
+            div.style.left = Math.min(Math.max(x, 20), canvas.width - 120) + 'px';
+            div.style.top = y + 'px';
+            div.style.color = color;
+            document.getElementById('game-container').appendChild(div);
+            setTimeout(() => div.remove(), 1000);
+        }
+
+        function spawnEnemy() {
+            const currentLevelData = levels[level - 1];
+            if (!currentLevelData) return;
+            const targetData = currentLevelData.targets[Math.floor(Math.random() * currentLevelData.targets.length)];
+            enemies.push(new Enemy(targetData));
+        }
+
+        function gameOver() {
+            gameActive = false;
+            overlayTitle.innerText = "Biological Failure!";
+            overlayDesc.innerText = `You reached level ${level} with a score of ${score}. Linnaeus is disappointed!`;
+            startBtn.innerText = "TRY AGAIN";
+            overlay.style.display = 'block';
+        }
+
+        function winLevel() {
+            if (level >= levels.length) {
+                gameActive = false;
+                overlayTitle.innerText = "Master of Taxonomy!";
+                overlayDesc.innerText = `You completed all levels! Final Score: ${score}. You are ready for the provincial exam!`;
+                startBtn.innerText = "PLAY AGAIN";
+                overlay.style.display = 'block';
+                return;
+            }
+            
+            gameActive = false;
+            level++;
+            setupLevel();
+        }
+
+        function setupLevel() {
+            const l = levels[level - 1];
+            overlayTitle.innerText = `Level ${l.num}: ${l.title}`;
+            overlayDesc.innerText = l.desc;
+            missionText = l.mission;
+            missionEl.innerText = missionText;
+            levelEl.innerText = level;
+            overlay.style.display = 'block';
+            enemies = [];
+            bullets = [];
+            // Reset modifiers
+            spawnRate = 2000 - (level * 200);
+            level3SpeedBonus = 0;
+        }
+
+        function startLevel() {
+            overlay.style.display = 'none';
+            gameActive = true;
+            hp = 100;
+            hpEl.innerText = hp;
+            if (level === 1 && score > 0) score = 0;
+            scoreEl.innerText = score;
+        }
+
+        canvas.addEventListener('mousedown', (e) => {
+            if (!gameActive) return;
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+
+            let clickedEnemy = null;
+            for (let i = enemies.length - 1; i >= 0; i--) {
+                const dist = Math.hypot(mouseX - enemies[i].x, mouseY - enemies[i].y);
+                if (dist < enemies[i].radius) {
+                    clickedEnemy = enemies[i];
+                    clickedEnemy.isLocked = true;
+                    break;
+                }
+            }
+
+            bullets.push(new Bullet(canvas.width/2, canvas.height, clickedEnemy, mouseX, mouseY));
+        });
+
+        startBtn.addEventListener('click', () => {
+            if (hp <= 0 || overlayTitle.innerText.includes("Master")) {
+                level = 1;
+                score = 0;
+                setupLevel();
+            } else {
+                startLevel();
+            }
+        });
+
+        function loop(timestamp) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            if (gameActive) {
+                // Background star effect
+                ctx.fillStyle = 'white';
+                for(let i=0; i<15; i++) {
+                    ctx.globalAlpha = 0.5;
+                    ctx.fillRect(Math.random()*canvas.width, Math.random()*canvas.height, 1, 1);
+                    ctx.globalAlpha = 1.0;
+                }
+
+                // Cannon Base
+                ctx.fillStyle = '#334155';
+                ctx.beginPath();
+                ctx.arc(canvas.width/2, canvas.height, 40, Math.PI, 0);
+                ctx.fill();
+
+                if (timestamp - lastSpawnTime > spawnRate) {
+                    spawnEnemy();
+                    lastSpawnTime = timestamp;
+                }
+
+                // Update & Draw Bullets
+                for (let i = bullets.length - 1; i >= 0; i--) {
+                    const b = bullets[i];
+                    if (!b) continue;
+                    
+                    b.update();
+                    
+                    if (bullets.length === 0) break;
+                    if (!bullets[i] || !bullets[i].active) {
+                        bullets.splice(i, 1);
+                        continue;
+                    }
+                    bullets[i].draw();
+                }
+
+                // Update & Draw Enemies
+                if (gameActive) {
+                    for (let i = enemies.length - 1; i >= 0; i--) {
+                        if (!enemies[i]) continue;
+                        if (enemies[i].update()) {
+                            enemies.splice(i, 1);
+                        } else {
+                            if (enemies[i]) enemies[i].draw();
+                        }
+                    }
+                }
+
+                // Particles
+                for (let i = particles.length - 1; i >= 0; i--) {
+                    particles[i].update();
+                    particles[i].draw();
+                    if (particles[i].life <= 0) particles.splice(i, 1);
+                }
+            }
+
+            requestAnimationFrame(loop);
+        }
+
+        setupLevel();
+        requestAnimationFrame(loop);
+    </script>
+</body>
+</html>
