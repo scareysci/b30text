@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biology 30 Saskatchewan - Chapter 9: SDS Workbook</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400&family=Inter:wght@300;400;600;800&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+            line-height: 1.8;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Merriweather', serif;
+        }
+
+        .feature-box {
+            border: 2px dashed #cbd5e1;
+            background-color: #f1f5f9;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            position: relative;
+        }
+
+        .feature-tag {
+            position: absolute;
+            top: -12px;
+            left: 1rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .tag-guide { background-color: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+
+        .learning-objective {
+            background-color: #eff6ff;
+            border-left: 4px solid #2563eb;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            font-size: 0.95rem;
+        }
+        th, td {
+            border: 1px solid #cbd5e1;
+            padding: 1rem;
+            text-align: left;
+        }
+        th {
+            background-color: #f1f5f9;
+            font-weight: 700;
+            color: #334155;
+        }
+        tr:nth-child(even) { background-color: #f8fafc; }
+
+        /* Writing lines for print */
+        .write-line {
+            border-bottom: 2px solid #cbd5e1;
+            display: inline-block;
+            min-height: 1.5rem;
+            width: 100%;
+            margin-top: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Checkbox styling */
+        .check-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+        .check-item input[type="checkbox"] {
+            margin-top: 0.4rem;
+            width: 1.25rem;
+            height: 1.25rem;
+            accent-color: #16a34a;
+            cursor: pointer;
+        }
+
+        @media print {
+            nav, footer, .print-hidden { display: none !important; }
+            body { background-color: white; color: black; font-size: 11pt; line-height: 1.5; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            .break-after-page { page-break-after: always; break-after: page; }
+            .break-avoid { page-break-inside: avoid; break-inside: avoid; }
+            .feature-box { border: 2px solid #cbd5e1; }
+            main { max-width: 100% !important; padding: 0 !important; margin: 0 !important; }
+            table { font-size: 10pt; }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50 print-hidden">
+        <div class="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center gap-4">
+            <div class="flex items-center gap-4">
+                <a href="#" class="flex items-center gap-2 text-slate-500 hover:text-green-700 transition-colors">
+                    <i data-lucide="arrow-left" class="w-5 h-5"></i>
+                </a>
+                <span class="font-bold text-xl text-green-700 tracking-tight">Biology 30</span>
+            </div>
+            <div class="text-sm text-slate-500 font-medium hidden md:block">
+                Unit 5: The Future of Biology
+            </div>
+            <div class="relative flex-grow max-w-xs">
+                <input type="text" placeholder="Search chapter..." class="block w-full pl-10 pr-3 py-1.5 border border-slate-300 rounded-md text-sm">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i data-lucide="search" class="w-4 h-4 text-slate-400"></i>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-6 py-12">
+        
+        <header class="mb-12">
+            <h1 class="text-4xl md:text-5xl font-black text-slate-900 mb-4 border-b-4 border-green-600 pb-4">Chapter 9: Student-Directed Study (SDS)</h1>
+            <h2 class="text-2xl font-bold text-slate-600 mb-8">Your Biological Journey, Your Way</h2>
+            
+            <!-- Student Details Area -->
+            <div class="bg-white p-6 rounded-lg border border-slate-200 shadow-sm flex flex-col md:flex-row gap-6 mb-8 break-avoid">
+                <div class="flex-1">
+                    <label class="font-bold text-slate-700">Name:</label>
+                    <div class="write-line"></div>
+                </div>
+                <div class="flex-1">
+                    <label class="font-bold text-slate-700">Course:</label>
+                    <div class="write-line border-b-2 border-slate-300">Biology 30</div>
+                </div>
+                <div class="flex-1">
+                    <label class="font-bold text-slate-700">Teacher:</label>
+                    <div class="write-line"></div>
+                </div>
+            </div>
+
+            <div class="learning-objective">
+                <strong>Welcome to Your Independent Study!</strong><br>
+                Biology is the study of life—and life is incredibly diverse. So is this project. Over the course of the semester, you will have one period a week to dive deep into a biological topic that genuinely interests <em>you</em>. This workbook is your roadmap. Keep it in your binder. You will use it to brainstorm, plan, research, build, and evaluate your final product.
+            </div>
+        </header>
+
+        <!-- PHASE 1 -->
+        <section class="mb-12" id="phase-1">
+            <h3 class="text-3xl font-bold text-slate-800 mb-6 bg-slate-100 py-2 px-4 rounded-md border-l-4 border-slate-800">PHASE 1: Discovery & Brainstorming</h3>
+            
+            <h4 class="text-xl font-bold text-slate-800 mt-8 mb-4">Step 1: Inspiration Station</h4>
+            <p class="text-slate-700 mb-6">Review the major themes of Biology 30. Check off any topics below that spark your curiosity, or use them to inspire your own ideas!</p>
+
+            <div class="grid md:grid-cols-2 gap-8 mb-8 break-avoid">
+                <!-- Unit 1 & 2 -->
+                <div>
+                    <h5 class="font-bold text-green-700 mb-3 border-b border-green-200 pb-1">Unit 1: What is Life?</h5>
+                    <div class="space-y-2 mb-6 text-sm text-slate-700">
+                        <label class="check-item"><input type="checkbox"> Are viruses, viroids, or prions actually alive? (e.g., The zombie deer disease / CWD in SK).</label>
+                        <label class="check-item"><input type="checkbox"> Extremophiles: How do organisms survive in boiling acid or extreme salt (like SK's Chaplin Lake)?</label>
+                        <label class="check-item"><input type="checkbox"> The history of biological discovery: Recreating a famous experiment (e.g., Pasteur, Miller-Urey).</label>
+                        <label class="check-item"><input type="checkbox"> Indigenous Knowledge Systems: Exploring the concept of <em>Wâhkôhtowin</em> (kinship) and the animate nature of the environment.</label>
+                    </div>
+
+                    <h5 class="font-bold text-green-700 mb-3 border-b border-green-200 pb-1">Unit 2: The Organization of Life</h5>
+                    <div class="space-y-2 mb-6 text-sm text-slate-700">
+                        <label class="check-item"><input type="checkbox"> Bio-engineering: How do we manipulate plant cell structures (like Canola) for better agriculture?</label>
+                        <label class="check-item"><input type="checkbox"> The Wood Wide Web: How fungi (mycorrhizae) communicate and transport nutrients between trees.</label>
+                        <label class="check-item"><input type="checkbox"> Comparative Anatomy: A deep dive into the weirdest evolutionary adaptations of a specific animal.</label>
+                        <label class="check-item"><input type="checkbox"> Redesigning Taxonomy: How is DNA sequencing changing the way we classify the "Tree of Life"?</label>
+                    </div>
+                </div>
+
+                <!-- Unit 3, 4, 5 -->
+                <div>
+                    <h5 class="font-bold text-green-700 mb-3 border-b border-green-200 pb-1">Unit 3: Genetics</h5>
+                    <div class="space-y-2 mb-6 text-sm text-slate-700">
+                        <label class="check-item"><input type="checkbox"> Epigenetics: How does trauma, diet, or environment change how our DNA is expressed?</label>
+                        <label class="check-item"><input type="checkbox"> Genetic Disorders: Tracing a disease from chromosomal mutation to physical symptoms.</label>
+                        <label class="check-item"><input type="checkbox"> The Ethics of CRISPR: Should we edit human embryos or eradicate mosquitoes?</label>
+                        <label class="check-item"><input type="checkbox"> Forensic Genetics: How DNA fingerprinting, PCR, and gel electrophoresis solve crimes.</label>
+                    </div>
+
+                    <h5 class="font-bold text-green-700 mb-3 border-b border-green-200 pb-1">Unit 4: Evolution & Unit 5: Biotech</h5>
+                    <div class="space-y-2 mb-6 text-sm text-slate-700">
+                        <label class="check-item"><input type="checkbox"> The Evolutionary Arms Race: How the overuse of antibiotics creates "Superbugs".</label>
+                        <label class="check-item"><input type="checkbox"> Paleontology in SK: What the fossil record of the Prairies tells us about ancient ecosystems.</label>
+                        <label class="check-item"><input type="checkbox"> De-extinction: The science (and ethics) of cloning the Woolly Mammoth.</label>
+                        <label class="check-item"><input type="checkbox"> Bioremediation: Using bacteria/fungi to clean up oil spills and plastic pollution.</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="break-avoid mt-8">
+                <h4 class="text-xl font-bold text-slate-800 mb-4">Step 2: Narrowing It Down</h4>
+                <p class="text-slate-700 mb-4 italic">Write down your top 3 ideas from the list above (or your own ideas). Which one makes you want to start researching right now? <strong>Circle it!</strong></p>
+                <div class="pl-4">
+                    <p class="font-bold text-slate-600">1. <span class="write-line"></span></p>
+                    <p class="font-bold text-slate-600">2. <span class="write-line"></span></p>
+                    <p class="font-bold text-slate-600">3. <span class="write-line"></span></p>
+                </div>
+            </div>
+        </section>
+
+        <div class="break-after-page"></div>
+
+        <!-- PHASE 2 -->
+        <section class="mb-12" id="phase-2">
+            <h3 class="text-3xl font-bold text-slate-800 mb-6 bg-slate-100 py-2 px-4 rounded-md border-l-4 border-slate-800">PHASE 2: Defining the Project & Medium</h3>
+            <p class="text-slate-700 mb-8">You have your topic. Now, how are you going to show what you've learned? You have total freedom to choose the format of your final product, as long as it fits the topic.</p>
+
+            <h4 class="text-xl font-bold text-slate-800 mb-4">Step 3: Choose Your Medium</h4>
+            <div class="grid md:grid-cols-2 gap-6 mb-8 break-avoid">
+                <div class="bg-white p-5 rounded-lg border border-slate-200 shadow-sm">
+                    <h5 class="font-bold text-blue-700 mb-3">Written & Analytical</h5>
+                    <label class="check-item"><input type="checkbox"> <strong>Research Paper:</strong> A formal, university-style deep dive into the science.</label>
+                    <label class="check-item"><input type="checkbox"> <strong>Magazine Feature Article:</strong> A visually appealing, highly readable article.</label>
+                    <label class="check-item"><input type="checkbox"> <strong>Scientific Debate/Position Paper:</strong> Arguing for/against a controversial topic.</label>
+                </div>
+                <div class="bg-white p-5 rounded-lg border border-slate-200 shadow-sm">
+                    <h5 class="font-bold text-blue-700 mb-3">Visual & Creative</h5>
+                    <label class="check-item"><input type="checkbox"> <strong>Physical 3D Model:</strong> Build an accurate model with an explanatory legend.</label>
+                    <label class="check-item"><input type="checkbox"> <strong>Infographic / Poster:</strong> A large-format visual breakdown of a complex process.</label>
+                    <label class="check-item"><input type="checkbox"> <strong>Children's Book/Comic:</strong> Explaining a complex concept to a younger audience.</label>
+                </div>
+                <div class="bg-white p-5 rounded-lg border border-slate-200 shadow-sm">
+                    <h5 class="font-bold text-blue-700 mb-3">Digital & Interactive</h5>
+                    <label class="check-item"><input type="checkbox"> <strong>Video Documentary:</strong> Scripted, filmed, and edited explainer.</label>
+                    <label class="check-item"><input type="checkbox"> <strong>Podcast Episode:</strong> A 10-15 minute audio deep dive.</label>
+                    <label class="check-item"><input type="checkbox"> <strong>Interactive Website:</strong> A self-guided digital tour of your topic.</label>
+                </div>
+                <div class="bg-white p-5 rounded-lg border border-slate-200 shadow-sm">
+                    <h5 class="font-bold text-blue-700 mb-3">Experimental</h5>
+                    <label class="check-item"><input type="checkbox"> <strong>Original Lab Experiment:</strong> Design a hypothesis, build a procedure, conduct the test, and write a formal report.</label>
+                </div>
+            </div>
+
+            <div class="break-avoid">
+                <h4 class="text-xl font-bold text-slate-800 mt-8 mb-2">Step 4: The Medium Match-Up</h4>
+                <p class="text-slate-700 italic mb-2">Why is this medium the BEST way to showcase your specific topic?</p>
+                <div class="write-line"></div>
+                <div class="write-line"></div>
+                <div class="write-line"></div>
+            </div>
+
+            <div class="bg-slate-50 border-2 border-slate-200 p-6 rounded-lg mt-8 break-avoid shadow-inner">
+                <h4 class="text-xl font-bold text-slate-800 mb-4 border-b pb-2">Step 5: The Official Pitch</h4>
+                <p class="font-bold text-slate-700 mt-4">My Topic: <span class="write-line"></span></p>
+                <p class="font-bold text-slate-700 mt-2">My Guiding Question (What am I trying to figure out?): <span class="write-line"></span></p>
+                <p class="font-bold text-slate-700 mt-2">My Final Product Medium: <span class="write-line"></span></p>
+                <div class="flex justify-between items-end mt-8">
+                    <p class="font-bold text-slate-700 w-1/2">Teacher Sign-Off: <span class="write-line"></span></p>
+                    <p class="font-bold text-slate-700 w-1/3">Date: <span class="write-line"></span></p>
+                </div>
+            </div>
+        </section>
+
+        <div class="break-after-page"></div>
+
+        <!-- PHASE 3 -->
+        <section class="mb-12" id="phase-3">
+            <h3 class="text-3xl font-bold text-slate-800 mb-6 bg-slate-100 py-2 px-4 rounded-md border-l-4 border-slate-800">PHASE 3: Planning & Milestones</h3>
+            <p class="text-slate-700 mb-6">You will have roughly one 50-minute period a week. If you don't have a plan, you will run out of time. Break your project down into manageable chunks.</p>
+
+            <div class="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden break-avoid">
+                <table class="m-0">
+                    <thead>
+                        <tr>
+                            <th class="w-24">Week #</th>
+                            <th class="w-32">Date</th>
+                            <th>My Goal for this 50-Minute Work Period</th>
+                            <th class="w-24 text-center">Done?</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="font-bold">Week 1</td>
+                            <td><div class="write-line m-0 border-slate-300"></div></td>
+                            <td>Brainstorming, selecting topic, and getting teacher sign-off.</td>
+                            <td class="text-center"><input type="checkbox" class="w-5 h-5 cursor-pointer"></td>
+                        </tr>
+                        <tr>
+                            <td class="font-bold">Week 2</td>
+                            <td><div class="write-line m-0 border-slate-300"></div></td>
+                            <td>Background research: Find at least 3 credible sources.</td>
+                            <td class="text-center"><input type="checkbox" class="w-5 h-5 cursor-pointer"></td>
+                        </tr>
+                        <tr>
+                            <td class="font-bold">Week 3</td>
+                            <td><div class="write-line m-0 border-slate-300"></div></td>
+                            <td>Detailed research notes and answering my guiding question.</td>
+                            <td class="text-center"><input type="checkbox" class="w-5 h-5 cursor-pointer"></td>
+                        </tr>
+                        <tr>
+                            <td class="font-bold">Week 4</td>
+                            <td><div class="write-line m-0 border-slate-300"></div></td>
+                            <td>Create an outline, storyboard, or blueprint for my final product.</td>
+                            <td class="text-center"><input type="checkbox" class="w-5 h-5 cursor-pointer"></td>
+                        </tr>
+                        <tr>
+                            <td class="font-bold">Week 5</td>
+                            <td><div class="write-line m-0 border-slate-300"></div></td>
+                            <td>Draft/Build Phase 1 (Writing rough draft, gathering materials, etc.)</td>
+                            <td class="text-center"><input type="checkbox" class="w-5 h-5 cursor-pointer"></td>
+                        </tr>
+                        <tr>
+                            <td class="font-bold">Week 6</td>
+                            <td><div class="write-line m-0 border-slate-300"></div></td>
+                            <td>Draft/Build Phase 2</td>
+                            <td class="text-center"><input type="checkbox" class="w-5 h-5 cursor-pointer"></td>
+                        </tr>
+                        <tr>
+                            <td class="font-bold">Week 7</td>
+                            <td><div class="write-line m-0 border-slate-300"></div></td>
+                            <td>Draft/Build Phase 3</td>
+                            <td class="text-center"><input type="checkbox" class="w-5 h-5 cursor-pointer"></td>
+                        </tr>
+                        <tr>
+                            <td class="font-bold">Week 8</td>
+                            <td><div class="write-line m-0 border-slate-300"></div></td>
+                            <td>Editing, refining, and polishing.</td>
+                            <td class="text-center"><input type="checkbox" class="w-5 h-5 cursor-pointer"></td>
+                        </tr>
+                        <tr>
+                            <td class="font-bold">Week 9</td>
+                            <td><div class="write-line m-0 border-slate-300"></div></td>
+                            <td>Final touches and self-evaluation.</td>
+                            <td class="text-center"><input type="checkbox" class="w-5 h-5 cursor-pointer"></td>
+                        </tr>
+                        <tr class="bg-red-50">
+                            <td class="font-bold text-red-700">Week 10</td>
+                            <td><div class="write-line m-0 border-slate-300"></div></td>
+                            <td class="font-bold text-red-700">FINAL PROJECT DUE!</td>
+                            <td class="text-center"><input type="checkbox" class="w-5 h-5 cursor-pointer"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <div class="break-after-page"></div>
+
+        <!-- PHASE 4 -->
+        <section class="mb-12" id="phase-4">
+            <h3 class="text-3xl font-bold text-slate-800 mb-6 bg-slate-100 py-2 px-4 rounded-md border-l-4 border-slate-800">PHASE 4: Research & Execution</h3>
+            
+            <div class="feature-box break-avoid">
+                <h4 class="font-bold text-slate-800 mb-2 flex items-center gap-2">
+                    <i data-lucide="book-open" class="w-5 h-5 text-blue-600"></i>
+                    A Note on Independent Research
+                </h4>
+                <span class="feature-tag tag-guide">Guide</span>
+                <p class="text-sm text-slate-700">If you have never done independent research before, take a deep breath. It can feel messy and overwhelming at first. You might read articles that use confusing jargon, or you might fall down a rabbit hole. That is completely normal! This section breaks the research process down into bite-sized, manageable steps.</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8 mb-8 break-avoid">
+                <div>
+                    <h4 class="text-lg font-bold text-slate-800 mb-4">Step 6.1: The "C.R.A.P." Test</h4>
+                    <p class="text-sm text-slate-600 mb-4">Not everything on the internet is true. Put your sources through this test:</p>
+                    <div class="bg-white p-4 rounded border border-slate-200 shadow-sm text-sm space-y-3">
+                        <label class="check-item"><input type="checkbox"> <strong>Currency:</strong> Is it recent? (Last 5-10 years is best for fast-changing science).</label>
+                        <label class="check-item"><input type="checkbox"> <strong>Reliability:</strong> Does the author provide evidence, data, or link to a real study?</label>
+                        <label class="check-item"><input type="checkbox"> <strong>Authority:</strong> Who wrote it? (Look for .edu, .gov, or recognized science magazines).</label>
+                        <label class="check-item"><input type="checkbox"> <strong>Purpose:</strong> Are they teaching you, or trying to sell a product/push an agenda?</label>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="text-lg font-bold text-slate-800 mb-4">Step 6.2: Targeted Reading</h4>
+                    <p class="text-sm text-slate-600 mb-4">Read with a mission. Hunt for answers to these questions:</p>
+                    <div class="bg-white p-4 rounded border border-slate-200 shadow-sm text-sm space-y-3">
+                        <p><strong>Part A: The "What" (The Science)</strong></p>
+                        <ul class="list-disc pl-5 text-slate-700">
+                            <li><strong>Micro View:</strong> What happens at the cellular/molecular level?</li>
+                            <li><strong>Macro View:</strong> How does this affect the whole organism or ecosystem?</li>
+                        </ul>
+                        <p class="mt-2"><strong>Part B: The "Why" (The Relevance)</strong></p>
+                        <ul class="list-disc pl-5 text-slate-700">
+                            <li><strong>Local Impact:</strong> How does this connect to Saskatchewan?</li>
+                            <li><strong>Future Impact:</strong> What are the ethical/environmental impacts 50 years from now?</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-blue-50 border border-blue-200 p-5 rounded-lg mb-8 break-avoid">
+                <h4 class="text-lg font-bold text-blue-900 mb-2">Step 6.3: The "Read, Hide, Write" Strategy</h4>
+                <p class="text-sm text-blue-800">To prevent accidental plagiarism (copying and pasting), use this brain-friendly strategy:</p>
+                <ol class="list-decimal pl-5 mt-2 text-sm text-blue-900 font-medium space-y-1">
+                    <li><strong>READ</strong> a paragraph or section of your article.</li>
+                    <li><strong>HIDE</strong> the article (minimize the tab or turn the page over).</li>
+                    <li><strong>WRITE</strong> the main idea in your own words. <em>If you can't explain it without looking, you don't understand it yet!</em></li>
+                </ol>
+            </div>
+            
+            <h4 class="text-2xl font-bold text-slate-800 mt-12 mb-6 text-center border-b-2 border-slate-300 pb-2">Step 6.4: The Source Breakdown Toolkit</h4>
+        </section>
+
+        <!-- Source 1 -->
+        <section class="break-after-page">
+            <h5 class="text-xl font-bold text-slate-700 mb-4 bg-slate-200 inline-block px-4 py-1 rounded">SOURCE 1</h5>
+            <table class="w-full bg-white shadow-sm rounded-lg overflow-hidden">
+                <tbody>
+                    <tr>
+                        <th class="w-1/3 text-right text-sm">Title of Article/Video:</th>
+                        <td class="w-2/3 h-12"><div class="write-line m-0 border-slate-300"></div></td>
+                    </tr>
+                    <tr>
+                        <th class="text-right text-sm">Author/Publisher & Date:</th>
+                        <td class="h-12"><div class="write-line m-0 border-slate-300"></div></td>
+                    </tr>
+                    <tr>
+                        <th class="text-right text-sm">URL / Link:</th>
+                        <td class="h-12"><div class="write-line m-0 border-slate-300"></div></td>
+                    </tr>
+                    <tr>
+                        <th class="text-right text-sm align-top pt-4">Credibility Check:<br><span class="font-normal text-xs text-slate-500">(Is it reliable? Why?)</span></th>
+                        <td class="h-24 align-top"><div class="write-line border-slate-300 mt-4"></div><div class="write-line border-slate-300"></div></td>
+                    </tr>
+                    <tr>
+                        <th class="text-right text-sm align-top pt-4 text-blue-800 bg-blue-50">The Big Idea:<br><span class="font-normal text-xs text-slate-500">(Summarize what it was about in ONE sentence without looking).</span></th>
+                        <td class="h-32 align-top bg-blue-50"><div class="write-line border-slate-300 mt-4"></div><div class="write-line border-slate-300"></div><div class="write-line border-slate-300"></div></td>
+                    </tr>
+                    <tr>
+                        <th class="text-right text-sm align-top pt-4">3 Key Scientific Facts:<br><span class="font-normal text-xs text-slate-500">(Define any complex vocabulary words).</span></th>
+                        <td class="h-48 align-top text-slate-700 font-bold">
+                            1. <div class="write-line border-slate-300"></div><div class="write-line border-slate-300"></div>
+                            2. <div class="write-line border-slate-300"></div><div class="write-line border-slate-300"></div>
+                            3. <div class="write-line border-slate-300"></div><div class="write-line border-slate-300"></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="text-right text-sm align-top pt-4 text-green-800 bg-green-50">Connection:<br><span class="font-normal text-xs text-slate-500">(How does this help answer my "What" or my "Why"?)</span></th>
+                        <td class="h-32 align-top bg-green-50"><div class="write-line border-slate-300 mt-4"></div><div class="write-line border-slate-300"></div><div class="write-line border-slate-300"></div></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Source 2 -->
+        <section class="break-after-page">
+            <h5 class="text-xl font-bold text-slate-700 mb-4 bg-slate-200 inline-block px-4 py-1 rounded">SOURCE 2</h5>
+            <table class="w-full bg-white shadow-sm rounded-lg overflow-hidden">
+                <tbody>
+                    <tr>
+                        <th class="w-1/3 text-right text-sm">Title of Article/Video:</th>
+                        <td class="w-2/3 h-12"><div class="write-line m-0 border-slate-300"></div></td>
+                    </tr>
+                    <tr>
+                        <th class="text-right text-sm">Author/Publisher & Date:</th>
+                        <td class="h-12"><div class="write-line m-0 border-slate-300"></div></td>
+                    </tr>
+                    <tr>
+                        <th class="text-right text-sm">URL / Link:</th>
+                        <td class="h-12"><div class="write-line m-0 border-slate-300"></div></td>
+                    </tr>
+                    <tr>
+                        <th class="text-right text-sm align-top pt-4">Credibility Check:<br><span class="font-normal text-xs text-slate-500">(Is it reliable? Why?)</span></th>
+                        <td class="h-24 align-top"><div class="write-line border-slate-300 mt-4"></div><div class="write-line border-slate-300"></div></td>
+                    </tr>
+                    <tr>
+                        <th class="text-right text-sm align-top pt-4 text-blue-800 bg-blue-50">The Big Idea:<br><span class="font-normal text-xs text-slate-500">(Summarize what it was about in ONE sentence without looking).</span></th>
+                        <td class="h-32 align-top bg-blue-50"><div class="write-line border-slate-300 mt-4"></div><div class="write-line border-slate-300"></div><div class="write-line border-slate-300"></div></td>
+                    </tr>
+                    <tr>
+                        <th class="text-right text-sm align-top pt-4">3 Key Scientific Facts:<br><span class="font-normal text-xs text-slate-500">(Define any complex vocabulary words).</span></th>
+                        <td class="h-48 align-top text-slate-700 font-bold">
+                            1. <div class="write-line border-slate-300"></div><div class="write-line border-slate-300"></div>
+                            2. <div class="write-line border-slate-300"></div><div class="write-line border-slate-300"></div>
+                            3. <div class="write-line border-slate-300"></div><div class="write-line border-slate-300"></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="text-right text-sm align-top pt-4 text-green-800 bg-green-50">Connection:<br><span class="font-normal text-xs text-slate-500">(How does this help answer my "What" or my "Why"?)</span></th>
+                        <td class="h-32 align-top bg-green-50"><div class="write-line border-slate-300 mt-4"></div><div class="write-line border-slate-300"></div><div class="write-line border-slate-300"></div></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Source 3 -->
+        <section class="break-after-page">
+            <h5 class="text-xl font-bold text-slate-700 mb-4 bg-slate-200 inline-block px-4 py-1 rounded">SOURCE 3</h5>
+            <table class="w-full bg-white shadow-sm rounded-lg overflow-hidden">
+                <tbody>
+                    <tr>
+                        <th class="w-1/3 text-right text-sm">Title of Article/Video:</th>
+                        <td class="w-2/3 h-12"><div class="write-line m-0 border-slate-300"></div></td>
+                    </tr>
+                    <tr>
+                        <th class="text-right text-sm">Author/Publisher & Date:</th>
+                        <td class="h-12"><div class="write-line m-0 border-slate-300"></div></td>
+                    </tr>
+                    <tr>
+                        <th class="text-right text-sm">URL / Link:</th>
+                        <td class="h-12"><div class="write-line m-0 border-slate-300"></div></td>
+                    </tr>
+                    <tr>
+                        <th class="text-right text-sm align-top pt-4">Credibility Check:<br><span class="font-normal text-xs text-slate-500">(Is it reliable? Why?)</span></th>
+                        <td class="h-24 align-top"><div class="write-line border-slate-300 mt-4"></div><div class="write-line border-slate-300"></div></td>
+                    </tr>
+                    <tr>
+                        <th class="text-right text-sm align-top pt-4 text-blue-800 bg-blue-50">The Big Idea:<br><span class="font-normal text-xs text-slate-500">(Summarize what it was about in ONE sentence without looking).</span></th>
+                        <td class="h-32 align-top bg-blue-50"><div class="write-line border-slate-300 mt-4"></div><div class="write-line border-slate-300"></div><div class="write-line border-slate-300"></div></td>
+                    </tr>
+                    <tr>
+                        <th class="text-right text-sm align-top pt-4">3 Key Scientific Facts:<br><span class="font-normal text-xs text-slate-500">(Define any complex vocabulary words).</span></th>
+                        <td class="h-48 align-top text-slate-700 font-bold">
+                            1. <div class="write-line border-slate-300"></div><div class="write-line border-slate-300"></div>
+                            2. <div class="write-line border-slate-300"></div><div class="write-line border-slate-300"></div>
+                            3. <div class="write-line border-slate-300"></div><div class="write-line border-slate-300"></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="text-right text-sm align-top pt-4 text-green-800 bg-green-50">Connection:<br><span class="font-normal text-xs text-slate-500">(How does this help answer my "What" or my "Why"?)</span></th>
+                        <td class="h-32 align-top bg-green-50"><div class="write-line border-slate-300 mt-4"></div><div class="write-line border-slate-300"></div><div class="write-line border-slate-300"></div></td>
+                    </tr>
+                </tbody>
+            </table>
+            <p class="text-center text-sm text-slate-500 mt-4 italic">(Need more sources? Print extra copies of this page!)</p>
+        </section>
+
+        <!-- Connecting the dots & Brainstorming -->
+        <section class="mb-12 break-after-page">
+            <h4 class="text-2xl font-bold text-slate-800 mt-8 mb-4 border-b-2 border-slate-300 pb-2">Step 6.5: Connecting the Dots (Synthesis)</h4>
+            <p class="text-slate-700 mb-6 italic">Research isn't just a list of facts; it is finding the connections between them. Look back at your Source Breakdown Toolkit and answer these two questions before you start creating your final product:</p>
+            
+            <div class="mb-8">
+                <p class="font-bold text-slate-800 mb-2">1. The Core Story: <span class="font-normal">If you had to explain your topic to a Grade 9 student in an "elevator pitch" (30 seconds or less), what would you say?</span></p>
+                <div class="write-line"></div>
+                <div class="write-line"></div>
+                <div class="write-line"></div>
+                <div class="write-line"></div>
+            </div>
+
+            <div class="mb-12">
+                <p class="font-bold text-slate-800 mb-2">2. The Missing Pieces: <span class="font-normal">What is something you still don't quite understand, or something scientists are still arguing about regarding your topic? (Including "unknowns" makes your final project much stronger!)</span></p>
+                <div class="write-line"></div>
+                <div class="write-line"></div>
+                <div class="write-line"></div>
+                <div class="write-line"></div>
+            </div>
+
+            <div class="bg-slate-50 border-2 border-dashed border-slate-300 rounded-lg p-6 min-h-[500px]">
+                <h4 class="text-lg font-bold text-slate-400 mb-2 text-center uppercase tracking-widest">Workspace / Brainstorming</h4>
+                <p class="text-center text-slate-400 text-sm mb-8">(Use this space to sketch, outline, mind-map, or draft your ideas)</p>
+            </div>
+        </section>
+
+
+        <!-- PHASE 5 -->
+        <section class="mb-12 break-after-page" id="phase-5">
+            <h3 class="text-3xl font-bold text-slate-800 mb-6 bg-slate-100 py-2 px-4 rounded-md border-l-4 border-slate-800">PHASE 5: Building Your Final Product (Execution)</h3>
+            <p class="text-slate-700 mb-8 italic">You have a pile of notes and a completed Source Breakdown. Now what? How do you turn a bunch of facts into a project that people actually want to read, watch, or listen to? Don't just dump data onto a page. Follow these steps to craft an engaging final product.</p>
+
+            <div class="mb-8 break-avoid">
+                <h4 class="text-xl font-bold text-slate-800 mb-4">Step 7.1: Know Your Audience</h4>
+                <p class="text-sm text-slate-700 mb-4">Before you write a single word, build a model, or record a single minute, answer this: <strong>Who is your target audience?</strong></p>
+                <div class="bg-white p-5 rounded-lg border border-slate-200 shadow-sm space-y-3">
+                    <label class="check-item"><input type="checkbox"> <strong>General Public / Classmates:</strong> Needs clear explanations, engaging visuals, and real-world connections.</label>
+                    <label class="check-item"><input type="checkbox"> <strong>Younger Students (e.g., Children's Book):</strong> Needs simple analogies, lots of pictures, and no heavy jargon.</label>
+                    <label class="check-item"><input type="checkbox"> <strong>Scientific Community (e.g., Research Paper):</strong> Needs formal language, precise terminology, and strict citations.</label>
+                </div>
+            </div>
+
+            <div class="mb-8 break-avoid">
+                <h4 class="text-xl font-bold text-slate-800 mb-4">Step 7.2: The "Story" Arc</h4>
+                <p class="text-sm text-slate-700 mb-4">Every great project—whether it's a podcast, an essay, or a 3D model with a legend—follows a narrative arc. Map out the flow of your project here:</p>
+                
+                <div class="pl-4">
+                    <p class="font-bold text-slate-800 mt-6">1. The Hook (Introduction): <span class="font-normal text-sm text-slate-600">How will you grab their attention? (A shocking statistic, a relatable question, a local SK connection?)</span></p>
+                    <div class="write-line mt-2"></div>
+                    <div class="write-line"></div>
+
+                    <p class="font-bold text-slate-800 mt-6">2. The Meat (The Science): <span class="font-normal text-sm text-slate-600">What are the 2-3 main scientific concepts you *must* explain for them to understand your topic?</span></p>
+                    <ul class="list-disc pl-6 space-y-4 mt-4">
+                        <li class="font-bold text-slate-600">Concept 1: <div class="write-line w-3/4"></div></li>
+                        <li class="font-bold text-slate-600">Concept 2: <div class="write-line w-3/4"></div></li>
+                        <li class="font-bold text-slate-600">Concept 3: <div class="write-line w-3/4"></div></li>
+                    </ul>
+
+                    <p class="font-bold text-slate-800 mt-6">3. The "So What?" (Conclusion): <span class="font-normal text-sm text-slate-600">Why does this matter to humanity's future, the environment, or local communities? Leave them with a powerful final thought.</span></p>
+                    <div class="write-line mt-2"></div>
+                    <div class="write-line"></div>
+                </div>
+            </div>
+
+            <div class="mb-8 break-avoid">
+                <h4 class="text-xl font-bold text-slate-800 mb-4">Step 7.3: The Anti-"Data Dump" Checklist</h4>
+                <p class="text-sm text-slate-700 mb-4">When assembling your project, check off these boxes to ensure it is engaging and demonstrates deep learning:</p>
+                <div class="bg-red-50 p-5 rounded-lg border border-red-200 space-y-4">
+                    <label class="check-item text-slate-800"><input type="checkbox"> <strong>I answered my Guiding Question:</strong> (Look back at Phase 2. Did your project actually answer the question you set out to explore?)</label>
+                    <label class="check-item text-slate-800"><input type="checkbox"> <strong>I used analogies:</strong> I compared complex biological processes to everyday things so my audience understands them (e.g., "Mitochondria are like a coal power plant for the cell").</label>
+                    <label class="check-item text-slate-800"><input type="checkbox"> <strong>I broke up the text:</strong> (If writing/presenting) I used headings, bullet points, and short paragraphs. No giant walls of text!</label>
+                    <label class="check-item text-slate-800"><input type="checkbox"> <strong>I included visuals:</strong> I have graphs, diagrams, or pictures that actually <em>help explain</em> the science, rather than just looking pretty.</label>
+                    <label class="check-item text-slate-800"><input type="checkbox"> <strong>I cited my sources:</strong> I gave credit to the scientists and authors I learned from using proper formatting.</label>
+                </div>
+            </div>
+        </section>
+
+        <!-- PHASE 6 -->
+        <section class="mb-12" id="phase-6">
+            <h3 class="text-3xl font-bold text-slate-800 mb-6 bg-slate-100 py-2 px-4 rounded-md border-l-4 border-slate-800">PHASE 6: Reflection & Evaluation</h3>
+            
+            <div class="learning-objective mb-8 break-avoid">
+                <em>The Biology 30 curriculum requires you to construct a tool to assess your own learning (Outcome BI30-SDS1g).</em>
+            </div>
+
+            <div class="mb-10 break-avoid">
+                <h4 class="text-xl font-bold text-slate-800 mb-4">Step 8: Create Your Own Rubric</h4>
+                <p class="text-sm text-slate-700 mb-6">Identify the three most important criteria for your specific project. (e.g., If you made a podcast, "Audio Clarity" might be one. If you wrote a paper, "Depth of Scientific Research" is crucial).</p>
+
+                <div class="bg-white border border-slate-300 rounded-lg p-6 space-y-6 shadow-sm">
+                    <div>
+                        <p class="font-bold text-slate-800 text-lg">Criteria 1: <span class="write-line w-2/3 border-slate-400"></span></p>
+                        <p class="text-sm text-slate-600 mt-2 mb-1 pl-4 flex items-start gap-2"><i data-lucide="corner-down-right" class="w-4 h-4 mt-0.5"></i> What does a 10/10 look like for this?</p>
+                        <div class="pl-10"><div class="write-line border-slate-300"></div><div class="write-line border-slate-300"></div></div>
+                    </div>
+                    
+                    <div>
+                        <p class="font-bold text-slate-800 text-lg">Criteria 2: <span class="write-line w-2/3 border-slate-400"></span></p>
+                        <p class="text-sm text-slate-600 mt-2 mb-1 pl-4 flex items-start gap-2"><i data-lucide="corner-down-right" class="w-4 h-4 mt-0.5"></i> What does a 10/10 look like for this?</p>
+                        <div class="pl-10"><div class="write-line border-slate-300"></div><div class="write-line border-slate-300"></div></div>
+                    </div>
+
+                    <div>
+                        <p class="font-bold text-slate-800 text-lg">Criteria 3: <span class="write-line w-2/3 border-slate-400"></span></p>
+                        <p class="text-sm text-slate-600 mt-2 mb-1 pl-4 flex items-start gap-2"><i data-lucide="corner-down-right" class="w-4 h-4 mt-0.5"></i> What does a 10/10 look like for this?</p>
+                        <div class="pl-10"><div class="write-line border-slate-300"></div><div class="write-line border-slate-300"></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="break-avoid">
+                <h4 class="text-xl font-bold text-slate-800 mb-4">Step 9: Final Self-Reflection</h4>
+                <p class="text-sm text-slate-700 mb-6 italic">(To be completed on the day you hand in your project)</p>
+                
+                <div class="space-y-6">
+                    <div>
+                        <p class="font-bold text-slate-800 mb-2">1. What is the most fascinating biological fact you learned during this project?</p>
+                        <div class="write-line"></div>
+                        <div class="write-line"></div>
+                        <div class="write-line"></div>
+                    </div>
+                    
+                    <div>
+                        <p class="font-bold text-slate-800 mb-2">2. What was the biggest challenge you faced (e.g., time management, finding good research, building the product), and how did you overcome it?</p>
+                        <div class="write-line"></div>
+                        <div class="write-line"></div>
+                        <div class="write-line"></div>
+                    </div>
+
+                    <div>
+                        <p class="font-bold text-slate-800 mb-2">3. If you had 3 more weeks to work on this, what would you add or improve?</p>
+                        <div class="write-line"></div>
+                        <div class="write-line"></div>
+                        <div class="write-line"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-slate-100 py-8 mt-12 border-t border-slate-200 print-hidden">
+        <div class="max-w-4xl mx-auto px-4 text-center text-slate-500 text-sm">
+            <p>Biology 30 Saskatchewan Digital Textbook - Chapter 9: Student-Directed Study Workbook</p>
+            <button onclick="window.print()" class="mt-4 bg-slate-800 hover:bg-slate-700 text-white font-bold px-6 py-3 rounded-lg text-sm transition-colors shadow-md flex items-center gap-2 mx-auto">
+                <i data-lucide="printer" class="w-4 h-4"></i> Print to PDF / Paper Workbook
+            </button>
+            <p class="mt-2 text-xs text-slate-400">For best results, enable "Background Graphics" in your print settings.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        });
+    </script>
+</body>
+</html>
