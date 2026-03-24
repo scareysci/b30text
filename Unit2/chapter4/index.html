@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biology 30 Saskatchewan - Chapter 4</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400&family=Inter:wght@300;400;600;800&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+            line-height: 1.8;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Merriweather', serif;
+        }
+
+        .feature-box {
+            border: 2px dashed #cbd5e1;
+            background-color: #f1f5f9;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            position: relative;
+        }
+
+        .feature-tag {
+            position: absolute;
+            top: -12px;
+            left: 1rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .tag-interactive { background-color: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+
+        .sask-context {
+            border-left: 4px solid #16a34a;
+            background-color: #f0fdf4;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 0 0.5rem 0.5rem 0;
+        }
+
+        .learning-objective {
+            background-color: #eff6ff;
+            border-left: 4px solid #2563eb;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+        }
+        
+        .formative-check {
+            background-color: #fff7ed;
+            border: 1px solid #fed7aa;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            border-radius: 0.5rem;
+        }
+
+        .img-container {
+            margin: 2.5rem 0;
+            background-color: #ffffff;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+
+        .img-placeholder {
+            min-height: 300px;
+            background: repeating-linear-gradient(
+                45deg,
+                #f8fafc,
+                #f8fafc 10px,
+                #f1f5f9 10px,
+                #f1f5f9 20px
+            );
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            font-size: 0.95rem;
+        }
+        th, td {
+            border: 1px solid #e2e8f0;
+            padding: 1rem;
+            text-align: left;
+        }
+        th {
+            background-color: #f1f5f9;
+            font-weight: 700;
+            color: #334155;
+        }
+        tr:nth-child(even) { background-color: #f8fafc; }
+
+        .summary-target {
+            border-left: 3px solid #cbd5e1;
+            padding-left: 1.5rem;
+            margin: 1.5rem 0;
+            font-style: italic;
+            color: #475569;
+        }
+
+        @media print {
+            nav, footer, .print-hidden { display: none !important; }
+            body { background-color: white; color: black; font-size: 12pt; }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50 print-hidden">
+        <div class="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center gap-4">
+            <div class="flex items-center gap-4">
+                <a href="#" class="flex items-center gap-2 text-slate-500 hover:text-green-700 transition-colors">
+                    <i data-lucide="arrow-left" class="w-5 h-5"></i>
+                </a>
+                <span class="font-bold text-xl text-green-700 tracking-tight">Biology 30</span>
+            </div>
+            <div class="text-sm text-slate-500 font-medium hidden md:block">
+                Unit 2: The Organization of Life
+            </div>
+            <div class="relative flex-grow max-w-xs">
+                <input type="text" placeholder="Search chapter..." class="block w-full pl-10 pr-3 py-1.5 border border-slate-300 rounded-md text-sm">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i data-lucide="search" class="w-4 h-4 text-slate-400"></i>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-4 py-12">
+        
+        <header class="mb-16">
+            <h1 class="text-4xl md:text-5xl font-black text-slate-900 mb-6 border-b-4 border-green-600 pb-4">Chapter 4: Comparative Anatomy and Physiology</h1>
+            
+            <div class="prose prose-lg text-slate-700 mb-8 max-w-none">
+                <p>Every living organism faces the same fundamental challenges: acquiring energy, exchanging gases, defending against threats, and reproducing to ensure the survival of its lineage. Yet, when we look at the natural world, the solutions to these problems are staggeringly diverse. A pine tree and a timber wolf must both transport water and nutrients, but their internal machinery evolved on entirely different paths.</p>
+                
+                <p>In this chapter, we transition from examining single, isolated cells to investigating how massive societies of cells cooperate. <strong>Anatomy</strong> is the study of an organism's physical structure—the "hardware." <strong>Physiology</strong> is the study of how those structures function—the "software." By comparing the anatomies and physiologies across different kingdoms, we can map the brilliant evolutionary adaptations that allow life to thrive in every corner of the Earth, including the harsh extremes of the Saskatchewan prairie.</p>
+            </div>
+
+            <figure class="img-container">
+                <div class="img-placeholder flex flex-col items-center justify-center p-8 text-center border-b border-slate-200">
+                    <i data-lucide="image" class="w-12 h-12 text-slate-400 mb-3"></i>
+                    <p class="font-bold text-slate-700">[Illustration Prompt: Figure 4.1]</p>
+                    <p class="text-sm text-slate-500 max-w-lg mt-2">A beautiful, highly detailed collage contrasting the internal transport systems of diverse organisms: the vascular bundles of a prairie crocus, the mycelial network of a morel mushroom, and the circulatory system of a moose.</p>
+                </div>
+                <figcaption class="p-4 text-center text-sm text-slate-600 italic bg-slate-50">
+                    <strong>Figure 4.1:</strong> From plants to fungi to animals, multicellular organisms have evolved unique anatomical structures to solve the universal challenges of survival.
+                </figcaption>
+            </figure>
+
+            <div class="feature-box">
+                <h4 class="font-bold text-slate-800 mb-2 flex items-center gap-2">
+                    <i data-lucide="puzzle" class="w-5 h-5 text-blue-600"></i>
+                    Schema Activator: Anatomical Matching
+                </h4>
+                <span class="feature-tag tag-interactive">Interactive Activity</span>
+                <p class="text-sm text-slate-600 mb-6">Before we dive into the complex details, what do you already know about how organisms function? Match the physiological need (e.g., "Gas Exchange") to the corresponding anatomical structure in a plant (stomata), insect (spiracles), and fish (gills).</p>
+                
+                <div class="flex justify-center">
+                    <button class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+                        <i data-lucide="external-link" class="w-5 h-5"></i>
+                        Launch Anatomical Matchmaker
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Section 4.1 -->
+        <section class="mb-20" id="section-4-1">
+            <h3 class="text-3xl font-bold text-slate-800 mb-6">4.1 Maintaining Homeostasis [BI30-OL2f, BI30-OL2g, BI30-OL2h]</h3>
+            
+            <div class="learning-objective">
+                <strong>Learning Objective:</strong> Identify how multicellular organisms maintain homeostasis through processes such as biofeedback, fluid regulation, and thermoregulation, and respond to environmental stimuli.
+            </div>
+
+            <div class="prose prose-lg text-slate-700 max-w-none">
+                <p class="mb-6">Before investigating the specific anatomies of different organisms, we must understand the universal physiological goal they are all trying to achieve. Regardless of the chaos in the external environment, the cells inside an organism require strict, stable conditions to survive. This state of internal balance is called <strong>homeostasis</strong>. Organisms maintain homeostasis primarily through <strong>negative feedback loops</strong>, where a change in a physiological variable triggers a response that reverses the initial change (like a thermostat controlling a furnace).</p>
+
+                <h4 class="font-bold text-slate-900 mt-8 mb-4">1. Thermoregulation (Temperature Control)</h4>
+                <p class="mb-4">Cellular enzymes only function within specific temperature ranges.</p>
+                <ul class="list-disc pl-6 space-y-2 mb-6">
+                    <li><strong>Ectotherms (Cold-blooded):</strong> Rely on environmental heat. A garter snake must bask on a warm rock to raise its internal temperature enough to digest its food.</li>
+                    <li><strong>Endotherms (Warm-blooded):</strong> Generate heat internally via metabolism. When a human gets cold, the brain triggers shivering (muscle contractions) to generate heat, and blood vessels in the skin constrict to keep warm blood near vital organs.</li>
+                </ul>
+
+                <h4 class="font-bold text-slate-900 mt-8 mb-4">2. Fluid Regulation (Osmoregulation)</h4>
+                <p class="mb-6">Organisms must balance water intake and loss. Mammals utilize complex kidneys to filter blood, excreting toxic urea in urine while reabsorbing vital water. Plants maintain fluid balance through transpiration—if the soil is dry, the plant will close its stomata to prevent water from escaping as vapor, though this halts photosynthesis.</p>
+
+                <h4 class="font-bold text-slate-900 mt-8 mb-4">3. Responding to Stimuli</h4>
+                <p class="mb-6">Homeostasis requires detecting external changes. Plants exhibit <em>tropisms</em>—growing towards light (phototropism) or responding to gravity (gravitropism). Animals utilize complex nervous systems to detect light, sound, touch, and chemical pheromones, translating these external signals into internal hormonal responses.</p>
+
+                <figure class="img-container">
+                    <div class="img-placeholder flex flex-col items-center justify-center p-8 text-center border-b border-slate-200">
+                        <i data-lucide="refresh-cw" class="w-12 h-12 text-slate-400 mb-3"></i>
+                        <p class="font-bold text-slate-700">[Illustration Prompt: Figure 4.2]</p>
+                        <p class="text-sm text-slate-500 max-w-lg mt-2">A circular flowchart diagram illustrating a negative feedback loop for mammalian thermoregulation. Stimulus (cold) -> Receptor (skin sensors) -> Control Center (brain) -> Effector (shivering muscles) -> Response (temperature rises) -> Back to normal.</p>
+                    </div>
+                    <figcaption class="p-4 text-center text-sm text-slate-600 italic bg-slate-50">
+                        <strong>Figure 4.2:</strong> A classic negative feedback loop. The system acts to cancel out the original stimulus, returning the body to a set point.
+                    </figcaption>
+                </figure>
+
+                <div class="feature-box mt-8">
+                    <h4 class="font-bold text-slate-800 mb-2 flex items-center gap-2">
+                        <i data-lucide="activity" class="w-5 h-5 text-teal-600"></i>
+                        [Digital Feature]: Homeostasis Simulator
+                    </h4>
+                    <span class="feature-tag tag-interactive">Interactive Activity</span>
+                    <p class="text-sm text-slate-600 mb-4">Test your understanding of negative feedback loops. See if you can keep the internal environment stable while external conditions fluctuate.</p>
+                    
+                    <div class="w-full bg-slate-900 rounded-lg border border-slate-300 overflow-hidden mb-5 shadow-inner" style="height: 550px;">
+                        <iframe src="https://scareysci.github.io/b30text/Unit2/chapter3/homeo.html" class="w-full h-full border-0" title="Homeostasis Interactive Simulator"></iframe>
+                    </div>
+                    
+                    <div class="flex justify-center">
+                        <a href="https://scareysci.github.io/b30text/Unit2/chapter3/homeo.html" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 bg-teal-600 hover:bg-teal-700 text-white font-bold py-2.5 px-6 rounded-lg transition-all shadow-md hover:shadow-lg">
+                            <i data-lucide="external-link" class="w-4 h-4"></i>
+                            Open Activity in New Window
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sask-context">
+                <h4 class="font-bold text-green-800 mb-2 flex items-center gap-2">
+                    <i data-lucide="wheat" class="w-5 h-5"></i> Saskatchewan Connection: The Battle Against Wheat Rust
+                </h4>
+                <p class="text-slate-700">Defense mechanisms aren't just for animals. <strong>Wheat Rust</strong> is a devastating fungal pathogen that attacks the stems of wheat plants, draining their nutrients and destroying crop yields. For decades, researchers at the University of Saskatchewan's Crop Development Centre have been engaged in an evolutionary arms race against this fungus. They cross-breed different wheat varieties to introduce new <em>physiological defenses</em>—specific resistance genes—into the wheat's DNA, staying one step ahead of the mutating fungus to protect the provincial economy.</p>
+            </div>
+
+            <div class="formative-check">
+                <h4 class="font-bold text-orange-800 mb-3"><i data-lucide="check-circle-2" class="inline w-5 h-5 mr-1"></i> Formative Check</h4>
+                <ul class="space-y-3 text-slate-700">
+                    <li>1. Why is extracellular digestion an evolutionary necessity for fungi?</li>
+                    <li>2. Explain how the 3Rs principle addresses the ethical concerns of using mice in medical research.</li>
+                    <li>3. Using the concept of <em>negative feedback</em>, explain what happens in an endothermic mammal when its internal temperature rises too high.</li>
+                    <li>4. Contrast an r-selected reproductive strategy with a K-selected strategy. Give an example of each.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Chapter Review -->
+        <section class="bg-slate-900 text-white p-8 rounded-lg shadow-xl">
+            <h3 class="text-2xl font-bold mb-4">Chapter 4 Review: Narrative Lab Report</h3>
+            <p class="mb-4 text-slate-300 font-semibold italic">Activity: Virtual Comparative Dissection.</p>
+            <ol class="list-decimal pl-6 space-y-4 text-slate-200">
+                <li><strong>What was I looking for?</strong> (I wanted to observe the anatomical differences in the respiratory systems of organisms adapted to different environments).</li>
+                <li><strong>How did I look for it?</strong> (I utilized the virtual dissection table to examine the internal chest cavities of a frog, a perch, and a fetal pig).</li>
+                <li><strong>What did I find?</strong> (I found that the perch utilized gills with a massive surface area exposed directly to water, the pig utilized highly compartmentalized lungs for extracting oxygen from the air, and the frog possessed relatively simple, sac-like lungs).</li>
+                <li><strong>What do these findings mean?</strong> (These structures directly reflect physiological and environmental needs. The frog's simple lungs indicate that it must supplement its respiration through its moist skin, whereas the pig's complex lungs support the high metabolic oxygen demand of an endothermic mammal).</li>
+            </ol>
+        </section>
+
+    </main>
+
+    <footer class="bg-slate-100 py-8 mt-12 border-t border-slate-200">
+        <div class="max-w-4xl mx-auto px-4 text-center text-slate-500 text-sm">
+            <p>Biology 30 Saskatchewan Digital Textbook - Unit 2, Chapter 4</p>
+            <button onclick="window.print()" class="mt-4 bg-slate-800 text-white px-4 py-2 rounded-lg text-xs hover:bg-slate-700 transition-colors">Print to PDF</button>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        });
+    </script>
+</body>
+</html>
