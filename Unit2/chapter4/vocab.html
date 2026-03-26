@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biology 30 - Vocab Builder</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400&family=Inter:wght@300;400;600;800&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+
+        h1, h2, h3, .serif-text {
+            font-family: 'Merriweather', serif;
+        }
+
+        /* 3D Flip Card CSS */
+        .scene {
+            width: 100%;
+            height: 450px;
+            perspective: 1000px;
+        }
+
+        .card {
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .card.is-flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            padding: 2rem;
+            background-color: white;
+            border: 2px solid #e2e8f0;
+        }
+
+        .card-face-back {
+            transform: rotateY(180deg);
+            background-color: #f0fdf4;
+            border-color: #bbf7d0;
+        }
+
+        .root-pill {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 0.5rem;
+            padding: 0.5rem 1rem;
+            margin: 0.25rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .hide { display: none !important; }
+        
+        /* Print Styles */
+        @media print {
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            body { background: white; color: black; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; page-break-inside: auto; }
+            tr { page-break-inside: avoid; page-break-after: auto; }
+            th, td { border: 1px solid #cbd5e1; padding: 15px; text-align: left; font-size: 14pt; }
+            th { background-color: #f1f5f9; font-weight: bold; }
+            h1 { font-size: 24pt; margin-bottom: 10px; }
+        }
+        @media screen {
+            .print-only { display: none !important; }
+        }
+        
+        /* Custom Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+
+    <!-- Navigation matches the textbook style -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50 no-print">
+        <div class="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center gap-4">
+            <div class="flex items-center gap-4">
+                <a href="index.html" class="flex items-center gap-2 text-slate-500 hover:text-green-700 transition-colors" title="Back to Textbook">
+                    <i data-lucide="book-open" class="w-5 h-5"></i>
+                </a>
+                <span class="font-bold text-xl text-green-700 tracking-tight">Biology 30 Vocab Builder</span>
+            </div>
+            <div class="text-sm text-slate-500 font-medium hidden md:block">
+                Chapter 4: Anatomy & Physiology
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow max-w-3xl mx-auto w-full px-4 py-8">
+        
+        <!-- App Header / Mode Selectors -->
+        <header class="mb-8 text-center no-print">
+            <h1 class="text-3xl md:text-4xl font-black text-slate-900 mb-4">Master the Terminology</h1>
+            <p class="text-slate-600 mb-6">Biology is a language. Learn the roots, and you'll never have to memorize a word again.</p>
+            
+            <div class="inline-flex flex-wrap justify-center gap-2 bg-slate-200 p-1 rounded-lg">
+                <button id="tab-flashcards" class="px-6 py-2.5 rounded-md font-semibold text-sm transition-all bg-white text-green-700 shadow-sm" onclick="switchMode('flashcards')">
+                    <i data-lucide="layers" class="inline w-4 h-4 mr-2 mb-0.5"></i> Flashcards
+                </button>
+                <button id="tab-quiz" class="px-6 py-2.5 rounded-md font-semibold text-sm transition-all text-slate-600 hover:text-slate-900" onclick="switchMode('quiz')">
+                    <i data-lucide="gamepad-2" class="inline w-4 h-4 mr-2 mb-0.5"></i> Practice Quiz
+                </button>
+                <button class="px-6 py-2.5 rounded-md font-semibold text-sm transition-all text-slate-600 hover:text-slate-900" onclick="window.print()">
+                    <i data-lucide="printer" class="inline w-4 h-4 mr-2 mb-0.5"></i> Print Worksheet
+                </button>
+            </div>
+        </header>
+
+        <!-- FLASHCARDS SECTION -->
+        <section id="view-flashcards" class="animate-fade-in no-print">
+            <!-- Progress Bar -->
+            <div class="mb-4 flex justify-between items-center text-sm font-semibold text-slate-500">
+                <span id="card-counter">Card 1 of 10</span>
+                <div class="w-1/2 bg-slate-200 rounded-full h-2.5">
+                    <div id="card-progress" class="bg-green-600 h-2.5 rounded-full transition-all duration-300" style="width: 10%"></div>
+                </div>
+            </div>
+
+            <!-- The 3D Scene -->
+            <div class="scene mb-8">
+                <div class="card" id="flashcard" onclick="flipCard()">
+                    
+                    <!-- Front of Card -->
+                    <div class="card-face flex-col items-center justify-center text-center relative group">
+                        <p class="text-slate-400 text-sm font-bold tracking-widest uppercase absolute top-6">Term</p>
+                        
+                        <!-- Speak Button (Stops card flip from triggering when clicked) -->
+                        <button onclick="event.stopPropagation(); speakTerm()" class="absolute top-4 right-4 p-3 text-slate-400 hover:text-green-600 hover:bg-green-50 rounded-full transition-colors focus:outline-none" title="Pronounce word">
+                            <i data-lucide="volume-2" class="w-6 h-6"></i>
+                        </button>
+
+                        <h2 id="card-term" class="text-4xl md:text-5xl font-black text-slate-800 mb-4">Homeostasis</h2>
+                        <p class="text-slate-500 text-sm italic mt-4 flex items-center gap-1 opacity-70 group-hover:opacity-100 transition-opacity">
+                            <i data-lucide="mouse-pointer-click" class="w-4 h-4"></i> Click anywhere to reveal
+                        </p>
+                    </div>
+
+                    <!-- Back of Card -->
+                    <div class="card-face card-face-back flex-col items-center justify-center text-center relative">
+                        <p class="text-green-600 text-sm font-bold tracking-widest uppercase absolute top-6">Definition & Roots</p>
+                        
+                        <!-- Word Breakdown Area -->
+                        <div id="card-roots" class="flex flex-wrap justify-center gap-2 mb-6 mt-8">
+                            <!-- Injected via JS -->
+                        </div>
+
+                        <h3 id="card-definition" class="text-xl md:text-2xl font-bold text-slate-800 mb-4 serif-text leading-snug">
+                            <!-- Injected via JS -->
+                        </h3>
+                        
+                        <div class="bg-white/60 p-4 rounded-lg border border-green-200 w-full mt-auto">
+                            <p id="card-context" class="text-sm text-slate-600 italic">
+                                <!-- Injected via JS -->
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Controls -->
+            <div class="flex justify-between items-center gap-4">
+                <button onclick="prevCard()" class="flex-1 py-4 bg-white border-2 border-slate-200 hover:border-slate-300 rounded-xl font-bold text-slate-600 flex justify-center items-center gap-2 transition-colors">
+                    <i data-lucide="arrow-left" class="w-5 h-5"></i> Previous
+                </button>
+                <button onclick="nextCard()" class="flex-1 py-4 bg-green-600 hover:bg-green-700 text-white rounded-xl font-bold flex justify-center items-center gap-2 shadow-md transition-colors">
+                    Next <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- QUIZ SECTION (Hidden by default) -->
+        <section id="view-quiz" class="hide animate-fade-in no-print">
+            <div class="bg-white p-8 rounded-xl border border-slate-200 shadow-sm relative overflow-hidden">
+                <!-- Decorative background icon -->
+                <i data-lucide="microscope" class="absolute -right-8 -bottom-8 w-48 h-48 text-slate-50 opacity-50 pointer-events-none"></i>
+                
+                <div id="quiz-setup">
+                    <h2 class="text-2xl font-bold text-slate-800 mb-4 serif-text">Knowledge Check</h2>
+                    <p class="text-slate-600 mb-8">Test your understanding of the chapter vocabulary. Questions will challenge you on definitions and root word meanings.</p>
+                    <button onclick="startQuiz()" class="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold flex justify-center items-center gap-2 shadow-md transition-all text-lg">
+                        <i data-lucide="play" class="w-5 h-5"></i> Start Quick Quiz (5 Questions)
+                    </button>
+                </div>
+
+                <div id="quiz-active" class="hide relative z-10">
+                    <div class="flex justify-between text-sm font-bold text-slate-500 mb-6">
+                        <span id="quiz-progress">Question 1 of 5</span>
+                        <span id="quiz-score" class="text-indigo-600">Score: 0</span>
+                    </div>
+                    
+                    <h3 id="quiz-question" class="text-xl md:text-2xl font-bold text-slate-800 mb-8 serif-text">
+                        <!-- Question injected here -->
+                    </h3>
+
+                    <div id="quiz-options" class="grid grid-cols-1 gap-3">
+                        <!-- Options injected here -->
+                    </div>
+                </div>
+
+                <div id="quiz-results" class="hide text-center relative z-10 py-8">
+                    <div class="inline-flex items-center justify-center w-20 h-20 bg-green-100 rounded-full mb-6">
+                        <i data-lucide="award" class="w-10 h-10 text-green-600"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold text-slate-800 mb-2">Quiz Complete!</h2>
+                    <p id="quiz-final-score" class="text-xl text-slate-600 mb-8">You scored 4 out of 5.</p>
+                    <button onclick="resetQuiz()" class="py-3 px-8 bg-slate-800 hover:bg-slate-900 text-white rounded-lg font-bold transition-all">
+                        Try Again
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- PRINT WORKSHEET (Visible only during printing) -->
+        <section id="view-print" class="print-only">
+            <div style="display: flex; justify-content: space-between; align-items: baseline; border-bottom: 2px solid #16a34a; padding-bottom: 10px; margin-bottom: 20px;">
+                <h1 class="text-2xl font-bold">Chapter 4: Anatomy & Physiology</h1>
+                <p class="text-lg font-bold">Name: _______________________</p>
+            </div>
+            <p class="mb-6 italic text-slate-600">Provide the definition and an example for each of the roots/terms below.</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 30%">Term & Root(s)</th>
+                        <th style="width: 40%">Definition</th>
+                        <th style="width: 30%">Example / Context</th>
+                    </tr>
+                </thead>
+                <tbody id="print-table-body">
+                    <!-- Injected via JS -->
+                </tbody>
+            </table>
+        </section>
+
+    </main>
+
+    <script>
+        // ==========================================
+        // TEACHER CONFIGURATION AREA
+        // Edit this array to change the vocabulary words!
+        // ==========================================
+        const vocabData = [
+            {
+                term: "Homeostasis",
+                roots: [
+                    { morpheme: "homeo", meaning: "same, steady" },
+                    { morpheme: "stasis", meaning: "state, standing" }
+                ],
+                definition: "A state of internal balance regardless of external environmental chaos.",
+                context: "Example: Sweating to cool down is a way your body maintains homeostasis."
+            },
+            {
+                term: "Thermoregulation",
+                roots: [
+                    { morpheme: "thermo", meaning: "heat" },
+                    { morpheme: "regulation", meaning: "control" }
+                ],
+                definition: "The physiological process of maintaining an optimal internal temperature.",
+                context: "Example: The Wood Frog uses extreme thermoregulation by freezing solid in winter."
+            },
+            {
+                term: "Ectotherm",
+                roots: [
+                    { morpheme: "ecto", meaning: "outside" },
+                    { morpheme: "therm", meaning: "heat" }
+                ],
+                definition: "An organism that relies on external environmental sources for body heat (Cold-blooded).",
+                context: "Example: A snake basking on a warm rock."
+            },
+            {
+                term: "Endotherm",
+                roots: [
+                    { morpheme: "endo", meaning: "inside" },
+                    { morpheme: "therm", meaning: "heat" }
+                ],
+                definition: "An organism that generates heat internally via metabolism (Warm-blooded).",
+                context: "Example: Humans shivering to generate body heat."
+            },
+            {
+                term: "Osmoregulation",
+                roots: [
+                    { morpheme: "osmo", meaning: "fluid / push" },
+                    { morpheme: "regulation", meaning: "control" }
+                ],
+                definition: "The process by which organisms balance water intake and loss.",
+                context: "Example: Mammalian kidneys filtering blood to retain water."
+            },
+            {
+                term: "Phototropism",
+                roots: [
+                    { morpheme: "photo", meaning: "light" },
+                    { morpheme: "tropism", meaning: "turning / growth" }
+                ],
+                definition: "The directional growth of an organism in response to light.",
+                context: "Example: A houseplant bending towards a sunny window."
+            },
+            {
+                term: "Gravitropism",
+                roots: [
+                    { morpheme: "gravi", meaning: "gravity / heavy" },
+                    { morpheme: "tropism", meaning: "turning / growth" }
+                ],
+                definition: "The directional growth of an organism in response to gravity.",
+                context: "Example: Plant roots always growing downward."
+            },
+            {
+                term: "Cryoprotectant",
+                roots: [
+                    { morpheme: "cryo", meaning: "cold / freezing" },
+                    { morpheme: "protectant", meaning: "protector" }
+                ],
+                definition: "A substance that prevents the freezing of tissues, or prevents damage to cells during freezing.",
+                context: "Example: Glucose acting as biological antifreeze in frogs."
+            },
+            {
+                term: "Extracellular",
+                roots: [
+                    { morpheme: "extra", meaning: "outside" },
+                    { morpheme: "cellular", meaning: "cell" }
+                ],
+                definition: "Occurring or located outside of a cell.",
+                context: "Example: Fungi secreting enzymes into the soil to digest food extracellularly."
+            },
+            {
+                term: "Autotroph",
+                roots: [
+                    { morpheme: "auto", meaning: "self" },
+                    { morpheme: "troph", meaning: "nourishment / food" }
+                ],
+                definition: "An organism that can produce its own food using light or chemicals.",
+                context: "Example: Plants utilizing photosynthesis."
+            },
+            {
+                term: "Heterotroph",
+                roots: [
+                    { morpheme: "hetero", meaning: "different / other" },
+                    { morpheme: "troph", meaning: "nourishment / food" }
+                ],
+                definition: "An organism that must consume other organisms for energy.",
+                context: "Example: Animals hunting prey or grazing on plants."
+            },
+            {
+                term: "Homologous",
+                roots: [
+                    { morpheme: "homo", meaning: "same" },
+                    { morpheme: "logous", meaning: "relation" }
+                ],
+                definition: "Structures that share a similar underlying framework due to a common evolutionary ancestor.",
+                context: "Example: A human arm and a whale flipper share the same basic bone structure."
+            },
+            {
+                term: "Analogous",
+                roots: [
+                    { morpheme: "ana", meaning: "similar to / corresponding" },
+                    { morpheme: "logous", meaning: "relation" }
+                ],
+                definition: "Structures that perform a similar function but evolved independently and have different anatomies.",
+                context: "Example: A bird's wing vs. an insect's wing."
+            },
+            {
+                term: "Pathogen",
+                roots: [
+                    { morpheme: "patho", meaning: "disease / suffering" },
+                    { morpheme: "gen", meaning: "producer / origin" }
+                ],
+                definition: "Any organism or agent that can produce disease.",
+                context: "Example: Wheat rust fungus destroying prairie crops."
+            }
+        ];
+        // ==========================================
+        // END CONFIGURATION
+        // ==========================================
+
+        // --- App State ---
+        let currentIndex = 0;
+        let isFlipped = false;
+        
+        // Quiz State
+        let quizQuestions = [];
+        let currentQuizIndex = 0;
+        let quizScore = 0;
+        const QUIZ_LENGTH = 5;
+
+        // --- Initialization ---
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            shuffleArray(vocabData); // Randomize flashcard order
+            updateCardUI();
+            generatePrintSheet();
+        });
+
+        // --- Print Worksheet Logic ---
+        function generatePrintSheet() {
+            const tbody = document.getElementById('print-table-body');
+            tbody.innerHTML = '';
+            
+            // Sort alphabetically for the worksheet
+            const sortedData = [...vocabData].sort((a, b) => a.term.localeCompare(b.term));
+            
+            sortedData.forEach(data => {
+                const tr = document.createElement('tr');
+                
+                // Format roots for the print view
+                let rootsText = '';
+                if (data.roots && data.roots.length > 0) {
+                    const rootsMapped = data.roots.map(r => `${r.morpheme} (${r.meaning})`).join(' + ');
+                    rootsText = `<br><span style="font-size: 0.85em; color: #555;">Roots: ${rootsMapped}</span>`;
+                }
+
+                // Create empty rows with line breaks to give students writing space
+                tr.innerHTML = `
+                    <td><strong>${data.term}</strong>${rootsText}</td>
+                    <td><br><br><br></td>
+                    <td><br><br><br></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // --- Flashcard Logic ---
+        function updateCardUI() {
+            const data = vocabData[currentIndex];
+            
+            // Front
+            document.getElementById('card-term').textContent = data.term;
+            
+            // Back
+            document.getElementById('card-definition').textContent = data.definition;
+            document.getElementById('card-context').textContent = data.context;
+            
+            // Build roots HTML
+            const rootsContainer = document.getElementById('card-roots');
+            rootsContainer.innerHTML = '';
+            
+            if (data.roots && data.roots.length > 0) {
+                data.roots.forEach((root, idx) => {
+                    const pill = document.createElement('div');
+                    pill.className = 'root-pill';
+                    pill.innerHTML = `
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">${root.morpheme}</span>
+                        <span class="text-sm font-semibold text-green-700">"${root.meaning}"</span>
+                    `;
+                    rootsContainer.appendChild(pill);
+                    
+                    // Add '+' sign between roots
+                    if (idx < data.roots.length - 1) {
+                        const plus = document.createElement('div');
+                        plus.className = 'text-slate-300 font-bold self-center text-xl mx-1';
+                        plus.textContent = '+';
+                        rootsContainer.appendChild(plus);
+                    }
+                });
+            } else {
+                 rootsContainer.innerHTML = `<span class="text-sm text-slate-500 italic">No root breakdown available.</span>`;
+            }
+
+            // Update Progress
+            document.getElementById('card-counter').textContent = `Card ${currentIndex + 1} of ${vocabData.length}`;
+            const progressPct = ((currentIndex + 1) / vocabData.length) * 100;
+            document.getElementById('card-progress').style.width = `${progressPct}%`;
+        }
+
+        function flipCard() {
+            const card = document.getElementById('flashcard');
+            isFlipped = !isFlipped;
+            if (isFlipped) {
+                card.classList.add('is-flipped');
+            } else {
+                card.classList.remove('is-flipped');
+            }
+        }
+
+        function nextCard() {
+            if (isFlipped) flipCard();
+            setTimeout(() => {
+                currentIndex = (currentIndex + 1) % vocabData.length;
+                updateCardUI();
+            }, isFlipped ? 300 : 0); // Wait for flip animation to finish before changing text
+        }
+
+        function prevCard() {
+            if (isFlipped) flipCard();
+            setTimeout(() => {
+                currentIndex = (currentIndex - 1 + vocabData.length) % vocabData.length;
+                updateCardUI();
+            }, isFlipped ? 300 : 0);
+        }
+
+        // --- Speech API ---
+        function speakTerm() {
+            const word = vocabData[currentIndex].term;
+            if ('speechSynthesis' in window) {
+                // Cancel any currently playing speech
+                window.speechSynthesis.cancel();
+                
+                const utterance = new SpeechSynthesisUtterance(word);
+                // Try to use a natural English voice if available
+                const voices = window.speechSynthesis.getVoices();
+                const preferredVoice = voices.find(v => v.lang.includes('en-') && v.name.includes('Google')) || voices[0];
+                if (preferredVoice) utterance.voice = preferredVoice;
+                
+                utterance.rate = 0.85; // Slightly slower for clarity
+                window.speechSynthesis.speak(utterance);
+            } else {
+                alert("Sorry, your browser doesn't support Text-to-Speech playback.");
+            }
+        }
+
+        // --- View Switching ---
+        function switchMode(mode) {
+            // Update UI tabs
+            document.getElementById('tab-flashcards').className = mode === 'flashcards' 
+                ? "px-6 py-2.5 rounded-md font-semibold text-sm transition-all bg-white text-green-700 shadow-sm"
+                : "px-6 py-2.5 rounded-md font-semibold text-sm transition-all text-slate-600 hover:text-slate-900";
+                
+            document.getElementById('tab-quiz').className = mode === 'quiz' 
+                ? "px-6 py-2.5 rounded-md font-semibold text-sm transition-all bg-white text-indigo-700 shadow-sm"
+                : "px-6 py-2.5 rounded-md font-semibold text-sm transition-all text-slate-600 hover:text-slate-900";
+
+            // Toggle sections
+            if (mode === 'flashcards') {
+                document.getElementById('view-flashcards').classList.remove('hide');
+                document.getElementById('view-quiz').classList.add('hide');
+            } else {
+                document.getElementById('view-flashcards').classList.add('hide');
+                document.getElementById('view-quiz').classList.remove('hide');
+                resetQuiz();
+            }
+        }
+
+        // --- Quiz Logic ---
+        function generateQuestions() {
+            const questions = [];
+            const tempVocab = [...vocabData];
+            shuffleArray(tempVocab);
+            
+            // Pick 'QUIZ_LENGTH' words for questions
+            for(let i=0; i < Math.min(QUIZ_LENGTH, tempVocab.length); i++) {
+                const target = tempVocab[i];
+                const isRootQuestion = target.roots.length > 0 && Math.random() > 0.5;
+                
+                let questionText, correctAns;
+                
+                if (isRootQuestion) {
+                    // Ask about a specific root
+                    const randomRoot = target.roots[Math.floor(Math.random() * target.roots.length)];
+                    questionText = `What does the root "${randomRoot.morpheme}" (as in ${target.term}) mean?`;
+                    correctAns = randomRoot.meaning;
+                } else {
+                    // Ask about the definition
+                    questionText = `Which term is defined as: "${target.definition}"?`;
+                    correctAns = target.term;
+                }
+
+                // Generate wrong answers
+                const options = new Set([correctAns]);
+                while(options.size < 4) {
+                    const randomItem = vocabData[Math.floor(Math.random() * vocabData.length)];
+                    if (isRootQuestion && randomItem.roots.length > 0) {
+                        options.add(randomItem.roots[Math.floor(Math.random() * randomItem.roots.length)].meaning);
+                    } else if (!isRootQuestion) {
+                        options.add(randomItem.term);
+                    }
+                }
+
+                const optionsArray = Array.from(options);
+                shuffleArray(optionsArray);
+
+                questions.push({
+                    q: questionText,
+                    options: optionsArray,
+                    answer: correctAns
+                });
+            }
+            return questions;
+        }
+
+        function startQuiz() {
+            document.getElementById('quiz-setup').classList.add('hide');
+            document.getElementById('quiz-results').classList.add('hide');
+            document.getElementById('quiz-active').classList.remove('hide');
+            
+            quizQuestions = generateQuestions();
+            currentQuizIndex = 0;
+            quizScore = 0;
+            loadQuizQuestion();
+        }
+
+        function resetQuiz() {
+            document.getElementById('quiz-setup').classList.remove('hide');
+            document.getElementById('quiz-active').classList.add('hide');
+            document.getElementById('quiz-results').classList.add('hide');
+        }
+
+        function loadQuizQuestion() {
+            const qData = quizQuestions[currentQuizIndex];
+            
+            document.getElementById('quiz-progress').textContent = `Question ${currentQuizIndex + 1} of ${quizQuestions.length}`;
+            document.getElementById('quiz-score').textContent = `Score: ${quizScore}`;
+            document.getElementById('quiz-question').textContent = qData.q;
+            
+            const optionsContainer = document.getElementById('quiz-options');
+            optionsContainer.innerHTML = '';
+            
+            qData.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-4 rounded-lg border-2 border-slate-200 hover:border-indigo-400 hover:bg-indigo-50 font-semibold text-slate-700 transition-all flex justify-between items-center group";
+                btn.innerHTML = `
+                    <span>${opt}</span>
+                    <i data-lucide="circle-check" class="w-5 h-5 text-indigo-400 opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                `;
+                btn.onclick = () => handleAnswer(opt, qData.answer, btn);
+                optionsContainer.appendChild(btn);
+            });
+            lucide.createIcons();
+        }
+
+        function handleAnswer(selected, correct, btnElement) {
+            // Disable all buttons
+            const buttons = document.getElementById('quiz-options').querySelectorAll('button');
+            buttons.forEach(b => b.disabled = true);
+            
+            if (selected === correct) {
+                btnElement.classList.remove('border-slate-200', 'hover:border-indigo-400', 'hover:bg-indigo-50');
+                btnElement.classList.add('bg-green-100', 'border-green-500', 'text-green-800');
+                btnElement.querySelector('i').classList.replace('text-indigo-400', 'text-green-600');
+                btnElement.querySelector('i').classList.remove('opacity-0');
+                quizScore++;
+            } else {
+                btnElement.classList.remove('border-slate-200', 'hover:border-indigo-400', 'hover:bg-indigo-50');
+                btnElement.classList.add('bg-red-50', 'border-red-400', 'text-red-800');
+                btnElement.querySelector('i').setAttribute('data-lucide', 'x-circle');
+                btnElement.querySelector('i').classList.replace('text-indigo-400', 'text-red-500');
+                btnElement.querySelector('i').classList.remove('opacity-0');
+                lucide.createIcons();
+                
+                // Highlight correct answer
+                buttons.forEach(b => {
+                    if(b.innerText.trim() === correct) {
+                        b.classList.add('border-green-500', 'bg-green-50');
+                    }
+                });
+            }
+
+            document.getElementById('quiz-score').textContent = `Score: ${quizScore}`;
+
+            setTimeout(() => {
+                currentQuizIndex++;
+                if (currentQuizIndex < quizQuestions.length) {
+                    loadQuizQuestion();
+                } else {
+                    showQuizResults();
+                }
+            }, 1500);
+        }
+
+        function showQuizResults() {
+            document.getElementById('quiz-active').classList.add('hide');
+            document.getElementById('quiz-results').classList.remove('hide');
+            document.getElementById('quiz-final-score').textContent = `You scored ${quizScore} out of ${quizQuestions.length}.`;
+        }
+
+        // --- Utility ---
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+    </script>
+</body>
+</html>
