@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Evolutionary Arms Race</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #111827; color: #f3f4f6; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        #game-container { position: relative; width: 100%; height: 100vh; display: flex; }
+        #canvas-container { flex-grow: 1; position: relative; }
+        canvas { display: block; width: 100%; height: 100%; }
+        
+        #sidebar { width: 400px; background-color: #1f2937; border-left: 2px solid #374151; display: flex; flex-direction: column; z-index: 10; box-shadow: -4px 0 15px rgba(0,0,0,0.5); }
+        
+        /* Custom Slider Styling */
+        input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 24px; width: 24px; border-radius: 50%; background: #10b981; cursor: pointer; margin-top: -8px; box-shadow: 0 0 10px rgba(16, 185, 129, 0.5); transition: background 0.1s; }
+        input[type=range]::-webkit-slider-thumb:hover { background: #34d399; }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 8px; cursor: pointer; background: #374151; border-radius: 4px; border: 1px solid #4b5563; }
+        
+        .graph-container { height: 140px; width: 100%; background: #111827; border-radius: 8px; border: 1px solid #374151; position: relative; margin-bottom: 1rem; overflow: hidden;}
+        .graph-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+
+        .btn { padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: bold; cursor: pointer; transition: all 0.2s; text-align: center; display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
+        .btn-primary { background-color: #3b82f6; color: white; }
+        .btn-primary:hover { background-color: #2563eb; }
+        .btn-success { background-color: #10b981; color: white; }
+        .btn-success:hover { background-color: #059669; }
+
+        /* Modal styling */
+        #modal { display: flex; position: absolute; inset: 0; background: rgba(0,0,0,0.8); z-index: 50; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    
+    <!-- Left: Simulation Canvas -->
+    <div id="canvas-container">
+        <canvas id="simCanvas"></canvas>
+
+        <!-- Event Banner -->
+        <div id="event-banner" class="absolute top-8 left-1/2 transform -translate-x-1/2 bg-red-600 text-white px-8 py-3 rounded-full font-black tracking-widest text-lg shadow-[0_0_20px_rgba(220,38,38,0.8)] transition-opacity duration-500 opacity-0 pointer-events-none z-20 border-2 border-red-400">
+            EVENT NAME
+        </div>
+        
+        <!-- UI Overlays on Canvas -->
+        <div class="absolute top-4 left-4 bg-gray-900 bg-opacity-75 p-4 rounded-lg border border-gray-700 pointer-events-none">
+            <div class="flex items-center justify-between mb-2 border-b border-gray-600 pb-2 gap-4">
+                <div>
+                    <span class="text-2xl font-black text-yellow-400 drop-shadow-md">SCORE: <span id="lbl-score">0</span></span>
+                    <span class="text-xs text-gray-400 ml-2 font-bold tracking-wider">HI: <span id="lbl-highscore">0</span></span>
+                </div>
+                <div class="bg-red-900 bg-opacity-60 border border-red-500 px-3 py-1 rounded flex items-center gap-1 shadow-[0_0_10px_rgba(239,68,68,0.5)]">
+                    <span class="text-red-400 font-bold">⏱</span>
+                    <span id="lbl-time" class="text-xl font-black text-white">30</span><span class="text-sm text-gray-300">s</span>
+                </div>
+            </div>
+            <h2 class="text-xl font-bold text-white mb-2 tracking-wide">ECOSYSTEM METRICS</h2>
+            <div class="flex flex-col gap-1 text-sm">
+                <div class="flex justify-between w-48"><span class="text-blue-400">Generation:</span> <span id="lbl-gen" class="font-mono font-bold">1</span></div>
+                <div class="flex justify-between w-48"><span class="text-gray-300">Insects:</span> <span id="lbl-bugs" class="font-mono font-bold">0</span></div>
+                <div class="flex justify-between w-48"><span class="text-green-400">Plants:</span> <span id="lbl-plants" class="font-mono font-bold">0</span></div>
+            </div>
+        </div>
+
+        <!-- Start/End Modal -->
+        <div id="modal">
+            <div class="bg-gray-800 p-8 rounded-xl border border-gray-600 max-w-lg w-full text-center shadow-2xl">
+                <h1 id="modal-title" class="text-3xl font-bold mb-4 text-emerald-400">The Evolutionary Arms Race</h1>
+                <p id="modal-desc" class="text-gray-300 mb-6 leading-relaxed text-left">
+                    Choose your side in the endless arms race between predator and prey. The computer will evolve to counter your strategy!<br><br>
+                    <ul class="list-disc pl-5 mt-2 text-sm text-gray-400 text-left space-y-1">
+                        <li><b>Play as Plant:</b> Control defenses. Starve the insects to win.</li>
+                        <li><b>Play as Insect:</b> Control adaptations. Overrun the ecosystem to win.</li>
+                        <li>Earn points for surviving, reproducing, and defeating the opponent!</li>
+                    </ul>
+                </p>
+                <div class="flex gap-4">
+                    <button id="btn-start-plant" class="btn btn-success w-full text-lg py-3">Play as Plant</button>
+                    <button id="btn-start-insect" class="btn btn-primary w-full text-lg py-3">Play as Insect</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right: Dashboard/Sidebar -->
+    <div id="sidebar" class="p-5 overflow-y-auto">
+        <div class="mb-6 flex justify-between items-center">
+            <h2 class="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-500">Control Panel</h2>
+            <button id="btn-pause" class="btn bg-gray-700 hover:bg-gray-600 text-white text-sm px-3">
+                <svg id="icon-pause" class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+                <svg id="icon-play" class="w-4 h-4 hidden" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
+            </button>
+        </div>
+
+        <!-- Player Controls -->
+        <div id="plant-controls" class="bg-gray-900 p-4 rounded-lg border border-gray-700 mb-6 shadow-inner hidden">
+            <div class="flex items-end justify-between mb-2">
+                <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Physiological Defense</span>
+                <span class="text-xs text-gray-500 mb-1">Cost: <span id="lbl-cost-tox">Low</span></span>
+            </div>
+            <div class="flex items-end justify-between mb-2">
+                <span id="lbl-toxicity-val" class="text-2xl font-bold text-emerald-400">Toxicity: 0%</span>
+            </div>
+            <input type="range" id="slider-toxicity" min="0" max="100" value="0">
+            
+            <div class="flex items-end justify-between mt-4 mb-2">
+                <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Structural Defense</span>
+                <span class="text-xs text-gray-500 mb-1">Cost: <span id="lbl-cost-thorns">Low</span></span>
+            </div>
+            <div class="flex items-end justify-between mb-2">
+                <span id="lbl-thorns-val" class="text-2xl font-bold text-yellow-500">Thorns: 0%</span>
+            </div>
+            <input type="range" id="slider-thorns" min="0" max="100" value="0">
+            
+            <p class="text-[10px] text-gray-500 mt-3 leading-tight">
+                Total metabolic cost impacts plant reproduction rate.
+            </p>
+        </div>
+
+        <div id="insect-controls" class="bg-gray-900 p-4 rounded-lg border border-gray-700 mb-6 shadow-inner hidden">
+            <div class="flex items-end justify-between mb-2">
+                <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Target Resistance</span>
+                <span class="text-xs text-gray-500 mb-1">Cost: <span id="lbl-cost-res">Low</span></span>
+            </div>
+            <span id="lbl-res-val" class="text-xl font-bold text-red-500 block mb-2">Resistance: 10%</span>
+            <input type="range" id="slider-bug-res" min="0" max="100" value="10">
+            
+            <div class="flex items-end justify-between mt-4 mb-2">
+                <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Target Armor</span>
+                <span class="text-xs text-gray-500 mb-1">Cost: <span id="lbl-cost-armor">Low</span></span>
+            </div>
+            <span id="lbl-armor-val" class="text-xl font-bold text-yellow-500 block mb-2">Armor: 10%</span>
+            <input type="range" id="slider-bug-armor" min="0" max="100" value="10">
+
+            <div class="flex items-end justify-between mt-4 mb-2">
+                <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Target Agility</span>
+                <span class="text-xs text-gray-500 mb-1">Cost: <span id="lbl-cost-agi">Medium</span></span>
+            </div>
+            <span id="lbl-agi-val" class="text-xl font-bold text-blue-400 block mb-2">Speed: 1.0x</span>
+            <input type="range" id="slider-bug-agility" min="50" max="200" value="100">
+            
+            <p class="text-[10px] text-gray-500 mt-3 leading-tight">
+                Offspring evolve towards your targets. High traits drain bug energy rapidly!
+            </p>
+        </div>
+
+        <!-- Live Metrics -->
+        <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-2">Population Dynamics</h3>
+        <div class="graph-container">
+            <canvas id="graph-pop" class="graph-canvas"></canvas>
+            <div class="absolute top-1 left-2 text-[10px] text-gray-400">
+                <span class="inline-block w-2 h-2 bg-blue-500 rounded-full mr-1"></span>Insects
+                <span class="inline-block w-2 h-2 bg-green-500 rounded-full mr-1 ml-2"></span>Plants
+            </div>
+        </div>
+
+        <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-2">Evolutionary Traits</h3>
+        <div class="graph-container">
+            <canvas id="graph-res" class="graph-canvas"></canvas>
+            <div class="absolute top-1 left-2 text-[10px] text-gray-400 flex flex-col gap-1">
+                <div><span class="inline-block w-2 h-2 bg-red-500 rounded-full mr-1"></span>Bug Resistance vs <span class="inline-block w-2 h-2 border border-emerald-500 rounded-full mr-1"></span>Toxicity</div>
+                <div><span class="inline-block w-2 h-2 bg-yellow-500 rounded-full mr-1"></span>Bug Armor vs <span class="inline-block w-2 h-2 border border-yellow-500 rounded-full mr-1"></span>Thorns</div>
+            </div>
+        </div>
+
+        <!-- Educational Legend -->
+        <div class="mt-auto bg-gray-800 p-4 rounded-lg border border-gray-700">
+            <h4 class="text-xs font-bold text-gray-400 uppercase mb-2">Insect Adaptations</h4>
+            <div class="flex items-center gap-2 mb-1">
+                <div class="w-3 h-3 rounded-full bg-white shadow-[0_0_5px_rgba(255,255,255,0.8)]"></div>
+                <span class="text-xs text-gray-300">Color = Toxin Resistance (Physiological)</span>
+            </div>
+            <div class="flex items-center gap-2 mb-1">
+                <div class="w-3 h-3 rounded-full bg-red-500 border-2 border-gray-400"></div>
+                <span class="text-xs text-gray-300">Border = Exoskeleton Armor (Structural)</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="text-xs text-gray-300 italic">- Fast movement = Foraging Agility (Behavioural)</span>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    /**
+     * The Evolutionary Arms Race - Simulation Logic
+     */
+
+    // --- Configuration & Constants ---
+    const CONFIG = {
+        maxBugs: 150,           
+        maxPlants: 120,
+        plantBaseSpawnRate: 0.12, 
+        plantNutrition: 50,     
+        bugStartEnergy: 60,
+        bugMaxEnergy: 120,
+        bugReproductionThreshold: 100,
+        bugMetabolism: 0.15,    
+        bugSpeed: 2.0,          
+        mutationRate: 8,        
+        toxicityDamageMult: 1.8,
+        thornDamageMult: 1.2    
+    };
+
+    // --- Global State ---
+    let state = {
+        isRunning: false,
+        isPaused: false,
+        role: 'plant', // 'plant' or 'insect'
+        score: 0,
+        highScorePlant: parseInt(localStorage.getItem('armsRaceHighScorePlant')) || 0,
+        highScoreInsect: parseInt(localStorage.getItem('armsRaceHighScoreInsect')) || 0,
+        timeLeft: 30,
+        timeCounter: 0,
+        lastTimestamp: null,
+        generation: 1,
+        ticks: 0,
+        targetToxicity: 0,
+        actualToxicity: 0,
+        targetThorns: 0,
+        actualThorns: 0,
+        targetBugRes: 10,
+        targetBugArmor: 10,
+        targetBugAgility: 1.0,
+        plants: [],
+        bugs: [],
+        history: [], 
+        lastTime: 0
+    };
+
+    // --- Canvas Setup ---
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d', { alpha: false });
+    const graphPopCanvas = document.getElementById('graph-pop');
+    const graphPopCtx = graphPopCanvas.getContext('2d');
+    const graphResCanvas = document.getElementById('graph-res');
+    const graphResCtx = graphResCanvas.getContext('2d');
+
+    function resizeCanvas() {
+        const container = document.getElementById('canvas-container');
+        canvas.width = container.clientWidth;
+        canvas.height = container.clientHeight;
+        
+        const gContainers = document.querySelectorAll('.graph-container');
+        graphPopCanvas.width = gContainers[0].clientWidth;
+        graphPopCanvas.height = gContainers[0].clientHeight;
+        graphResCanvas.width = gContainers[1].clientWidth;
+        graphResCanvas.height = gContainers[1].clientHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // --- UI Elements ---
+    const ui = {
+        lblGen: document.getElementById('lbl-gen'),
+        lblBugs: document.getElementById('lbl-bugs'),
+        lblPlants: document.getElementById('lbl-plants'),
+        lblScore: document.getElementById('lbl-score'),
+        lblHighScore: document.getElementById('lbl-highscore'),
+        lblTime: document.getElementById('lbl-time'),
+        lblToxVal: document.getElementById('lbl-toxicity-val'),
+        lblThornsVal: document.getElementById('lbl-thorns-val'),
+        lblResVal: document.getElementById('lbl-res-val'),
+        lblArmorVal: document.getElementById('lbl-armor-val'),
+        lblAgiVal: document.getElementById('lbl-agi-val'),
+        lblCostTox: document.getElementById('lbl-cost-tox'),
+        lblCostThorns: document.getElementById('lbl-cost-thorns'),
+        lblCostRes: document.getElementById('lbl-cost-res'),
+        lblCostArmor: document.getElementById('lbl-cost-armor'),
+        lblCostAgi: document.getElementById('lbl-cost-agi'),
+        sliderTox: document.getElementById('slider-toxicity'),
+        sliderThorns: document.getElementById('slider-thorns'),
+        sliderBugRes: document.getElementById('slider-bug-res'),
+        sliderBugArmor: document.getElementById('slider-bug-armor'),
+        sliderBugAgility: document.getElementById('slider-bug-agility'),
+        plantControls: document.getElementById('plant-controls'),
+        insectControls: document.getElementById('insect-controls'),
+        modal: document.getElementById('modal'),
+        modalTitle: document.getElementById('modal-title'),
+        modalDesc: document.getElementById('modal-desc'),
+        btnStartPlant: document.getElementById('btn-start-plant'),
+        btnStartInsect: document.getElementById('btn-start-insect'),
+        btnPause: document.getElementById('btn-pause'),
+        iconPause: document.getElementById('icon-pause'),
+        iconPlay: document.getElementById('icon-play'),
+        eventBanner: document.getElementById('event-banner')
+    };
+
+    // --- Helper Math Functions ---
+    const MathUtils = {
+        rand: (min, max) => Math.random() * (max - min) + min,
+        clamp: (val, min, max) => Math.min(Math.max(val, min), max),
+        dist: (x1, y1, x2, y2) => Math.hypot(x2 - x1, y2 - y1),
+        resToColor: (res) => {
+            const r = MathUtils.clamp(res, 0, 100);
+            if (r < 50) {
+                const ratio = r / 50;
+                const g = Math.floor(255);
+                const b = Math.floor(255 * (1 - ratio));
+                return `rgb(255, ${g}, ${b})`;
+            } else {
+                const ratio = (r - 50) / 50;
+                const g = Math.floor(255 * (1 - ratio));
+                const b = 0;
+                return `rgb(255, ${g}, ${b})`;
+            }
+        }
+    };
+
+    // --- Scoring Logic ---
+    function addScore(points) {
+        state.score += points;
+        ui.lblScore.innerText = state.score;
+        // High score is now calculated at the end of the game based on Total Performance
+    }
+
+    // --- Classes ---
+
+    class Plant {
+        constructor(x, y) {
+            this.x = x;
+            this.y = y;
+            this.size = 6;
+        }
+        draw(ctx) {
+            if (state.actualThorns > 20) {
+                ctx.fillStyle = '#f59e0b'; 
+                ctx.beginPath();
+                const spikes = Math.floor(state.actualThorns / 10) + 3;
+                const spikeLen = this.size + (state.actualThorns / 20);
+                for(let i=0; i<spikes; i++) {
+                    let angle = (i / spikes) * Math.PI * 2;
+                    ctx.moveTo(this.x, this.y);
+                    ctx.lineTo(this.x + Math.cos(angle) * spikeLen, this.y + Math.sin(angle) * spikeLen);
+                }
+                ctx.lineWidth = 1.5;
+                ctx.strokeStyle = '#d97706';
+                ctx.stroke();
+            }
+
+            ctx.fillStyle = state.actualToxicity > 50 ? '#059669' : '#10b981'; 
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = '#059669';
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+        }
+    }
+
+    class Bug {
+        constructor(x, y, resistance, armor, agility) {
+            this.x = x;
+            this.y = y;
+            this.vx = MathUtils.rand(-1, 1);
+            this.vy = MathUtils.rand(-1, 1);
+            
+            this.resistance = MathUtils.clamp(resistance, 0, 100); 
+            this.armor = MathUtils.clamp(armor, 0, 100);           
+            this.agility = MathUtils.clamp(agility, 0.5, 2.0);     
+            
+            this.normalizeVel();
+            
+            this.energy = CONFIG.bugStartEnergy;
+            this.size = 5;
+            this.targetPlant = null;
+            this.color = MathUtils.resToColor(this.resistance);
+        }
+
+        normalizeVel() {
+            const mag = Math.hypot(this.vx, this.vy);
+            const currentSpeed = CONFIG.bugSpeed * this.agility;
+            if (mag === 0) { this.vx = currentSpeed; this.vy = 0; return; }
+            this.vx = (this.vx / mag) * currentSpeed;
+            this.vy = (this.vy / mag) * currentSpeed;
+        }
+
+        update() {
+            let behaviorCost = CONFIG.bugMetabolism * (this.agility * 0.8 + 0.2);
+            let structuralCost = (this.armor / 100) * 0.05;
+            
+            // Environmental Event Effect: Heatwaves drain bug energy rapidly
+            if (state.event === 'heatwave') {
+                behaviorCost *= 1.6; 
+            }
+
+            this.energy -= (behaviorCost + structuralCost);
+
+            if (!this.targetPlant || !state.plants.includes(this.targetPlant)) {
+                let nearest = null;
+                let minDist = Infinity;
+                for (let p of state.plants) {
+                    let d = MathUtils.dist(this.x, this.y, p.x, p.y);
+                    if (d < minDist) {
+                        minDist = d;
+                        nearest = p;
+                    }
+                }
+                this.targetPlant = nearest;
+            }
+
+            if (this.targetPlant) {
+                const dx = this.targetPlant.x - this.x;
+                const dy = this.targetPlant.y - this.y;
+                this.vx += (dx * 0.05) + MathUtils.rand(-0.5, 0.5);
+                this.vy += (dy * 0.05) + MathUtils.rand(-0.5, 0.5);
+            } else {
+                this.vx += MathUtils.rand(-0.2, 0.2);
+                this.vy += MathUtils.rand(-0.2, 0.2);
+            }
+            this.normalizeVel();
+
+            this.x += this.vx;
+            this.y += this.vy;
+
+            if (this.x < 0) { this.x = 0; this.vx *= -1; }
+            if (this.x > canvas.width) { this.x = canvas.width; this.vx *= -1; }
+            if (this.y < 0) { this.y = 0; this.vy *= -1; }
+            if (this.y > canvas.height) { this.y = canvas.height; this.vy *= -1; }
+
+            this.checkEating();
+            this.checkReproduction();
+        }
+
+        checkEating() {
+            if (!this.targetPlant) return;
+            const d = MathUtils.dist(this.x, this.y, this.targetPlant.x, this.targetPlant.y);
+            if (d < this.size + this.targetPlant.size) {
+                
+                const effectivePoison = Math.max(0, state.actualToxicity - this.resistance) * CONFIG.toxicityDamageMult;
+                const effectiveThorns = Math.max(0, state.actualThorns - this.armor) * CONFIG.thornDamageMult;
+                
+                const netEnergy = CONFIG.plantNutrition - effectivePoison - effectiveThorns;
+                this.energy += netEnergy;
+                this.energy = Math.min(this.energy, CONFIG.bugMaxEnergy);
+
+                const index = state.plants.indexOf(this.targetPlant);
+                if (index > -1) {
+                    state.plants.splice(index, 1);
+                    if (state.role === 'insect') addScore(5); // Point for eating
+                }
+                this.targetPlant = null;
+            }
+        }
+
+        checkReproduction() {
+            if (this.energy >= CONFIG.bugReproductionThreshold) {
+                this.energy = this.energy / 2;
+                let childRes, childArmor, childAgility;
+
+                // Both roles now use targeted evolutionary drift to aggressively adapt.
+                // User Insect uses sliders for targets. Computer Insect uses AI to pick targets.
+                childRes = this.resistance + (state.targetBugRes - this.resistance) * 0.3 + MathUtils.rand(-3, 3);
+                childArmor = this.armor + (state.targetBugArmor - this.armor) * 0.3 + MathUtils.rand(-3, 3);
+                childAgility = this.agility + (state.targetBugAgility - this.agility) * 0.3 + MathUtils.rand(-0.05, 0.05);
+                
+                const child = new Bug(
+                    this.x + MathUtils.rand(-10, 10), 
+                    this.y + MathUtils.rand(-10, 10), 
+                    childRes, childArmor, childAgility
+                );
+                child.energy = this.energy;
+                state.bugs.push(child);
+                
+                if (state.role === 'insect') addScore(2); // Point for reproducing
+                
+                if(state.bugs.length % 5 === 0) {
+                    state.generation++;
+                    if (state.role === 'plant') addScore(15); // Plant gets points for surviving generations
+                }
+            }
+        }
+
+        draw(ctx) {
+            ctx.fillStyle = this.color;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fill();
+
+            if (this.armor > 10) {
+                ctx.lineWidth = Math.min(3, this.armor / 20);
+                ctx.strokeStyle = '#9ca3af'; 
+                ctx.stroke();
+            }
+            
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(this.x, this.y);
+            ctx.lineTo(this.x + (this.vx * 1.5), this.y + (this.vy * 1.5));
+            ctx.stroke();
+        }
+    }
+
+    // --- Game Logic ---
+
+    function initGame(role) {
+        state.role = role;
+        state.score = 0;
+        state.event = null;
+        state.eventTimer = 0;
+        state.timeLeft = 30;
+        state.timeCounter = 0;
+        state.lastTimestamp = null;
+        state.plants = [];
+        state.bugs = [];
+        state.history = [];
+        state.generation = 1;
+        state.ticks = 0;
+        state.actualToxicity = 0;
+        state.targetToxicity = 0;
+        state.actualThorns = 0;
+        state.targetThorns = 0;
+        state.targetBugRes = 10;
+        state.targetBugArmor = 10;
+        state.targetBugAgility = 1.0;
+
+        // Reset UI
+        ui.lblScore.innerText = "0";
+        ui.lblTime.innerText = "30";
+        ui.lblHighScore.innerText = role === 'plant' ? state.highScorePlant : state.highScoreInsect;
+        
+        if (role === 'plant') {
+            ui.plantControls.classList.remove('hidden');
+            ui.insectControls.classList.add('hidden');
+            ui.sliderTox.value = 0;
+            ui.sliderThorns.value = 0;
+            ui.lblToxVal.innerText = "Toxicity: 0%";
+            ui.lblThornsVal.innerText = "Thorns: 0%";
+            updateCostLabel(0, ui.lblCostTox);
+            updateCostLabel(0, ui.lblCostThorns);
+        } else {
+            ui.plantControls.classList.add('hidden');
+            ui.insectControls.classList.remove('hidden');
+            ui.sliderBugRes.value = 10;
+            ui.sliderBugArmor.value = 10;
+            ui.sliderBugAgility.value = 100;
+            ui.lblResVal.innerText = "Resistance: 10%";
+            ui.lblArmorVal.innerText = "Armor: 10%";
+            ui.lblAgiVal.innerText = "Speed: 1.0x";
+            updateCostLabel(10, ui.lblCostRes);
+            updateCostLabel(10, ui.lblCostArmor);
+            updateCostLabel(50, ui.lblCostAgi);
+        }
+
+        for (let i = 0; i < 60; i++) spawnPlant();
+        for (let i = 0; i < 25; i++) {
+            state.bugs.push(new Bug(MathUtils.rand(0, canvas.width), MathUtils.rand(0, canvas.height), MathUtils.rand(0, 10), MathUtils.rand(0, 10), 1.0));
+        }
+
+        state.isRunning = true;
+        state.isPaused = false;
+        ui.modal.classList.add('hidden');
+        requestAnimationFrame(gameLoop);
+    }
+
+    function spawnPlant() {
+        if (state.plants.length >= CONFIG.maxPlants) return;
+        
+        const toxCost = state.actualToxicity / 100;
+        const thornCost = state.actualThorns / 100;
+        const combinedPenalty = Math.min(0.95, (toxCost * 0.5) + (thornCost * 0.5)); 
+        let spawnMultiplier = 1 - combinedPenalty; 
+        
+        // Environmental Event Effects on Plants
+        if (state.event === 'drought') spawnMultiplier *= 0.3; // Massively reduced growth
+        if (state.event === 'spring') spawnMultiplier *= 2.5;  // Massively increased growth
+
+        const currentSpawnRate = CONFIG.plantBaseSpawnRate * spawnMultiplier;
+
+        if (Math.random() < currentSpawnRate) {
+            state.plants.push(new Plant(MathUtils.rand(20, canvas.width-20), MathUtils.rand(20, canvas.height-20)));
+        }
+    }
+
+    function updateSim() {
+        if (!state.isRunning || state.isPaused) return;
+
+        state.ticks++;
+
+        // --- ENVIRONMENTAL EVENTS ---
+        if (state.ticks % 600 === 0 && !state.event) { // Trigger randomly ~ every 10 seconds
+            const events = [
+                { name: "⚠ DROUGHT: Plant Growth Halted! ⚠", type: "drought", duration: 300, bg: "bg-orange-600" },
+                { name: "⚠ HEATWAVE: Insect Exhaustion! ⚠", type: "heatwave", duration: 300, bg: "bg-red-600" },
+                { name: "✿ FERTILE SPRING: Rapid Bloom! ✿", type: "spring", duration: 300, bg: "bg-pink-500" }
+            ];
+            const ev = events[Math.floor(Math.random() * events.length)];
+            state.event = ev.type;
+            state.eventTimer = ev.duration;
+            ui.eventBanner.innerText = ev.name;
+            ui.eventBanner.className = `absolute top-8 left-1/2 transform -translate-x-1/2 text-white px-8 py-3 rounded-full font-black tracking-widest text-lg shadow-lg transition-opacity duration-500 pointer-events-none z-20 border-2 border-white opacity-100 ${ev.bg}`;
+            
+            // Fade banner out after 3 seconds, but math effects last for eventTimer
+            setTimeout(() => { ui.eventBanner.classList.replace('opacity-100', 'opacity-0'); }, 3000);
+        }
+
+        if (state.eventTimer > 0) {
+            state.eventTimer--;
+            if (state.eventTimer <= 0) state.event = null;
+        }
+
+        // --- DYNAMIC AI (Anti-Stalemate Mechanics) ---
+        if (state.role === 'insect' && state.ticks % 200 === 0) {
+            // AI PLANT: Every few seconds, drastically shift strategies to trip up the user's insect traits
+            if (state.plants.length < 30) {
+                // Panic Mode: Drop defenses to reproduce and recover population
+                state.targetToxicity = Math.max(0, state.targetToxicity - 30);
+                state.targetThorns = Math.max(0, state.targetThorns - 30);
+            } else {
+                // Strategic Shift: Pick a highly specialized defense to catch the insect off guard
+                const strats = [
+                    { t: MathUtils.rand(70, 100), th: MathUtils.rand(0, 20) }, // Pure Chemical
+                    { t: MathUtils.rand(0, 20), th: MathUtils.rand(70, 100) }, // Pure Structural
+                    { t: MathUtils.rand(40, 60), th: MathUtils.rand(40, 60) }  // Balanced
+                ];
+                const s = strats[Math.floor(Math.random() * strats.length)];
+                state.targetToxicity = s.t;
+                state.targetThorns = s.th;
+            }
+        } else if (state.role === 'plant' && state.ticks % 100 === 0) {
+            // AI INSECT: Aggressively overcompensate against the user's plant defenses
+            state.targetBugRes = Math.min(100, state.actualToxicity + 20); // Always aim higher than current tox
+            state.targetBugArmor = Math.min(100, state.actualThorns + 20); // Always aim higher than current thorns
+            // If the user's plant is highly defended, bugs mutate to move very fast to find the few remaining edible plants
+            state.targetBugAgility = MathUtils.clamp(1.0 + (state.actualToxicity + state.actualThorns) / 150, 0.8, 2.0);
+        }
+
+        // 2. Update Defenses (Evolutionary lag)
+        if (state.actualToxicity < state.targetToxicity) state.actualToxicity = Math.min(state.actualToxicity + 0.1, state.targetToxicity);
+        else if (state.actualToxicity > state.targetToxicity) state.actualToxicity = Math.max(state.actualToxicity - 0.1, state.targetToxicity);
+        
+        if (state.actualThorns < state.targetThorns) state.actualThorns = Math.min(state.actualThorns + 0.1, state.targetThorns);
+        else if (state.actualThorns > state.targetThorns) state.actualThorns = Math.max(state.actualThorns - 0.1, state.targetThorns);
+
+        // 3. Spawn Plants
+        spawnPlant();
+
+        // 4. Update Bugs
+        for (let i = state.bugs.length - 1; i >= 0; i--) {
+            const b = state.bugs[i];
+            b.update();
+            if (b.energy <= 0) {
+                state.bugs.splice(i, 1);
+                if (state.role === 'plant') addScore(3); // Point for plant successfully starving/poisoning a bug
+            }
+        }
+
+        // 5. Record History for Graphs
+        if (state.ticks % 30 === 0) {
+            let avgRes = 0, avgArmor = 0;
+            if (state.bugs.length > 0) {
+                avgRes = state.bugs.reduce((sum, b) => sum + b.resistance, 0) / state.bugs.length;
+                avgArmor = state.bugs.reduce((sum, b) => sum + b.armor, 0) / state.bugs.length;
+            }
+            state.history.push({
+                popBugs: state.bugs.length,
+                popPlants: state.plants.length,
+                avgRes: avgRes,
+                avgArmor: avgArmor,
+                tox: state.actualToxicity,
+                thorns: state.actualThorns
+            });
+            if (state.history.length > 150) state.history.shift(); 
+        }
+
+        // 6. Update UI Labels
+        if (state.ticks % 5 === 0) {
+            ui.lblGen.innerText = state.generation;
+            ui.lblBugs.innerText = state.bugs.length;
+            ui.lblBugs.className = `font-mono font-bold ${state.bugs.length > 100 ? 'text-red-400' : 'text-gray-300'}`;
+            ui.lblPlants.innerText = state.plants.length;
+            ui.lblPlants.className = `font-mono font-bold ${state.plants.length < 20 ? 'text-red-400' : 'text-green-400'}`;
+        }
+
+        // 7. Check Win/Loss Conditions
+        checkEndGame();
+    }
+
+    function calculateRank() {
+        let popBonus = 0;
+        let traitBonus = 0;
+        let baseScore = state.score;
+
+        if (state.role === 'plant') {
+            popBonus = state.plants.length * 10;
+            traitBonus = (state.actualToxicity + state.actualThorns) * 5;
+        } else {
+            popBonus = state.bugs.length * 10;
+            let avgRes = state.bugs.length > 0 ? state.bugs.reduce((sum, b) => sum + b.resistance, 0) / state.bugs.length : 0;
+            let avgArmor = state.bugs.length > 0 ? state.bugs.reduce((sum, b) => sum + b.armor, 0) / state.bugs.length : 0;
+            let avgAgi = state.bugs.length > 0 ? state.bugs.reduce((sum, b) => sum + b.agility, 0) / state.bugs.length : 1;
+            traitBonus = (avgRes + avgArmor + (avgAgi * 50)) * 5;
+        }
+
+        let totalPerformance = baseScore + popBonus + traitBonus;
+        let rankName = "";
+        let rankColor = "";
+
+        if (totalPerformance < 500) { rankName = "Evolutionary Dead End 💀"; rankColor = "text-gray-500"; }
+        else if (totalPerformance < 1500) { rankName = "Fossil Record Footnote 🦴"; rankColor = "text-gray-400"; }
+        else if (totalPerformance < 3000) { rankName = "Hardy-Weinberg Average 😐"; rankColor = "text-yellow-400"; }
+        else if (totalPerformance < 5000) { rankName = "Survival of the Adequate 🌿"; rankColor = "text-green-400"; }
+        else if (totalPerformance < 8000) { rankName = "Apex Adapter 🐅"; rankColor = "text-blue-400"; }
+        else if (totalPerformance < 12000) { rankName = "Darwin's Darling 👑"; rankColor = "text-purple-400"; }
+        else { rankName = "The Red Queen's Champion 🧬"; rankColor = "text-pink-500"; }
+
+        return { 
+            popBonus: Math.round(popBonus), 
+            traitBonus: Math.round(traitBonus), 
+            total: Math.round(totalPerformance), 
+            rankName, 
+            rankColor 
+        };
+    }
+
+    function checkEndGame() {
+        if (state.timeLeft <= 0) {
+            const msg = state.role === 'plant' 
+                ? "You successfully defended the ecosystem for 30 seconds!" 
+                : "Your insects survived and established a foothold for 30 seconds!";
+            endGame("Time's Up! (Survival)", msg, "text-blue-400");
+            return;
+        }
+        if (state.bugs.length === 0) {
+            if (state.role === 'plant') endGame("Extinction! (You Win)", "You successfully starved the insects out of the ecosystem.", "text-blue-400");
+            else endGame("Extinction! (You Lose)", "Your insect colony couldn't adapt quickly enough and starved to death.", "text-red-500");
+        } else if (state.bugs.length >= CONFIG.maxBugs) {
+            if (state.role === 'plant') endGame("Infestation! (You Lose)", "The insects bypassed your defenses and overran the ecosystem.", "text-red-500");
+            else endGame("Infestation! (You Win)", "Your insects rapidly adapted and dominated the ecosystem!", "text-green-400");
+        } else if (state.plants.length === 0) {
+            if (state.role === 'plant') endGame("Ecosystem Collapse! (You Lose)", "You spent too much energy on extreme defenses. Without reproduction, the plants died out.", "text-yellow-500");
+            else endGame("Ecosystem Collapse! (You Lose)", "Your bugs were too ravenous and ate all the plants. Without a food source, your species perishes.", "text-yellow-500");
+        }
+    }
+
+    function endGame(title, desc, titleClass) {
+        state.isRunning = false;
+        ui.modalTitle.innerText = title;
+        ui.modalTitle.className = `text-3xl font-bold mb-4 ${titleClass}`;
+        
+        const rank = calculateRank();
+        
+        let hs = state.role === 'plant' ? state.highScorePlant : state.highScoreInsect;
+        let newHsHtml = "";
+        
+        if (rank.total > hs) {
+            hs = rank.total;
+            if (state.role === 'plant') {
+                state.highScorePlant = hs;
+                localStorage.setItem('armsRaceHighScorePlant', hs);
+            } else {
+                state.highScoreInsect = hs;
+                localStorage.setItem('armsRaceHighScoreInsect', hs);
+            }
+            ui.lblHighScore.innerText = hs;
+            newHsHtml = `<span class="ml-2 text-xs bg-yellow-500 text-black px-2 py-0.5 rounded uppercase font-bold animate-pulse">New High Score!</span>`;
+        }
+        
+        let scoreCard = `
+            <div class="bg-gray-900 p-4 rounded-lg border border-gray-700 mt-4 mb-4 text-left shadow-inner">
+                <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-2 border-b border-gray-700 pb-1">Evolutionary Report Card</h3>
+                <div class="flex justify-between text-sm mb-1"><span class="text-gray-300">Base Score:</span> <span class="font-mono">${state.score}</span></div>
+                <div class="flex justify-between text-sm mb-1"><span class="text-gray-300">Population Bonus:</span> <span class="font-mono text-blue-400">+${rank.popBonus}</span></div>
+                <div class="flex justify-between text-sm mb-3"><span class="text-gray-300">Trait Dev Bonus:</span> <span class="font-mono text-emerald-400">+${rank.traitBonus}</span></div>
+                <div class="flex justify-between items-center text-lg font-bold border-t border-gray-700 pt-2 mb-2">
+                    <span class="text-white">Total Performance:</span> 
+                    <div><span class="font-mono text-yellow-400">${rank.total}</span>${newHsHtml}</div>
+                </div>
+                <div class="text-center mt-3 border-t border-gray-700 pt-3">
+                    <span class="text-xs text-gray-400 uppercase tracking-widest block mb-1">Assigned Rank</span>
+                    <span class="text-2xl font-black ${rank.rankColor} drop-shadow-md">${rank.rankName}</span>
+                </div>
+            </div>
+        `;
+
+        ui.modalDesc.innerHTML = desc + scoreCard;
+        ui.btnStartPlant.innerText = "Play Again as Plant";
+        ui.btnStartInsect.innerText = "Play Again as Insect";
+        ui.modal.classList.remove('hidden');
+    }
+
+    // --- Rendering ---
+    function drawSim() {
+        ctx.fillStyle = '#111827'; 
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.strokeStyle = '#1f2937';
+        ctx.lineWidth = 1;
+        for(let i=0; i<canvas.width; i+=50) { ctx.beginPath(); ctx.moveTo(i,0); ctx.lineTo(i,canvas.height); ctx.stroke(); }
+        for(let i=0; i<canvas.height; i+=50) { ctx.beginPath(); ctx.moveTo(0,i); ctx.lineTo(canvas.width,i); ctx.stroke(); }
+
+        state.plants.forEach(p => p.draw(ctx));
+        state.bugs.forEach(b => b.draw(ctx));
+    }
+
+    function drawGraphs() {
+        if (state.history.length === 0) return;
+
+        const w1 = graphPopCanvas.width; const h1 = graphPopCanvas.height;
+        const w2 = graphResCanvas.width; const h2 = graphResCanvas.height;
+        
+        graphPopCtx.clearRect(0, 0, w1, h1);
+        graphResCtx.clearRect(0, 0, w2, h2);
+
+        const xStep1 = w1 / 150;
+        const xStep2 = w2 / 150;
+
+        graphPopCtx.lineWidth = 2;
+        graphPopCtx.strokeStyle = '#3b82f6';
+        graphPopCtx.beginPath();
+        state.history.forEach((pt, i) => {
+            let x = i * xStep1; let y = h1 - (pt.popBugs / CONFIG.maxBugs) * h1;
+            if (i === 0) graphPopCtx.moveTo(x, y); else graphPopCtx.lineTo(x, y);
+        });
+        graphPopCtx.stroke();
+
+        graphPopCtx.strokeStyle = '#10b981';
+        graphPopCtx.beginPath();
+        state.history.forEach((pt, i) => {
+            let x = i * xStep1; let y = h1 - (pt.popPlants / CONFIG.maxPlants) * h1;
+            if (i === 0) graphPopCtx.moveTo(x, y); else graphPopCtx.lineTo(x, y);
+        });
+        graphPopCtx.stroke();
+
+        graphResCtx.lineWidth = 2;
+        graphResCtx.strokeStyle = '#ef4444';
+        graphResCtx.beginPath();
+        state.history.forEach((pt, i) => {
+            let x = i * xStep2; let y = h2 - (pt.avgRes / 100) * h2;
+            if (i === 0) graphResCtx.moveTo(x, y); else graphResCtx.lineTo(x, y);
+        });
+        graphResCtx.stroke();
+        
+        graphResCtx.strokeStyle = '#eab308';
+        graphResCtx.beginPath();
+        state.history.forEach((pt, i) => {
+            let x = i * xStep2; let y = h2 - (pt.avgArmor / 100) * h2;
+            if (i === 0) graphResCtx.moveTo(x, y); else graphResCtx.lineTo(x, y);
+        });
+        graphResCtx.stroke();
+
+        graphResCtx.strokeStyle = '#10b981';
+        graphResCtx.setLineDash([3, 3]); 
+        graphResCtx.beginPath();
+        state.history.forEach((pt, i) => {
+            let x = i * xStep2; let y = h2 - (pt.tox / 100) * h2;
+            if (i === 0) graphResCtx.moveTo(x, y); else graphResCtx.lineTo(x, y);
+        });
+        graphResCtx.stroke();
+        
+        graphResCtx.strokeStyle = '#f59e0b';
+        graphResCtx.beginPath();
+        state.history.forEach((pt, i) => {
+            let x = i * xStep2; let y = h2 - (pt.thorns / 100) * h2;
+            if (i === 0) graphResCtx.moveTo(x, y); else graphResCtx.lineTo(x, y);
+        });
+        graphResCtx.stroke();
+        
+        graphResCtx.setLineDash([]); 
+    }
+
+    function gameLoop(timestamp) {
+        if (!state.isRunning) return;
+        
+        if (!state.lastTimestamp) state.lastTimestamp = timestamp;
+        // Clamp delta to prevent massive jumps if tab is inactive
+        const delta = Math.min(timestamp - state.lastTimestamp, 100); 
+        state.lastTimestamp = timestamp;
+
+        if (!state.isPaused) {
+            // Timer logic
+            state.timeCounter += delta;
+            if (state.timeCounter >= 1000) {
+                state.timeLeft--;
+                ui.lblTime.innerText = state.timeLeft;
+                state.timeCounter -= 1000;
+            }
+
+            updateSim();
+            drawSim();
+            if(state.ticks % 5 === 0) drawGraphs();
+        }
+
+        requestAnimationFrame(gameLoop);
+    }
+
+    // --- Event Listeners ---
+    function updateCostLabel(val, lbl) {
+        if(val < 30) { lbl.innerText = "Low"; lbl.className = "text-green-400"; }
+        else if(val < 70) { lbl.innerText = "Medium"; lbl.className = "text-yellow-400"; }
+        else { lbl.innerText = "High"; lbl.className = "text-red-500 font-bold"; }
+    }
+
+    ui.sliderTox.addEventListener('input', (e) => {
+        state.targetToxicity = parseInt(e.target.value);
+        ui.lblToxVal.innerText = `Toxicity: ${state.targetToxicity}%`;
+        updateCostLabel(state.targetToxicity, ui.lblCostTox);
+    });
+
+    ui.sliderThorns.addEventListener('input', (e) => {
+        state.targetThorns = parseInt(e.target.value);
+        ui.lblThornsVal.innerText = `Thorns: ${state.targetThorns}%`;
+        updateCostLabel(state.targetThorns, ui.lblCostThorns);
+    });
+
+    ui.sliderBugRes.addEventListener('input', (e) => {
+        state.targetBugRes = parseInt(e.target.value);
+        ui.lblResVal.innerText = `Resistance: ${state.targetBugRes}%`;
+        updateCostLabel(state.targetBugRes, ui.lblCostRes);
+    });
+
+    ui.sliderBugArmor.addEventListener('input', (e) => {
+        state.targetBugArmor = parseInt(e.target.value);
+        ui.lblArmorVal.innerText = `Armor: ${state.targetBugArmor}%`;
+        updateCostLabel(state.targetBugArmor, ui.lblCostArmor);
+    });
+
+    ui.sliderBugAgility.addEventListener('input', (e) => {
+        const val = parseInt(e.target.value);
+        state.targetBugAgility = val / 100;
+        ui.lblAgiVal.innerText = `Speed: ${state.targetBugAgility.toFixed(1)}x`;
+        updateCostLabel(val - 50, ui.lblCostAgi); // map 50-200 to approx 0-150 relative cost
+    });
+
+    ui.btnStartPlant.addEventListener('click', () => initGame('plant'));
+    ui.btnStartInsect.addEventListener('click', () => initGame('insect'));
+
+    ui.btnPause.addEventListener('click', () => {
+        if (!state.isRunning) return;
+        state.isPaused = !state.isPaused;
+        if (state.isPaused) {
+            ui.iconPause.classList.add('hidden');
+            ui.iconPlay.classList.remove('hidden');
+            ctx.fillStyle = 'rgba(0,0,0,0.5)';
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+            ctx.fillStyle = 'white';
+            ctx.font = '30px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText("PAUSED", canvas.width/2, canvas.height/2);
+        } else {
+            ui.iconPause.classList.remove('hidden');
+            ui.iconPlay.classList.add('hidden');
+        }
+    });
+
+    // Draw initial blank state
+    drawSim();
+
+</script>
+</body>
+</html>
