@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saskatchewan Biology 30 - Exam Prep</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- MathJax for chemical formulas/equations -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #0f172a; }
+        .hidden { display: none !important; }
+        .btn-option { transition: all 0.2s ease-in-out; }
+        .btn-option:active { transform: scale(0.98); }
+        .correct-answer { background-color: #10b981 !important; color: white !important; border-color: #10b981 !important; }
+        .wrong-answer { background-color: #ef4444 !important; color: white !important; border-color: #ef4444 !important; }
+        .glass-panel { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border: 1px solid rgba(226, 232, 240, 0.8); }
+        
+        /* Custom Checkbox */
+        .custom-checkbox input:checked + div { background-color: #4f46e5; border-color: #4f46e5; }
+        .custom-checkbox input:checked + div svg { display: block; }
+        
+        /* Progress Bar */
+        #timer-bar { transition: width 1s linear; }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4 sm:p-6">
+
+    <!-- DATA STORE: We embed the raw text inside a template to safely parse it with JS -->
+    <script type="text/template" id="raw-exam-data">
+--- PAGE 1 ---
+Biology 30 Saskatchewan - Comprehensive Exam Bank
+Chapter 2: Cell Structure and Processes
+Knowledge (50 Questions)
+1. Which of the following lacks membrane-bound organelles? A) Plant cell B) Animal cell C) Prokaryote D) Eukaryote. Ans: C
+2. Where is the DNA located in a prokaryotic cell? A) Nucleus B) Nucleoid C) Mitochondria D) Ribosome. Ans: B
+3. Which cell type is typically 10-100 times smaller than the other? A) Eukaryotic B) Prokaryotic C) Plant D) Animal. Ans: B
+4. Which domain consists of extremophile prokaryotes? A) Bacteria B) Eukarya C) Archaea D) Protista. Ans: C
+5. What does the term "Eukaryote" literally translate to? A) Before nucleus B) True nucleus C) Small cell D) Complex cell. Ans: B
+6. Which organelle acts as the command center housing the genetic blueprint? A) Golgi B) ER C) Nucleus D) Lysosome. Ans: C
+7. What is the primary function of the rough endoplasmic reticulum? A) Lipid synthesis B) Protein synthesis C) Detoxification D) Energy production. Ans: B
+8. Which organelle modifies, sorts, and packages proteins? A) Golgi Apparatus B) Smooth ER C) Ribosome D) Vacuole. Ans: A
+9. What do lysosomes primarily contain? A) DNA B) Chlorophyll C) Digestive enzymes D) Lipids. Ans: C
+10. Which cell structure is rigid, non-living, and made of cellulose? A) Cell membrane B) Cell wall C) Cytoskeleton D) Capsule. Ans: B
+11. In which organelle does cellular respiration occur? A) Chloroplast B) Ribosome C) Mitochondria D) Nucleus. Ans: C
+12. Which organelle is found in plants but NOT in animals? A) Mitochondria B) Chloroplast C) Ribosome D) Golgi. Ans: B
+13. What is the function of centrioles in animal cells? A) Organize cell division B) Synthesize proteins C) Digest waste D) Produce ATP. Ans: A
+14. Which structure is short, numerous, and used for movement like oars? A) Flagella B) Cilia C) Pseudopods D) Hyphae. Ans: B
+15. What is the fluid mosaic model used to describe? A) Cell wall B) Nuclear envelope C) Cell membrane D) Cytoplasm. Ans: C
+16. What is the primary usable energy currency of the cell? A) Glucose B) DNA C) ATP D) NADH. Ans: C
+17. How is energy released from an ATP molecule? A) Adding a phosphate B) Breaking the 3rd phosphate bond C) Fusing with glucose D) Absorbing light. Ans: B
+--- PAGE 2 ---
+18. What is the first stage of cellular respiration? A) Krebs Cycle B) Transition Reaction C) Glycolysis D) Oxidative Phosphorylation. Ans: C
+19. Where does glycolysis occur? A) Mitochondria B) Nucleus C) Cytoplasm D) Chloroplast. Ans: C
+20. Does glycolysis require oxygen? A) Yes B) No C) Only in plants D) Only in animals. Ans: B
+21. Which stage of respiration produces the most ATP? A) Glycolysis B) Krebs Cycle C) Oxidative Phosphorylation D) Transition Reaction. Ans: C
+22. What is the final electron acceptor in the electron transport chain? A) Carbon dioxide B) Water C) Oxygen D) ATP. Ans: C
+23. What are the two stages of photosynthesis? A) Glycolysis and Krebs B) Light-Dependent and Calvin Cycle C) Transition and ETC D) Photolysis and Oxidation. Ans: B
+24. Where do the light-dependent reactions occur? A) Stroma B) Thylakoids C) Matrix D) Cytoplasm. Ans: B
+25. What is the process of splitting water using light called? A) Hydrolysis B) Photolysis C) Plasmolysis D) Glycolysis. Ans: B
+26. Which enzyme fixes carbon in the Calvin Cycle? A) ATP Synthase B) Amylase C) Rubisco D) Polymerase. Ans: C
+27. Which macromolecule is the primary energy source and structural material? A) Proteins B) Lipids C) Carbohydrates D) Nucleic Acids. Ans: C
+28. What is the animal storage form of carbohydrates? A) Starch B) Cellulose C) Glycogen D) Chitin. Ans: C
+29. Which molecules are the primary builders of the cell membrane? A) Phospholipids B) Triglycerides C) Polypeptides D) Monosaccharides. Ans: A
+30. The head of a phospholipid is: A) Hydrophobic B) Hydrophilic C) Non-polar D) Made of fatty acids. Ans: B
+31. What are the building blocks of proteins? A) Nucleotides B) Monosaccharides C) Fatty acids D) Amino acids. Ans: D
+32. What determines a protein's primary structure? A) 3D folding B) Amino acid sequence C) Alpha helices D) Multiple subunits. Ans: B
+33. Which nucleic acid is double-stranded? A) RNA B) DNA C) ATP D) ADP. Ans: B
+34. In DNA, Adenine always pairs with: A) Cytosine B) Guanine C) Thymine D) Uracil. Ans: C
+35. Plant cell walls are primarily made of: A) Peptidoglycan B) Chitin C) Cellulose D) Glycogen. Ans: C
+36. Fungal cell walls are primarily made of: A) Peptidoglycan B) Chitin C) Cellulose D) Phospholipids. Ans: B
+37. Bacterial cell walls are primarily made of: A) Peptidoglycan B) Chitin C) Cellulose D) Keratin. Ans: A
+38. Which Gram stain result indicates a thick peptidoglycan wall? A) Gram-negative (pink) B) Gram-positive (purple) C) Gram-neutral (clear) D) Gram-variable (blue). Ans: B
+39. How does an Amoeba move? A) Cilia B) Flagella C) Pseudopods D) Pumping water. Ans: C
+40. A symbiotic relationship where both organisms benefit is called: A) Parasitism B) Commensalism C) Amensalism D) Mutualism. Ans: D
+41. Which Archaea are known as "salt lovers"? A) Thermophiles B) Halophiles C) Methanogens
+--- PAGE 3 ---
+D) Cyanobacteria. Ans: B
+42. Which microscope uses light and is good for viewing live cells? A) TEM B) SEM C) Compound Light D) Synchrotron. Ans: C
+43. Which microscope provides highly detailed 3D surface images of dead specimens? A) TEM B) SEM C) Light D) Dissecting. Ans: B
+44. Movement of small particles directly through the membrane from high to low concentration is: A) Active transport B) Osmosis C) Diffusion D) Endocytosis. Ans: C
+45. The diffusion of water is specifically called: A) Phagocytosis B) Pinocytosis C) Osmosis D) Facilitated diffusion. Ans: C
+46. Does passive transport require ATP? A) Yes B) No C) Only for water D) Only for large ions. Ans: B
+47. Which process moves materials against their concentration gradient? A) Diffusion B) Osmosis C) Facilitated diffusion D) Active transport. Ans: D
+48. "Cell eating" of solid particles is called: A) Pinocytosis B) Phagocytosis C) Exocytosis D) Osmosis. Ans: B
+49. "Cell drinking" of liquids is called: A) Pinocytosis B) Phagocytosis C) Exocytosis D) Diffusion. Ans: A
+50. Expelling bulky material out of the cell via vesicles is: A) Endocytosis B) Exocytosis C) Phagocytosis D) Plasmolysis. Ans: B
+Application (25 Questions)
+51. If a cell is viewed under a microscope and contains a distinct nucleus and cell wall, but no chloroplasts, it is likely a: A) Plant cell B) Animal cell C) Fungal cell D) Bacterial cell. Ans: C
+52. Which organelle would be highly abundant in a muscle cell requiring massive amounts of energy? A) Lysosome B) Golgi C) Mitochondria D) Smooth ER. Ans: C
+53. A protein is destined to be exported from the cell. Which path will it take? A) Ribosome -> Rough ER -> Golgi -> Vesicle B) Nucleus -> Smooth ER -> Lysosome C) Mitochondria -> Golgi -> Membrane D) Cytoplasm -> Ribosome -> Membrane. Ans: A
+54. Why are antibiotics that target peptidoglycan safe for human use? A) Human cells have chitin walls B) Human cells lack cell walls entirely C) Human cells have cellulose D) Humans are prokaryotes. Ans: B
+55. If a plant is placed in the dark, which process will immediately halt? A) Glycolysis B) Krebs cycle C) Light-dependent reactions D) Cellular respiration. Ans: C
+56. During intense exercise, oxygen supply drops. Which metabolic pathway allows muscles to generate a small amount of ATP? A) Oxidative phosphorylation B) Anaerobic glycolysis C) Calvin cycle D) Transition reaction. Ans: B
+57. You trace a radioactive atom of oxygen gas $({O_{2}})$ inhaled by a mouse. Where will that atom end up? A) In exhaled $CO_{2}$ B) In formed $H_{2}O$ C) In synthesized glucose D) In ATP. Ans: B
+58. A herbicide blocks the action of Rubisco. What is the immediate effect on the plant? A) Cannot split water B) Cannot fix carbon dioxide into sugars C) Cannot absorb light D)
+--- PAGE 4 ---
+Cannot produce ATP in the thylakoid. Ans: B
+59. Why do phospholipids form a bilayer in water? A) Because both tails and heads are hydrophilic B) Because the tails are hydrophobic and hide inward C) Because the heads are hydrophobic D) Because proteins force them into shape. Ans: B
+60. Cooking an egg turns the clear part white. What biological process is happening to the proteins? A) Altering the primary structure B) Disrupting the secondary and tertiary structures (denaturing) C) Building new peptide bonds D) Converting to lipids. Ans: B
+61. If a DNA strand reads A-T-C-G, what is the complementary strand? A) U-A-G-C B) T-A-G-C C) A-T-C-G D) C-G-A-T. Ans: B
+62. You find a single-celled organism in a boiling hot spring. What is it most likely to be? A) Eukaryote B) Halophile C) Thermophilic Archaean D) Plant cell. Ans: C
+63. A paramecium in a freshwater pond constantly absorbs water. Which structure prevents it from bursting? A) Cell wall B) Contractile vacuole C) Nucleus D) Lysosome. Ans: B
+64. An agricultural soil has too much nitrogen fertilizer, creating a hypertonic environment. What happens to the plant roots? A) They swell with water B) They lose water via osmosis C) They actively transport water out D) They perform endocytosis. Ans: B
+65. How does a white blood cell engulf an invading bacterium? A) Exocytosis B) Osmosis C) Phagocytosis D) Facilitated diffusion. Ans: C
+66. Why is the inner membrane of a mitochondrion (cristae) highly folded? A) To store more DNA B) To increase surface area for the electron transport chain C) To trap more light D) To hold more ribosomes. Ans: B
+67. Canola seeds are harvested for their lipids. Which specialized organelle stores this oil? A) Chloroplast B) Lysosome C) Oleosome D) Mitochondria. Ans: C
+68. If a cell lacks a nucleolus, what cellular structure will it fail to produce? A) Mitochondria B) Cell membrane C) Ribosomes D) Flagella. Ans: C
+69. What type of transport is used when a nerve cell pumps sodium ions out against their concentration gradient? A) Osmosis B) Diffusion C) Facilitated diffusion D) Active transport. Ans: D
+70. Which process explains why a drop of food coloring spreads evenly in a glass of water? A) Active transport B) Diffusion C) Osmosis D) Pinocytosis. Ans: B
+71. If a fungal cell secretes digestive enzymes, it is performing: A) Phagocytosis B) Intracellular digestion C) Extracellular digestion D) Endocytosis. Ans: C
+72. In an isotonic solution, what is the net movement of water across a cell membrane? A) Rapidly inward B) Rapidly outward C) Zero net movement D) Active transport only. Ans: C
+73. Which feature distinguishes a eukaryotic animal cell from a eukaryotic plant cell under a compound microscope? A) Presence of a nucleus B) Lack of a rigid cell wall C) Presence of cytoplasm D) Presence of a cell membrane. Ans: B
+74. If lentil plants are grown in sterile soil without Rhizobium bacteria, what will likely occur? A) The plants will grow faster B) The plants will struggle due to a lack of fixed nitrogen C) The plants will become carnivorous D) The plants will fix nitrogen themselves. Ans: B
+75. What acts as the "ID tags" on the surface of the cell membrane? A) Cholesterol B) Phospholipid tails C) Carbohydrate chains attached to proteins D) Integral channel
+--- PAGE 5 ---
+proteins. Ans: C
+Extension / Critical Thinking (25 Questions)
+76. Cyanide is a deadly poison because it blocks the Electron Transport Chain. Why does this cause rapid death? A) It stops glucose from entering the cell B) It halts the majority of ATP production C) It causes the cell to digest itself D) It stops photosynthesis. Ans: B
+77. Why is aerobic respiration considered evolutionarily superior to anaerobic respiration for complex multicellular life? A) It doesn't require oxygen B) It produces 36-38 ATP per glucose compared to 2 ATP C) It occurs faster D) It produces lactic acid. Ans: B
+78. If the Calvin Cycle is "light-independent," why does it still stop shortly after a plant is placed in the dark? A) It requires light directly to fix carbon B) It relies on ATP and NADPH produced by the light-dependent reactions C) Rubisco is destroyed in the dark D) Stomata open in the dark. Ans: B
+79. Fungi and insects both use chitin. This is an example of: A) Divergent evolution B) Convergent evolution C) Homologous structures D) Artificial classification. Ans: B
+80. Clubroot is caused by a protist that attacks plant cell walls. A chemical treatment targets cellulose. Why might this harm the crop? A) Because the protist is made of cellulose B) Because the plant's cell walls are made of cellulose C) Because the plant's DNA is made of cellulose D) Because it will destroy the soil. Ans: B
+81. Why can't a transmission electron microscope (TEM) be used to watch a live amoeba move? A) The magnification is too low B) It only shows the surface C) The specimen must be dead and in a vacuum D) It only views prokaryotes. Ans: C
+82. Some bacteria secrete penicillinase, an enzyme that destroys Penicillin. What level of protein structure dictates the specific shape of this enzyme? A) Primary B) Secondary C) Tertiary D) Quaternary. Ans: C
+83. A genetic mutation changes one amino acid in a transport protein. Why might this stop the protein from functioning? A) It changes the protein's 3D shape B) It turns the protein into a lipid C) It destroys the cell wall D) It reverses the concentration gradient. Ans: A
+84. Why are extremophile Archaea structurally stable in boiling acid, while Eukaryotes are not? A) They have peptidoglycan B) They have ether-linked lipids and stable enzymes C) They lack DNA D) They perform photosynthesis. Ans: B
+85. If a plant cell is placed in pure distilled water (hypotonic), why doesn't it burst like an animal cell would? A) It pumps water out actively B) It has a rigid cellulose cell wall that provides turgor pressure C) Its membrane is impermeable to water D) It uses phagocytosis. Ans: B
+86. Termites eat wood but cannot digest it. Microbes in their gut digest it for them. This is an example of: A) Parasitism B) Amensalism C) Mutualism D) Commensalism. Ans: C
+87. The endosymbiotic theory suggests mitochondria were once free-living bacteria. Which structural evidence from the text supports this? A) They have a double membrane B) They are found in the nucleus C) They make glucose D) They digest waste. Ans: A
+88. What is the evolutionary advantage of compartmentalization in Eukaryotes? A) It allows incompatible chemical reactions to occur simultaneously without interference B) It makes the cell smaller C) It eliminates the need for ATP D) It prevents osmosis. Ans: A
+89. Why is the middle lamella important in plant tissue architecture? A) It produces ATP B) It
+--- PAGE 6 ---
+cements adjacent plant cells together C) It digests foreign bacteria D) It absorbs sunlight. Ans: B
+90. If an animal cell's lysosomes rupture, what is the immediate danger? A) The cell will starve B) The cell will burst from water C) The digestive enzymes will destroy the cell itself D) The cell will divide uncontrollably. Ans: C
+91. Why do organisms store energy as glycogen or starch instead of just hoarding free glucose? A) Glucose is toxic B) Long chains are more compact and affect osmosis less C) Glucose cannot enter mitochondria D) Polysaccharides generate more ATP per carbon. Ans: B
+92. A poison degrades the smooth ER. Which cellular function is most directly impaired? A) Protein synthesis B) ATP generation C) Lipid synthesis and detoxification D) Digestion. Ans: C
+93. How does the presence of cholesterol in the fluid mosaic model affect the membrane? A) It makes it perfectly rigid B) It stabilizes membrane fluidity at different temperatures C) It transports water D) It breaks down ATP. Ans: B
+94. If you hold your breath, $CO_{2}$ builds up in your blood. How will it cross your cell membranes to enter the blood? A) Active transport B) Simple diffusion C) Endocytosis D) Osmosis. Ans: B
+95. Why do plant cells possess both chloroplasts AND mitochondria? A) Chloroplasts are only for storage B) Chloroplasts make food, but mitochondria must break it down to make usable ATP C) Mitochondria are used only at night D) It is a biological mistake. Ans: B
+96. How did researchers prove that the oxygen released during photosynthesis comes from water and not CO2? A) By using radioactive carbon B) By using radioactive oxygen isotopes C) By measuring ATP output D) By counting chloroplasts. Ans: B
+97. What happens to the energy released when the third phosphate is cleaved from ATP? A) It is destroyed B) It is used to perform cellular work C) It turns into light D) It turns into DNA. Ans: B
+98. What is the fate of the G3P molecule produced in the Calvin Cycle? A) It is exhaled as $CO_{2}$ B) Some becomes glucose, the rest regenerates RuBP C) It becomes ATP D) It enters the ETC. Ans: B
+99. A cell has an unusually high number of ribosomes. What is its likely specialized function? A) Fat storage B) Movement C) Producing large amounts of proteins D) Detoxifying poisons. Ans: C
+100. Why is the distinction between Prokaryotes and Eukaryotes considered the most significant division in biology? A) It represents a massive leap in cellular complexity and evolutionary history B) It separates plants from animals C) It separates living from non-living things D) It is based on color. Ans: A
+Chapter 3: Biological Classification
+Knowledge (50 Questions)
+--- PAGE 7 ---
+1. About how many species are estimated to exist on Earth today? A) 1.2 million B) 8.7 million C) 100,000 D) 1 billion. Ans: B
+2. Grouping a weed and a crop based on their competition for nutrients is an example of what classification? A) Phylogenetic B) Morphological C) Functional D) Natural. Ans: C
+3. Classifying a bat and a bird together because they both have wings is an example of: A) Phylogenetic classification B) Morphological classification C) Functional classification D) Indigenous knowledge. Ans: B
+4. Which classification system is considered the modern scientific standard? A) Functional B) Morphological C) Artificial D) Phylogenetic. Ans: D
+5. Phylogenetic classification groups organisms based on: A) Utility B) Physical appearance C) Evolutionary ancestry D) Alphabetical order. Ans: C
+6. An "artificial" classification system groups organisms by: A) DNA B) Shared evolutionary history C) Arbitrary or superficial traits D) Cell type. Ans: C
+7. The Plains Cree and Anishinaabe concept that emphasizes the web of kinship connecting all living things is called: A) Binomial nomenclature B) Taxonomy C) Wâhkôhtowin D) Dichotomous key. Ans: C
+8. In the Medicine Wheel framework, organisms are often classified by: A) DNA sequence B) Direction, season, and element C) Economic value D) Skeletal structure. Ans: B
+9. Who created the universal two-part naming system for species? A) Charles Darwin B) Carl Linnaeus C) Gregor Mendel D) Aristotle. Ans: B
+10. The system of giving every species a two-part name is called: A) Polynomial taxonomy B) Binomial nomenclature C) Wâhkôhtowin D) Functional typing. Ans: B
+11. Which language is used for scientific names? A) English B) Greek C) Latin D) Swedish. Ans: C
+12. In the name Castor canadensis, "Castor" represents the: A) Species B) Genus C) Family D) Order. Ans: B
+13. In a scientific name, which part is ALWAYS capitalized? A) Genus B) Specific epithet C) Both D) Neither. Ans: A
+14. How should a scientific name be formatted if typed? A) Bolded B) Underlined C) Italicized D) ALL CAPS. Ans: C
+15. What is the broadest, most inclusive level of the taxonomic hierarchy? A) Kingdom B) Species C) Domain D) Phylum. Ans: C
+16. The Red Fox belongs to which Domain? A) Bacteria B) Archaea C) Eukarya D) Animalia. Ans: C
+17. What kingdom does the Red Fox belong to? A) Plantae B) Fungi C) Protista D) Animalia. Ans: D
+18. Which taxon comes immediately after Phylum? A) Class B) Order C) Family D) Genus. Ans: A
+19. Which taxon comes immediately before Genus? A) Species B) Family C) Order D) Class. Ans: B
+20. What is a "taxon"? A) A specific tool for identifying leaves B) A specific level or group within the hierarchy C) A type of bacterium D) A tax applied to agriculture. Ans: B
+21. Animals with a spinal cord belong to which Phylum? A) Mammalia B) Chordata C)
+--- PAGE 8 ---
+Carnivora D) Arthropoda. Ans: B
+22. Which Domain includes organisms with a true nucleus? A) Bacteria B) Archaea C) Eukarya D) Prokarya. Ans: C
+23. Which historical kingdom is often referred to as the "taxonomic junk drawer"? A) Fungi B) Protista C) Plantae D) Animalia. Ans: B
+24. The term "polyphyletic" means a group contains: A) Organisms from a single common ancestor B) Unrelated evolutionary lines C) Only bacteria D) Only plants. Ans: B
+25. The Biological Species Concept defines a species as a group that can: A) Look similar B) Live in the same habitat C) Interbreed and produce fertile offspring D) Eat the same food. Ans: C
+26. What is a "Pizzly" bear? A) A fictional animal B) A hybrid of a Grizzly and a Polar bear C) A new species of black bear D) A marsupial. Ans: B
+27. A tool featuring a series of paired, opposing choices used to identify an organism is a: A) Cladogram B) Medicine Wheel C) Dichotomous Key D) Phylogenetic tree. Ans: C
+28. In a dichotomous key, how many choices are presented at each step? A) 1 B) 2 C) 3 D) 4. Ans: B
+29. A branching diagram representing evolutionary relationships is called a: A) Dichotomous Key B) Cladogram C) Histogram D) Punnett Square. Ans: B
+30. The traits placed along the "trunk" of a cladogram are called: A) Artificial traits B) Derived characters C) Binomials D) Ancestral flaws. Ans: B
+31. What derived character separates mammals from reptiles on a cladogram? A) Four limbs B) Jaws C) Fur D) Amniotic egg. Ans: C
+32. What is Saskatchewan's floral emblem? A) White Spruce B) Prairie Lily C) Trembling Aspen D) Wild Oat. Ans: B
+33. What is Saskatchewan's provincial fish? A) Northern Pike B) Walleye C) Lake Trout D) Perch. Ans: B
+34. The scientific name for the North American Beaver is: A) Vulpes vulpes B) Bison bison C) Castor canadensis D) Avena fatua. Ans: C
+35. The Wild Oat (Avena fatua) is classified economically in Saskatchewan as a: A) Cash crop B) Noxious weed C) Floral emblem D) Protected species. Ans: B
+36. Which domain contains organisms with peptidoglycan in their cell walls? A) Bacteria B) Archaea C) Eukarya D) Protista. Ans: A
+37. Which group of eukaryotes is currently being reorganized into "Supergroups" using genomic evidence? A) Animals B) Plants C) Fungi D) Protists. Ans: D
+38. When typing the scientific name for humans, which is correct? A) Homo Sapiens B) homo sapiens C) Homo sapiens D) homo Sapiens. Ans: C
+39. Does the Linnaean hierarchy use circles or nesting boxes as its conceptual model? A) Circles B) Nesting boxes (dolls) C) Webs D) Parallel lines. Ans: B
+40. Under the natural classification system, which animals are grouped in the "Tetrapods"? A) Only mammals B) Mammals, birds, reptiles, amphibians C) Only insects D) Only fish. Ans: B
+41. Which classification view groups red foxes and red beetles together? A) Natural B)
+--- PAGE 9 ---
+Artificial C) Phylogenetic D) Evolutionary. Ans: B
+42. "Canidae" is the Family name for: A) Cats B) Bears C) Dogs and foxes D) Weasels. Ans: C
+43. What is the Genus of the Red Fox? A) Canis B) Vulpes C) Felis D) Ursus. Ans: B
+44. According to Indigenous Knowledge Systems, animals are often viewed as: A) Resources to be exploited B) Inferior organisms C) Teachers and relations D) Scientific models only. Ans: C
+45. In Western taxonomy, humans sit at the top of a pyramid. In Indigenous frameworks, humans are part of a: A) Web or circle B) Ladder C) Hierarchy D) Chain of being. Ans: A
+46. The scientific name for Wheat is Triticum aestivum. "aestivum" is the: A) Genus B) Domain C) Specific epithet D) Family. Ans: C
+47. How do domains categorize life? A) By physical color B) By basic cell structure (prokaryote vs eukaryote) C) By geographic location D) By diet. Ans: B
+48. Which tool tells you WHERE an organism came from evolutionarily? A) Dichotomous key B) Cladogram C) Gram stain D) Light microscope. Ans: B
+49. Which tool tells you WHAT an unknown organism currently is? A) Dichotomous key B) Cladogram C) Medicine wheel D) Evolutionary tree. Ans: A
+50. Why is Latin used for Binomial Nomenclature? A) It is easy to speak B) It is a "dead language" that doesn't change C) Linnaeus was Roman D) It is the language of science. Ans: B
+Application (25 Questions)
+51. If two organisms are in the same Order, they MUST also be in the same: A) Family B) Genus C) Class D) Species. Ans: C
+52. You are studying two plants: Acer rubrum and Acer saccharum. These plants belong to the same: A) Species B) Genus C) Ecosystem D) Subspecies. Ans: B
+53. A botanist and a farmer are looking at a field. The farmer sees a weed, the botanist sees a member of the Poaceae family. Who is using a functional classification? A) Botanist B) Farmer C) Both D) Neither. Ans: B
+54. You find an insect with a hard exoskeleton and six legs. Under natural classification, it belongs to the: A) Vertebrates B) Invertebrates C) Tetrapods D) Mammals. Ans: B
+55. Using the leaf key in Chapter 3: If a leaf is linear and narrow, it leads to: A) Willow B) Aspen C) Birch D) Oak. Ans: A
+56. Using the leaf key in Chapter 3: If a leaf is nearly circular with small fine teeth, it leads to: A) Willow B) Aspen C) Birch D) Maple. Ans: B
+57. On a cladogram, a trait labeled "Amniotic Egg" appears before lizards and foxes, but after frogs. Who has the amniotic egg? A) Frogs only B) Frogs, Lizards, and Foxes C) Lizards and Foxes D) Foxes only. Ans: C
+58. You find an organism that is multicellular, has a nucleus, and ingests other organisms for food. Which Kingdom does it belong to? A) Plantae B) Fungi C) Protista D) Animalia. Ans: D
+59. Why would grouping a dolphin and a shark together be considered "artificial" classification? A) They share a recent common ancestor B) It relies on superficial swimming traits rather than internal bone homologies C) They both have DNA D) They both live in the ocean. Ans: B
+60. If you are writing a lab report by hand, how must you format the name Bison bison? A)
+--- PAGE 10 ---
+Highlight it B) Capitalize both words C) Underline it D) Put it in quotes. Ans: C
+61. The dog (Canis lupus familiaris) and the wolf (Canis lupus) can interbreed and produce fertile offspring. According to the strict Biological Species Concept, they are: A) Different domains B) The same species C) Different genera D) Polyphyletic. Ans: B
+62. You observe a Medicine Wheel diagram. An eagle is placed in the East. This placement likely signifies: A) It has wings B) Its evolutionary link to reptiles C) Its relational association with Spring and new beginnings D) Its DNA sequence. Ans: C
+63. A grocery store puts tomatoes (a botanical fruit) in the vegetable aisle. What type of classification is this? A) Natural B) Phylogenetic C) Functional D) Linnaean. Ans: C
+64. If a cladogram shows that birds and crocodiles share a more recent common ancestor than lizards and crocodiles, what does this mean? A) Birds are closely related to crocodiles B) Crocodiles are birds C) Lizards evolved from birds D) Birds and lizards are the exact same species. Ans: A
+65. An organism is identified as a Eukaryote. What can you immediately conclude about its cellular structure? A) It lacks a nucleus B) It has a nucleus and membrane-bound organelles C) It has a peptidoglycan cell wall D) It is single-celled. Ans: B
+66. Why might the name "gopher" be problematic for a scientist communicating internationally? A) It is too hard to spell B) It refers to different animals (ground squirrels vs tortoises) in different regions C) It is a Latin word D) It violates the biological species concept. Ans: B
+67. In the hierarchical nesting doll model, as you move from Domain down to Species, what happens to the organisms in the group? A) They become more diverse B) They become more similar to each other C) They lose their DNA D) They become smaller in size. Ans: B
+68. If a new organism is discovered that is a prokaryote but survives in boiling acid, which domain should it be placed in? A) Bacteria B) Archaea C) Eukarya D) Protista. Ans: B
+69. You are creating a dichotomous key for vehicles. Which of the following is a good paired statement? A) "Is fast" vs "Is slow" B) "Has 4 wheels" vs "Does not have 4 wheels" C) "Is cool" vs "Is red" D) "Runs on gas" vs "Is big". Ans: B
+70. Based on the cladogram in Fig 3.6b, which organism is the most distant relative of the Red Fox? A) Perch (Fish) B) Frog (Amphibian) C) Lizard (Reptile) D) Bird. Ans: A
+71. A farmer wishes to kill Avena fatua but save Triticum aestivum. Because they are both in the Poaceae family, a chemical that targets all Poaceae will: A) Kill only the weed B) Kill only the wheat C) Kill both D) Kill neither. Ans: C
+72. If an organism's scientific name is Homo sapiens, what is its Genus? A) Homo B) sapiens C) Human D) Primate. Ans: A
+73. The grouping of "Red Animals" (Cardinal, Fox, Red Beetle) is polyphyletic. What does this mean? A) They share a recent common ancestor B) They do not share a recent common ancestor despite a shared trait C) They are all mammals D) They are all poisonous. Ans: B
+74. If a taxonomist reclassifies an amoeba from Kingdom Protista to Supergroup Amoebozoa, what type of evidence most likely prompted this? A) It changed color B) Genomic (DNA) evidence C) It learned to fly D) It was found in a new lake. Ans: B
+75. When identifying a Jack Pine using a conifer key, what specific trait separates it from a White Spruce? A) Needles in bundles vs single needles B) Presence of cones C) Green
+--- PAGE 11 ---
+needles D) Bark color. Ans: A
+Extension / Critical Thinking (25 Questions)
+76. How does the discovery of fertile "Pizzly" bears challenge the classical Linnaean system? A) It proves bears are plants B) It shows that distinct species boundaries can blur, challenging the Biological Species Concept C) It proves DNA doesn't exist D) It proves Linnaeus was entirely wrong about everything. Ans: B
+77. Why is the Kingdom Protista currently being dismantled by modern taxonomists? A) Because all protists died out B) Because DNA shows it is a "catch-all" group containing organisms that aren't closely related C) Because protists are actually bacteria D) Because they lack nuclei. Ans: B
+78. What is the fundamental philosophical difference between the Linnaean taxonomic hierarchy and Wähkõhtowin? A) Linnaeus grouped by color, Wähkôhtowin groups by diet B) Linnaeus builds a rigid, top-down hierarchy; Wahkõhtowin emphasizes an interconnected, non-hierarchical web of relationships C) Linnaeus used DNA, Wähkôhtowin uses microscopes D) There is no difference. Ans: B
+79. Why do scientists continually revise classification systems (like moving from 5 Kingdoms to 3 Domains)? A) Because scientists like changing names B) Because new technologies (like DNA sequencing) reveal deeper evolutionary truths C) Because animals physically change species every year D) Because old names expire. Ans: B
+80. If you build a functional classification system for a pharmacy, how would you group plants? A) By their evolutionary ancestors B) By their physical leaf shape C) By their medicinal uses (e.g., pain relief vs digestive aid) D) By the color of their flowers. Ans: C
+81. Explain why artificial classification is still used today despite being evolutionarily inaccurate. A) It isn't used today B) It is highly practical for human tasks like organizing a grocery store or field guide C) It is required by law D) It predicts DNA better. Ans: B
+82. If two organisms share many derived characters on a cladogram, what can you infer about their DNA? A) Their DNA is completely different B) They share a high percentage of similar DNA sequences C) They have no DNA D) One is a plant, one is an animal. Ans: B
+83. A student argues that functional classification is "wrong." How should a biologist respond? A) Agree, only phylogenetic is right B) Disagree, classification systems are human tools designed for specific purposes; a functional system is "right" if it solves the problem it was designed for C) Agree, Linnaeus proved it wrong D) Disagree, functional is the only true system. Ans: B
+84. How does climate change directly impact taxonomy in the Canadian North? A) It freezes DNA B) It forces overlapping territories, leading to hybridization that blurs species lines C) It causes animals to forget their scientific names D) It stops evolution. Ans: B
+85. In Indigenous Knowledge Systems, classifying an animal often includes understanding its "medicine." This implies that classification is deeply tied to: A) Profit B) Reciprocity and ecological roles C) Genetic manipulation D) Fossil records. Ans: B
+86. Why is the "Domain" a relatively recent addition above the "Kingdom" level? A) Because Linnaeus forgot it B) Because electron microscopes and genetic analysis revealed a massive, fundamental split within prokaryotes (Bacteria vs Archaea) C) Because there
+--- PAGE 12 ---
+were too many animals D) Because the UN mandated it. Ans: B
+87. If you are examining an organism's "homologies" for a natural classification, what are you looking for? A) Deep-seated, inherent structural similarities pointing to a common ancestor B) Superficial color similarities C) Similar diets D) Shared habitats. Ans: A
+88. What is the danger of using morphological classification alone to determine evolutionary history? A) It's too expensive B) Convergent evolution can cause unrelated animals to look similar (like birds and bats) C) It requires DNA testing D) It only works on plants. Ans: B
+89. How did Carl Linnaeus's invention solve a major communication problem in science? A) He translated everything to English B) He replaced long, confusing descriptive sentences with a standardized, two-word Latin name C) He invented the internet D) He discovered DNA. Ans: B
+90. If a newly discovered fossil shows a mix of reptile and mammal traits, where would it be placed on a cladogram? A) At the top B) At a branching point (node) between the reptile and mammal lineages C) Off the chart entirely D) At the very bottom. Ans: B
+91. Why must the traits in a dichotomous key be "opposing"? A) To confuse the user B) To force a definitive "yes or no" choice, eliminating one path C) To make it look like a tree D) To ensure both paths can be taken. Ans: B
+92. A scientist claims Canis latrans (coyote) and Canis lupus (wolf) are completely unrelated. How does binomial nomenclature instantly disprove this? A) They share the same specific epithet B) They share the same Genus (Canis), indicating close relation C) They are both italicized D) They are both Latin. Ans: B
+93. What is a "derived character"? A) A trait that was lost over time B) A new trait that evolved in a lineage and was passed to descendants C) A trait artificially given by humans D) A behavioral quirk. Ans: B
+94. The shift from categorizing organisms as "plants vs animals" to the current 3 Domain system represents: A) A step backward B) The self-correcting nature of science as new evidence emerges C) A rejection of evolution D) Indigenous science. Ans: B
+95. Wähkôhtowin considers the land and water as "relations." How does this differ from standard biological taxonomy? A) Taxonomy classifies land as Domain Eukarya B) Taxonomy only classifies living, biological organisms, treating land as an abiotic environment C) There is no difference D) Taxonomy classifies water as an animal. Ans: B
+96. If you want to know if two morphologically identical butterflies are the same species, what is the ultimate biological test? A) See if they can interbreed and produce fertile offspring B) Measure their wingspans C) Look at their color D) Feed them different plants. Ans: A
+97. What does the term "Extracellular Digestion" in fungi tell us about their functional classification in an ecosystem? A) They are producers B) They are mobile predators C) They are essential decomposers that break down organic matter externally D) They are parasites. Ans: C
+98. Why is it important that scientists worldwide agree on the taxonomic hierarchy? A) To make exams harder B) To ensure clear, unambiguous communication when researching and protecting global biodiversity C) To sell more textbooks D) To prevent Indigenous naming. Ans: B
+99. A farmer classifying Wild Oats as a weed is making an economic choice. A botanist
+--- PAGE 13 ---
+classifying it as an Avena is making an evolutionary choice. Which statement is true? A) Only the botanist is correct B) Only the farmer is correct C) Both are "correct" within the context of their specific needs D) Both are wrong. Ans: C
+100. How does a cladogram represent time? A) Time is not represented B) The trunk represents ancient ancestors, and the tips represent modern descendants C) The tips represent ancient ancestors D) It uses a clock face. Ans: B
+Chapter 4: Comparative Anatomy and Physiology
+Knowledge (50 Questions)
+1. What is the study of an organism's physical structure? A) Physiology B) Anatomy C) Taxonomy D) Ecology. Ans: B
+2. What is the study of how an organism's structures function? A) Physiology B) Anatomy C) Taxonomy D) Ecology. Ans: A
+3. The state of strict, stable internal cellular conditions is called: A) Heterostasis B) Glycolysis C) Homeostasis D) Symbiosis. Ans: C
+4. What mechanism primarily maintains homeostasis by reversing an initial change? A) Positive feedback B) Negative feedback C) Viral infection D) Active transport. Ans: B
+5. Organisms that rely on environmental heat to regulate their temperature are: A) Endotherms B) Ectotherms C) Thermophiles D) Mammals. Ans: B
+6. Organisms that generate heat internally via metabolism are: A) Endotherms B) Ectotherms C) Halophiles D) Reptiles. Ans: A
+7. The process of balancing water intake and loss is called: A) Thermoregulation B) Osmoregulation C) Phototropism D) Digestion. Ans: B
+8. A plant's growth response toward light is called: A) Gravitropism B) Thigmotropism C) Phototropism D) Osmosis. Ans: C
+9. Which organisms rely heavily on direct diffusion across their cell membranes for gas exchange? A) Mammals B) Birds C) Small aquatic Protists D) Pine trees. Ans: C
+10. Fungi are composed of thread-like structures called: A) Roots B) Hyphae C) Xylem D) Cilia. Ans: B
+11. A mass of fungal hyphae is called a: A) Mycelium B) Root system C) Stroma D) Vascular bundle. Ans: A
+12. Fungi digest their food by secreting enzymes into their environment. This is called: A) Intracellular digestion B) Extracellular digestion C) Photosynthesis D) Phagocytosis. Ans: B
+13. Which plant vascular tissue transports water UP from the roots? A) Phloem B) Xylem C) Stomata D) Epidermis. Ans: B
+14. Which plant vascular tissue transports sugars DOWN from the leaves? A) Phloem B) Xylem C) Hyphae D) Pith. Ans: A
+15. What are the microscopic pores in leaves used for gas exchange called? A) Xylem B) Guard cells C) Stomata D) Mycelia. Ans: C
+16. Animals are mobile heterotrophs. What does "heterotroph" mean? A) They make their own food B) They must consume other organisms for energy C) They perform photosynthesis D) They do not need energy. Ans: B
+--- PAGE 14 ---
+17. Which system delivers oxygen and nutrients to every cell in an animal's body? A) Digestive B) Respiratory C) Circulatory D) Nervous. Ans: C
+18. Structures that share a similar underlying framework due to a common ancestor are: A) Analogous structures B) Homologous structures C) Vestigial structures D) Artificial structures. Ans: B
+19. Structures that perform a similar function but evolved independently are: A) Analogous structures B) Homologous structures C) Ancestral structures D) Model structures. Ans: A
+20. The arm of a human and the flipper of a whale are examples of: A) Analogous structures B) Homologous structures C) Negative feedback D) Protists. Ans: B
+21. The wing of a bird and the wing of an insect are examples of: A) Analogous structures B) Homologous structures C) Convergent evolution D) Both A and C. Ans: D
+22. Non-human species studied extensively to understand biology and human diseases are called: A) Pests B) Model organisms C) Analogues D) Taxons. Ans: B
+23. Which bacterium is heavily used as a model organism for basic DNA research? A) Arabidopsis B) Drosophila C) E. coli D) Mus musculus. Ans: C
+24. Which organism is the universal model for plant biology? A) E. coli B) Arabidopsis thaliana C) Trembling Aspen D) Wheat. Ans: B
+25. The fruit fly used in genetics research is: A) Mus musculus B) Drosophila melanogaster C) Avena fatua D) Castor canadensis. Ans: B
+26. Which model organism shares 85% of protein-coding genes with humans? A) E. coli B) Drosophila C) Mus musculus (House mouse) D) Arabidopsis. Ans: C
+27. The ethical framework guiding animal research is the: A) 3Rs Principle B) Linnaean System C) Fluid Mosaic Model D) Scientific Method. Ans: A
+28. In the 3Rs, using a computer simulation instead of a live animal is an example of: A) Reduction B) Refinement C) Replacement D) Recycling. Ans: C
+29. In the 3Rs, using fewer animals to get statistically valid results is an example of: A) Reduction B) Refinement C) Replacement D) Relationality. Ans: A
+30. In the 3Rs, modifying procedures to minimize pain is an example of: A) Reduction B) Refinement C) Replacement D) Restriction. Ans: B
+31. The Indigenous principle acknowledging humans and animals as equal relations is: A) Taxonomy B) Utilitarianism C) Wähkôhtowin D) Homeostasis. Ans: C
+32. Reproduction involving a single parent producing genetically identical clones is: A) Sexual B) Asexual C) Gametic D) Meiotic. Ans: B
+33. Reproduction requiring two parents and resulting in high genetic diversity is: A) Sexual B) Asexual C) Budding D) Cloning. Ans: A
+34. Which reproductive strategy is fast and requires no energy to find a mate? A) Sexual B) Asexual C) K-selection D) Outcrossing. Ans: B
+35. Which reproductive strategy provides the variation necessary to adapt to environmental changes? A) Sexual B) Asexual C) Clonal colony D) Vegetative propagation. Ans: A
+36. Species that produce massive numbers of offspring with no parental care are: A) K-selected B) r-selected C) Extinct D) Endothermic. Ans: B
+37. Species that produce few offspring but invest heavily in parental care are: A) K-selected B) r-selected C) Asexual D) Ectothermic. Ans: A
+--- PAGE 15 ---
+38. A Northern Pike laying 100,000 eggs is an example of which strategy? A) r-selected B) K-selected C) Asexual D) Endothermic. Ans: A
+39. A Black Bear raising two cubs for two years is an example of which strategy? A) r-selected B) K-selected C) Asexual D) Ectothermic. Ans: B
+40. The Trembling Aspen reproduces asexually by sending up new stems from underground roots. This forms a: A) Clonal colony B) Fungal network C) K-selected group D) Mycelium. Ans: A
+41. The thick bark of an oak tree is an example of a: A) Behavioural defense B) Physiological defense C) Structural defense D) Mutualism. Ans: C
+42. A Killdeer faking a broken wing to distract predators is an example of a: A) Behavioural defense B) Physiological defense C) Structural defense D) Commensalism. Ans: A
+43. A rattlesnake producing venom is an example of a: A) Behavioural defense B) Physiological defense C) Structural defense D) Tropism. Ans: B
+44. A plant producing toxic alkaloids to deter herbivores is a: A) Structural defense B) Behavioural defense C) Physiological defense D) Mechanical barrier. Ans: C
+45. In a negative feedback loop, what detects the change in the environment? A) Effector B) Receptor/Sensor C) Control Center D) Variable. Ans: B
+46. In human thermoregulation, what acts as the control center? A) Skin B) Shivering muscles C) Brain (Hypothalamus) D) Blood vessels. Ans: C
+47. If you are cold, what is the body's effector response? A) Sweating B) Shivering C) Dilating blood vessels D) Dropping core temperature. Ans: B
+48. A wood frog surviving freezing temperatures uses glucose as a: A) Structural defense B) Toxin C) Biological antifreeze (cryoprotectant) D) Digestive enzyme. Ans: C
+49. The constant evolutionary battle between predator and prey or host and pathogen is known as an: A) Evolutionary arms race B) Homeostatic balance C) Artificial classification D) Asexual strategy. Ans: A
+50. What plant pathogen threatens Saskatchewan crops and forces an evolutionary arms race in agriculture? A) E. coli B) Wheat Rust C) Clubroot D) Drosophila. Ans: B
+Application (25 Questions)
+51. You step outside in winter. Your skin feels cold (stimulus), your brain processes this, and your muscles begin to shiver. What are the muscles in this feedback loop? A) Receptor B) Control Center C) Effector D) Variable. Ans: C
+52. A garter snake is cold. It slithers onto a sun-baked rock to warm up. This confirms the snake is an: A) Endotherm B) Ectotherm C) Archaean D) Autotroph. Ans: B
+53. A drought hits a wheat field. The plants close their stomata. What is the immediate physiological trade-off? A) They save water but stop fixing $CO_{2}$ for photosynthesis B) They lose water but photosynthesize faster C) They turn into fungi D) They grow longer roots. Ans: A
+54. You observe a mold breaking down a dead log. Where is the actual digestion occurring? A) Inside the mold's stomach B) Outside the mold, in the log C) In the mold's chloroplasts D) In the mold's xylem. Ans: B
+--- PAGE 16 ---
+55. If a pine tree's xylem is severed, what will the tree immediately fail to do? A) Transport sugars to the roots B) Transport water and minerals to the leaves C) Perform cellular respiration D) Reproduce. Ans: B
+56. You are comparing the wings of a bat and a pterodactyl. Both use wings to fly, but their bone structures are entirely different. This is an example of: A) Homology B) Analogy C) Asexual reproduction D) Parasitism. Ans: B
+57. You want to test a new cancer drug's effect on tumor growth in a complex mammalian system. Which model organism should you use? A) E. coli B) Arabidopsis C) Drosophila D) Mus musculus. Ans: D
+58. A researcher decides to test an antibiotic on bacterial cell cultures in a petri dish instead of live mice. Which "R" does this represent? A) Replacement B) Reduction C) Refinement D) Reproduction. Ans: A
+59. An Indigenous researcher offers tobacco before harvesting a plant for medicinal study. This represents the ethical concept of: A) Utilitarianism B) Protocol and Permission C) Artificial classification D) Reduction. Ans: B
+60. A farmer's field is infected with a new disease. The entire crop dies because every plant is genetically identical. What reproductive strategy did the crop use? A) Sexual B) Asexual C) K-selected D) R-selected. Ans: B
+61. A female spider lays 1,000 eggs and dies immediately. This is a classic example of: A) K-selection B) r-selection C) Asexual reproduction D) Endothermy. Ans: B
+62. A porcupine uses sharp quills to deter wolves. Which type of defense is this? A) Structural B) Behavioural C) Physiological D) Chemical. Ans: A
+63. A skunk sprays a foul-smelling chemical when threatened. Which type of defense is this? A) Structural B) Behavioural C) Physiological D) Mechanical. Ans: C
+64. An opossum "plays dead" to trick a predator into leaving it alone. Which type of defense is this? A) Structural B) Behavioural C) Physiological D) Anatomical. Ans: B
+65. In a negative feedback loop controlling blood sugar, insulin lowers sugar levels. If sugar levels drop too low, what must the feedback loop do? A) Release more insulin B) Stop releasing insulin C) Freeze the cells D) Induce shivering. Ans: B
+66. Why do single-celled protists not require a circulatory system? A) They don't need oxygen B) They are small enough that direct diffusion is sufficient C) They use xylem D) They have a heart. Ans: B
+67. You dissect a Mallard duck and find highly efficient lungs and air sacs. What lifestyle does this support? A) Sedentary B) Mobile, high-energy heterotroph C) Photosynthetic D) Anaerobic. Ans: B
+68. Which of the following best describes the human arm and the horse's front leg? A) Homologous: same structure, different function B) Analogous: different structure, same function C) Neither D) Both. Ans: A
+69. You need to study how a specific gene affects the growth of leaves. Which model organism is best? A) E. coli B) Mus musculus C) Arabidopsis thaliana D) Drosophila. Ans: C
+70. A lab uses painkillers to treat mice after a surgical procedure. Which "R" is this? A) Replacement B) Reduction C) Refinement D) Relationality. Ans: C
+71. If a population of rabbits lives in a highly unstable environment where sudden freezes kill
+--- PAGE 17 ---
+many individuals, which reproductive strategy is favored? A) Produce few offspring and care for them B) Produce many offspring quickly (r-selected) C) Stop reproducing D) Switch to asexual cloning. Ans: B
+72. How does the concept of Wähkôhtowin change how a scientist might view a lab mouse? A) It is seen as a tool B) It is seen as a relative making a sacrifice C) It is seen as a pest D) It is seen as a machine. Ans: B
+73. A plant grows thicker cuticles (waxy layers) in response to a fungal outbreak. This is a: A) Behavioural defense B) Structural defense C) Phototropism D) Reproductive strategy. Ans: B
+74. What is the stimulus in the mammalian cold response? A) Shivering B) Drop in environmental temperature C) The hypothalamus D) Skin sensors. Ans: B
+75. What is the ultimate "goal" of the physiological responses in an organism? A) To evolve B) To maintain homeostasis and survive C) To become an endotherm D) To change taxonomy. Ans: B
+Extension / Critical Thinking (25 Questions)
+76. Why is a positive feedback loop (where a stimulus causes an amplified response) generally dangerous for homeostasis? A) It maintains stability B) It pushes the body further away from its set point, leading to extreme states C) It cools the body down D) It generates ATP. Ans: B
+77. The Wood Frog freezes solid. Why doesn't the ice destroy its cells? A) It has a thick shell B) It floods its tissues with glucose to prevent sharp ice crystals from forming C) It keeps its heart beating D) It is a warm-blooded endotherm. Ans: B
+78. Why did complex circulatory systems evolve in animals but not in fungi? A) Fungi don't need nutrients B) Animals are large, mobile, and have high metabolic demands requiring rapid transport, whereas fungi grow directly into their food source C) Animals have cell walls D) Fungi use xylem. Ans: B
+79. How does convergent evolution explain analogous structures like the wings of birds and insects? A) They share a recent winged ancestor B) Both groups faced similar environmental pressures (the need to fly) and evolved separate solutions C) Insects evolved from birds D) It is a random coincidence. Ans: B
+80. A scientist proposes using primates for a new cosmetic toxicity test. An ethics board denies it using the 3Rs. What is their likely reasoning? A) Primates are too small B) Cosmetic testing does not justify the distress to a highly sentient model when replacement alternatives (cell cultures) exist C) Primates don't have skin D) The scientist didn't use a dichotomous key. Ans: B
+81. Why do r-selected species often become invasive pests (like wild oats or certain insects)? A) They are very large B) They reproduce rapidly in massive numbers, quickly taking over unstable environments C) They care for their young D) They are endotherms. Ans: B
+82. If a genetic disease destroys a plant's ability to form phloem, what is the ultimate cause of death for the plant? A) The leaves will dry out B) The roots will starve because they cannot receive sugars from the leaves C) The plant will drown D) The stomata will freeze. Ans: B
+83. An evolutionary arms race occurs between a toxic plant and an insect. The insect evolves
+--- PAGE 18 ---
+resistance to the toxin. What is the likely next evolutionary step for the plant? A) Give up and die B) Evolve a stronger toxin or a new structural defense C) Become an insect D) Switch to asexual reproduction. Ans: B
+84. In Indigenous research paradigms, "Holism" implies that studying an animal in a sterile lab might produce flawed knowledge. Why? A) Because labs are dirty B) Because the animal is removed from its relational web and environment, changing its behavior and biology C) Because microscopes don't work on animals D) Because animals cannot be studied. Ans: B
+85. The trade-off for sexual reproduction is the high energy cost. Why has evolution favored it in complex organisms? A) It is faster B) It produces clones C) The genetic diversity generated is crucial for surviving diseases and changing environments D) It requires less food. Ans: C
+86. A new antibiotic kills 99% of bacteria. The surviving 1% repopulate. This is an example of: A) Negative feedback B) Artificial classification C) An evolutionary arms race and natural selection D) Homology. Ans: C
+87. Why must terrestrial plants balance gas exchange with water loss? A) Stomata must open for $CO_{2}$ to enter, but this allows water vapor to escape B) Xylem needs light C) Phloem blocks oxygen D) Roots cannot absorb water. Ans: A
+88. If a human's thermoregulatory negative feedback loop fails during extreme heat, what condition results? A) Homeostasis B) Hypothermia C) Heatstroke D) Shivering. Ans: C
+89. How do model organisms rely on the concept of evolutionary homology? A) They don't B) Because all life shares common ancestors, basic cellular and genetic mechanisms in a fruit fly are homologous to those in a human C) Because mice and humans look alike D) Because fruit flies have human arms. Ans: B
+90. Why is extracellular digestion an evolutionary necessity for a fungus living inside a fallen tree? A) It lacks a mouth and digestive tract, so it must break the wood down into absorbable molecules externally B) It is photosynthetic C) It needs to feed the tree D) Wood is toxic. Ans: A
+91. A K-selected species (like a bison) faces a sudden, drastic climate shift. Why is it at higher risk of extinction than an r-selected species (like a mosquito)? A) Bison reproduce slowly and cannot adapt their population genetics fast enough B) Mosquitos are stronger C) Bison don't care for their young D) Bison are asexual. Ans: A
+92. How does the mammalian kidney contribute to homeostasis? A) By generating heat B) By filtering toxic urea from the blood while retaining necessary water (osmoregulation) C) By producing red blood cells D) By digesting food. Ans: B
+93. In the context of homeostasis, why are severe burns life-threatening? A) They cause rapid weight gain B) They destroy the skin's structural defense and its ability to prevent water loss and infection C) They stop the heart D) They cause immediate freezing. Ans: B
+94. Why is a clonal colony of Trembling Aspen highly vulnerable to a new fungal pathogen? A) They are too tall B) They lack genetic diversity; if the fungus can kill one, it can kill the entire connected colony C) They have no roots D) They are K-selected. Ans: B
+95. Wheat breeders at the Univ. of Saskatchewan constantly cross-breed wheat to resist
+--- PAGE 19 ---
+Wheat Rust. If they stop, what will happen? A) The wheat will evolve legs B) The rapidly mutating fungus will eventually overcome the old physiological defenses of the wheat C) The wheat will become poisonous to humans D) Nothing. Ans: B
+96. Indigenous protocol requires using knowledge gained from an animal to help the community. This aligns with the concept of: A) Reciprocity B) Artificial selection C) Extracellular digestion D) Turgor pressure. Ans: A
+97. A virus enters a cell. The cell releases chemical signals to warn neighboring cells to build defenses. This is a: A) Structural defense B) Physiological/Chemical defense C) Behavioural defense D) Phototropism. Ans: B
+98. Why would a scientist choose Arabidopsis over an Oak tree for a genetics experiment? A) Oak trees don't have DNA B) Arabidopsis has a short generation time and small size, allowing rapid, large-scale studies C) Arabidopsis is an animal D) Oak trees are heterotrophs. Ans: B
+99. A marathon runner sweats profusely, losing water. The brain detects concentrated blood and triggers thirst. Drinking water restores fluid levels. This is a: A) Positive feedback loop B) Negative feedback loop C) Pathogenic response D) Structural defense. Ans: B
+100. Comparing the complex circulatory system of an elk to the direct diffusion of a kelp frond illustrates that: A) Kelp are more advanced B) Evolution creates diverse anatomical solutions to the universal physiological problem of nutrient transport based on size and environment C) Elk evolved from kelp D) Diffusion requires a heart. Ans: B
+    </script>
+
+    <div class="max-w-3xl w-full mx-auto">
+        
+        <!-- SETUP SCREEN -->
+        <div id="setup-screen" class="glass-panel rounded-2xl shadow-xl overflow-hidden animate-fade-in transition-all duration-300">
+            <div class="bg-indigo-600 text-white p-6 sm:p-8 text-center">
+                <h1 class="text-3xl font-extrabold tracking-tight mb-2">Biology 30 Challenge</h1>
+                <p class="text-indigo-100 font-medium">Saskatchewan Exam Prep</p>
+            </div>
+            
+            <div class="p-6 sm:p-8">
+                <!-- Chapters -->
+                <div class="mb-8">
+                    <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center">
+                        <span class="bg-indigo-100 text-indigo-700 w-8 h-8 rounded-full flex items-center justify-center mr-3">1</span> 
+                        Select Chapters
+                    </h2>
+                    <div class="grid sm:grid-cols-1 gap-3">
+                        <label class="custom-checkbox flex items-center p-4 border rounded-xl cursor-pointer hover:bg-slate-50 transition-colors">
+                            <input type="checkbox" class="hidden chap-select" value="Chapter 2: Cell Structure and Processes" checked>
+                            <div class="w-6 h-6 border-2 border-slate-300 rounded flex-shrink-0 flex items-center justify-center mr-4 transition-colors">
+                                <svg class="w-4 h-4 text-white hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                            </div>
+                            <span class="font-medium text-slate-700">Chapter 2: Cell Structure & Processes</span>
+                        </label>
+                        <label class="custom-checkbox flex items-center p-4 border rounded-xl cursor-pointer hover:bg-slate-50 transition-colors">
+                            <input type="checkbox" class="hidden chap-select" value="Chapter 3: Biological Classification" checked>
+                            <div class="w-6 h-6 border-2 border-slate-300 rounded flex-shrink-0 flex items-center justify-center mr-4 transition-colors">
+                                <svg class="w-4 h-4 text-white hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                            </div>
+                            <span class="font-medium text-slate-700">Chapter 3: Biological Classification</span>
+                        </label>
+                        <label class="custom-checkbox flex items-center p-4 border rounded-xl cursor-pointer hover:bg-slate-50 transition-colors">
+                            <input type="checkbox" class="hidden chap-select" value="Chapter 4: Comparative Anatomy and Physiology" checked>
+                            <div class="w-6 h-6 border-2 border-slate-300 rounded flex-shrink-0 flex items-center justify-center mr-4 transition-colors">
+                                <svg class="w-4 h-4 text-white hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                            </div>
+                            <span class="font-medium text-slate-700">Chapter 4: Comparative Anatomy</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Game Mode -->
+                <div class="mb-8">
+                    <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center">
+                        <span class="bg-indigo-100 text-indigo-700 w-8 h-8 rounded-full flex items-center justify-center mr-3">2</span> 
+                        Game Mode
+                    </h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <button class="mode-btn border-2 border-slate-200 rounded-xl p-4 text-center hover:border-indigo-500 hover:bg-indigo-50 transition-all font-medium text-slate-700" data-mode="random" onclick="selectMode('random', this)">
+                            🎲 Random Quiz
+                        </button>
+                        <button class="mode-btn border-2 border-slate-200 rounded-xl p-4 text-center hover:border-indigo-500 hover:bg-indigo-50 transition-all font-medium text-slate-700" data-mode="lightning" onclick="selectMode('lightning', this)">
+                            ⚡ Lightning Round
+                        </button>
+                        <button class="mode-btn border-2 border-slate-200 rounded-xl p-4 text-center hover:border-indigo-500 hover:bg-indigo-50 transition-all font-medium text-slate-700" data-mode="sudden_death" onclick="selectMode('sudden_death', this)">
+                            💀 Sudden Death
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Contextual Options -->
+                <div id="options-container" class="mb-8 hidden space-y-6">
+                    
+                    <!-- Difficulty (Hidden for Sudden Death) -->
+                    <div id="difficulty-block">
+                        <h2 class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-3">Select Difficulty</h2>
+                        <div class="flex gap-3">
+                            <button class="diff-btn flex-1 py-3 border-2 border-slate-200 rounded-lg text-sm font-semibold hover:bg-slate-50 text-slate-600" data-diff="easy" onclick="selectDifficulty('easy', this)">Easy</button>
+                            <button class="diff-btn flex-1 py-3 border-2 border-slate-200 rounded-lg text-sm font-semibold hover:bg-slate-50 text-slate-600" data-diff="medium" onclick="selectDifficulty('medium', this)">Medium</button>
+                            <button class="diff-btn flex-1 py-3 border-2 border-slate-200 rounded-lg text-sm font-semibold hover:bg-slate-50 text-slate-600" data-diff="hard" onclick="selectDifficulty('hard', this)">Hard</button>
+                        </div>
+                        <p id="diff-desc" class="text-xs text-slate-400 mt-2 italic text-center"></p>
+                    </div>
+
+                    <!-- Mode Params -->
+                    <div id="param-block" class="hidden">
+                        <h2 id="param-title" class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-3"></h2>
+                        <div class="flex gap-3" id="param-buttons">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                    
+                    <!-- Sudden Death Info -->
+                    <div id="sd-info-block" class="hidden bg-slate-100 p-4 rounded-xl text-sm text-slate-600">
+                        <strong>Rules:</strong> Starts with 3 Easy questions -> 3 Medium -> 3 Hard. If you get one wrong, you drop down a level for 3 questions. <strong>3 strikes and you're out!</strong>
+                    </div>
+
+                </div>
+
+                <button id="start-btn" disabled class="w-full bg-indigo-600 text-white font-bold text-lg py-4 rounded-xl shadow-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors" onclick="startGame()">
+                    Start Game
+                </button>
+            </div>
+        </div>
+
+        <!-- GAME SCREEN -->
+        <div id="game-screen" class="hidden">
+            <!-- Header Stats -->
+            <div class="flex justify-between items-center mb-4">
+                <div class="bg-white px-4 py-2 rounded-full shadow text-sm font-bold text-slate-600 flex items-center">
+                    <span id="header-mode-icon" class="mr-2"></span>
+                    <span id="header-progress">Q: 1/10</span>
+                </div>
+                
+                <!-- Timer or Strikes -->
+                <div id="header-right-stat" class="bg-white px-4 py-2 rounded-full shadow text-sm font-bold text-slate-600 flex items-center">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+
+            <!-- Lightning Timer Bar -->
+            <div id="timer-bar-container" class="w-full bg-slate-200 h-2 rounded-full mb-6 hidden overflow-hidden">
+                <div id="timer-bar" class="h-full bg-indigo-500 w-full rounded-full"></div>
+            </div>
+
+            <!-- Question Card -->
+            <div class="glass-panel rounded-2xl shadow-xl p-6 sm:p-8 relative overflow-hidden">
+                <div id="difficulty-badge" class="absolute top-0 right-0 bg-emerald-100 text-emerald-800 text-xs font-bold px-3 py-1 rounded-bl-lg">Easy</div>
+                
+                <h3 id="question-chapter" class="text-xs font-bold text-indigo-500 uppercase tracking-widest mb-2"></h3>
+                <h2 id="question-text" class="text-xl sm:text-2xl font-bold text-slate-800 mb-8 leading-relaxed"></h2>
+                
+                <div class="space-y-3" id="options-container-game">
+                    <button class="btn-option w-full text-left p-4 rounded-xl border-2 border-slate-200 hover:border-indigo-500 hover:bg-indigo-50 font-medium text-slate-700 flex items-start" onclick="submitAnswer('A', this)">
+                        <span class="bg-slate-100 text-slate-500 font-bold w-8 h-8 rounded-lg flex items-center justify-center mr-4 shrink-0">A</span>
+                        <span id="opt-A" class="pt-1"></span>
+                    </button>
+                    <button class="btn-option w-full text-left p-4 rounded-xl border-2 border-slate-200 hover:border-indigo-500 hover:bg-indigo-50 font-medium text-slate-700 flex items-start" onclick="submitAnswer('B', this)">
+                        <span class="bg-slate-100 text-slate-500 font-bold w-8 h-8 rounded-lg flex items-center justify-center mr-4 shrink-0">B</span>
+                        <span id="opt-B" class="pt-1"></span>
+                    </button>
+                    <button class="btn-option w-full text-left p-4 rounded-xl border-2 border-slate-200 hover:border-indigo-500 hover:bg-indigo-50 font-medium text-slate-700 flex items-start" onclick="submitAnswer('C', this)">
+                        <span class="bg-slate-100 text-slate-500 font-bold w-8 h-8 rounded-lg flex items-center justify-center mr-4 shrink-0">C</span>
+                        <span id="opt-C" class="pt-1"></span>
+                    </button>
+                    <button class="btn-option w-full text-left p-4 rounded-xl border-2 border-slate-200 hover:border-indigo-500 hover:bg-indigo-50 font-medium text-slate-700 flex items-start" onclick="submitAnswer('D', this)">
+                        <span class="bg-slate-100 text-slate-500 font-bold w-8 h-8 rounded-lg flex items-center justify-center mr-4 shrink-0">D</span>
+                        <span id="opt-D" class="pt-1"></span>
+                    </button>
+                </div>
+            </div>
+            
+            <button id="end-early-btn" class="mt-6 mx-auto block text-slate-400 hover:text-slate-600 text-sm font-medium underline" onclick="endGame()">End Game Early</button>
+        </div>
+
+        <!-- RESULTS SCREEN -->
+        <div id="results-screen" class="hidden glass-panel rounded-2xl shadow-xl overflow-hidden text-center">
+            <div id="results-header" class="bg-indigo-600 p-8 text-white">
+                <h1 class="text-3xl font-extrabold mb-2">Game Over!</h1>
+                <p id="results-score" class="text-5xl font-black mt-4"></p>
+            </div>
+            
+            <div class="p-6 sm:p-8">
+                <p id="results-stats-text" class="text-lg text-slate-600 font-medium mb-8"></p>
+                
+                <!-- Concept Analysis (Random / Lightning) -->
+                <div id="concept-analysis" class="text-left mb-8 bg-slate-50 p-6 rounded-xl border">
+                    <h3 class="font-bold text-slate-800 text-lg mb-4">Performance Analysis</h3>
+                    
+                    <div class="mb-4">
+                        <p class="text-sm font-bold text-emerald-600 uppercase mb-1">🌟 Strongest Concepts</p>
+                        <ul id="strong-concepts" class="list-disc pl-5 text-slate-700 font-medium"></ul>
+                    </div>
+                    
+                    <div>
+                        <p class="text-sm font-bold text-rose-600 uppercase mb-1">📚 Needs Review</p>
+                        <ul id="weak-concepts" class="list-disc pl-5 text-slate-700 font-medium"></ul>
+                    </div>
+                </div>
+
+                <button class="w-full bg-slate-800 text-white font-bold text-lg py-4 rounded-xl shadow hover:bg-slate-900 transition-colors" onclick="resetApp()">
+                    Play Again
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- Data Parser ---
+        let allQuestions = [];
+        
+        function parseBankData() {
+            let rawText = document.getElementById('raw-exam-data').textContent;
+            
+            // Clean formatting artifacts
+            rawText = rawText.replace(/--- PAGE \d+ ---/g, ' '); 
+            rawText = rawText.replace(/\n/g, ' ');
+            rawText = rawText.replace(/\s{2,}/g, ' '); // collapse extra spaces
+            
+            // Expected Chapter names based on text
+            const chapterNames = [
+                "Chapter 2: Cell Structure and Processes",
+                "Chapter 3: Biological Classification",
+                "Chapter 4: Comparative Anatomy and Physiology"
+            ];
+            
+            // Split by "Chapter \d+:"
+            const chapterChunks = rawText.split(/Chapter \d+:/);
+            chapterChunks.shift(); // remove everything before first chapter
+            
+            chapterChunks.forEach((chunk, index) => {
+                const chapName = chapterNames[index];
+                
+                // Split by sections
+                const sectionRegex = /(Knowledge \(\d+ Questions\)|Application \(\d+ Questions\)|Extension \/ Critical Thinking \(\d+ Questions\))/g;
+                const splitChunk = chunk.split(sectionRegex);
+                
+                // splitChunk array format: [Intro text, Match 1, Content 1, Match 2, Content 2...]
+                for (let i = 1; i < splitChunk.length; i += 2) {
+                    const sectionTitle = splitChunk[i];
+                    const sectionContent = splitChunk[i+1] || "";
+                    
+                    let difficulty = "Easy";
+                    if (sectionTitle.includes("Application")) difficulty = "Medium";
+                    if (sectionTitle.includes("Extension")) difficulty = "Hard";
+                    
+                    // Core Regex: Matches 1. QQQ A) opt B) opt C) opt D) opt Ans: X
+                    // Handles spaces around Ans: and optional periods
+                    const qRegex = /(\d+)\.\s+(.*?)\s+A\)\s+(.*?)\s+B\)\s+(.*?)\s+C\)\s+(.*?)\s+D\)\s+(.*?)(?:\.|\s)*Ans:\s*([A-D])/g;
+                    
+                    let match;
+                    while ((match = qRegex.exec(sectionContent)) !== null) {
+                        allQuestions.push({
+                            id: parseInt(match[1]),
+                            chapter: chapName,
+                            difficulty: difficulty,
+                            questionText: match[2].trim(),
+                            options: {
+                                A: match[3].trim(),
+                                B: match[4].trim(),
+                                C: match[5].trim(),
+                                D: match[6].trim().replace(/\.$/, '') // strip trailing dot from last option if there
+                            },
+                            answer: match[7].trim().toUpperCase()
+                        });
+                    }
+                }
+            });
+            console.log(`Parsed ${allQuestions.length} questions successfully.`);
+        }
+
+        // --- App State ---
+        let state = {
+            mode: null,          // random, lightning, sudden_death
+            difficulty: null,    // easy, medium, hard
+            param: null,         // Number of questions OR seconds
+            
+            // Game variables
+            activePool: [],
+            currentQuestionIndex: 0,
+            score: 0,
+            strikes: 0,
+            timer: null,
+            timeRemaining: 0,
+            totalTime: 0,
+            history: [],         // To track performance per chapter
+            
+            // Sudden Death variables
+            sdLevel: 1,          // 1: Easy, 2: Med, 3: Hard
+            sdConsecutive: 0,    // Track progress in current level
+            poolEasy: [],
+            poolMed: [],
+            poolHard: []
+        };
+
+        // --- UI Interactions (Setup) ---
+        function selectMode(mode, btnEl) {
+            document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('border-indigo-500', 'bg-indigo-50', 'ring-2', 'ring-indigo-200'));
+            btnEl.classList.add('border-indigo-500', 'bg-indigo-50', 'ring-2', 'ring-indigo-200');
+            state.mode = mode;
+            state.param = null; // reset
+            
+            const optsContainer = document.getElementById('options-container');
+            const diffBlock = document.getElementById('difficulty-block');
+            const sdBlock = document.getElementById('sd-info-block');
+            const paramBlock = document.getElementById('param-block');
+            const paramTitle = document.getElementById('param-title');
+            const paramButtons = document.getElementById('param-buttons');
+            
+            optsContainer.classList.remove('hidden');
+            
+            if (mode === 'sudden_death') {
+                diffBlock.classList.add('hidden');
+                paramBlock.classList.add('hidden');
+                sdBlock.classList.remove('hidden');
+                state.difficulty = 'all'; // handled internally
+                state.param = 'infinite';
+            } else {
+                diffBlock.classList.remove('hidden');
+                sdBlock.classList.add('hidden');
+                paramBlock.classList.remove('hidden');
+                
+                // Populate params
+                paramButtons.innerHTML = '';
+                if (mode === 'random') {
+                    paramTitle.innerText = "Number of Questions";
+                    [5, 10, 20].forEach(num => {
+                        paramButtons.innerHTML += `<button class="param-btn flex-1 py-3 border-2 border-slate-200 rounded-lg text-sm font-semibold hover:bg-slate-50 text-slate-600" data-val="${num}" onclick="selectParam(${num}, this)">${num} Qs</button>`;
+                    });
+                } else if (mode === 'lightning') {
+                    paramTitle.innerText = "Time Limit";
+                    const times = [{v: 60, l: '1 Min'}, {v: 180, l: '3 Min'}, {v: 300, l: '5 Min'}];
+                    times.forEach(t => {
+                        paramButtons.innerHTML += `<button class="param-btn flex-1 py-3 border-2 border-slate-200 rounded-lg text-sm font-semibold hover:bg-slate-50 text-slate-600" data-val="${t.v}" onclick="selectParam(${t.v}, this)">${t.l}</button>`;
+                    });
+                }
+            }
+            checkStartReady();
+        }
+
+        function selectDifficulty(diff, btnEl) {
+            document.querySelectorAll('.diff-btn').forEach(btn => btn.classList.remove('border-indigo-500', 'bg-indigo-50', 'text-indigo-700'));
+            btnEl.classList.add('border-indigo-500', 'bg-indigo-50', 'text-indigo-700');
+            state.difficulty = diff;
+            
+            const desc = {
+                'easy': 'Knowledge questions only.',
+                'medium': 'Knowledge & Application questions.',
+                'hard': 'Application & Extension questions.'
+            };
+            document.getElementById('diff-desc').innerText = desc[diff];
+            checkStartReady();
+        }
+
+        function selectParam(val, btnEl) {
+            document.querySelectorAll('.param-btn').forEach(btn => btn.classList.remove('border-indigo-500', 'bg-indigo-50', 'text-indigo-700'));
+            btnEl.classList.add('border-indigo-500', 'bg-indigo-50', 'text-indigo-700');
+            state.param = val;
+            checkStartReady();
+        }
+
+        function checkStartReady() {
+            const btn = document.getElementById('start-btn');
+            const chapsSelected = document.querySelectorAll('.chap-select:checked').length > 0;
+            
+            if (chapsSelected && state.mode && state.difficulty && state.param) {
+                btn.disabled = false;
+            } else {
+                btn.disabled = true;
+            }
+        }
+
+        document.querySelectorAll('.chap-select').forEach(cb => {
+            cb.addEventListener('change', checkStartReady);
+        });
+
+        // --- Game Logic ---
+        function shuffle(array) {
+            let currentIndex = array.length, randomIndex;
+            while (currentIndex > 0) {
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+                [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+            }
+            return array;
+        }
+
+        function startGame() {
+            // Get selected chapters
+            const chaps = Array.from(document.querySelectorAll('.chap-select:checked')).map(cb => cb.value);
+            
+            // Filter global pool by chapters
+            let filteredPool = allQuestions.filter(q => chaps.includes(q.chapter));
+            
+            if (state.mode === 'sudden_death') {
+                state.poolEasy = shuffle(filteredPool.filter(q => q.difficulty === 'Easy'));
+                state.poolMed = shuffle(filteredPool.filter(q => q.difficulty === 'Medium'));
+                state.poolHard = shuffle(filteredPool.filter(q => q.difficulty === 'Hard'));
+                state.sdLevel = 1;
+                state.sdConsecutive = 0;
+                state.strikes = 0;
+            } else {
+                // Filter by Difficulty
+                if (state.difficulty === 'easy') {
+                    filteredPool = filteredPool.filter(q => q.difficulty === 'Easy');
+                } else if (state.difficulty === 'medium') {
+                    filteredPool = filteredPool.filter(q => q.difficulty === 'Easy' || q.difficulty === 'Medium');
+                } else if (state.difficulty === 'hard') {
+                    filteredPool = filteredPool.filter(q => q.difficulty === 'Medium' || q.difficulty === 'Hard');
+                }
+                
+                shuffle(filteredPool);
+                
+                if (state.mode === 'random') {
+                    state.activePool = filteredPool.slice(0, Math.min(state.param, filteredPool.length));
+                } else {
+                    state.activePool = filteredPool; // Use as many as possible within time limit
+                }
+            }
+
+            // Reset scores & history
+            state.score = 0;
+            state.currentQuestionIndex = 0;
+            state.history = [];
+            
+            // UI Transition
+            document.getElementById('setup-screen').classList.add('hidden');
+            document.getElementById('game-screen').classList.remove('hidden');
+            
+            // Setup Header
+            const modeIcon = document.getElementById('header-mode-icon');
+            const rightStat = document.getElementById('header-right-stat');
+            const timerBarCont = document.getElementById('timer-bar-container');
+            
+            if (state.mode === 'random') {
+                modeIcon.innerText = '🎲';
+                rightStat.innerHTML = `Score: <span id="score-display" class="ml-1 text-indigo-600">0</span>`;
+                timerBarCont.classList.add('hidden');
+            } else if (state.mode === 'lightning') {
+                modeIcon.innerText = '⚡';
+                rightStat.innerHTML = `⏱️ <span id="time-display" class="ml-1 text-rose-500"></span>`;
+                timerBarCont.classList.remove('hidden');
+                state.timeRemaining = state.param;
+                state.totalTime = state.param;
+                updateTimerUI();
+                state.timer = setInterval(timerTick, 1000);
+            } else if (state.mode === 'sudden_death') {
+                modeIcon.innerText = '💀';
+                rightStat.innerHTML = `Strikes: <span id="strikes-display" class="ml-1 text-rose-600">0/3</span>`;
+                timerBarCont.classList.add('hidden');
+            }
+
+            loadNextQuestion();
+        }
+
+        function timerTick() {
+            state.timeRemaining--;
+            updateTimerUI();
+            if (state.timeRemaining <= 0) {
+                clearInterval(state.timer);
+                endGame();
+            }
+        }
+
+        function updateTimerUI() {
+            const mins = Math.floor(state.timeRemaining / 60);
+            const secs = state.timeRemaining % 60;
+            document.getElementById('time-display').innerText = `${mins}:${secs.toString().padStart(2, '0')}`;
+            
+            const pct = (state.timeRemaining / state.totalTime) * 100;
+            const bar = document.getElementById('timer-bar');
+            bar.style.width = `${pct}%`;
+            if (pct < 20) bar.classList.replace('bg-indigo-500', 'bg-rose-500');
+        }
+
+        function getNextSuddenDeathQuestion() {
+            let q;
+            if (state.sdLevel === 1) q = state.poolEasy.pop();
+            else if (state.sdLevel === 2) q = state.poolMed.pop();
+            else q = state.poolHard.pop();
+            
+            // If sub-pool empty, fallback to lower pool or end if all empty
+            if (!q) {
+                if (state.sdLevel > 1) {
+                    state.sdLevel--;
+                    return getNextSuddenDeathQuestion();
+                } else {
+                    return null; // Ran out of all questions!
+                }
+            }
+            return q;
+        }
+
+        function loadNextQuestion() {
+            let q;
+            if (state.mode === 'sudden_death') {
+                q = getNextSuddenDeathQuestion();
+                if (!q) return endGame(); // rare, but possible if they exhaust the bank
+                
+                // Update Progress text
+                document.getElementById('header-progress').innerText = `Level: ${state.sdLevel === 1 ? 'Easy' : (state.sdLevel===2 ? 'Medium' : 'Hard')} (${state.sdConsecutive+1}/3)`;
+                
+            } else {
+                if (state.currentQuestionIndex >= state.activePool.length) {
+                    return endGame();
+                }
+                q = state.activePool[state.currentQuestionIndex];
+                document.getElementById('header-progress').innerText = `Q: ${state.currentQuestionIndex + 1} / ${state.mode === 'random' ? state.activePool.length : '∞'}`;
+            }
+
+            // Render
+            document.getElementById('question-chapter').innerText = q.chapter;
+            document.getElementById('question-text').innerText = q.questionText;
+            
+            const diffBadge = document.getElementById('difficulty-badge');
+            diffBadge.innerText = q.difficulty;
+            diffBadge.className = 'absolute top-0 right-0 text-xs font-bold px-3 py-1 rounded-bl-lg ' + 
+                (q.difficulty === 'Easy' ? 'bg-emerald-100 text-emerald-800' : 
+                 q.difficulty === 'Medium' ? 'bg-amber-100 text-amber-800' : 'bg-rose-100 text-rose-800');
+
+            document.getElementById('opt-A').innerText = q.options.A;
+            document.getElementById('opt-B').innerText = q.options.B;
+            document.getElementById('opt-C').innerText = q.options.C;
+            document.getElementById('opt-D').innerText = q.options.D;
+
+            // Trigger MathJax render for equations like $({O_{2}})$
+            if (window.MathJax) {
+                MathJax.typesetPromise([document.getElementById('game-screen')]).catch(err => console.log(err));
+            }
+
+            // Reset buttons
+            document.querySelectorAll('.btn-option').forEach(btn => {
+                btn.classList.remove('correct-answer', 'wrong-answer', 'opacity-50', 'pointer-events-none');
+                btn.disabled = false;
+            });
+            
+            // Store current question ref on DOM
+            document.getElementById('game-screen').dataset.correctAnswer = q.answer;
+            document.getElementById('game-screen').dataset.currentChap = q.chapter;
+        }
+
+        function submitAnswer(selLetter, btnEl) {
+            const gameScreen = document.getElementById('game-screen');
+            const correctAns = gameScreen.dataset.correctAnswer;
+            const chapter = gameScreen.dataset.currentChap;
+            const isCorrect = selLetter === correctAns;
+
+            // Disable all buttons
+            const allBtns = document.querySelectorAll('.btn-option');
+            allBtns.forEach(btn => {
+                btn.disabled = true;
+                btn.classList.add('pointer-events-none');
+            });
+
+            // Visually show right/wrong
+            if (isCorrect) {
+                btnEl.classList.add('correct-answer');
+            } else {
+                btnEl.classList.add('wrong-answer');
+                // find and highlight correct
+                const map = {A:0, B:1, C:2, D:3};
+                allBtns[map[correctAns]].classList.add('correct-answer');
+            }
+
+            // Record History
+            state.history.push({ chapter: chapter, correct: isCorrect });
+
+            // Logic updates
+            if (state.mode === 'sudden_death') {
+                if (isCorrect) {
+                    state.score++;
+                    state.sdConsecutive++;
+                    if (state.sdConsecutive === 3) {
+                        state.sdLevel = Math.min(3, state.sdLevel + 1);
+                        state.sdConsecutive = 0;
+                    }
+                } else {
+                    state.strikes++;
+                    document.getElementById('strikes-display').innerText = `${state.strikes}/3`;
+                    state.sdLevel = Math.max(1, state.sdLevel - 1);
+                    state.sdConsecutive = 0;
+                }
+            } else {
+                if (isCorrect) {
+                    state.score++;
+                    if (state.mode === 'random') {
+                        document.getElementById('score-display').innerText = state.score;
+                    }
+                }
+                state.currentQuestionIndex++;
+            }
+
+            // Delay and advance
+            setTimeout(() => {
+                if (state.mode === 'sudden_death' && state.strikes >= 3) {
+                    endGame();
+                } else {
+                    loadNextQuestion();
+                }
+            }, 1200);
+        }
+
+        function endGame() {
+            if (state.timer) clearInterval(state.timer);
+            
+            document.getElementById('game-screen').classList.add('hidden');
+            const resScreen = document.getElementById('results-screen');
+            resScreen.classList.remove('hidden');
+
+            const scoreHeader = document.getElementById('results-score');
+            const statsText = document.getElementById('results-stats-text');
+            const analysisBlock = document.getElementById('concept-analysis');
+            
+            if (state.mode === 'sudden_death') {
+                scoreHeader.innerText = `${state.score} Questions Conquered!`;
+                statsText.innerText = state.strikes >= 3 ? "You struck out!" : "Game ended manually.";
+                analysisBlock.classList.add('hidden'); // Simplified for sudden death
+            } else {
+                const totalAttempted = state.history.length;
+                scoreHeader.innerText = `${state.score} / ${totalAttempted}`;
+                statsText.innerText = `You scored ${totalAttempted > 0 ? Math.round((state.score/totalAttempted)*100) : 0}%`;
+                
+                // Concept Analysis (Aggregating history)
+                analysisBlock.classList.remove('hidden');
+                
+                let chapterStats = {};
+                state.history.forEach(item => {
+                    if (!chapterStats[item.chapter]) chapterStats[item.chapter] = { total: 0, correct: 0 };
+                    chapterStats[item.chapter].total++;
+                    if (item.correct) chapterStats[item.chapter].correct++;
+                });
+
+                let strong = [];
+                let weak = [];
+                
+                for (const [chap, data] of Object.entries(chapterStats)) {
+                    const pct = data.correct / data.total;
+                    const displayStr = `${chap} (${Math.round(pct*100)}%)`;
+                    if (pct >= 0.7) strong.push(displayStr);
+                    else weak.push(displayStr);
+                }
+
+                const strongEl = document.getElementById('strong-concepts');
+                const weakEl = document.getElementById('weak-concepts');
+                
+                strongEl.innerHTML = strong.length ? strong.map(s => `<li>${s}</li>`).join('') : '<li class="text-slate-400 italic">Not enough data / No strong areas yet.</li>';
+                weakEl.innerHTML = weak.length ? weak.map(s => `<li>${s}</li>`).join('') : '<li class="text-slate-400 italic">Looking good! No major weak areas.</li>';
+            }
+        }
+
+        function resetApp() {
+            document.getElementById('results-screen').classList.add('hidden');
+            document.getElementById('setup-screen').classList.remove('hidden');
+            
+            // Reset state
+            state.score = 0;
+            state.strikes = 0;
+            state.history = [];
+            if (state.timer) clearInterval(state.timer);
+        }
+
+        // Initialize Data on Load
+        window.addEventListener('DOMContentLoaded', () => {
+            parseBankData();
+        });
+
+    </script>
+</body>
+</html>
