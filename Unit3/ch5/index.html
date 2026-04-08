@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biology 30 Saskatchewan - Chapter 5</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400&family=Inter:wght@300;400;600;800&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+            line-height: 1.8;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Merriweather', serif;
+        }
+
+        .feature-box {
+            border: 2px dashed #cbd5e1;
+            background-color: #f1f5f9;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            position: relative;
+        }
+
+        .feature-tag {
+            position: absolute;
+            top: -12px;
+            left: 1rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .tag-interactive { background-color: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+
+        .sask-context {
+            border-left: 4px solid #16a34a;
+            background-color: #f0fdf4;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 0 0.5rem 0.5rem 0;
+        }
+
+        .learning-objective {
+            background-color: #eff6ff;
+            border-left: 4px solid #2563eb;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+        }
+        
+        .formative-check {
+            background-color: #fff7ed;
+            border: 1px solid #fed7aa;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            border-radius: 0.5rem;
+        }
+
+        .img-container {
+            margin: 2.5rem 0;
+            background-color: #ffffff;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+
+        .img-placeholder {
+            min-height: 300px;
+            background: repeating-linear-gradient(
+                45deg,
+                #f8fafc,
+                #f8fafc 10px,
+                #f1f5f9 10px,
+                #f1f5f9 20px
+            );
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #94a3b8;
+            font-style: italic;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            font-size: 0.95rem;
+        }
+        th, td {
+            border: 1px solid #e2e8f0;
+            padding: 1rem;
+            text-align: left;
+        }
+        th {
+            background-color: #f1f5f9;
+            font-weight: 700;
+            color: #334155;
+        }
+        tr:nth-child(even) { background-color: #f8fafc; }
+
+        .summary-target {
+            border-left: 3px solid #cbd5e1;
+            padding-left: 1.5rem;
+            margin: 1.5rem 0;
+            font-style: italic;
+            color: #475569;
+        }
+
+        @media print {
+            nav, footer, .print-hidden { display: none !important; }
+            body { background-color: white; color: black; font-size: 12pt; }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50 print-hidden">
+        <div class="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center gap-4">
+            <div class="flex items-center gap-4">
+                <a href="#" class="flex items-center gap-2 text-slate-500 hover:text-green-700 transition-colors">
+                    <i data-lucide="arrow-left" class="w-5 h-5"></i>
+                </a>
+                <span class="font-bold text-xl text-green-700 tracking-tight">Biology 30</span>
+            </div>
+            <div class="text-sm text-slate-500 font-medium hidden md:block">
+                Unit 3: How are characteristics passed on?
+            </div>
+            <div class="relative flex-grow max-w-xs">
+                <input type="text" placeholder="Search chapter..." class="block w-full pl-10 pr-3 py-1.5 border border-slate-300 rounded-md text-sm">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i data-lucide="search" class="w-4 h-4 text-slate-400"></i>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-4 py-12">
+        
+        <header class="mb-16">
+            <div class="text-sm font-bold text-indigo-600 tracking-widest uppercase mb-2">Unit 3 Schema Activator</div>
+            <h1 class="text-4xl md:text-5xl font-black text-slate-900 mb-6 border-b-4 border-indigo-600 pb-4">Chapter 5: Biological Inheritance</h1>
+            
+            <div class="feature-box mt-8 mb-12">
+                <h4 class="font-bold text-slate-800 mb-2 flex items-center gap-2">
+                    <i data-lucide="git-branch" class="w-5 h-5 text-indigo-600"></i>
+                    [Digital Feature]: The Trait Tracker
+                </h4>
+                <span class="feature-tag tag-interactive">Interactive Concept Map</span>
+                <p class="text-sm text-slate-600 mb-4">Before we dive into the mathematics of genetics, let's explore your own schema. Choose a visible trait—like a widow's peak, attached earlobes, or even the coat color of a family pet. Use this interactive tool to trace that specific trait backwards through three generations. Where did it skip? Where did it appear in multiple siblings?</p>
+                
+                <div class="w-full bg-slate-900 rounded-lg border border-slate-300 overflow-hidden mb-5 shadow-inner" style="height: 400px;">
+                    <!-- Placeholder for interactive Trait Tracker -->
+                    <div class="w-full h-full flex flex-col items-center justify-center text-slate-400">
+                        <i data-lucide="git-commit" class="w-12 h-12 mb-4 opacity-50"></i>
+                        <p>Interactive "Trait Tracker" Generation Tool</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="prose prose-lg text-slate-700 mb-8 max-w-none">
+                <p>Have you ever wondered why you might have your mother's eyes but your grandfather's nose? Or why two brown-eyed parents can have a blue-eyed child? For millennia, humans recognized that traits were passed down from generation to generation, but the <em>mechanisms</em> of this inheritance were a mystery. Farmers bred the fastest horses and the hardiest wheat, relying on the visible outcomes of biology without understanding the invisible code driving it.</p>
+                
+                <p>In this chapter, we will decode that mystery. We will transition from the cellular structures studied in Unit 2 to the profound implications of the information stored inside the nucleus. By exploring <strong>classical (Mendelian) genetics</strong> and current <strong>chromosomal understandings</strong>, we will learn how probability, specific patterns of inheritance, and the microscopic dance of meiosis ensure both the continuity of a species and the brilliant diversity of life.</p>
+            </div>
+        </header>
+
+        <!-- Section 5.1 & 5.2 -->
+        <section class="mb-20" id="section-5-1">
+            <h3 class="text-3xl font-bold text-slate-800 mb-6">5.1 & 5.2 Tracing History: The Inheritance of Traits [BI30-GB1a, BI30-GB1b, BI30-GB1d]</h3>
+            
+            <div class="learning-objective">
+                <strong>Learning Objective:</strong> Explore patterns of inheritance by interpreting pedigrees and discussing the importance of probability in predicting the likelihood of traits.
+            </div>
+
+            <div class="prose prose-lg text-slate-700 max-w-none">
+                <p class="mb-6">The study of genetics is fundamentally the study of <strong>probability</strong>. When parents reproduce sexually, they do not pass on their exact genetic makeup. Instead, they pass on a <em>randomized half</em> of their genetic information. Because of this, we cannot say with absolute certainty what a child will look like; we can only predict the <em>likelihood</em> of inheriting particular traits.</p>
+
+                <h4 class="font-bold text-slate-900 mt-8 mb-4">Interpreting Pedigrees</h4>
+                <p class="mb-4">To understand probability, biologists must look to the past. A <strong>pedigree</strong> is a genetic family tree that visually maps the occurrence of a specific trait through multiple generations of a family. By analyzing these patterns, geneticists can determine whether a trait is dominant, recessive, or linked to a sex chromosome.</p>
+                
+                <ul class="list-disc pl-6 space-y-2 mb-6">
+                    <li><strong>Squares</strong> represent males.</li>
+                    <li><strong>Circles</strong> represent females.</li>
+                    <li><strong>Shaded shapes</strong> indicate the individual expresses the trait being studied.</li>
+                    <li><strong>Horizontal lines</strong> connecting a male and female indicate a mating pair.</li>
+                    <li><strong>Vertical lines</strong> dropping down from a pair lead to their offspring.</li>
+                </ul>
+
+                <figure class="img-container">
+                    <div class="img-placeholder">
+                        [Illustration: A standard 3-generation pedigree chart showing a recessive trait skipping a generation]
+                    </div>
+                    <figcaption class="p-4 text-center text-sm text-slate-600 italic bg-slate-50">
+                        <strong>Figure 5.1:</strong> A typical pedigree. Notice how the trait (shaded) appears in generation III even though neither parent in generation II expresses it. This is a classic hallmark of a recessive trait.
+                    </figcaption>
+                </figure>
+            </div>
+
+            <div class="sask-context">
+                <h4 class="font-bold text-green-800 mb-2 flex items-center gap-2">
+                    <i data-lucide="tractor" class="w-5 h-5"></i> Saskatchewan Connection: The Black Angus Pedigree
+                </h4>
+                <p class="text-slate-700">Applied pedigree analysis is crucial to Saskatchewan's agricultural economy. Consider the Black Angus cattle breed, highly prized by provincial ranchers. Coat color in cattle is genetically determined. Black coat color is a dominant trait, while a red coat is recessive. A rancher wanting to maintain a pure Black Angus herd must carefully map the pedigrees of their bulls and cows to ensure they are not unknowingly harboring the hidden (recessive) gene for the red coat, which could pop up unexpectedly in future generations.</p>
+            </div>
+        </section>
+
+        <!-- Section 5.3, 5.4, 5.5 -->
+        <section class="mb-20" id="section-5-3">
+            <h3 class="text-3xl font-bold text-slate-800 mb-6">5.3 Decoding the Organism: Mendelian Genetics [BI30-GB1c, e, f, g]</h3>
+            
+            <div class="learning-objective">
+                <strong>Learning Objective:</strong> Discuss the historical development of Mendelian genetics, determine phenotypes from genotypes, and use Punnett squares to predict offspring frequencies across different patterns of inheritance.
+            </div>
+
+            <div class="prose prose-lg text-slate-700 max-w-none">
+                <p class="mb-6">The mathematical foundation of genetics was not laid by a modern scientist with a high-tech lab, but by an Austrian monk named <strong>Gregor Mendel</strong> in the 1860s. Mendel is considered the "father of genetics" because he was the first to use rigorous statistical analysis to track inheritance, spending years cultivating over 28,000 pea plants.</p>
+                
+                <div class="bg-indigo-50 border-l-4 border-indigo-500 p-6 rounded-r-lg mb-8">
+                    <h5 class="font-bold text-indigo-900 mb-2">Why Peas? The Genius of Mendel's Model</h5>
+                    <p class="mb-4 text-slate-700">Mendel’s success was largely due to his careful selection of the garden pea (<em>Pisum sativum</em>) as his model organism. He chose them for several crucial reasons:</p>
+                    <ul class="list-disc pl-6 space-y-2 text-slate-700">
+                        <li><strong>Controlled Mating:</strong> Pea plants naturally self-pollinate, but Mendel could easily open the petals, remove the pollen-producing anthers, and manually cross-pollinate them with a specific partner using a small paintbrush.</li>
+                        <li><strong>Distinct, Observable Traits:</strong> He selected varieties that differed in stark, "either/or" ways—there were no "medium" height plants, only tall or short. There were no yellowish-green peas, only yellow or green.</li>
+                        <li><strong>Rapid Reproduction:</strong> They grow quickly, allowing him to observe multiple generations in a short time.</li>
+                        <li><strong>High Yield:</strong> Each plant produces many peas (offspring), providing the large sample sizes necessary to see clear mathematical ratios in his data.</li>
+                    </ul>
+                </div>
+
+                <figure class="img-container mb-10">
+                    <div class="img-placeholder" style="flex-direction: column; text-align: center; padding: 2.5rem;">
+                        <i data-lucide="image" class="w-12 h-12 mb-4 opacity-50"></i>
+                        <span class="font-bold text-slate-600 mb-2">Image Prompt for Illustrator:</span>
+                        <span class="text-sm max-w-lg">A scientific botanical illustration showing the 7 distinct traits of the garden pea studied by Mendel. Split the image into paired comparisons: Seed Shape (Round vs. Wrinkled), Seed Color (Yellow vs. Green), Flower Color (Purple vs. White), Pod Shape (Inflated vs. Constricted), Pod Color (Green vs. Yellow), Flower Position (Axial vs. Terminal), and Stem Height (Tall vs. Dwarf).</span>
+                    </div>
+                    <figcaption class="p-4 text-center text-sm text-slate-600 italic bg-slate-50 border-t border-slate-200">
+                        <strong>Figure 5.2:</strong> The seven distinct, binary traits of <em>Pisum sativum</em> that allowed Mendel to track inheritance patterns without the confusion of blended characteristics.
+                    </figcaption>
+                </figure>
+
+                <h4 class="font-bold text-slate-900 mt-8 mb-4">Genotype vs. Phenotype</h4>
+                <p class="mb-4">Mendel deduced that traits are controlled by discrete "factors" (which we now call <strong>genes</strong>). Every organism has two versions of each gene—one inherited from the mother, one from the father. These different versions of a gene are called <strong>alleles</strong>.</p>
+                <ul class="list-disc pl-6 space-y-4 mb-6">
+                    <li><strong>Genotype:</strong> The actual genetic makeup of the organism (the invisible code, represented by letters).
+                        <ul class="list-circle pl-6 mt-2 text-sm text-slate-600">
+                            <li><em>Homozygous Dominant (TT)</em>: Two dominant alleles.</li>
+                            <li><em>Heterozygous (Tt)</em>: One dominant, one recessive allele.</li>
+                            <li><em>Homozygous Recessive (tt)</em>: Two recessive alleles.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Phenotype:</strong> The physical, observable expression of that trait (what you see, e.g., "Tall" or "Short").</li>
+                </ul>
+
+                <h4 class="font-bold text-slate-900 mt-8 mb-4">Predicting Offspring: The P, F<sub>1</sub>, and F<sub>2</sub> Generations</h4>
+                <p class="mb-4">To calculate the probability of offspring inheriting specific traits, biologists use a mathematical grid called a <strong>Punnett square</strong>. When tracking a trait across multiple generations (a <em>monohybrid cross</em>), geneticists use specific shorthand:</p>
+                <ul class="list-disc pl-6 space-y-2 mb-6 text-slate-700">
+                    <li><strong>P Generation (Parental):</strong> The original true-breeding (homozygous) parents.</li>
+                    <li><strong>F<sub>1</sub> Generation (First Filial):</strong> The offspring of the P generation cross.</li>
+                    <li><strong>F<sub>2</sub> Generation (Second Filial):</strong> The offspring produced when two F<sub>1</sub> individuals are crossed.</li>
+                </ul>
+
+                <p class="mb-4">Let's walk through Mendel's classic experiment with flower color, crossing a pure-breeding purple flowered plant with a pure-breeding white flowered plant.</p>
+                
+                <!-- F1 Cross -->
+                <div class="bg-white p-6 rounded-lg border border-slate-200 shadow-sm mb-6">
+                    <p class="font-bold mb-4 text-lg">Step 1: The P Cross (PP x pp)</p>
+                    <p class="mb-4 text-slate-700">We cross a Homozygous Dominant purple plant (<strong>PP</strong>) with a Homozygous Recessive white plant (<strong>pp</strong>).</p>
+                    <div class="flex flex-col md:flex-row items-center gap-6 mb-4">
+                        <table class="w-auto text-center border-2 border-slate-800">
+                            <tr>
+                                <th class="border-2 border-slate-800 p-4 bg-slate-100"></th>
+                                <th class="border-2 border-slate-800 p-4 font-bold text-indigo-700">p (Sperm)</th>
+                                <th class="border-2 border-slate-800 p-4 font-bold text-indigo-700">p (Sperm)</th>
+                            </tr>
+                            <tr>
+                                <th class="border-2 border-slate-800 p-4 font-bold text-pink-700">P (Egg)</th>
+                                <td class="border-2 border-slate-800 p-4 font-bold bg-purple-100 text-purple-900">Pp (Purple)</td>
+                                <td class="border-2 border-slate-800 p-4 font-bold bg-purple-100 text-purple-900">Pp (Purple)</td>
+                            </tr>
+                            <tr>
+                                <th class="border-2 border-slate-800 p-4 font-bold text-pink-700">P (Egg)</th>
+                                <td class="border-2 border-slate-800 p-4 font-bold bg-purple-100 text-purple-900">Pp (Purple)</td>
+                                <td class="border-2 border-slate-800 p-4 font-bold bg-purple-100 text-purple-900">Pp (Purple)</td>
+                            </tr>
+                        </table>
+                        
+                        <div class="img-placeholder flex-1 p-6 text-center border border-dashed border-slate-300 rounded bg-slate-50 flex flex-col justify-center h-full">
+                            <span class="font-bold text-slate-600 block mb-2">Image Prompt: F1 Generation</span>
+                            <span class="text-sm text-slate-500">Illustration of a deep purple pea flower crossed with a white pea flower (P generation). An arrow points down to the resulting offspring (F1 generation) which consists of an entire row of four purple flowers, visually showing that 100% of the F1 generation expresses the dominant purple phenotype.</span>
+                        </div>
+                    </div>
+                    <p class="text-sm text-slate-600"><strong>F<sub>1</sub> Results:</strong> 100% Heterozygous (Pp). Phenotype: 100% Purple. The white trait seems to have disappeared entirely!</p>
+                </div>
+
+                <!-- F2 Cross -->
+                <div class="bg-white p-6 rounded-lg border border-slate-200 shadow-sm mb-6">
+                    <p class="font-bold mb-4 text-lg">Step 2: The F<sub>1</sub> Cross (Pp x Pp)</p>
+                    <p class="mb-4 text-slate-700">Mendel then allowed the F<sub>1</sub> generation to self-pollinate, crossing two Heterozygous purple plants (<strong>Pp</strong> x <strong>Pp</strong>).</p>
+                    <div class="flex flex-col md:flex-row items-center gap-6 mb-4">
+                        <table class="w-auto text-center border-2 border-slate-800">
+                            <tr>
+                                <th class="border-2 border-slate-800 p-4 bg-slate-100"></th>
+                                <th class="border-2 border-slate-800 p-4 font-bold text-indigo-700">P (Sperm)</th>
+                                <th class="border-2 border-slate-800 p-4 font-bold text-indigo-700">p (Sperm)</th>
+                            </tr>
+                            <tr>
+                                <th class="border-2 border-slate-800 p-4 font-bold text-pink-700">P (Egg)</th>
+                                <td class="border-2 border-slate-800 p-4 font-bold bg-purple-200 text-purple-900">PP (Purple)</td>
+                                <td class="border-2 border-slate-800 p-4 font-bold bg-purple-100 text-purple-900">Pp (Purple)</td>
+                            </tr>
+                            <tr>
+                                <th class="border-2 border-slate-800 p-4 font-bold text-pink-700">p (Egg)</th>
+                                <td class="border-2 border-slate-800 p-4 font-bold bg-purple-100 text-purple-900">Pp (Purple)</td>
+                                <td class="border-2 border-slate-800 p-4 font-bold bg-slate-100 text-slate-500">pp (White)</td>
+                            </tr>
+                        </table>
+                        
+                        <div class="img-placeholder flex-1 p-6 text-center border border-dashed border-slate-300 rounded bg-slate-50 flex flex-col justify-center h-full">
+                            <span class="font-bold text-slate-600 block mb-2">Image Prompt: F2 Generation</span>
+                            <span class="text-sm text-slate-500">Illustration showing two of the purple F1 flowers being crossed. An arrow points down to the resulting offspring (F2 generation) showing three purple flowers and one white flower. This visually represents the classic 3:1 phenotypic ratio where the recessive white trait reappears.</span>
+                        </div>
+                    </div>
+                    <p class="text-sm text-slate-600"><strong>F<sub>2</sub> Results:</strong> The Genotypic ratio is 1 PP : 2 Pp : 1 pp (1:2:1). The Phenotypic ratio is 3 Purple : 1 White (75% probability of a purple plant). The hidden white trait reappears!</p>
+                </div>
+
+                <h4 class="font-bold text-slate-900 mt-8 mb-4">Beyond Mendel: Complex Patterns of Inheritance</h4>
+                <p class="mb-4">Mendel was lucky; pea plant traits are largely binary (tall/short, green/yellow). Nature is rarely that simple. Modern genetics recognizes multiple complex patterns:</p>
+                <ul class="list-disc pl-6 space-y-4 mb-6">
+                    <li><strong>Incomplete Dominance:</strong> Neither allele is completely dominant. A red flower and a white flower cross to produce a <em>pink</em> flower (a blending of traits).</li>
+                    <li><strong>Codominance:</strong> Both alleles are equally and fully expressed. A black chicken and a white chicken cross to produce a chicken with <em>checkered</em> black and white feathers.</li>
+                    <li><strong>Multiple Alleles:</strong> A gene that has more than two possible alleles in the population. Human blood type is the classic example (A, B, and O alleles combine to make types A, B, AB, or O).</li>
+                    <li><strong>Sex-Linked Traits:</strong> Genes located on the sex chromosomes (usually the X chromosome). Because males have only one X chromosome (XY), they are much more susceptible to recessive X-linked conditions like color blindness or hemophilia than females (XX).</li>
+                    <li><strong>Polygenic Inheritance:</strong> A single trait controlled by the interaction of <em>many</em> genes. Human height, skin color, and eye color are polygenic, resulting in a smooth continuum of phenotypes rather than discrete categories.</li>
+                </ul>
+
+                <div class="feature-box mt-8">
+                    <h4 class="font-bold text-slate-800 mb-2 flex items-center gap-2">
+                        <i data-lucide="grid" class="w-5 h-5 text-indigo-600"></i>
+                        [Digital Feature]: Punnett Square Generator
+                    </h4>
+                    <span class="feature-tag tag-interactive">Interactive Tool</span>
+                    <p class="text-sm text-slate-600 mb-4">Practice your genetics! Use this drag-and-drop tool to cross P1 (Parental) generations and calculate the genotypic and phenotypic frequencies for the F1 (First Filial) and F2 generations across different inheritance patterns.</p>
+                    
+                    <div class="w-full bg-slate-900 rounded-lg border border-slate-300 overflow-hidden mb-5 shadow-inner" style="height: 300px;">
+                        <div class="w-full h-full flex flex-col items-center justify-center text-slate-400">
+                            <i data-lucide="table" class="w-12 h-12 mb-4 opacity-50"></i>
+                            <p>Drag-and-Drop Punnett Square Interactive Area</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="sask-context">
+                <h4 class="font-bold text-green-800 mb-2 flex items-center gap-2">
+                    <i data-lucide="wheat" class="w-5 h-5"></i> Saskatchewan Connection: Polygenic Wheat
+                </h4>
+                <p class="text-slate-700">Polygenic inheritance is highly visible in Saskatchewan's agricultural sector. The kernel color of wheat is not simply "red" or "white." It is controlled by up to three separate genes (A, B, and C) working together. The more dominant alleles present across these three genes, the darker red the wheat kernel becomes. Crop scientists at the University of Saskatchewan must understand this complex polygenic interaction to breed specific varieties desired by global markets.</p>
+            </div>
+        </section>
+
+        <!-- Section 5.6 -->
+        <section class="mb-20" id="section-5-6">
+            <h3 class="text-3xl font-bold text-slate-800 mb-6">5.6 Population Genetics [BI30-GB1h]</h3>
+            
+            <div class="learning-objective">
+                <strong>Learning Objective:</strong> Describe how gene flow, genetic drift, and natural selection influence the frequency of alleles within a population.
+            </div>
+
+            <div class="prose prose-lg text-slate-700 max-w-none">
+                <p class="mb-6">While Punnett squares predict the traits of individuals, <strong>Population Genetics</strong> examines the genetics of an entire group over time. Evolution, at a genetic level, is simply a change in the frequency of alleles in a population over generations. Three major mechanisms drive this change:</p>
+
+                <ol class="list-decimal pl-6 space-y-6 mb-6">
+                    <li><strong>Natural Selection:</strong> The environment applies pressure. Individuals with alleles that provide a survival advantage will live to reproduce, passing those advantageous alleles on, increasing their frequency in the population.</li>
+                    <li><strong>Gene Flow:</strong> The movement of alleles into or out of a population due to the migration of individuals. This keeps adjacent populations genetically similar.</li>
+                    <li><strong>Genetic Drift:</strong> Random, chance events that change allele frequencies, impacting small populations most severely.
+                        <ul class="list-disc pl-6 mt-2 text-sm text-slate-700 space-y-2">
+                            <li><em>The Founder Effect:</em> A small group breaks off from a larger population to start a new colony. The new colony may have a completely different allele frequency than the original population just by random chance.</li>
+                            <li><em>The Bottleneck Effect:</em> A disaster (disease, famine, human hunting) drastically reduces the population size. The few survivors rebuild the population, but massive amounts of genetic diversity have been lost forever.</li>
+                        </ul>
+                    </li>
+                </ol>
+            </div>
+
+            <div class="sask-context">
+                <h4 class="font-bold text-green-800 mb-2 flex items-center gap-2">
+                    <i data-lucide="mountain-snow" class="w-5 h-5"></i> Saskatchewan Connection: The Bison Bottleneck
+                </h4>
+                <p class="text-slate-700">Before the 1800s, an estimated 30-60 million Plains Bison roamed North America, including the Saskatchewan prairie. By 1890, due to overhunting and habitat loss, the population was reduced to less than 1,000 individuals. This is a devastating example of the <strong>Bottleneck Effect</strong>. Even though conservation efforts have brought bison numbers back up into the hundreds of thousands today, modern herds possess only a tiny fraction of the genetic diversity that existed 200 years ago, making them potentially more vulnerable to future diseases or climate shifts.</p>
+            </div>
+        </section>
+
+        <!-- Section 5.7 & 5.8 -->
+        <section class="mb-20" id="section-5-7">
+            <h3 class="text-3xl font-bold text-slate-800 mb-6">5.7 & 5.8 Chromosomes, Meiosis, and Mutations [BI30-GB1i, j, k, l]</h3>
+            
+            <div class="learning-objective">
+                <strong>Learning Objective:</strong> Investigate the importance of meiosis and crossing-over in creating variation, and identify chromosomal abnormalities using karyotypes.
+            </div>
+
+            <div class="prose prose-lg text-slate-700 max-w-none">
+                <p class="mb-6">Mendel proposed his laws of inheritance (Law of Segregation, Law of Independent Assortment) without ever knowing what a gene or a chromosome was. It wasn't until decades later that scientists discovered that <strong>chromosomes</strong> inside the nucleus are the actual physical mechanism carrying Mendel's invisible "factors."</p>
+
+                <h4 class="font-bold text-slate-900 mt-8 mb-4">Meiosis: The Engine of Diversity</h4>
+                <p class="mb-4">To ensure that offspring have the correct number of chromosomes (46 in humans), organisms must produce sex cells (gametes: sperm and egg) that have exactly half the normal number of chromosomes (23). This reduction division is called <strong>Meiosis</strong>. </p>
+                
+                <p class="mb-6">Meiosis doesn't just cut the number in half; it actively scrambles the genetic code to ensure every sperm and egg is entirely unique. During early meiosis, homologous chromosomes pair up and physically swap chunks of DNA in a process called <strong>Crossing-Over</strong>. This recombination is why you look different from your siblings even though you share the same parents.</p>
+
+                <figure class="img-container">
+                    <div class="img-placeholder">
+                        [Illustration: Homologous chromosomes undergoing crossing-over and exchanging genetic material]
+                    </div>
+                    <figcaption class="p-4 text-center text-sm text-slate-600 italic bg-slate-50">
+                        <strong>Figure 5.2:</strong> Crossing-over during Meiosis I. This swapping of alleles ensures infinite genetic variation in the offspring.
+                    </figcaption>
+                </figure>
+
+                <h4 class="font-bold text-slate-900 mt-8 mb-4">Chromosomal Mutations and Nondisjunction</h4>
+                <p class="mb-4">The complex dance of meiosis sometimes experiences errors. If entire sections of a chromosome break or reattach incorrectly, large-scale mutations occur:</p>
+                <ul class="list-disc pl-6 space-y-2 mb-6 text-slate-700">
+                    <li><strong>Deletion:</strong> A piece of the chromosome is lost.</li>
+                    <li><strong>Duplication:</strong> A segment is repeated.</li>
+                    <li><strong>Inversion:</strong> A segment detaches, flips 180 degrees, and reattaches.</li>
+                    <li><strong>Translocation:</strong> A piece of one chromosome breaks off and attaches to a completely different, non-homologous chromosome.</li>
+                </ul>
+
+                <p class="mb-4">An even larger error occurs if the chromosomes fail to separate correctly during anaphase of meiosis. This is called <strong>Nondisjunction</strong>. It results in a sperm or egg cell having either one too many, or one too few chromosomes. If this gamete is fertilized, the resulting child will have a chromosomal disorder. Scientists diagnose these conditions by taking a picture of the cell's chromosomes, arranging them by size in a chart called a <strong>Karyotype</strong>.</p>
+                
+                <div class="overflow-x-auto shadow-sm border rounded-lg mb-8 mt-6">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Disorder</th>
+                                <th>Chromosomal Mechanism</th>
+                                <th>Karyotype Notation</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Down Syndrome</strong></td>
+                                <td>Nondisjunction resulting in three copies of Chromosome 21 (Trisomy 21).</td>
+                                <td>47, XX,+21 or 47, XY,+21</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Turner Syndrome</strong></td>
+                                <td>A female inheriting only one X chromosome (Monosomy X).</td>
+                                <td>45, X0</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Klinefelter Syndrome</strong></td>
+                                <td>A male inheriting an extra X chromosome.</td>
+                                <td>47, XXY</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="feature-box mt-8">
+                    <h4 class="font-bold text-slate-800 mb-2 flex items-center gap-2">
+                        <i data-lucide="microscope" class="w-5 h-5 text-indigo-600"></i>
+                        [Digital Feature]: Virtual Clinical Karyotyping
+                    </h4>
+                    <span class="feature-tag tag-interactive">Interactive Lab</span>
+                    <p class="text-sm text-slate-600 mb-4">Step into the role of a clinical geneticist. You will be presented with raw, scrambled chromosome images from three different "patients." You must match the homologous pairs based on length, centromere location, and banding patterns to build the karyotype, then diagnose any nondisjunction mutations present.</p>
+                    
+                    <div class="w-full bg-slate-900 rounded-lg border border-slate-300 overflow-hidden mb-5 shadow-inner" style="height: 350px;">
+                        <div class="w-full h-full flex flex-col items-center justify-center text-slate-400">
+                            <i data-lucide="activity" class="w-12 h-12 mb-4 opacity-50"></i>
+                            <p>Virtual Karyotype Builder Application</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="formative-check">
+                <h4 class="font-bold text-orange-800 mb-3"><i data-lucide="check-circle-2" class="inline w-5 h-5 mr-1"></i> Formative Check</h4>
+                <ul class="space-y-3 text-slate-700">
+                    <li>1. In a pedigree tracing a recessive disease, two healthy parents have a child with the disease. What must the genotypes of both parents be?</li>
+                    <li>2. Explain the difference between Incomplete Dominance and Codominance.</li>
+                    <li>3. Why are males more likely than females to express a sex-linked recessive trait like colorblindness?</li>
+                    <li>4. How does "Crossing-Over" during meiosis contribute to the survival of a species?</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Chapter Review -->
+        <section class="bg-slate-900 text-white p-8 rounded-lg shadow-xl">
+            <h3 class="text-2xl font-bold mb-4">Chapter 5 Review: Narrative Lab Report</h3>
+            <p class="mb-4 text-slate-300 font-semibold italic">Activity: Virtual Karyotyping and Pedigree Analysis.</p>
+            <ol class="list-decimal pl-6 space-y-4 text-slate-200">
+                <li><strong>What was I looking for?</strong> (I was looking to identify the specific chromosomal cause of a genetic disorder for a patient, and track how it might have been inherited in their family tree).</li>
+                <li><strong>How did I look for it?</strong> (I utilized the virtual karyotype builder to pair up the 23 sets of chromosomes based on banding patterns. Then, I constructed a pedigree chart based on the patient's family history).</li>
+                <li><strong>What did I find?</strong> (Upon completing the karyotype, I found that Patient A possessed three copies of chromosome 21. By looking at the pedigree, I found that the condition was a random occurrence, not an inherited trait passed down from previous generations).</li>
+                <li><strong>What do these findings mean?</strong> (These findings mean the patient has Down Syndrome caused by a nondisjunction event—a failure of chromosomes to separate properly during meiosis in one of the parents' gametes. Because this is an error during gamete formation, it is not a trait governed by simple Mendelian dominant/recessive rules shown on the pedigree).</li>
+            </ol>
+        </section>
+
+    </main>
+
+    <footer class="bg-slate-100 py-8 mt-12 border-t border-slate-200">
+        <div class="max-w-4xl mx-auto px-4 text-center text-slate-500 text-sm">
+            <p>Biology 30 Saskatchewan Digital Textbook - Unit 3, Chapter 5</p>
+            <button onclick="window.print()" class="mt-4 bg-slate-800 text-white px-4 py-2 rounded-lg text-xs hover:bg-slate-700 transition-colors">Print to PDF</button>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        });
+    </script>
+</body>
+</html>
