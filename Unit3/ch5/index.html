@@ -350,34 +350,65 @@
             </div>
         </section>
 
-        <!-- Section 5.6 -->
+        <!-- Section 5.6: Dihybrid Crosses -->
         <section class="mb-20" id="section-5-6">
-            <h3 class="text-3xl font-bold text-slate-800 mb-6">5.6 Population Genetics [BI30-GB1h]</h3>
+            <h3 class="text-3xl font-bold text-slate-800 mb-6">5.6 Predicting Two Traits: The Dihybrid Cross</h3>
             
             <div class="learning-objective">
-                <strong>Learning Objective:</strong> Describe how gene flow, genetic drift, and natural selection influence the frequency of alleles within a population.
+                <strong>Learning Objective:</strong> Calculate genotypic and phenotypic ratios for two independent traits using a dihybrid cross.
             </div>
 
             <div class="prose prose-lg text-slate-700 max-w-none">
-                <p class="mb-6">While Punnett squares predict the traits of individuals, <strong>Population Genetics</strong> examines the genetics of an entire group over time. Evolution, at a genetic level, is simply a change in the frequency of alleles in a population over generations. Three major mechanisms drive this change:</p>
+                <p class="mb-6">Mendel's early experiments tracked a single trait at a time (a monohybrid cross). But organisms are complex collections of thousands of traits. Mendel's next logical question was: <em>Are different traits inherited together, or independently?</em> Does a pea plant that inherits a dominant seed shape also automatically inherit a dominant flower color?</p>
+                
+                <p class="mb-4">To test this, he performed a <strong>dihybrid cross</strong>—an experiment tracking two distinct traits simultaneously. Let's walk through his classic experiment crossing pea shape and flower color.</p>
 
-                <ol class="list-decimal pl-6 space-y-6 mb-6">
-                    <li><strong>Natural Selection:</strong> The environment applies pressure. Individuals with alleles that provide a survival advantage will live to reproduce, passing those advantageous alleles on, increasing their frequency in the population.</li>
-                    <li><strong>Gene Flow:</strong> The movement of alleles into or out of a population due to the migration of individuals. This keeps adjacent populations genetically similar.</li>
-                    <li><strong>Genetic Drift:</strong> Random, chance events that change allele frequencies, impacting small populations most severely.
-                        <ul class="list-disc pl-6 mt-2 text-sm text-slate-700 space-y-2">
-                            <li><em>The Founder Effect:</em> A small group breaks off from a larger population to start a new colony. The new colony may have a completely different allele frequency than the original population just by random chance.</li>
-                            <li><em>The Bottleneck Effect:</em> A disaster (disease, famine, human hunting) drastically reduces the population size. The few survivors rebuild the population, but massive amounts of genetic diversity have been lost forever.</li>
-                        </ul>
-                    </li>
-                </ol>
-            </div>
+                <h4 class="font-bold text-slate-900 mt-8 mb-4">The P Generation: True-Breeding Parents</h4>
+                <p class="mb-4">Mendel started by crossing a pure-breeding plant with <strong>smooth peas and purple flowers</strong> (both dominant traits) with a pure-breeding plant with <strong>wrinkled peas and white flowers</strong> (both recessive traits). Let's define our alleles:</p>
+                <ul class="list-disc pl-6 space-y-2 mb-6">
+                    <li><strong>Pea Shape:</strong> Smooth (<strong>S</strong>) is dominant to wrinkled (<strong>s</strong>).</li>
+                    <li><strong>Flower Color:</strong> Purple (<strong>P</strong>) is dominant to white (<strong>p</strong>).</li>
+                </ul>
+                <p class="mb-6">The genotype of the dominant parent is <strong>SSPP</strong>. The genotype of the recessive parent is <strong>sspp</strong>.</p>
 
-            <div class="sask-context">
-                <h4 class="font-bold text-green-800 mb-2 flex items-center gap-2">
-                    <i data-lucide="mountain-snow" class="w-5 h-5"></i> Saskatchewan Connection: The Bison Bottleneck
-                </h4>
-                <p class="text-slate-700">Before the 1800s, an estimated 30-60 million Plains Bison roamed North America, including the Saskatchewan prairie. By 1890, due to overhunting and habitat loss, the population was reduced to less than 1,000 individuals. This is a devastating example of the <strong>Bottleneck Effect</strong>. Even though conservation efforts have brought bison numbers back up into the hundreds of thousands today, modern herds possess only a tiny fraction of the genetic diversity that existed 200 years ago, making them potentially more vulnerable to future diseases or climate shifts.</p>
+                <figure class="img-container mb-8">
+                    <div class="img-placeholder" style="flex-direction: column; text-align: center; padding: 2.5rem;">
+                        <i data-lucide="image" class="w-12 h-12 mb-4 opacity-50"></i>
+                        <span class="font-bold text-slate-600 mb-2">Image Prompt: Dihybrid P Generation Cross</span>
+                        <span class="text-sm max-w-lg">An illustration showing a cross (X) between two pea plants. On the left: a plant with smooth, round peas and bright purple flowers (labeled "Genotype: SSPP", "Phenotype: Smooth & Purple"). On the right: a plant with wrinkled, shriveled peas and white flowers (labeled "Genotype: sspp", "Phenotype: Wrinkled & White"). Below them, draw arrows indicating the gametes they produce: "SP" and "sp".</span>
+                    </div>
+                </figure>
+
+                <h4 class="font-bold text-slate-900 mt-8 mb-4">The F<sub>1</sub> Generation: The Double Hybrids</h4>
+                <p class="mb-6">Because the parents are homozygous, the SSPP plant can only pass on 'SP' alleles, and the sspp plant can only pass on 'sp' alleles. When these gametes combine, 100% of the offspring in the F<sub>1</sub> generation inherit the exact same genotype: <strong>SsPp</strong>. Because they possess at least one dominant allele for each trait, their phenotype is 100% Smooth and Purple.</p>
+
+                <figure class="img-container mb-8">
+                    <div class="img-placeholder" style="flex-direction: column; text-align: center; padding: 2.5rem;">
+                        <i data-lucide="image" class="w-12 h-12 mb-4 opacity-50"></i>
+                        <span class="font-bold text-slate-600 mb-2">Image Prompt: Dihybrid F1 Generation</span>
+                        <span class="text-sm max-w-lg">An illustration of the F1 offspring. Show a vibrant pea plant with smooth round peas and purple flowers. Text labels should clearly state: "Phenotype: 100% Smooth & Purple", "Genotype: 100% SsPp", and "Ratio: 1:0". Include a small visualization showing the combination of the SP and sp gametes into the SsPp hybrid.</span>
+                    </div>
+                </figure>
+
+                <h4 class="font-bold text-slate-900 mt-8 mb-4">The F<sub>2</sub> Generation: The 9:3:3:1 Ratio</h4>
+                <p class="mb-4">The real magic happens when two F<sub>1</sub> hybrids (SsPp x SsPp) are crossed. According to Mendel's <strong>Law of Independent Assortment</strong>, the alleles for seed shape separate independently from the alleles for flower color. Each parent can produce four different gamete combinations (using the FOIL method: First, Outer, Inner, Last): <strong>SP, Sp, sP, and sp</strong>.</p>
+                
+                <p class="mb-6">Plotting these four gametes against each other requires a massive 16-square Punnett grid. The resulting F<sub>2</sub> offspring showcase a famous mathematical ratio that proved traits do not "stick" together:</p>
+
+                <ul class="list-disc pl-6 space-y-2 mb-6 font-semibold text-slate-800 bg-white p-6 border border-slate-200 rounded-lg shadow-sm">
+                    <li><span class="text-purple-700">9</span> Smooth & Purple (Genotypes: SSPP, SsPP, SSPp, SsPp)</li>
+                    <li><span class="text-blue-600">3</span> Smooth & White (Genotypes: SSpp, Sspp)</li>
+                    <li><span class="text-green-700">3</span> Wrinkled & Purple (Genotypes: ssPP, ssPp)</li>
+                    <li><span class="text-slate-500">1</span> Wrinkled & White (Genotype: sspp)</li>
+                </ul>
+
+                <figure class="img-container mb-8">
+                    <div class="img-placeholder" style="flex-direction: column; text-align: center; padding: 2.5rem;">
+                        <i data-lucide="image" class="w-12 h-12 mb-4 opacity-50"></i>
+                        <span class="font-bold text-slate-600 mb-2">Image Prompt: Dihybrid F2 Generation 16-Square Grid</span>
+                        <span class="text-sm max-w-lg">A highly detailed 4x4 Punnett square representing the F2 generation. The top and left headers should list the gametes: SP, Sp, sP, sp. Inside the 16 squares, illustrate the resulting pea shape and flower color for each specific genotype. The visual should clearly color-code or highlight the resulting 9:3:3:1 phenotypic ratio. Below the grid, clearly state "Phenotypic Ratio = 9:3:3:1".</span>
+                    </div>
+                </figure>
             </div>
         </section>
 
@@ -463,6 +494,37 @@
                 </div>
 
             </div>
+        </section>
+
+        <!-- Section 5.9: Population Genetics -->
+        <section class="mb-20" id="section-5-9">
+            <h3 class="text-3xl font-bold text-slate-800 mb-6">5.9 Population Genetics [BI30-GB1h]</h3>
+            
+            <div class="learning-objective">
+                <strong>Learning Objective:</strong> Describe how gene flow, genetic drift, and natural selection influence the frequency of alleles within a population.
+            </div>
+
+            <div class="prose prose-lg text-slate-700 max-w-none">
+                <p class="mb-6">While Punnett squares predict the traits of individuals, <strong>Population Genetics</strong> examines the genetics of an entire group over time. Evolution, at a genetic level, is simply a change in the frequency of alleles in a population over generations. Three major mechanisms drive this change:</p>
+
+                <ol class="list-decimal pl-6 space-y-6 mb-6">
+                    <li><strong>Natural Selection:</strong> The environment applies pressure. Individuals with alleles that provide a survival advantage will live to reproduce, passing those advantageous alleles on, increasing their frequency in the population.</li>
+                    <li><strong>Gene Flow:</strong> The movement of alleles into or out of a population due to the migration of individuals. This keeps adjacent populations genetically similar.</li>
+                    <li><strong>Genetic Drift:</strong> Random, chance events that change allele frequencies, impacting small populations most severely.
+                        <ul class="list-disc pl-6 mt-2 text-sm text-slate-700 space-y-2">
+                            <li><em>The Founder Effect:</em> A small group breaks off from a larger population to start a new colony. The new colony may have a completely different allele frequency than the original population just by random chance.</li>
+                            <li><em>The Bottleneck Effect:</em> A disaster (disease, famine, human hunting) drastically reduces the population size. The few survivors rebuild the population, but massive amounts of genetic diversity have been lost forever.</li>
+                        </ul>
+                    </li>
+                </ol>
+            </div>
+
+            <div class="sask-context">
+                <h4 class="font-bold text-green-800 mb-2 flex items-center gap-2">
+                    <i data-lucide="mountain-snow" class="w-5 h-5"></i> Saskatchewan Connection: The Bison Bottleneck
+                </h4>
+                <p class="text-slate-700">Before the 1800s, an estimated 30-60 million Plains Bison roamed North America, including the Saskatchewan prairie. By 1890, due to overhunting and habitat loss, the population was reduced to less than 1,000 individuals. This is a devastating example of the <strong>Bottleneck Effect</strong>. Even though conservation efforts have brought bison numbers back up into the hundreds of thousands today, modern herds possess only a tiny fraction of the genetic diversity that existed 200 years ago, making them potentially more vulnerable to future diseases or climate shifts.</p>
+            </div>
 
             <div class="formative-check">
                 <h4 class="font-bold text-orange-800 mb-3"><i data-lucide="check-circle-2" class="inline w-5 h-5 mr-1"></i> Formative Check</h4>
@@ -471,6 +533,7 @@
                     <li>2. Explain the difference between Incomplete Dominance and Codominance.</li>
                     <li>3. Why are males more likely than females to express a sex-linked recessive trait like colorblindness?</li>
                     <li>4. How does "Crossing-Over" during meiosis contribute to the survival of a species?</li>
+                    <li>5. Explain how the Bottleneck Effect impacts the genetic diversity of a population.</li>
                 </ul>
             </div>
         </section>
