@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classical Genetics Digital Lab</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Screen Styles for specific genetic visuals */
+        .pea-purple { background-color: #9333ea; border: 3px solid #6b21a8; }
+        .pea-white { background-color: #ffffff; border: 3px solid #d1d5db; }
+        
+        .flower-red { background-color: #ef4444; border: 3px solid #b91c1c; }
+        .flower-white { background-color: #ffffff; border: 3px solid #d1d5db; }
+        .flower-pink { background-color: #f472b6; border: 3px solid #be185d; }
+
+        .chicken-black { background-color: #1f2937; border: 3px solid #000000; }
+        .chicken-white { background-color: #ffffff; border: 3px solid #9ca3af; }
+        .chicken-speckled { 
+            background-color: #ffffff; 
+            border: 3px solid #4b5563;
+            background-image: radial-gradient(#1f2937 20%, transparent 20%), radial-gradient(#1f2937 20%, transparent 20%);
+            background-size: 16px 16px;
+            background-position: 0 0, 8px 8px;
+        }
+
+        /* Print Styles - Crucial for the Lab Report Feature */
+        @media screen {
+            #printable-report { display: none !important; }
+        }
+        
+        @media print {
+            body { 
+                background-color: white !important; 
+                color: black !important;
+                font-family: 'Times New Roman', Times, serif !important;
+                font-size: 12pt;
+                -webkit-print-color-adjust: exact;
+            }
+            .no-print, #app-navigation, #interactive-container { 
+                display: none !important; 
+            }
+            #printable-report { 
+                display: block !important; 
+                width: 100%;
+            }
+            
+            /* Worksheet Specific Layout */
+            .page-break { page-break-before: always; }
+            .avoid-break { page-break-inside: avoid; }
+            
+            .punnett-table {
+                border-collapse: collapse;
+                margin-top: 10px;
+                margin-bottom: 10px;
+            }
+            .punnett-table td {
+                width: 60px;
+                height: 60px;
+                border: 2px solid black;
+                text-align: center;
+                vertical-align: middle;
+            }
+            .punnett-header-top {
+                width: 60px;
+                height: 40px;
+                border-bottom: 2px solid black;
+                text-align: center;
+                vertical-align: bottom;
+                padding-bottom: 5px;
+            }
+            .punnett-header-side {
+                width: 40px;
+                height: 60px;
+                border-right: 2px solid black;
+                text-align: right;
+                vertical-align: middle;
+                padding-right: 10px;
+            }
+            .blank-line {
+                display: inline-block;
+                border-bottom: 1px solid black;
+                width: 200px;
+                margin-left: 10px;
+            }
+            .long-blank-line {
+                display: block;
+                border-bottom: 1px solid black;
+                width: 100%;
+                margin-top: 30px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 font-sans min-h-screen flex flex-col">
+
+    <!-- SCREEN UI: Header and Navigation -->
+    <header class="bg-blue-900 text-white shadow-md no-print relative z-10">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-bold">Genetics Virtual Lab</h1>
+                <p class="text-blue-200 text-sm">Interactive Inheritance Models</p>
+            </div>
+            <button onclick="window.print()" class="bg-amber-500 hover:bg-amber-400 text-amber-950 font-bold py-2 px-4 rounded shadow transition-colors flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M5 4v3H4a2 2 0 00-2 2v3a2 2 0 002 2h1v2a2 2 0 002 2h6a2 2 0 002-2v-2h1a2 2 0 002-2V9a2 2 0 00-2-2h-1V4a2 2 0 00-2-2H7a2 2 0 00-2 2zm8 0H7v3h6V4zm0 8H7v4h6v-4z" clip-rule="evenodd" />
+                </svg>
+                Print Lab Report
+            </button>
+        </div>
+        <nav id="app-navigation" class="flex overflow-x-auto bg-blue-800 px-4 max-w-6xl mx-auto rounded-t-lg mt-4">
+            <button onclick="switchTab('simple')" id="tab-simple" class="px-4 py-3 font-semibold text-white border-b-4 border-amber-500 transition-colors">Simple Dominance</button>
+            <button onclick="switchTab('incomplete')" id="tab-incomplete" class="px-4 py-3 font-semibold text-blue-300 border-b-4 border-transparent hover:text-white transition-colors">Incomplete Dominance</button>
+            <button onclick="switchTab('codominance')" id="tab-codominance" class="px-4 py-3 font-semibold text-blue-300 border-b-4 border-transparent hover:text-white transition-colors">Co-dominance</button>
+            <button onclick="switchTab('sexlinked')" id="tab-sexlinked" class="px-4 py-3 font-semibold text-blue-300 border-b-4 border-transparent hover:text-white transition-colors">Sex-Linked</button>
+        </nav>
+    </header>
+
+    <!-- SCREEN UI: Main Interactive Area -->
+    <main id="interactive-container" class="flex-grow max-w-6xl mx-auto w-full p-4 md:p-6 no-print">
+        
+        <div class="bg-white rounded-b-lg rounded-tr-lg shadow-lg p-6 mb-8">
+            <div class="mb-6 bg-blue-50 border-l-4 border-blue-500 p-4 rounded text-blue-900 text-sm">
+                <strong>Instructions:</strong> Use this digital lab to simulate genetic crosses. Print your Lab Report first (or keep it open as a PDF), then step through each module, observe the phenotypes and genotypes, and fill in the data and Punnett squares on your worksheet.
+            </div>
+
+            <!-- TAB 1: Simple Dominance (Peas) -->
+            <div id="content-simple" class="tab-content block">
+                <h2 class="text-2xl font-bold mb-2">Simple Dominance (Mendel's Pea Flowers)</h2>
+                <p class="mb-6 text-gray-600">In simple dominance, one allele completely masks the expression of the recessive allele. We will cross a homozygous dominant Purple pea flower (PP) with a homozygous recessive White pea flower (pp).</p>
+                
+                <!-- P Generation -->
+                <div class="flex flex-col items-center mb-8">
+                    <h3 class="font-bold text-lg mb-4 text-gray-500 uppercase tracking-wide">Parent (P) Generation</h3>
+                    <div class="flex items-center justify-center gap-12">
+                        <div class="text-center">
+                            <div class="w-20 h-20 rounded-full pea-purple mx-auto mb-2 shadow-inner"></div>
+                            <div class="font-bold">Purple Flower</div>
+                            <div class="text-sm font-mono bg-gray-100 px-2 rounded mt-1 inline-block">Genotype: PP</div>
+                        </div>
+                        <div class="text-2xl font-bold text-gray-400">X</div>
+                        <div class="text-center">
+                            <div class="w-20 h-20 rounded-full pea-white mx-auto mb-2 shadow-inner"></div>
+                            <div class="font-bold">White Flower</div>
+                            <div class="text-sm font-mono bg-gray-100 px-2 rounded mt-1 inline-block">Genotype: pp</div>
+                        </div>
+                    </div>
+                    <button onclick="startCross('simple-f1', { p1Name: 'Purple Flower', t1: 'P', t2: 'P', p2Name: 'White Flower', s1: 'p', s2: 'p', boxes: ['Pp', 'Pp', 'Pp', 'Pp'], targetGenId: 'simple-f1' })" id="btn-simple-f1" class="mt-6 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-full shadow transition-transform transform hover:scale-105">Set up Punnett Square (F1)</button>
+                    <div id="ps-container-simple-f1" class="w-full mt-6" style="display: none;"></div>
+                </div>
+
+                <!-- F1 Generation -->
+                <div id="simple-f1" class="hidden flex-col items-center mb-8 pt-8 border-t border-gray-200">
+                    <h3 class="font-bold text-lg mb-4 text-indigo-600 uppercase tracking-wide">F1 Generation (Offspring)</h3>
+                    <div class="flex justify-center gap-6 mb-6 flex-wrap">
+                        <!-- 4 offspring -->
+                        <div class="text-center"><div class="w-16 h-16 rounded-full pea-purple mx-auto mb-1 shadow-inner"></div><div class="text-xs font-mono bg-indigo-50 px-1 rounded">Pp</div></div>
+                        <div class="text-center"><div class="w-16 h-16 rounded-full pea-purple mx-auto mb-1 shadow-inner"></div><div class="text-xs font-mono bg-indigo-50 px-1 rounded">Pp</div></div>
+                        <div class="text-center"><div class="w-16 h-16 rounded-full pea-purple mx-auto mb-1 shadow-inner"></div><div class="text-xs font-mono bg-indigo-50 px-1 rounded">Pp</div></div>
+                        <div class="text-center"><div class="w-16 h-16 rounded-full pea-purple mx-auto mb-1 shadow-inner"></div><div class="text-xs font-mono bg-indigo-50 px-1 rounded">Pp</div></div>
+                    </div>
+                    <p class="text-center italic text-gray-600 max-w-md mx-auto mb-6">Notice that 100% of the F1 generation displays the dominant Purple phenotype, even though they carry the recessive white allele.</p>
+                    <button onclick="startCross('simple-f2', { p1Name: 'Purple F1', t1: 'P', t2: 'p', p2Name: 'Purple F1', s1: 'P', s2: 'p', boxes: ['PP', 'Pp', 'Pp', 'pp'], targetGenId: 'simple-f2' })" id="btn-simple-f2" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-full shadow transition-transform transform hover:scale-105">Set up Punnett Square (F2)</button>
+                    <div id="ps-container-simple-f2" class="w-full mt-6" style="display: none;"></div>
+                </div>
+
+                <!-- F2 Generation -->
+                <div id="simple-f2" class="hidden flex-col items-center pt-8 border-t border-gray-200 bg-slate-50 rounded-lg p-6">
+                    <h3 class="font-bold text-lg mb-4 text-indigo-800 uppercase tracking-wide">F2 Generation</h3>
+                    <div class="flex justify-center gap-6 mb-4 flex-wrap">
+                        <div class="text-center"><div class="w-16 h-16 rounded-full pea-purple mx-auto mb-1 shadow-inner"></div><div class="text-xs font-mono bg-white border border-gray-200 px-1 rounded">PP</div></div>
+                        <div class="text-center"><div class="w-16 h-16 rounded-full pea-purple mx-auto mb-1 shadow-inner"></div><div class="text-xs font-mono bg-white border border-gray-200 px-1 rounded">Pp</div></div>
+                        <div class="text-center"><div class="w-16 h-16 rounded-full pea-purple mx-auto mb-1 shadow-inner"></div><div class="text-xs font-mono bg-white border border-gray-200 px-1 rounded">Pp</div></div>
+                        <div class="text-center"><div class="w-16 h-16 rounded-full pea-white mx-auto mb-1 shadow-inner"></div><div class="text-xs font-mono bg-white border border-gray-200 px-1 rounded">pp</div></div>
+                    </div>
+                    <button onclick="resetLab('simple')" class="mt-4 text-sm text-gray-500 underline hover:text-gray-800">Reset Lab Section</button>
+                </div>
+            </div>
+
+            <!-- TAB 2: Incomplete Dominance (Flowers) -->
+            <div id="content-incomplete" class="tab-content hidden">
+                <h2 class="text-2xl font-bold mb-2">Incomplete Dominance (Snapdragon Flowers)</h2>
+                <p class="mb-6 text-gray-600">In incomplete dominance, neither allele is completely dominant. The heterozygous phenotype is a <em>blend</em> of the two homozygous phenotypes. We will cross a Red flower (RR) with a White flower (WW).</p>
+                
+                <!-- P Generation -->
+                <div class="flex flex-col items-center mb-8">
+                    <h3 class="font-bold text-lg mb-4 text-gray-500 uppercase tracking-wide">Parent (P) Generation</h3>
+                    <div class="flex items-center justify-center gap-12">
+                        <div class="text-center">
+                            <div class="w-20 h-20 rounded-full flower-red mx-auto mb-2 shadow-inner"></div>
+                            <div class="font-bold">Red Flower</div>
+                            <div class="text-sm font-mono bg-gray-100 px-2 rounded mt-1 inline-block">Genotype: RR</div>
+                        </div>
+                        <div class="text-2xl font-bold text-gray-400">X</div>
+                        <div class="text-center">
+                            <div class="w-20 h-20 rounded-full flower-white mx-auto mb-2 shadow-inner"></div>
+                            <div class="font-bold">White Flower</div>
+                            <div class="text-sm font-mono bg-gray-100 px-2 rounded mt-1 inline-block">Genotype: WW</div>
+                        </div>
+                    </div>
+                    <button onclick="startCross('incomplete-f1', { p1Name: 'Red Flower', t1: 'R', t2: 'R', p2Name: 'White Flower', s1: 'W', s2: 'W', boxes: ['RW', 'RW', 'RW', 'RW'], targetGenId: 'incomplete-f1' })" id="btn-incomplete-f1" class="mt-6 bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-6 rounded-full shadow transition-transform transform hover:scale-105">Set up Punnett Square (F1)</button>
+                    <div id="ps-container-incomplete-f1" class="w-full mt-6" style="display: none;"></div>
+                </div>
+
+                <!-- F1 Generation -->
+                <div id="incomplete-f1" class="hidden flex-col items-center mb-8 pt-8 border-t border-gray-200">
+                    <h3 class="font-bold text-lg mb-4 text-pink-600 uppercase tracking-wide">F1 Generation (Offspring)</h3>
+                    <div class="flex justify-center gap-6 mb-6 flex-wrap">
+                        <div class="text-center"><div class="w-16 h-16 rounded-full flower-pink mx-auto mb-1 shadow-inner"></div><div class="text-xs font-mono bg-pink-50 px-1 rounded">RW</div></div>
+                        <div class="text-center"><div class="w-16 h-16 rounded-full flower-pink mx-auto mb-1 shadow-inner"></div><div class="text-xs font-mono bg-pink-50 px-1 rounded">RW</div></div>
+                        <div class="text-center"><div class="w-16 h-16 rounded-full flower-pink mx-auto mb-1 shadow-inner"></div><div class="text-xs font-mono bg-pink-50 px-1 rounded">RW</div></div>
+                        <div class="text-center"><div class="w-16 h-16 rounded-full flower-pink mx-auto mb-1 shadow-inner"></div><div class="text-xs font-mono bg-pink-50 px-1 rounded">RW</div></div>
+                    </div>
+                    <p class="text-center italic text-gray-600 max-w-md mx-auto mb-6">100% of the F1 generation has a new, blended phenotype: Pink.</p>
+                    <button onclick="startCross('incomplete-f2', { p1Name: 'Pink F1', t1: 'R', t2: 'W', p2Name: 'Pink F1', s1: 'R', s2: 'W', boxes: ['RR', 'RW', 'RW', 'WW'], targetGenId: 'incomplete-f2' })" id="btn-incomplete-f2" class="bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-6 rounded-full shadow transition-transform transform hover:scale-105">Set up Punnett Square (F2)</button>
+                    <div id="ps-container-incomplete-f2" class="w-full mt-6" style="display: none;"></div>
+                </div>
+
+                <!-- F2 Generation -->
+                <div id="incomplete-f2" class="hidden flex-col items-center pt-8 border-t border-gray-200 bg-slate-50 rounded-lg p-6">
+                    <h3 class="font-bold text-lg mb-4 text-pink-800 uppercase tracking-wide">F2 Generation</h3>
+                    <div class="flex justify-center gap-6 mb-4 flex-wrap">
+                        <div class="text-center"><div class="w-16 h-16 rounded-full flower-red mx-auto mb-1 shadow-inner"></div><div class="text-xs font-mono bg-white border border-gray-200 px-1 rounded">RR</div></div>
+                        <div class="text-center"><div class="w-16 h-16 rounded-full flower-pink mx-auto mb-1 shadow-inner"></div><div class="text-xs font-mono bg-white border border-gray-200 px-1 rounded">RW</div></div>
+                        <div class="text-center"><div class="w-16 h-16 rounded-full flower-pink mx-auto mb-1 shadow-inner"></div><div class="text-xs font-mono bg-white border border-gray-200 px-1 rounded">RW</div></div>
+                        <div class="text-center"><div class="w-16 h-16 rounded-full flower-white mx-auto mb-1 shadow-inner"></div><div class="text-xs font-mono bg-white border border-gray-200 px-1 rounded">WW</div></div>
+                    </div>
+                    <button onclick="resetLab('incomplete')" class="mt-4 text-sm text-gray-500 underline hover:text-gray-800">Reset Lab Section</button>
+                </div>
+            </div>
+
+            <!-- TAB 3: Co-dominance (Chickens) -->
+            <div id="content-codominance" class="tab-content hidden">
+                <h2 class="text-2xl font-bold mb-2">Co-dominance (Erminette Chickens)</h2>
+                <p class="mb-6 text-gray-600">In co-dominance, both alleles are expressed equally and distinctly in the heterozygote. They do not blend. We will cross a Black chicken (BB) with a White chicken (WW).</p>
+                
+                <!-- P Generation -->
+                <div class="flex flex-col items-center mb-8">
+                    <h3 class="font-bold text-lg mb-4 text-gray-500 uppercase tracking-wide">Parent (P) Generation</h3>
+                    <div class="flex items-center justify-center gap-12">
+                        <div class="text-center">
+                            <div class="w-20 h-20 rounded-full chicken-black mx-auto mb-2 shadow-inner flex items-center justify-center text-3xl">🐔</div>
+                            <div class="font-bold">Black</div>
+                            <div class="text-sm font-mono bg-gray-100 px-2 rounded mt-1 inline-block">Genotype: BB</div>
+                        </div>
+                        <div class="text-2xl font-bold text-gray-400">X</div>
+                        <div class="text-center">
+                            <div class="w-20 h-20 rounded-full chicken-white mx-auto mb-2 shadow-inner flex items-center justify-center text-3xl">🐔</div>
+                            <div class="font-bold">White</div>
+                            <div class="text-sm font-mono bg-gray-100 px-2 rounded mt-1 inline-block">Genotype: WW</div>
+                        </div>
+                    </div>
+                    <button onclick="startCross('codominance-f1', { p1Name: 'Black Chicken', t1: 'B', t2: 'B', p2Name: 'White Chicken', s1: 'W', s2: 'W', boxes: ['BW', 'BW', 'BW', 'BW'], targetGenId: 'codominance-f1' })" id="btn-codominance-f1" class="mt-6 bg-slate-800 hover:bg-slate-900 text-white font-bold py-2 px-6 rounded-full shadow transition-transform transform hover:scale-105">Set up Punnett Square (F1)</button>
+                    <div id="ps-container-codominance-f1" class="w-full mt-6" style="display: none;"></div>
+                </div>
+
+                <!-- F1 Generation -->
+                <div id="codominance-f1" class="hidden flex-col items-center mb-8 pt-8 border-t border-gray-200">
+                    <h3 class="font-bold text-lg mb-4 text-slate-700 uppercase tracking-wide">F1 Generation (Offspring)</h3>
+                    <div class="flex justify-center gap-6 mb-6 flex-wrap">
+                        <div class="text-center"><div class="w-16 h-16 rounded-full chicken-speckled mx-auto mb-1 shadow-inner flex items-center justify-center text-2xl">🐔</div><div class="text-xs font-mono bg-slate-100 px-1 rounded">BW</div></div>
+                        <div class="text-center"><div class="w-16 h-16 rounded-full chicken-speckled mx-auto mb-1 shadow-inner flex items-center justify-center text-2xl">🐔</div><div class="text-xs font-mono bg-slate-100 px-1 rounded">BW</div></div>
+                        <div class="text-center"><div class="w-16 h-16 rounded-full chicken-speckled mx-auto mb-1 shadow-inner flex items-center justify-center text-2xl">🐔</div><div class="text-xs font-mono bg-slate-100 px-1 rounded">BW</div></div>
+                        <div class="text-center"><div class="w-16 h-16 rounded-full chicken-speckled mx-auto mb-1 shadow-inner flex items-center justify-center text-2xl">🐔</div><div class="text-xs font-mono bg-slate-100 px-1 rounded">BW</div></div>
+                    </div>
+                    <p class="text-center italic text-gray-600 max-w-md mx-auto mb-6">100% of the F1 generation are "Speckled" (Erminette) having both black and white feathers visible.</p>
+                    <button onclick="startCross('codominance-f2', { p1Name: 'Speckled F1', t1: 'B', t2: 'W', p2Name: 'Speckled F1', s1: 'B', s2: 'W', boxes: ['BB', 'BW', 'BW', 'WW'], targetGenId: 'codominance-f2' })" id="btn-codominance-f2" class="bg-slate-800 hover:bg-slate-900 text-white font-bold py-2 px-6 rounded-full shadow transition-transform transform hover:scale-105">Set up Punnett Square (F2)</button>
+                    <div id="ps-container-codominance-f2" class="w-full mt-6" style="display: none;"></div>
+                </div>
+
+                <!-- F2 Generation -->
+                <div id="codominance-f2" class="hidden flex-col items-center pt-8 border-t border-gray-200 bg-slate-50 rounded-lg p-6">
+                    <h3 class="font-bold text-lg mb-4 text-slate-900 uppercase tracking-wide">F2 Generation</h3>
+                    <div class="flex justify-center gap-6 mb-4 flex-wrap">
+                        <div class="text-center"><div class="w-16 h-16 rounded-full chicken-black mx-auto mb-1 shadow-inner flex items-center justify-center text-2xl">🐔</div><div class="text-xs font-mono bg-white border border-gray-200 px-1 rounded">BB</div></div>
+                        <div class="text-center"><div class="w-16 h-16 rounded-full chicken-speckled mx-auto mb-1 shadow-inner flex items-center justify-center text-2xl">🐔</div><div class="text-xs font-mono bg-white border border-gray-200 px-1 rounded">BW</div></div>
+                        <div class="text-center"><div class="w-16 h-16 rounded-full chicken-speckled mx-auto mb-1 shadow-inner flex items-center justify-center text-2xl">🐔</div><div class="text-xs font-mono bg-white border border-gray-200 px-1 rounded">BW</div></div>
+                        <div class="text-center"><div class="w-16 h-16 rounded-full chicken-white mx-auto mb-1 shadow-inner flex items-center justify-center text-2xl">🐔</div><div class="text-xs font-mono bg-white border border-gray-200 px-1 rounded">WW</div></div>
+                    </div>
+                    <button onclick="resetLab('codominance')" class="mt-4 text-sm text-gray-500 underline hover:text-gray-800">Reset Lab Section</button>
+                </div>
+            </div>
+
+            <!-- TAB 4: Sex-Linked (Fruit Flies) -->
+            <div id="content-sexlinked" class="tab-content hidden">
+                <h2 class="text-2xl font-bold mb-2">Sex-Linked Traits (Drosophila/Fruit Flies)</h2>
+                <p class="mb-6 text-gray-600">These traits are carried on the X chromosome. Y chromosomes do not carry these genes. Red eyes (R) are dominant to White eyes (r). We will cross a Red-eyed Female (XᴿXᴿ) with a White-eyed Male (XʳY).</p>
+                
+                <!-- P Generation -->
+                <div class="flex flex-col items-center mb-8">
+                    <h3 class="font-bold text-lg mb-4 text-gray-500 uppercase tracking-wide">Parent (P) Generation</h3>
+                    <div class="flex items-center justify-center gap-12">
+                        <div class="text-center flex flex-col items-center">
+                            <div class="text-4xl mb-2 relative">
+                                🪰<span class="absolute top-0 right-0 text-sm bg-red-500 w-3 h-3 rounded-full border border-white"></span>
+                            </div>
+                            <div class="font-bold text-pink-600">Female (Red Eyes)</div>
+                            <div class="text-sm font-mono bg-gray-100 px-2 rounded mt-1 inline-block">Xᴿ Xᴿ</div>
+                        </div>
+                        <div class="text-2xl font-bold text-gray-400">X</div>
+                        <div class="text-center flex flex-col items-center">
+                            <div class="text-4xl mb-2 relative">
+                                🪰<span class="absolute top-0 right-0 text-sm bg-white w-3 h-3 rounded-full border border-gray-400"></span>
+                            </div>
+                            <div class="font-bold text-blue-600">Male (White Eyes)</div>
+                            <div class="text-sm font-mono bg-gray-100 px-2 rounded mt-1 inline-block">Xʳ Y</div>
+                        </div>
+                    </div>
+                    <button onclick="startCross('sexlinked-f1', { p1Name: 'Red Female', t1: 'Xᴿ', t2: 'Xᴿ', p2Name: 'White Male', s1: 'Xʳ', s2: 'Y', boxes: ['XᴿXʳ', 'XᴿY', 'XᴿXʳ', 'XᴿY'], targetGenId: 'sexlinked-f1' })" id="btn-sexlinked-f1" class="mt-6 bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-6 rounded-full shadow transition-transform transform hover:scale-105">Set up Punnett Square (F1)</button>
+                    <div id="ps-container-sexlinked-f1" class="w-full mt-6" style="display: none;"></div>
+                </div>
+
+                <!-- F1 Generation -->
+                <div id="sexlinked-f1" class="hidden flex-col items-center mb-8 pt-8 border-t border-gray-200">
+                    <h3 class="font-bold text-lg mb-4 text-teal-700 uppercase tracking-wide">F1 Generation (Offspring)</h3>
+                    <div class="flex justify-center gap-6 mb-6 flex-wrap">
+                        <div class="text-center">
+                            <div class="text-3xl mb-1 relative mx-auto w-10">🪰<span class="absolute top-0 right-0 bg-red-500 w-2 h-2 rounded-full border border-white"></span></div>
+                            <div class="text-xs font-mono bg-teal-50 px-1 rounded mb-1">Xᴿ Xʳ</div>
+                            <div class="text-xs text-pink-600">Female (Red)</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl mb-1 relative mx-auto w-10">🪰<span class="absolute top-0 right-0 bg-red-500 w-2 h-2 rounded-full border border-white"></span></div>
+                            <div class="text-xs font-mono bg-teal-50 px-1 rounded mb-1">Xᴿ Xʳ</div>
+                            <div class="text-xs text-pink-600">Female (Red)</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl mb-1 relative mx-auto w-10">🪰<span class="absolute top-0 right-0 bg-red-500 w-2 h-2 rounded-full border border-white"></span></div>
+                            <div class="text-xs font-mono bg-teal-50 px-1 rounded mb-1">Xᴿ Y</div>
+                            <div class="text-xs text-blue-600">Male (Red)</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl mb-1 relative mx-auto w-10">🪰<span class="absolute top-0 right-0 bg-red-500 w-2 h-2 rounded-full border border-white"></span></div>
+                            <div class="text-xs font-mono bg-teal-50 px-1 rounded mb-1">Xᴿ Y</div>
+                            <div class="text-xs text-blue-600">Male (Red)</div>
+                        </div>
+                    </div>
+                    <p class="text-center italic text-gray-600 max-w-md mx-auto mb-6">Males inherit their single X chromosome exclusively from their mother. Since the mother was XᴿXᴿ, all sons have red eyes. All daughters are heterozygous carriers.</p>
+                    <button onclick="startCross('sexlinked-f2', { p1Name: 'F1 Female', t1: 'Xᴿ', t2: 'Xʳ', p2Name: 'F1 Male', s1: 'Xᴿ', s2: 'Y', boxes: ['XᴿXᴿ', 'XᴿY', 'XᴿXʳ', 'XʳY'], targetGenId: 'sexlinked-f2' })" id="btn-sexlinked-f2" class="bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-6 rounded-full shadow transition-transform transform hover:scale-105">Set up Punnett Square (F2)</button>
+                    <div id="ps-container-sexlinked-f2" class="w-full mt-6" style="display: none;"></div>
+                </div>
+
+                <!-- F2 Generation -->
+                <div id="sexlinked-f2" class="hidden flex-col items-center pt-8 border-t border-gray-200 bg-slate-50 rounded-lg p-6">
+                    <h3 class="font-bold text-lg mb-4 text-teal-900 uppercase tracking-wide">F2 Generation</h3>
+                    <div class="flex justify-center gap-6 mb-4 flex-wrap">
+                        <div class="text-center">
+                            <div class="text-3xl mb-1 relative mx-auto w-10">🪰<span class="absolute top-0 right-0 bg-red-500 w-2 h-2 rounded-full border border-white"></span></div>
+                            <div class="text-xs font-mono bg-white border border-gray-200 px-1 rounded mb-1">Xᴿ Xᴿ</div>
+                            <div class="text-xs text-pink-600">Female (Red)</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl mb-1 relative mx-auto w-10">🪰<span class="absolute top-0 right-0 bg-red-500 w-2 h-2 rounded-full border border-white"></span></div>
+                            <div class="text-xs font-mono bg-white border border-gray-200 px-1 rounded mb-1">Xᴿ Xʳ</div>
+                            <div class="text-xs text-pink-600">Female (Red)</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl mb-1 relative mx-auto w-10">🪰<span class="absolute top-0 right-0 bg-red-500 w-2 h-2 rounded-full border border-white"></span></div>
+                            <div class="text-xs font-mono bg-white border border-gray-200 px-1 rounded mb-1">Xᴿ Y</div>
+                            <div class="text-xs text-blue-600">Male (Red)</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl mb-1 relative mx-auto w-10">🪰<span class="absolute top-0 right-0 bg-white w-2 h-2 rounded-full border border-gray-400"></span></div>
+                            <div class="text-xs font-mono bg-white border border-gray-200 px-1 rounded mb-1">Xʳ Y</div>
+                            <div class="text-xs text-blue-600">Male (White)</div>
+                        </div>
+                    </div>
+                    <button onclick="resetLab('sexlinked')" class="mt-4 text-sm text-gray-500 underline hover:text-gray-800">Reset Lab Section</button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- PRINTABLE LAB REPORT (Hidden on Screen, Shown on Print) -->
+    <div id="printable-report" class="print-only">
+        
+        <!-- Header -->
+        <div style="border-bottom: 2px solid black; padding-bottom: 10px; margin-bottom: 20px;">
+            <h1 style="margin: 0; font-size: 24pt;">Classical Genetics Lab Report</h1>
+            <div style="margin-top: 15px;">
+                <p style="margin: 5px 0;">Name: <span class="blank-line" style="width: 300px;"></span></p>
+                <p style="margin: 5px 0;">Date: <span class="blank-line" style="width: 150px;"></span> Class/Block: <span class="blank-line" style="width: 100px;"></span></p>
+            </div>
+        </div>
+
+        <!-- Section 1: Simple Dominance -->
+        <div class="avoid-break" style="margin-bottom: 40px;">
+            <h2>Part 1: Simple Dominance (Pea Plants)</h2>
+            <p><em>P Generation: Homozygous Purple (PP) x Homozygous White (pp)</em></p>
+            
+            <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+                <!-- F1 Area -->
+                <div style="width: 45%;">
+                    <h3>1. F1 Generation Cross (P x P)</h3>
+                    <p>Draw the Punnett Square crossing the P generation:</p>
+                    <table class="punnett-table" style="margin-left: 40px;">
+                        <tr>
+                            <td style="border: none; width: 40px;"></td>
+                            <td class="punnett-header-top"></td>
+                            <td class="punnett-header-top"></td>
+                        </tr>
+                        <tr>
+                            <td class="punnett-header-side"></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td class="punnett-header-side"></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </table>
+                    <p style="margin-top: 15px;"><strong>F1 Results:</strong></p>
+                    <p>Genotype(s) & Ratios: <span class="blank-line"></span></p>
+                    <p>Phenotype(s) & Ratios: <span class="blank-line"></span></p>
+                </div>
+                
+                <!-- F2 Area -->
+                <div style="width: 45%;">
+                    <h3>2. F2 Generation Cross (F1 x F1)</h3>
+                    <p>Draw the Punnett Square crossing two F1 plants:</p>
+                    <table class="punnett-table" style="margin-left: 40px;">
+                        <tr>
+                            <td style="border: none; width: 40px;"></td>
+                            <td class="punnett-header-top"></td>
+                            <td class="punnett-header-top"></td>
+                        </tr>
+                        <tr>
+                            <td class="punnett-header-side"></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td class="punnett-header-side"></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </table>
+                    <p style="margin-top: 15px;"><strong>F2 Results:</strong></p>
+                    <p>Genotype Ratios: <span class="blank-line"></span></p>
+                    <p>Phenotype Ratios: <span class="blank-line"></span></p>
+                </div>
+            </div>
+            
+            <h4>Application Questions:</h4>
+            <p>1. Explain why the F1 generation only displays the purple phenotype despite inheriting a white allele.</p>
+            <span class="long-blank-line"></span>
+            <span class="long-blank-line"></span>
+            <p style="margin-top:20px;">2. If you crossed an F2 purple plant with a white plant, and some offspring were white, what was the genotype of the F2 purple parent?</p>
+            <span class="long-blank-line"></span>
+            <span class="long-blank-line"></span>
+        </div>
+
+        <div class="page-break"></div>
+
+        <!-- Section 2: Incomplete Dominance -->
+        <div class="avoid-break" style="margin-bottom: 40px;">
+            <h2>Part 2: Incomplete Dominance (Snapdragon Flowers)</h2>
+            <p><em>P Generation: Homozygous Red (RR) x Homozygous White (WW)</em></p>
+            
+            <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+                <div style="width: 45%;">
+                    <h3>1. F1 Generation Cross</h3>
+                    <table class="punnett-table" style="margin-left: 40px;">
+                        <tr><td style="border: none; width: 40px;"></td><td class="punnett-header-top"></td><td class="punnett-header-top"></td></tr>
+                        <tr><td class="punnett-header-side"></td><td></td><td></td></tr>
+                        <tr><td class="punnett-header-side"></td><td></td><td></td></tr>
+                    </table>
+                    <p style="margin-top: 15px;"><strong>F1 Results:</strong></p>
+                    <p>Genotype(s) & Ratios: <span class="blank-line"></span></p>
+                    <p>Phenotype(s) & Ratios: <span class="blank-line"></span></p>
+                </div>
+                <div style="width: 45%;">
+                    <h3>2. F2 Generation Cross (F1 x F1)</h3>
+                    <table class="punnett-table" style="margin-left: 40px;">
+                        <tr><td style="border: none; width: 40px;"></td><td class="punnett-header-top"></td><td class="punnett-header-top"></td></tr>
+                        <tr><td class="punnett-header-side"></td><td></td><td></td></tr>
+                        <tr><td class="punnett-header-side"></td><td></td><td></td></tr>
+                    </table>
+                    <p style="margin-top: 15px;"><strong>F2 Results:</strong></p>
+                    <p>Genotype Ratios: <span class="blank-line"></span></p>
+                    <p>Phenotype Ratios: <span class="blank-line"></span></p>
+                </div>
+            </div>
+            
+            <h4>Application Questions:</h4>
+            <p>1. How does incomplete dominance differ from simple dominance based on your F1 data?</p>
+            <span class="long-blank-line"></span>
+            <span class="long-blank-line"></span>
+            <p style="margin-top:20px;">2. Is it genetically possible to establish a "true-breeding" population of pink snapdragons? Explain why or why not.</p>
+            <span class="long-blank-line"></span>
+            <span class="long-blank-line"></span>
+        </div>
+
+        <div style="margin-top: 40px; border-top: 2px dashed #ccc; padding-top: 20px;" class="avoid-break">
+            <!-- Section 3: Co-dominance -->
+            <h2>Part 3: Co-dominance (Erminette Chickens)</h2>
+            <p><em>P Generation: Homozygous Black (BB) x Homozygous White (WW)</em></p>
+            
+            <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+                <div style="width: 45%;">
+                    <h3>1. F1 Generation Cross</h3>
+                    <table class="punnett-table" style="margin-left: 40px;">
+                        <tr><td style="border: none; width: 40px;"></td><td class="punnett-header-top"></td><td class="punnett-header-top"></td></tr>
+                        <tr><td class="punnett-header-side"></td><td></td><td></td></tr>
+                        <tr><td class="punnett-header-side"></td><td></td><td></td></tr>
+                    </table>
+                </div>
+                <div style="width: 45%;">
+                    <h3>2. F2 Generation Cross (F1 x F1)</h3>
+                    <table class="punnett-table" style="margin-left: 40px;">
+                        <tr><td style="border: none; width: 40px;"></td><td class="punnett-header-top"></td><td class="punnett-header-top"></td></tr>
+                        <tr><td class="punnett-header-side"></td><td></td><td></td></tr>
+                        <tr><td class="punnett-header-side"></td><td></td><td></td></tr>
+                    </table>
+                </div>
+            </div>
+
+            <p style="margin-top: 15px;"><strong>F2 Genotype Ratio:</strong> <span class="blank-line"></span> &nbsp;&nbsp;&nbsp; <strong>F2 Phenotype Ratio:</strong> <span class="blank-line"></span></p>
+            
+            <h4>Application Question:</h4>
+            <p>1. If a farmer wants to maximize the number of speckled (Erminette) offspring, which two genotypes should they cross? Use your data to justify.</p>
+            <span class="long-blank-line"></span>
+            <span class="long-blank-line"></span>
+        </div>
+
+        <div class="page-break"></div>
+
+        <!-- Section 4: Sex-Linked -->
+        <div class="avoid-break" style="margin-bottom: 40px;">
+            <h2>Part 4: Sex-Linked Traits (Fruit Flies)</h2>
+            <p><em>P Generation: Red-eyed Female (XᴿXᴿ) x White-eyed Male (XʳY)</em></p>
+            
+            <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+                <div style="width: 45%;">
+                    <h3>1. F1 Generation Cross</h3>
+                    <table class="punnett-table" style="margin-left: 40px;">
+                        <tr><td style="border: none; width: 40px;"></td><td class="punnett-header-top"></td><td class="punnett-header-top"></td></tr>
+                        <tr><td class="punnett-header-side"></td><td></td><td></td></tr>
+                        <tr><td class="punnett-header-side"></td><td></td><td></td></tr>
+                    </table>
+                    <p style="margin-top: 15px;"><strong>F1 Results:</strong></p>
+                    <p>Female Phenotypes: <span class="blank-line"></span></p>
+                    <p>Male Phenotypes: <span class="blank-line"></span></p>
+                </div>
+                <div style="width: 45%;">
+                    <h3>2. F2 Generation Cross (F1 x F1)</h3>
+                    <table class="punnett-table" style="margin-left: 40px;">
+                        <tr><td style="border: none; width: 40px;"></td><td class="punnett-header-top"></td><td class="punnett-header-top"></td></tr>
+                        <tr><td class="punnett-header-side"></td><td></td><td></td></tr>
+                        <tr><td class="punnett-header-side"></td><td></td><td></td></tr>
+                    </table>
+                    <p style="margin-top: 15px;"><strong>F2 Results:</strong></p>
+                    <p>Female Phenotypes: <span class="blank-line"></span></p>
+                    <p>Male Phenotypes: <span class="blank-line"></span></p>
+                </div>
+            </div>
+            
+            <h4>Application Questions:</h4>
+            <p>1. Why are white eyes more commonly found in male fruit flies than in females?</p>
+            <span class="long-blank-line"></span>
+            <span class="long-blank-line"></span>
+            <p style="margin-top:20px;">2. Can a white-eyed father pass the white-eyed trait to his sons? Explain using chromosome inheritance.</p>
+            <span class="long-blank-line"></span>
+            <span class="long-blank-line"></span>
+        </div>
+
+    </div>
+
+    <!-- JavaScript for Interactive UI -->
+    <script>
+        // Tab switching logic
+        function switchTab(tabId) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(el => {
+                el.classList.add('hidden');
+                el.classList.remove('block');
+            });
+            
+            // Reset all tab styling
+            const tabs = ['simple', 'incomplete', 'codominance', 'sexlinked'];
+            tabs.forEach(t => {
+                const btn = document.getElementById('tab-' + t);
+                btn.classList.remove('border-amber-500', 'text-white');
+                btn.classList.add('border-transparent', 'text-blue-300');
+            });
+            
+            // Show selected tab content
+            const selectedContent = document.getElementById('content-' + tabId);
+            selectedContent.classList.remove('hidden');
+            selectedContent.classList.add('block');
+            
+            // Highlight selected tab button
+            const selectedBtn = document.getElementById('tab-' + tabId);
+            selectedBtn.classList.remove('border-transparent', 'text-blue-300');
+            selectedBtn.classList.add('border-amber-500', 'text-white');
+        }
+
+        // Logic for revealing generations
+        function revealGeneration(genId) {
+            const target = document.getElementById(genId);
+            if(target) {
+                target.classList.remove('hidden');
+                target.classList.add('flex'); // Ensure flex layout is maintained
+                
+                // Hide the button that was just clicked
+                const btnId = 'btn-' + genId;
+                const btn = document.getElementById(btnId);
+                if(btn) btn.style.display = 'none';
+            }
+        }
+
+        // Logic to reset a specific lab section
+        function resetLab(labPrefix) {
+            // Hide F1 and F2
+            const f1 = document.getElementById(labPrefix + '-f1');
+            const f2 = document.getElementById(labPrefix + '-f2');
+            
+            if(f1) {
+                f1.classList.add('hidden');
+                f1.classList.remove('flex');
+            }
+            if(f2) {
+                f2.classList.add('hidden');
+                f2.classList.remove('flex');
+            }
+
+            // Bring buttons back
+            const btnF1 = document.getElementById('btn-' + labPrefix + '-f1');
+            const btnF2 = document.getElementById('btn-' + labPrefix + '-f2');
+            
+            if(btnF1) btnF1.style.display = 'inline-block';
+            if(btnF2) btnF2.style.display = 'inline-block';
+
+            // Clear punnett builders
+            const ps1 = document.getElementById(`ps-container-${labPrefix}-f1`);
+            const ps2 = document.getElementById(`ps-container-${labPrefix}-f2`);
+            if(ps1) { ps1.innerHTML = ''; ps1.style.display = 'none'; }
+            if(ps2) { ps2.innerHTML = ''; ps2.style.display = 'none'; }
+        }
+
+        // New Logic for Interactive Step-by-Step Punnett Squares
+        function startCross(crossId, config) {
+            // Hide the specific "Cross" button
+            document.getElementById(`btn-${crossId}`).style.display = 'none';
+
+            const containerId = `ps-container-${crossId}`;
+            const container = document.getElementById(containerId);
+
+            const html = `
+            <div class="flex flex-col items-center w-full my-6 p-6 bg-white rounded-xl shadow-sm border border-slate-200 no-print">
+                <h3 class="font-bold text-lg mb-4 text-slate-800 uppercase flex items-center gap-2">
+                    <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                    Interactive Punnett Square Setup
+                </h3>
+                
+                <div class="flex flex-col md:flex-row items-center gap-8 md:gap-12">
+                    <!-- Parent 1 (Top) -->
+                    <div class="text-center bg-slate-50 p-4 rounded-lg border border-slate-200 w-36 shadow-sm">
+                        <div class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Top Parent</div>
+                        <div class="text-sm font-semibold mb-2 text-indigo-800">${config.p1Name}</div>
+                        <div class="text-2xl font-mono font-bold text-blue-700 transition-opacity duration-500" id="ps-p1-alleles-${crossId}">${config.t1}${config.t2}</div>
+                    </div>
+
+                    <!-- Punnett Grid -->
+                    <div class="relative bg-white p-6 rounded-xl shadow border border-slate-200">
+                        <table class="border-collapse text-2xl font-mono text-center relative z-10 bg-white">
+                            <tr>
+                                <td class="w-12 h-12"></td>
+                                <td class="w-20 h-12 border-b-4 border-slate-800 text-blue-600 transition-all duration-500 opacity-0 translate-y-4 font-bold" id="ps-top1-${crossId}">${config.t1}</td>
+                                <td class="w-20 h-12 border-b-4 border-slate-800 text-blue-600 transition-all duration-500 opacity-0 translate-y-4 font-bold" id="ps-top2-${crossId}">${config.t2}</td>
+                            </tr>
+                            <tr>
+                                <td class="w-12 h-20 border-r-4 border-slate-800 text-red-600 transition-all duration-500 opacity-0 translate-x-4 font-bold" id="ps-side1-${crossId}">${config.s1}</td>
+                                <td class="w-20 h-20 border-r-2 border-b-2 border-slate-300 bg-slate-50 transition-all duration-500 opacity-0 scale-90" id="ps-box1-${crossId}">
+                                    ${config.boxes[0]}
+                                </td>
+                                <td class="w-20 h-20 border-b-2 border-slate-300 bg-slate-50 transition-all duration-500 opacity-0 scale-90" id="ps-box2-${crossId}">
+                                    ${config.boxes[1]}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="w-12 h-20 border-r-4 border-slate-800 text-red-600 transition-all duration-500 opacity-0 translate-x-4 font-bold" id="ps-side2-${crossId}">${config.s2}</td>
+                                <td class="w-20 h-20 border-r-2 border-slate-300 bg-slate-50 transition-all duration-500 opacity-0 scale-90" id="ps-box3-${crossId}">
+                                    ${config.boxes[2]}
+                                </td>
+                                <td class="w-20 h-20 bg-slate-50 transition-all duration-500 opacity-0 scale-90" id="ps-box4-${crossId}">
+                                    ${config.boxes[3]}
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <!-- Parent 2 (Side) -->
+                    <div class="text-center bg-slate-50 p-4 rounded-lg border border-slate-200 w-36 shadow-sm">
+                        <div class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Side Parent</div>
+                        <div class="text-sm font-semibold mb-2 text-indigo-800">${config.p2Name}</div>
+                        <div class="text-2xl font-mono font-bold text-red-600 transition-opacity duration-500" id="ps-p2-alleles-${crossId}">${config.s1}${config.s2}</div>
+                    </div>
+                </div>
+
+                <div class="mt-8 flex gap-4">
+                    <button id="btn-ps-step1-${crossId}" onclick="psSegregate('${crossId}')" class="bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-6 rounded shadow transition-colors">1. Segregate Alleles (Meiosis)</button>
+                    <button id="btn-ps-step2-${crossId}" onclick="psFill('${crossId}')" class="hidden bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded shadow transition-colors">2. Fertilize (Fill Grid)</button>
+                    <button id="btn-ps-step3-${crossId}" onclick="finishPunnett('${crossId}', '${config.targetGenId}')" class="hidden bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded shadow transition-colors">3. View Full Offspring Results</button>
+                </div>
+                
+                <p id="ps-instruct-${crossId}" class="mt-4 text-sm text-gray-500 italic max-w-lg text-center">Click "Segregate Alleles" to separate the parents' genotypes into individual gametes (sperm or egg cells) along the top and side of the grid.</p>
+            </div>
+            `;
+
+            container.innerHTML = html;
+            container.style.display = 'block';
+        }
+
+        function psSegregate(crossId) {
+            // Fade in top/side alleles
+            const tops = [document.getElementById(`ps-top1-${crossId}`), document.getElementById(`ps-top2-${crossId}`)];
+            const sides = [document.getElementById(`ps-side1-${crossId}`), document.getElementById(`ps-side2-${crossId}`)];
+            
+            tops.forEach(el => { el.classList.remove('opacity-0', 'translate-y-4'); el.classList.add('opacity-100', 'translate-y-0'); });
+            sides.forEach(el => { el.classList.remove('opacity-0', 'translate-x-4'); el.classList.add('opacity-100', 'translate-x-0'); });
+
+            // Dim parents
+            document.getElementById(`ps-p1-alleles-${crossId}`).classList.add('opacity-30', 'line-through');
+            document.getElementById(`ps-p2-alleles-${crossId}`).classList.add('opacity-30', 'line-through');
+
+            // Toggle buttons
+            document.getElementById(`btn-ps-step1-${crossId}`).classList.add('hidden');
+            document.getElementById(`btn-ps-step2-${crossId}`).classList.remove('hidden');
+            
+            document.getElementById(`ps-instruct-${crossId}`).innerText = "Now click 'Fertilize' to bring the top and side alleles together in each box. This represents the possible genetic combinations for the offspring.";
+        }
+
+        function psFill(crossId) {
+            // Fade in boxes with a staggered delay for a nice effect
+            for(let i=1; i<=4; i++) {
+                const box = document.getElementById(`ps-box${i}-${crossId}`);
+                setTimeout(() => {
+                    box.classList.remove('opacity-0', 'scale-90');
+                    box.classList.add('opacity-100', 'scale-100');
+                    box.classList.replace('bg-slate-50', 'bg-blue-50');
+                }, i * 200);
+            }
+
+            // Toggle buttons
+            document.getElementById(`btn-ps-step2-${crossId}`).classList.add('hidden');
+            document.getElementById(`btn-ps-step3-${crossId}`).classList.remove('hidden');
+            
+            document.getElementById(`ps-instruct-${crossId}`).innerText = "Punnett Square complete! These inner boxes show all the possible genotypes for the offspring generation.";
+        }
+
+        function finishPunnett(crossId, targetGenId) {
+            document.getElementById(`btn-ps-step3-${crossId}`).classList.add('hidden');
+            document.getElementById(`ps-instruct-${crossId}`).classList.add('hidden');
+            revealGeneration(targetGenId);
+        }
+    </script>
+</body>
+</html>
