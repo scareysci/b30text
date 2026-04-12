@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mystery of the Golden Wheat Sheaf - Pedigree Analysis Game</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for the Pedigree Tree */
+        .tree-container {
+            width: 100%;
+            overflow-x: auto;
+            padding-bottom: 20px;
+            cursor: grab;
+        }
+        .tree-container:active {
+            cursor: grabbing;
+        }
+        .tree ul {
+            padding-top: 20px; position: relative;
+            transition: all 0.5s;
+            display: flex; justify-content: center;
+            width: max-content;
+            margin: 0 auto;
+        }
+        .tree li {
+            float: left; text-align: center;
+            list-style-type: none;
+            position: relative;
+            padding: 20px 10px 0 10px;
+            transition: all 0.5s;
+        }
+        /* Connectors */
+        .tree li::before, .tree li::after {
+            content: '';
+            position: absolute; top: 0; right: 50%;
+            border-top: 2px solid #4b5563;
+            width: 50%; height: 20px;
+        }
+        .tree li::after {
+            right: auto; left: 50%;
+            border-left: 2px solid #4b5563;
+        }
+        /* Remove connectors from first/last child */
+        .tree li:only-child::after, .tree li:only-child::before {
+            display: none;
+        }
+        .tree li:only-child { padding-top: 0; }
+        .tree li:first-child::before, .tree li:last-child::after {
+            border: 0 none;
+        }
+        .tree li:last-child::before {
+            border-right: 2px solid #4b5563;
+            border-radius: 0 5px 0 0;
+        }
+        .tree li:first-child::after {
+            border-radius: 5px 0 0 0;
+        }
+        /* Downward connectors from parents */
+        .tree ul ul::before {
+            content: '';
+            position: absolute; top: 0; left: 50%;
+            border-left: 2px solid #4b5563;
+            width: 0; height: 20px;
+        }
+        
+        /* Node Styling */
+        .node {
+            border: 2px solid #1e3a8a;
+            color: #111827;
+            font-family: arial, verdana, tahoma;
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            width: 140px;
+            height: 120px;
+            padding: 5px;
+            position: relative;
+            z-index: 10;
+        }
+        .node-square { border-radius: 8px; } /* Male */
+        .node-circle { border-radius: 50%; } /* Female */
+        
+        .node-name {
+            font-weight: bold;
+            font-size: 14px;
+            border-bottom: 1px solid #d1d5db;
+            padding-bottom: 2px;
+            margin-bottom: 4px;
+            width: 80%;
+            text-align: center;
+        }
+        .node-traits {
+            font-size: 10px;
+            line-height: 1.4;
+            color: #4b5563;
+        }
+        .trait-unknown {
+            color: #d97706; /* Amber */
+            font-weight: bold;
+        }
+
+        .suspect-node {
+            border: 3px solid #ef4444;
+            background-color: #fef2f2;
+        }
+        
+        .marriage-line {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+            position: relative;
+            z-index: 5;
+        }
+        .marriage-line::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 2px;
+            background-color: #4b5563;
+            z-index: 1;
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        /* Prairie / RCMP Theme Colors */
+        .bg-rcmp-blue { background-color: #1e3a8a; }
+        .text-rcmp-blue { color: #1e3a8a; }
+        .bg-wheat { background-color: #fef08a; }
+        .border-wheat { border-color: #facc15; }
+
+        /* Print Styles */
+        @media print {
+            body { background-color: white !important; color: black !important; font-size: 12pt; }
+            header { background-color: white !important; color: black !important; border-bottom: 2px solid black; padding: 10px 0; box-shadow: none; }
+            header h1, header p { color: black !important; }
+            
+            /* Hide UI controls */
+            .tab-btn, .print-btn, button, .print-hidden { display: none !important; }
+            
+            /* Unroll tabs */
+            .tab-content { display: block !important; border: none !important; box-shadow: none !important; margin-bottom: 30px; page-break-inside: avoid; }
+            
+            /* Strip background colors for ink saving */
+            .bg-rcmp-blue, .bg-blue-50, .bg-gray-50, .bg-yellow-400, .bg-white { background-color: white !important; color: black !important; border: 1px solid #ccc !important; }
+            .text-rcmp-blue { color: black !important; }
+            
+            /* Pedigree formatting for print */
+            .tree-container { overflow: visible !important; border: none !important; }
+            .node { border: 2px solid black !important; background-color: white !important; }
+            .suspect-node { border: 3px dashed black !important; }
+            .tree ul { margin: 0; padding: 0; }
+            .trait-unknown { color: black !important; }
+            
+            /* Scale down to fit standard page width */
+            .tree { zoom: 0.65; } 
+            .print-page-break { page-break-before: always; }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans leading-normal tracking-normal">
+
+    <!-- Header -->
+    <header class="bg-rcmp-blue text-white p-6 shadow-lg border-b-4 border-wheat relative">
+        <div class="container mx-auto max-w-6xl flex justify-between items-center">
+            <div>
+                <h1 class="text-3xl font-bold uppercase tracking-wider">RCMP Detachment - Eatonia, SK</h1>
+                <p class="text-xl text-yellow-300 mt-2">Active File: The Mystery of the Golden Wheat Sheaf</p>
+                <p class="text-sm opacity-80 mt-1">Lead Investigator: [Your Name Here]</p>
+            </div>
+            <button onclick="window.print()" class="print-btn bg-yellow-400 hover:bg-yellow-500 text-blue-900 font-bold py-2 px-4 rounded shadow flex items-center transition">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                Print Case Files
+            </button>
+        </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <div class="container mx-auto max-w-6xl mt-6 px-4 print-hidden">
+        <ul class="flex flex-wrap border-b border-gray-300">
+            <li class="mr-2">
+                <button onclick="openTab('briefing')" id="tab-briefing" class="tab-btn bg-white inline-block border-l border-t border-r rounded-t py-2 px-4 text-rcmp-blue font-semibold hover:bg-gray-50 focus:outline-none">1. Case Briefing</button>
+            </li>
+            <li class="mr-2">
+                <button onclick="openTab('pedigree')" id="tab-pedigree" class="tab-btn bg-gray-200 inline-block py-2 px-4 text-gray-500 hover:text-rcmp-blue font-semibold hover:bg-gray-50 rounded-t focus:outline-none">2. Family Pedigree</button>
+            </li>
+            <li class="mr-2">
+                <button onclick="openTab('investigation')" id="tab-investigation" class="tab-btn bg-gray-200 inline-block py-2 px-4 text-gray-500 hover:text-rcmp-blue font-semibold hover:bg-gray-50 rounded-t focus:outline-none">3. The Clues</button>
+            </li>
+            <li class="mr-2">
+                <button onclick="openTab('report')" id="tab-report" class="tab-btn bg-gray-200 inline-block py-2 px-4 text-gray-500 hover:text-rcmp-blue font-semibold hover:bg-gray-50 rounded-t focus:outline-none">4. Police Report</button>
+            </li>
+            <li class="mr-2">
+                <button onclick="openTab('worksheets')" id="tab-worksheets" class="tab-btn bg-gray-200 inline-block py-2 px-4 text-gray-500 hover:text-rcmp-blue font-semibold hover:bg-gray-50 rounded-t focus:outline-none">5. Worksheets</button>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content Area -->
+    <main class="container mx-auto max-w-6xl mt-4 px-4 mb-12">
+        
+        <!-- Tab 1: Briefing -->
+        <div id="briefing" class="tab-content active bg-white p-8 rounded shadow-lg border-t-4 border-rcmp-blue">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4 border-b-2 border-gray-200 pb-2">Case Briefing</h2>
+            <div class="prose max-w-none text-gray-700 space-y-4 text-lg">
+                <p>Welcome, Detective. Last night, the pride of our town—the legendary <strong>Golden Wheat Sheaf</strong>—was stolen right out of the display case at the Eatonia Heritage Park.</p>
+                
+                <p>We have a primary suspect pool: <strong>The Kerroberts</strong>. They are a large family from the rival town up the highway. The 4th generation of cousins (Mick, Nina, Oscar, Penny, Quinn, and Riley) were seen in town last night for a family reunion.</p>
+                
+                <p>We have compiled a 4-generation pedigree of the Kerrobert family. However, the record is incomplete. Many of the physical traits (phenotypes) are missing and marked with a <span class="text-amber-600 font-bold">[?]</span>. You will need to use your knowledge of Mendelian genetics (dominant vs. recessive inheritance) to <strong>fill in the blanks</strong> and deduce the exact traits of the 4th Generation Suspects.</p>
+                
+                <div class="bg-blue-50 p-6 rounded border-l-4 border-blue-500 my-6 shadow-sm">
+                    <h3 class="font-bold text-blue-900 mb-2 text-xl">The Genetic Traits Under Investigation:</h3>
+                    <ul class="list-disc pl-6 space-y-2 text-blue-800">
+                        <li><strong>Earlobe Attachment (E/e):</strong> Free-hanging earlobes (Dominant - <strong>E</strong>) vs. Attached earlobes (Recessive - <strong>e</strong>).</li>
+                        <li><strong>Hairline (W/w):</strong> Widow's Peak, a V-shape point (Dominant - <strong>W</strong>) vs. Straight hairline (Recessive - <strong>w</strong>).</li>
+                        <li><strong>Thumb Mobility (H/h):</strong> Straight thumb (Dominant - <strong>H</strong>) vs. Hitchhiker's thumb (Recessive - <strong>h</strong>).</li>
+                    </ul>
+                </div>
+                
+                <p><strong>Your Mission:</strong> Analyze the pedigree. Deduce the phenotypes for all 6 Suspects. Then, follow the clues left at local landmarks to progressively rule out suspects based on their inherited genetics. Finally, deduce specific genotypes and file your official RCMP Police Report.</p>
+                
+                <button onclick="openTab('pedigree')" class="mt-6 bg-rcmp-blue hover:bg-blue-800 text-white font-bold py-3 px-6 rounded shadow-lg transition duration-300 print-hidden">Proceed to Pedigree Analysis &rarr;</button>
+            </div>
+        </div>
+
+        <!-- Tab 2: Pedigree -->
+        <div id="pedigree" class="tab-content bg-white p-8 rounded shadow-lg border-t-4 border-rcmp-blue print-page-break">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4 border-b-2 border-gray-200 pb-2">The Kerrobert Family Pedigree</h2>
+            <p class="mb-2 text-gray-800 font-medium">Use the known phenotypes (and homozygous labels) of ancestors to determine the missing <span class="text-amber-600 font-bold">[?]</span> traits.</p>
+            <p class="mb-6 text-sm text-gray-500 italic print-hidden">Scroll horizontally if needed to view the entire family tree. (For printing, set page layout to Landscape).</p>
+            
+            <div class="tree-container bg-gray-50 border border-gray-200 rounded-lg" id="tree-container">
+                <div class="tree w-max">
+                    <ul>
+                        <li>
+                            <!-- Gen I -->
+                            <div class="text-xs font-bold text-gray-400 mb-2 uppercase tracking-widest">Generation I</div>
+                            <div class="marriage-line">
+                                <div class="node node-square">
+                                    <div class="node-name">Arthur</div>
+                                    <div class="node-traits">Free Earlobes<br>Widow's Peak<br>Straight Thumb</div>
+                                </div>
+                                <div class="node node-circle">
+                                    <div class="node-name">Beatrice</div>
+                                    <div class="node-traits">Attached Earlobes<br>Straight Hair<br>Hitchhiker Thumb</div>
+                                </div>
+                            </div>
+                            <ul>
+                                <li>
+                                    <!-- Gen II -->
+                                    <div class="text-xs font-bold text-gray-400 mb-2 mt-6 uppercase tracking-widest">Generation II</div>
+                                    <div class="marriage-line">
+                                        <div class="node node-square">
+                                            <div class="node-name">Charles</div>
+                                            <div class="node-traits">Free Earlobes<br>Widow's Peak<br>Straight Thumb</div>
+                                        </div>
+                                        <div class="node node-circle bg-gray-200 border-dashed border-gray-400">
+                                            <div class="node-name">Fiona</div>
+                                            <div class="node-traits">Attached Earlobes<br>Straight Hair<br>Straight Thumb (Homozygous)</div>
+                                        </div>
+                                    </div>
+                                    <ul>
+                                        <!-- Gen III Branch 1 -->
+                                        <li>
+                                            <div class="text-xs font-bold text-gray-400 mb-2 mt-6 uppercase tracking-widest">Generation III</div>
+                                            <div class="marriage-line">
+                                                <div class="node node-square">
+                                                    <div class="node-name">Jack</div>
+                                                    <div class="node-traits">Free Earlobes<br>Straight Hair<br>Straight Thumb</div>
+                                                </div>
+                                                <div class="node node-circle bg-gray-200 border-dashed border-gray-400">
+                                                    <div class="node-name">Karen</div>
+                                                    <div class="node-traits">Free Earlobes (Homozygous)<br>Widow's Peak (Homozygous)<br>Hitchhiker Thumb</div>
+                                                </div>
+                                            </div>
+                                            <ul>
+                                                <li>
+                                                    <div class="text-xs font-bold text-red-500 mb-2 mt-6 uppercase tracking-widest">Gen IV</div>
+                                                    <div class="node node-square suspect-node">
+                                                        <div class="node-name text-red-600">Mick</div>
+                                                        <div class="node-traits"><span class="trait-unknown">[?] Earlobes</span><br><span class="trait-unknown">[?] Hairline</span><br>Straight Thumb</div>
+                                                    </div>
+                                                </li>
+                                                <li>
+                                                    <div class="text-xs font-bold text-red-500 mb-2 mt-6 uppercase tracking-widest">Suspects</div>
+                                                    <div class="node node-circle suspect-node">
+                                                        <div class="node-name text-red-600">Nina</div>
+                                                        <div class="node-traits"><span class="trait-unknown">[?] Earlobes</span><br><span class="trait-unknown">[?] Hairline</span><br>Hitchhiker Thumb</div>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                        <!-- Gen III Branch 2 -->
+                                        <li>
+                                            <div class="text-xs font-bold text-gray-400 mb-2 mt-6 uppercase tracking-widest">Generation III</div>
+                                            <div class="marriage-line">
+                                                <div class="node node-circle">
+                                                    <div class="node-name">Mia</div>
+                                                    <div class="node-traits">Attached Earlobes<br>Widow's Peak<br>Straight Thumb</div>
+                                                </div>
+                                                <div class="node node-square bg-gray-200 border-dashed border-gray-400">
+                                                    <div class="node-name">Noah</div>
+                                                    <div class="node-traits">Free Earlobes (Homozygous)<br>Straight Hair<br>Hitchhiker Thumb</div>
+                                                </div>
+                                            </div>
+                                            <ul>
+                                                <li>
+                                                    <div class="text-xs font-bold text-red-500 mb-2 mt-6 uppercase tracking-widest">Gen IV</div>
+                                                    <div class="node node-square suspect-node">
+                                                        <div class="node-name text-red-600">Oscar</div>
+                                                        <div class="node-traits"><span class="trait-unknown">[?] Earlobes</span><br>Straight Hair<br>Hitchhiker Thumb</div>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </li>
+                                
+                                <li>
+                                    <!-- Gen II - Second Child -->
+                                    <div class="text-xs font-bold text-gray-400 mb-2 mt-6 uppercase tracking-widest">Generation II</div>
+                                    <div class="marriage-line">
+                                        <div class="node node-square">
+                                            <div class="node-name">George</div>
+                                            <div class="node-traits">Attached Earlobes<br>Widow's Peak<br>Hitchhiker Thumb</div>
+                                        </div>
+                                        <div class="node node-circle bg-gray-200 border-dashed border-gray-400">
+                                            <div class="node-name">Helen</div>
+                                            <div class="node-traits">Attached Earlobes<br>Widow's Peak (Homozygous)<br>Hitchhiker Thumb</div>
+                                        </div>
+                                    </div>
+                                    <ul>
+                                        <!-- Gen III Branch 3 (FIXED SHAPES) -->
+                                        <li>
+                                            <div class="text-xs font-bold text-gray-400 mb-2 mt-6 uppercase tracking-widest">Generation III</div>
+                                            <div class="marriage-line">
+                                                <!-- Paul (Male Biological Child) -->
+                                                <div class="node node-square">
+                                                    <div class="node-name">Paul</div>
+                                                    <div class="node-traits"><span class="trait-unknown">[?] Earlobes</span><br><span class="trait-unknown">[?] Hairline</span><br><span class="trait-unknown">[?] Thumb</span></div>
+                                                </div>
+                                                <!-- Olivia (Female Spouse) -->
+                                                <div class="node node-circle bg-gray-200 border-dashed border-gray-400">
+                                                    <div class="node-name">Olivia</div>
+                                                    <div class="node-traits">Attached Earlobes<br>Straight Hair<br>Hitchhiker Thumb</div>
+                                                </div>
+                                            </div>
+                                            <ul>
+                                                <li>
+                                                    <div class="text-xs font-bold text-red-500 mb-2 mt-6 uppercase tracking-widest">Gen IV</div>
+                                                    <div class="node node-circle suspect-node">
+                                                        <div class="node-name text-red-600">Penny</div>
+                                                        <div class="node-traits"><span class="trait-unknown">[?] Earlobes</span><br>Straight Hair<br><span class="trait-unknown">[?] Thumb</span></div>
+                                                    </div>
+                                                </li>
+                                                <li>
+                                                    <div class="text-xs font-bold text-red-500 mb-2 mt-6 uppercase tracking-widest">Suspects</div>
+                                                    <div class="node node-square suspect-node">
+                                                        <div class="node-name text-red-600">Quinn</div>
+                                                        <div class="node-traits"><span class="trait-unknown">[?] Earlobes</span><br>Widow's Peak<br><span class="trait-unknown">[?] Thumb</span></div>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                        <!-- Gen III Branch 4 -->
+                                        <li>
+                                            <div class="text-xs font-bold text-gray-400 mb-2 mt-6 uppercase tracking-widest">Generation III</div>
+                                            <div class="marriage-line">
+                                                <div class="node node-circle">
+                                                    <div class="node-name">Rachel</div>
+                                                    <div class="node-traits"><span class="trait-unknown">[?] Earlobes</span><br><span class="trait-unknown">[?] Hairline</span><br><span class="trait-unknown">[?] Thumb</span></div>
+                                                </div>
+                                                <div class="node node-square bg-gray-200 border-dashed border-gray-400">
+                                                    <div class="node-name">Steve</div>
+                                                    <div class="node-traits">Free Earlobes (Homozygous)<br>Widow's Peak (Homozygous)<br>Straight Thumb (Homozygous)</div>
+                                                </div>
+                                            </div>
+                                            <ul>
+                                                <li>
+                                                    <div class="text-xs font-bold text-red-500 mb-2 mt-6 uppercase tracking-widest">Gen IV</div>
+                                                    <div class="node node-square suspect-node">
+                                                        <div class="node-name text-red-600">Riley</div>
+                                                        <div class="node-traits"><span class="trait-unknown">[?] Earlobes</span><br><span class="trait-unknown">[?] Hairline</span><br><span class="trait-unknown">[?] Thumb</span></div>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </li>
+
+                                <li>
+                                    <!-- Gen II - Third Child -->
+                                    <div class="text-xs font-bold text-gray-400 mb-2 mt-6 uppercase tracking-widest">Generation II</div>
+                                    <div class="node node-circle">
+                                        <div class="node-name">Diana</div>
+                                        <div class="node-traits">Attached Earlobes<br>Straight Hair<br>Hitchhiker Thumb</div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 3: Investigation (Clues) -->
+        <div id="investigation" class="tab-content bg-white p-8 rounded shadow-lg border-t-4 border-rcmp-blue print-page-break">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6 border-b-2 border-gray-200 pb-2">The Investigation Field Notes</h2>
+            
+            <div class="space-y-8">
+                <!-- Clue 1 -->
+                <div class="bg-gray-50 p-6 rounded-lg border-l-8 border-yellow-400 shadow-md">
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Clue #1: The Eston Riverside Discovery</h3>
+                    <p class="text-gray-700 mb-4">You receive a call from the Eston detachment. Near the Eston Riverside Regional Park, exactly where the Eston Ramblers held their team wind-up, a torn balaclava was found caught on a Saskatoon berry bush branch. RCMP forensics pulled a single hair follicle from the mask. The root structure and distinct angled growth pattern definitively prove the suspect has a <strong>Widow's Peak (W)</strong>.</p>
+                    <div class="bg-white p-4 rounded border border-gray-200">
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Based on Clue 1, who can be ruled out? (Detail your reasoning in the Police Report)</label>
+                        <div class="flex flex-wrap gap-4" id="clue1-checkboxes">
+                            <!-- Populated via JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Clue 2 -->
+                <div class="bg-gray-50 p-6 rounded-lg border-l-8 border-yellow-500 shadow-md">
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Clue #2: The Leader Landmark Sighting</h3>
+                    <p class="text-gray-700 mb-4">A tourist taking photos at the Giant Western Meadowlark sculpture in Leader reports seeing someone matching the thief's build running to a truck. The tourist snapped a photo just as the suspect gave a sarcastic "thumbs up" gesture. The photograph clearly shows the thumb bent backwards at an extreme 90-degree angle—a classic <strong>Hitchhiker's thumb (h)</strong>.</p>
+                    <div class="bg-white p-4 rounded border border-gray-200">
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Based on Clue 2, who else can be ruled out?</label>
+                        <div class="flex flex-wrap gap-4" id="clue2-checkboxes">
+                            <!-- Populated via JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Clue 3 -->
+                <div class="bg-gray-50 p-6 rounded-lg border-l-8 border-yellow-600 shadow-md">
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Clue #3: Foot traffic at the Kindersley Mall</h3>
+                    <p class="text-gray-700 mb-4">Checking regional cameras, you spot our suspect getting out of their truck at the Kindersley Mall. For a brief second before pulling up their hood, a side-profile reflection is caught in the glass doors of the mall entrance. The image is enhanced: the suspect's earlobes blend directly into the side of their head without any free-hanging loop. They have <strong>Attached Earlobes (e)</strong>.</p>
+                    <div class="bg-white p-4 rounded border border-gray-200">
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Based on Clue 3, who are the final people ruled out?</label>
+                        <div class="flex flex-wrap gap-4" id="clue3-checkboxes">
+                            <!-- Populated via JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <button onclick="openTab('report')" class="mt-8 bg-rcmp-blue hover:bg-blue-800 text-white font-bold py-3 px-6 rounded shadow-lg transition duration-300 w-full text-center print-hidden">Proceed to File Official Police Report &rarr;</button>
+
+        </div>
+
+        <!-- Tab 4: Printable Report -->
+        <div id="report" class="tab-content bg-white p-8 rounded shadow-lg border-t-4 border-rcmp-blue print-page-break">
+            <div class="flex justify-between items-center mb-6 pb-4 print-hidden">
+                <h2 class="text-3xl font-bold text-gray-800">Printable Police Report</h2>
+                <button onclick="window.print()" class="print-btn bg-yellow-400 hover:bg-yellow-500 text-blue-900 font-bold py-2 px-4 rounded shadow flex items-center transition">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                    Print Document
+                </button>
+            </div>
+            
+            <div class="border-4 border-gray-800 p-8 printable-report-area text-black">
+                <!-- Header of Report -->
+                <div class="text-center mb-8 border-b-2 border-gray-400 pb-4 relative">
+                    <h1 class="text-3xl font-bold uppercase tracking-widest mb-2">RCMP Official Case Report</h1>
+                    <p class="text-lg">Eatonia Detachment - Division F</p>
+                    <img src="https://upload.wikimedia.org/wikipedia/en/thumb/3/3d/Royal_Canadian_Mounted_Police_badge.svg/120px-Royal_Canadian_Mounted_Police_badge.svg.png" alt="" class="h-16 absolute top-0 right-4 opacity-20" onerror="this.style.display='none'">
+                </div>
+                
+                <!-- Officer & Date Info -->
+                <div class="flex justify-between mb-10">
+                    <div class="w-1/2 pr-4">
+                        <p class="text-lg font-bold">Investigating Officer (Student Name):</p>
+                        <div class="border-b-2 border-gray-600 mt-6 w-full"></div>
+                    </div>
+                    <div class="w-1/3">
+                        <p class="text-lg font-bold">Date of Report:</p>
+                        <div class="border-b-2 border-gray-600 mt-6 w-full"></div>
+                    </div>
+                </div>
+
+                <!-- Part 1 -->
+                <div class="mb-10">
+                    <h3 class="text-xl font-bold mb-4 bg-gray-200 p-2 border border-gray-400">Part 1: Genotype Analysis</h3>
+                    <p class="mb-4 text-gray-700 italic">Deduce the exact genotype (using two letters per trait) for the following individuals.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 px-4">
+                        <div>
+                            <p class="font-bold">Arthur (Gen I):</p>
+                            <div class="border-b-2 border-gray-600 mt-6 w-full"></div>
+                        </div>
+                        <div>
+                            <p class="font-bold">George (Gen II):</p>
+                            <div class="border-b-2 border-gray-600 mt-6 w-full"></div>
+                        </div>
+                        <div>
+                            <p class="font-bold">Quinn (Gen IV Suspect):</p>
+                            <div class="border-b-2 border-gray-600 mt-6 w-full"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Part 2 -->
+                <div class="mb-10">
+                    <h3 class="text-xl font-bold mb-4 bg-gray-200 p-2 border border-gray-400">Part 2: Clue 1 Analysis (Widow's Peak)</h3>
+                    <p class="mb-4 text-gray-700 italic">Explain which suspects (Mick, Nina, Oscar, Penny, Quinn, Riley) are ruled out and why based on deduced genetics.</p>
+                    <div class="border-b-2 border-gray-600 mt-8 w-full"></div>
+                    <div class="border-b-2 border-gray-600 mt-8 w-full"></div>
+                    <div class="border-b-2 border-gray-600 mt-8 w-full"></div>
+                </div>
+
+                <!-- Part 3 -->
+                <div class="mb-10">
+                    <h3 class="text-xl font-bold mb-4 bg-gray-200 p-2 border border-gray-400">Part 3: Clue 2 Analysis (Hitchhiker's Thumb)</h3>
+                    <p class="mb-4 text-gray-700 italic">Explain which remaining suspects are ruled out and why based on the deduced thumb trait.</p>
+                    <div class="border-b-2 border-gray-600 mt-8 w-full"></div>
+                    <div class="border-b-2 border-gray-600 mt-8 w-full"></div>
+                    <div class="border-b-2 border-gray-600 mt-8 w-full"></div>
+                </div>
+
+                <!-- Part 4 -->
+                <div class="mb-10">
+                    <h3 class="text-xl font-bold mb-4 bg-gray-200 p-2 border border-gray-400">Part 4: Clue 3 Analysis (Attached Earlobes)</h3>
+                    <p class="mb-4 text-gray-700 italic">Explain which final suspects are ruled out and why.</p>
+                    <div class="border-b-2 border-gray-600 mt-8 w-full"></div>
+                    <div class="border-b-2 border-gray-600 mt-8 w-full"></div>
+                    <div class="border-b-2 border-gray-600 mt-8 w-full"></div>
+                </div>
+
+                <!-- Conclusion -->
+                <div class="mt-12 p-6 border-4 border-black text-center bg-gray-50">
+                    <h2 class="text-2xl font-bold mb-6 tracking-wide text-red-700 uppercase">Conclusion & Arrest Warrant Issued For:</h2>
+                    <div class="border-b-2 border-black w-3/4 mx-auto mt-8 mb-2"></div>
+                    <p class="text-gray-500 font-bold uppercase">(Print the name of the guilty Kerrobert)</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 5: Worksheets -->
+        <div id="worksheets" class="tab-content bg-white p-8 rounded shadow-lg border-t-4 border-rcmp-blue">
+            <h2 class="text-3xl font-bold text-gray-800 mb-4 border-b-2 border-gray-200 pb-2 print-hidden">Genotype Deduction Worksheets</h2>
+            <p class="mb-6 text-lg text-gray-700 print-hidden">Print these blank pedigrees to map out the genotypes for each of the three traits under investigation.</p>
+            <div class="print-hidden mb-8">
+                <button onclick="window.print()" class="bg-yellow-400 hover:bg-yellow-500 text-blue-900 font-bold py-3 px-6 rounded shadow flex items-center transition">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                    Print Worksheets Now
+                </button>
+            </div>
+            
+            <div id="worksheets-container">
+                <!-- Populated via JS -->
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white text-center p-4 text-sm mt-8 print-hidden">
+        <p>Created for Educational Purposes. Eatonia/Eston/Kindersley/Leader Regional Genetics Activity.</p>
+    </footer>
+
+    <script>
+        const suspectsList = ["Mick", "Nina", "Oscar", "Penny", "Quinn", "Riley"];
+        
+        // --- Initialization ---
+        window.onload = function() {
+            // Populate checkboxes in investigation tab
+            const setupCheckboxes = (clueId) => {
+                const container = document.getElementById(clueId);
+                suspectsList.forEach(suspect => {
+                    const div = document.createElement('div');
+                    div.className = 'flex items-center';
+                    div.innerHTML = `
+                        <input type="checkbox" id="${clueId}-${suspect}" class="w-5 h-5 text-red-600 rounded border-gray-400 focus:ring-red-500">
+                        <label for="${clueId}-${suspect}" class="ml-2 text-gray-800 font-medium">${suspect}</label>
+                    `;
+                    container.appendChild(div);
+                });
+            };
+
+            setupCheckboxes('clue1-checkboxes');
+            setupCheckboxes('clue2-checkboxes');
+            setupCheckboxes('clue3-checkboxes');
+
+            generateWorksheets();
+
+            // Click and Drag to scroll the wide pedigree tree(s)
+            document.querySelectorAll('.tree-container').forEach(slider => {
+                let isDown = false;
+                let startX;
+                let scrollLeft;
+
+                slider.addEventListener('mousedown', (e) => {
+                    isDown = true;
+                    startX = e.pageX - slider.offsetLeft;
+                    scrollLeft = slider.scrollLeft;
+                });
+                slider.addEventListener('mouseleave', () => { isDown = false; });
+                slider.addEventListener('mouseup', () => { isDown = false; });
+                slider.addEventListener('mousemove', (e) => {
+                    if (!isDown) return;
+                    e.preventDefault();
+                    const x = e.pageX - slider.offsetLeft;
+                    const walk = (x - startX) * 2; // Scroll fast
+                    slider.scrollLeft = scrollLeft - walk;
+                });
+            });
+        };
+
+        // --- Worksheets Generation ---
+        function generateWorksheets() {
+            const templateTree = document.querySelector('#tree-container .tree').cloneNode(true);
+            
+            // Replace all traits with blanks
+            templateTree.querySelectorAll('.node-traits').forEach(el => {
+                el.innerHTML = '<span class="text-gray-600 font-bold text-[10px]">Genotype:</span><br><span class="inline-block border-b-2 border-gray-600 w-16 mt-3"></span>';
+                el.classList.remove('trait-unknown');
+            });
+            
+            const worksheetContainer = document.getElementById('worksheets-container');
+            
+            const traits = [
+                { title: "Trait 1: Earlobe Attachment (E/e)", desc: "Free-hanging (Dominant E) vs Attached (Recessive e)" },
+                { title: "Trait 2: Hairline (W/w)", desc: "Widow's Peak (Dominant W) vs Straight (Recessive w)" },
+                { title: "Trait 3: Thumb Mobility (H/h)", desc: "Straight (Dominant H) vs Hitchhiker (Recessive h)" }
+            ];
+
+            traits.forEach((trait) => {
+                const section = document.createElement('div');
+                section.className = 'mb-12 print-page-break';
+                section.innerHTML = `
+                    <h3 class="text-2xl font-bold text-rcmp-blue mb-2">${trait.title}</h3>
+                    <p class="text-gray-600 mb-6 font-medium">Map out the genotypes for the entire family regarding <strong>${trait.desc}</strong> based on the main pedigree.</p>
+                    <div class="tree-container bg-white border border-gray-400 rounded-lg overflow-x-auto pb-4 pt-4">
+                        ${templateTree.outerHTML}
+                    </div>
+                `;
+                worksheetContainer.appendChild(section);
+            });
+        }
+
+        // --- UI Functions ---
+        function openTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => {
+                el.classList.remove('bg-white', 'border-l', 'border-t', 'border-r', 'text-rcmp-blue');
+                el.classList.add('bg-gray-200', 'text-gray-500');
+            });
+
+            document.getElementById(tabId).classList.add('active');
+            const activeTab = document.getElementById('tab-' + tabId);
+            activeTab.classList.remove('bg-gray-200', 'text-gray-500');
+            activeTab.classList.add('bg-white', 'border-l', 'border-t', 'border-r', 'text-rcmp-blue');
+        }
+    </script>
+</body>
+</html>
