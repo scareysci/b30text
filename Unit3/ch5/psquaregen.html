@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Punnett Square Practice Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&family=Poppins:wght@400;600;700&display=swap');
+
+        body {
+            background-color: #f3f4f6;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* The actual printable area */
+        #pdf-container {
+            width: 210mm; /* A4 width */
+            min-height: 297mm; /* A4 height */
+            background: white;
+            margin: 0 auto;
+            padding: 8mm 15mm; /* Further reduced top and bottom padding */
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        .handwriting {
+            font-family: 'Comic Neue', cursive;
+            color: #ef4444; /* Red for answers */
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+
+        /* Punnett Square Table Styles */
+        .punnett-table {
+            border-collapse: collapse;
+            margin: 5px auto;
+        }
+        
+        .punnett-table td {
+            text-align: center;
+            vertical-align: middle;
+            font-size: 1.15rem;
+            font-family: 'Courier New', Courier, monospace; /* Extremely clear Y vs y */
+            font-weight: bold;
+            color: #1f2937;
+        }
+
+        /* Outside labels */
+        .pt-empty { width: 20px; height: 20px; }
+        .pt-top { width: 55px; height: 20px; font-size: 1.15rem; }
+        .pt-left { width: 20px; height: 55px; font-size: 1.15rem; }
+        
+        /* Inside boxes */
+        .pt-box {
+            border: 2px solid #000;
+            width: 55px;
+            height: 55px;
+        }
+
+        /* Dihybrid Styles */
+        .pt-top-di { width: 45px; height: 25px; font-size: 1rem; }
+        .pt-left-di { width: 35px; height: 45px; font-size: 1rem; }
+        .pt-box-di {
+            border: 2px solid #000;
+            width: 45px;
+            height: 45px;
+            font-size: 1rem !important; /* Slightly smaller to fit 4 letters */
+        }
+
+        /* Layout for the problems grid */
+        .problem-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px 30px; /* Further reduced vertical gap */
+            margin-top: 5px;
+        }
+
+        .problem {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+
+        .prob-num {
+            background: black;
+            color: white;
+            padding: 1px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+            margin-right: 6px;
+            display: inline-block;
+            font-size: 0.9em;
+        }
+
+        .ratio-line {
+            border-bottom: 1px solid black;
+            display: inline-block;
+            min-width: 140px;
+            text-align: center;
+            height: auto;
+            min-height: 1.3rem;
+            line-height: 1.3;
+            padding-bottom: 1px;
+        }
+
+        /* Hide UI elements during print if triggered via browser */
+        @media print {
+            .no-print { display: none !important; }
+            #pdf-container { box-shadow: none; margin: 0; padding: 0; width: 100%; }
+        }
+    </style>
+</head>
+<body class="pb-20">
+
+    <!-- Control Panel -->
+    <div class="no-print bg-white shadow-md sticky top-0 z-50 mb-8 p-4 border-b-4 border-blue-500">
+        <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-4">
+            <div>
+                <h1 class="text-xl font-bold text-gray-800">Punnett Square Worksheet Generator</h1>
+                <p class="text-sm text-gray-500">Generate randomized practice problems</p>
+            </div>
+            
+            <div class="flex items-center gap-4 bg-gray-100 p-2 rounded-lg">
+                <label class="font-semibold text-gray-700">Size:</label>
+                <select id="cross-size" class="border rounded px-3 py-1 bg-white outline-none focus:ring-2 focus:ring-blue-500" onchange="toggleTraitSelect()">
+                    <option value="mono">Monohybrid (1 Trait)</option>
+                    <option value="di">Dihybrid (2 Traits)</option>
+                </select>
+
+                <label class="font-semibold text-gray-700 ml-2">Pattern:</label>
+                <select id="trait-type" class="border rounded px-3 py-1 bg-white outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="mix">Mix of All Types</option>
+                    <option value="simple">Simple Dominance</option>
+                    <option value="incomplete">Incomplete Dominance</option>
+                    <option value="codominance">Co-dominance</option>
+                </select>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <label class="flex items-center gap-2 cursor-pointer font-semibold text-gray-700 bg-red-50 hover:bg-red-100 px-3 py-2 rounded-lg border border-red-200 transition">
+                    <input type="checkbox" id="show-answers" class="w-5 h-5 text-red-500 rounded focus:ring-red-400">
+                    Show Answer Key
+                </label>
+                
+                <button onclick="generateWorksheet()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow transition flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Regenerate
+                </button>
+                <button onclick="downloadPDF()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded shadow transition flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    Download PDF
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Printable Worksheet Area -->
+    <div id="pdf-container">
+        
+        <!-- Header -->
+        <div class="text-center mb-2">
+            <h1 class="text-2xl font-extrabold uppercase tracking-widest text-black" style="font-family: 'Poppins', sans-serif;">Punnett Square Practice</h1>
+        </div>
+
+        <!-- Directions -->
+        <div class="bg-blue-50 border border-blue-200 rounded-xl p-2 mb-2 shadow-sm">
+            <p class="text-gray-800 leading-tight text-xs">
+                <strong class="text-black text-sm">Directions:</strong> Read each problem carefully. The alleles for the parents have been placed on the outside of the Punnett squares for you. Complete the inner boxes of the square to determine the possible offspring. Then, analyze the results to determine the genotypic ratio and the phenotypic ratio for the cross.
+            </p>
+        </div>
+
+        <!-- Dynamic Grid for 6 Problems -->
+        <div id="problems-container" class="problem-grid text-sm text-gray-900">
+            <!-- Populated by JS -->
+        </div>
+
+    </div>
+
+    <script>
+        // Database of common textbook biological traits (Standardized to singular nouns)
+        const traitsDB = {
+            simple: [
+                { organism: "pea plant", trait: "height", type: "simple", domName: "tall", recName: "short", a1: "T", a2: "t" },
+                { organism: "pea plant", trait: "seed color", type: "simple", domName: "yellow", recName: "green", a1: "Y", a2: "y" },
+                { organism: "pea plant", trait: "seed shape", type: "simple", domName: "round", recName: "wrinkled", a1: "R", a2: "r" },
+                { organism: "human", trait: "hairline", type: "simple", domName: "widow's peak", recName: "straight hairline", a1: "W", a2: "w" },
+                { organism: "guinea pig", trait: "coat color", type: "simple", domName: "black", recName: "white", a1: "B", a2: "b" }
+            ],
+            incomplete: [
+                { organism: "snapdragon flower", trait: "flower color", type: "incomplete", name1: "red", name2: "white", nameHetero: "pink", a1: "R", a2: "W" },
+                { organism: "four o'clock flower", trait: "flower color", type: "incomplete", name1: "red", name2: "white", nameHetero: "pink", a1: "R", a2: "W" },
+                { organism: "radish", trait: "shape", type: "incomplete", name1: "long", name2: "round", nameHetero: "oval", a1: "L", a2: "R" }
+            ],
+            codominance: [
+                { organism: "cow", trait: "coat color", type: "codominance", name1: "red", name2: "white", nameHetero: "roan (red & white)", a1: "R", a2: "W" },
+                { organism: "chicken", trait: "feather color", type: "codominance", name1: "black", name2: "white", nameHetero: "speckled (erminette)", a1: "B", a2: "W" },
+                { organism: "horse", trait: "coat color", type: "codominance", name1: "red", name2: "white", nameHetero: "roan", a1: "R", a2: "W" }
+            ]
+        };
+
+        const dihybridPairs = [
+            {
+                organism: "pea plant",
+                t1: traitsDB.simple[0], // height
+                t2: traitsDB.simple[1]  // seed color
+            },
+            {
+                organism: "pea plant",
+                t1: traitsDB.simple[2], // seed shape
+                t2: traitsDB.simple[1]  // seed color
+            },
+            {
+                organism: "guinea pig",
+                t1: traitsDB.simple[4], // coat color
+                t2: { trait: "hair length", type: "simple", domName: "short", recName: "long", a1: "S", a2: "s" }
+            }
+        ];
+
+        // UI Elements
+        const container = document.getElementById('problems-container');
+        const typeSelect = document.getElementById('trait-type');
+        const sizeSelect = document.getElementById('cross-size');
+        const showAnswersCheck = document.getElementById('show-answers');
+
+        // State
+        let currentProblems = [];
+
+        function toggleTraitSelect() {
+            // Standard dihybrid traits are usually simple dominance, so disable Pattern select if Dihybrid
+            if(sizeSelect.value === 'di') {
+                typeSelect.disabled = true;
+                typeSelect.classList.add('opacity-50');
+            } else {
+                typeSelect.disabled = false;
+                typeSelect.classList.remove('opacity-50');
+            }
+            generateWorksheet();
+        }
+
+        // Helper: Get a random integer between min and max
+        function getRandomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        // Helper: Pick random element from array
+        function pickRandom(arr) {
+            return arr[getRandomInt(0, arr.length - 1)];
+        }
+
+        // Sort alleles to ensure consistency (e.g., Tt instead of tT)
+        function formatAlleles(trait, alleleA, alleleB) {
+            if (alleleA === trait.a1 && alleleB === trait.a1) return trait.a1 + trait.a1;
+            if (alleleA === trait.a2 && alleleB === trait.a2) return trait.a2 + trait.a2;
+            return trait.a1 + trait.a2; // Heterozygous always Dominant/A1 first
+        }
+
+        // Generate data for a single parent based on trait and zygosity (0=Homo1, 1=Hetero, 2=Homo2)
+        function generateParent(trait, zygosity) {
+            let alleles = [];
+            let description = "";
+            let genotypeStr = "";
+
+            if (trait.type === "simple") {
+                if (zygosity === 0) {
+                    alleles = [trait.a1, trait.a1];
+                    description = `homozygous ${trait.domName}`;
+                } else if (zygosity === 1) {
+                    alleles = [trait.a1, trait.a2];
+                    description = `heterozygous ${trait.domName}`;
+                } else {
+                    alleles = [trait.a2, trait.a2];
+                    description = `homozygous ${trait.recName}`;
+                }
+            } else {
+                if (zygosity === 0) {
+                    alleles = [trait.a1, trait.a1];
+                    description = `homozygous ${trait.name1}`;
+                } else if (zygosity === 1) {
+                    alleles = [trait.a1, trait.a2];
+                    description = `heterozygous ${trait.nameHetero}`;
+                } else {
+                    alleles = [trait.a2, trait.a2];
+                    description = `homozygous ${trait.name2}`;
+                }
+            }
+            genotypeStr = alleles.join("");
+            return { alleles, description, genotypeStr };
+        }
+
+        function getGametes(alleles1, alleles2) {
+            return [
+                alleles1[0] + alleles2[0],
+                alleles1[0] + alleles2[1],
+                alleles1[1] + alleles2[0],
+                alleles1[1] + alleles2[1]
+            ];
+        }
+
+        function generateDihybridParent(pair, z1, z2) {
+            let p1 = generateParent(pair.t1, z1);
+            let p2 = generateParent(pair.t2, z2);
+            
+            let description = `${p1.description} for ${pair.t1.trait} and ${p2.description} for ${pair.t2.trait}`;
+            let genotypeStr = p1.genotypeStr + p2.genotypeStr;
+            let gametes = getGametes(p1.alleles, p2.alleles);
+            
+            return { alleles1: p1.alleles, alleles2: p2.alleles, description, genotypeStr, gametes };
+        }
+
+        function combineDihybrid(t1, t2, g1, g2) {
+            return formatAlleles(t1, g1[0], g2[0]) + formatAlleles(t2, g1[1], g2[1]);
+        }
+
+        // Calculate Ratios based on the 4 offspring (monohybrid)
+        function calculateRatios(trait, offspring) {
+            let genotypicCounts = {};
+            let phenotypicCounts = {};
+
+            offspring.forEach(geno => {
+                genotypicCounts[geno] = (genotypicCounts[geno] || 0) + 1;
+                
+                let pheno = "";
+                if (trait.type === "simple") {
+                    if (geno.includes(trait.a1)) pheno = trait.domName;
+                    else pheno = trait.recName;
+                } else {
+                    if (geno === trait.a1 + trait.a1) pheno = trait.name1;
+                    else if (geno === trait.a2 + trait.a2) pheno = trait.name2;
+                    else pheno = trait.nameHetero;
+                }
+                phenotypicCounts[pheno] = (phenotypicCounts[pheno] || 0) + 1;
+            });
+
+            let gRatioStr = Object.entries(genotypicCounts).map(([g, count]) => `${count} ${g}`).join(" : ");
+            let pRatioStr = Object.entries(phenotypicCounts).map(([p, count]) => `${count} ${p}`).join(" : ");
+
+            return { genotypic: gRatioStr, phenotypic: pRatioStr };
+        }
+
+        function calculateDihybridRatios(pair, offspring) {
+            let genotypicCounts = {};
+            let phenotypicCounts = {};
+
+            offspring.forEach(geno => {
+                genotypicCounts[geno] = (genotypicCounts[geno] || 0) + 1;
+                
+                let p1 = geno.slice(0,2).includes(pair.t1.a1) ? pair.t1.domName : pair.t1.recName;
+                let p2 = geno.slice(2,4).includes(pair.t2.a1) ? pair.t2.domName : pair.t2.recName;
+                let pheno = `${p1}, ${p2}`;
+                
+                phenotypicCounts[pheno] = (phenotypicCounts[pheno] || 0) + 1;
+            });
+
+            let gRatioStr = Object.entries(genotypicCounts).map(([g, count]) => `${count} ${g}`).join(" : ");
+            let pRatioStr = Object.entries(phenotypicCounts).map(([p, count]) => `${count} ${p}`).join(" : ");
+
+            return { genotypic: gRatioStr, phenotypic: pRatioStr };
+        }
+
+        // Main generation function
+        function generateWorksheet() {
+            container.innerHTML = '';
+            currentProblems = [];
+            const selectedType = typeSelect.value;
+            const selectedSize = sizeSelect.value;
+            
+            let problemCount = selectedSize === 'di' ? 2 : 6;
+            
+            if(selectedSize === 'di') {
+                container.style.gridTemplateColumns = "1fr";
+            } else {
+                container.style.gridTemplateColumns = "1fr 1fr";
+            }
+            
+            for (let i = 1; i <= problemCount; i++) {
+                if (selectedSize === 'mono') {
+                    // Monohybrid Logic
+                    let probType = selectedType;
+                    if (selectedType === 'mix') {
+                        const types = ['simple', 'incomplete', 'codominance'];
+                        probType = types[getRandomInt(0, 2)];
+                    }
+
+                    const trait = pickRandom(traitsDB[probType]);
+
+                    let z1 = getRandomInt(0, 2);
+                    let z2 = getRandomInt(0, 2);
+                    if (z1 === 0 && z2 === 0) z2 = 1;
+                    if (z1 === 2 && z2 === 2) z1 = 1;
+
+                    const parent1 = generateParent(trait, z1);
+                    const parent2 = generateParent(trait, z2);
+
+                    let patternText = "";
+                    if(selectedType === 'mix') {
+                        if(probType === 'incomplete') patternText = " (Incomplete Dominance)";
+                        if(probType === 'codominance') patternText = " (Co-dominance)";
+                    }
+
+                    let text = `A ${trait.organism} that is ${parent1.description} (${parent1.genotypeStr}) is crossed with a ${trait.organism} that is ${parent2.description} (${parent2.genotypeStr})${patternText}.`;
+
+                    let offspring = [
+                        formatAlleles(trait, parent1.alleles[0], parent2.alleles[0]),
+                        formatAlleles(trait, parent1.alleles[1], parent2.alleles[0]),
+                        formatAlleles(trait, parent1.alleles[0], parent2.alleles[1]),
+                        formatAlleles(trait, parent1.alleles[1], parent2.alleles[1])
+                    ];
+
+                    const ratios = calculateRatios(trait, offspring);
+                    const problemData = { num: i, text, parent1, parent2, offspring, ratios };
+                    currentProblems.push(problemData);
+                    renderProblem(problemData);
+
+                } else {
+                    // Dihybrid Logic
+                    let pair = pickRandom(dihybridPairs);
+                    
+                    let z1_t1 = getRandomInt(0, 2);
+                    let z1_t2 = getRandomInt(0, 2);
+                    let z2_t1 = getRandomInt(0, 2);
+                    let z2_t2 = getRandomInt(0, 2);
+                    
+                    // Prevent total homozygous recessive cross for slightly better practice worksheets
+                    if(z1_t1 === 2 && z2_t1 === 2) z1_t1 = 1;
+                    if(z1_t2 === 2 && z2_t2 === 2) z1_t2 = 1;
+                    
+                    // Force problem 1 to be a classic heterozygous cross (AaBb x AaBb) 
+                    if (i === 1) { 
+                        z1_t1 = 1; z1_t2 = 1; z2_t1 = 1; z2_t2 = 1;
+                    }
+
+                    let p1 = generateDihybridParent(pair, z1_t1, z1_t2);
+                    let p2 = generateDihybridParent(pair, z2_t1, z2_t2);
+                    
+                    let text = `A ${pair.organism} that is ${p1.description} (${p1.genotypeStr}) is crossed with a ${pair.organism} that is ${p2.description} (${p2.genotypeStr}).`;
+                    
+                    let offspringMatrix = [];
+                    let flatOffspring = [];
+                    for(let r=0; r<4; r++) {
+                        let rowOffspring = [];
+                        for(let c=0; c<4; c++) {
+                            let gLeft = p2.gametes[r];
+                            let gTop = p1.gametes[c];
+                            let combined = combineDihybrid(pair.t1, pair.t2, gTop, gLeft);
+                            rowOffspring.push(combined);
+                            flatOffspring.push(combined);
+                        }
+                        offspringMatrix.push(rowOffspring);
+                    }
+                    
+                    let ratios = calculateDihybridRatios(pair, flatOffspring);
+                    const problemData = { num: i, text, parent1: p1, parent2: p2, offspring: offspringMatrix, ratios, type: 'di' };
+                    currentProblems.push(problemData);
+                    renderDihybridProblem(problemData);
+                }
+            }
+            toggleAnswers();
+        }
+
+        function renderProblem(data) {
+            const pDiv = document.createElement('div');
+            pDiv.className = 'problem';
+
+            pDiv.innerHTML = `
+                <div class="mb-1 text-sm leading-tight">
+                    <span class="prob-num">${data.num}</span> 
+                    <span>${data.text}</span>
+                </div>
+                <table class="punnett-table">
+                    <tr>
+                        <td class="pt-empty"></td>
+                        <td class="pt-top"><span class="text-black">${data.parent1.alleles[0]}</span></td>
+                        <td class="pt-top"><span class="text-black">${data.parent1.alleles[1]}</span></td>
+                    </tr>
+                    <tr>
+                        <td class="pt-left"><span class="text-black">${data.parent2.alleles[0]}</span></td>
+                        <td class="pt-box"><span class="answer-text handwriting hidden">${data.offspring[0]}</span></td>
+                        <td class="pt-box"><span class="answer-text handwriting hidden">${data.offspring[1]}</span></td>
+                    </tr>
+                    <tr>
+                        <td class="pt-left"><span class="text-black">${data.parent2.alleles[1]}</span></td>
+                        <td class="pt-box"><span class="answer-text handwriting hidden">${data.offspring[2]}</span></td>
+                        <td class="pt-box"><span class="answer-text handwriting hidden">${data.offspring[3]}</span></td>
+                    </tr>
+                </table>
+                <div class="mt-1 flex flex-col px-2 text-sm">
+                    <div class="flex items-end mb-1">
+                        <span class="w-32 font-semibold shrink-0">Genotypic Ratio:</span>
+                        <span class="ratio-line flex-grow text-left pl-2">
+                            <span class="answer-text handwriting hidden">${data.ratios.genotypic}</span>
+                        </span>
+                    </div>
+                    <div class="flex items-end">
+                        <span class="w-32 font-semibold shrink-0">Phenotypic Ratio:</span>
+                        <span class="ratio-line flex-grow text-left pl-2">
+                            <span class="answer-text handwriting hidden">${data.ratios.phenotypic}</span>
+                        </span>
+                    </div>
+                </div>
+            `;
+            container.appendChild(pDiv);
+        }
+
+        function renderDihybridProblem(data) {
+            const pDiv = document.createElement('div');
+            pDiv.className = 'problem mb-4';
+
+            let tableHTML = `
+                <div class="mb-2 text-sm leading-snug">
+                    <span class="prob-num">${data.num}</span> 
+                    <span>${data.text}</span>
+                </div>
+                <table class="punnett-table">
+                    <tr>
+                        <td class="pt-empty"></td>
+                        <td class="pt-top-di"><span class="text-black">${data.parent1.gametes[0]}</span></td>
+                        <td class="pt-top-di"><span class="text-black">${data.parent1.gametes[1]}</span></td>
+                        <td class="pt-top-di"><span class="text-black">${data.parent1.gametes[2]}</span></td>
+                        <td class="pt-top-di"><span class="text-black">${data.parent1.gametes[3]}</span></td>
+                    </tr>`;
+            
+            for(let r=0; r<4; r++) {
+                tableHTML += `<tr>
+                    <td class="pt-left-di"><span class="text-black">${data.parent2.gametes[r]}</span></td>`;
+                for(let c=0; c<4; c++) {
+                    tableHTML += `<td class="pt-box-di"><span class="answer-text handwriting hidden">${data.offspring[r][c]}</span></td>`;
+                }
+                tableHTML += `</tr>`;
+            }
+            
+            tableHTML += `</table>
+                <div class="mt-2 flex flex-col px-4 text-sm gap-1">
+                    <div class="flex items-end">
+                        <span class="w-32 font-semibold shrink-0">Genotypic Ratio:</span>
+                        <span class="ratio-line flex-grow text-left pl-2">
+                            <span class="answer-text handwriting hidden">${data.ratios.genotypic}</span>
+                        </span>
+                    </div>
+                    <div class="flex items-end">
+                        <span class="w-32 font-semibold shrink-0">Phenotypic Ratio:</span>
+                        <span class="ratio-line flex-grow text-left pl-2">
+                            <span class="answer-text handwriting hidden">${data.ratios.phenotypic}</span>
+                        </span>
+                    </div>
+                </div>
+            `;
+            pDiv.innerHTML = tableHTML;
+            container.appendChild(pDiv);
+        }
+
+        function toggleAnswers() {
+            const show = showAnswersCheck.checked;
+            const answers = document.querySelectorAll('.answer-text');
+            answers.forEach(el => {
+                if (show) {
+                    el.classList.remove('hidden');
+                } else {
+                    el.classList.add('hidden');
+                }
+            });
+        }
+
+        function downloadPDF() {
+            const element = document.getElementById('pdf-container');
+            const typeText = sizeSelect.value === 'di' ? 'Dihybrid' : typeSelect.options[typeSelect.selectedIndex].text.replace(/\s+/g, '');
+            const answers = showAnswersCheck.checked ? "_AnswerKey" : "";
+            const opt = {
+                margin:       0,
+                filename:     `PunnettSquarePractice_${typeText}${answers}.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(element).save();
+        }
+
+        // Event Listeners
+        showAnswersCheck.addEventListener('change', toggleAnswers);
+        typeSelect.addEventListener('change', generateWorksheet);
+
+        // Init on load
+        window.onload = () => {
+            generateWorksheet();
+        };
+
+    </script>
+</body>
+</html>
