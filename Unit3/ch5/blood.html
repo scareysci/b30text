@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSI: Classroom - Blood Typing Lab</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for the blood drops and clumping effect */
+        .blood-drop {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background-color: #ef4444; /* Standard Red */
+            margin: auto;
+            box-shadow: inset -4px -4px 8px rgba(0,0,0,0.3), 2px 2px 5px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .blood-drop.clumped {
+            background-color: #7f1d1d; /* Dark Red */
+            /* CSS pattern to simulate agglutination (clumping) */
+            background-image: 
+                radial-gradient(#450a0a 20%, transparent 20%),
+                radial-gradient(#450a0a 20%, transparent 20%);
+            background-color: #991b1b;
+            background-position: 0 0, 6px 6px;
+            background-size: 12px 12px;
+            box-shadow: inset -4px -4px 8px rgba(0,0,0,0.5), 2px 2px 5px rgba(0,0,0,0.2);
+        }
+
+        /* Fun CRT scanline effect for the header */
+        .scanlines {
+            position: relative;
+            overflow: hidden;
+        }
+        .scanlines::before {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 10;
+            background-size: 100% 4px, 3px 100%;
+            pointer-events: none;
+        }
+
+        /* Modal animations */
+        .modal-enter { opacity: 0; transform: scale(0.9); }
+        .modal-enter-active { opacity: 1; transform: scale(1); transition: opacity 300ms, transform 300ms; }
+        .modal-leave { opacity: 1; transform: scale(1); }
+        .modal-leave-active { opacity: 0; transform: scale(0.9); transition: opacity 300ms, transform 300ms; }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-200 font-sans min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-slate-950 border-b border-cyan-800 p-6 scanlines relative">
+        <div class="max-w-6xl mx-auto flex justify-between items-center z-20 relative">
+            <div>
+                <h1 class="text-3xl font-bold text-cyan-400 tracking-wider uppercase flex items-center gap-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-500"><path d="M10 2v7.31"/><path d="M14 9.3V1.99"/><path d="M8.5 2h7"/><path d="M14 9.3a6.5 6.5 0 1 1-4 0"/><path d="M5.52 16h12.96"/></svg>
+                    CSI: Classroom Serology Lab
+                </h1>
+                <p class="text-slate-400 text-sm mt-1">Forensic Blood Typing Simulator v2.4</p>
+            </div>
+            <div class="flex flex-col md:flex-row items-end md:items-center gap-4">
+                <select id="mode-select" onchange="generateNewCase()" class="bg-slate-900 border border-cyan-800 text-cyan-400 text-sm rounded shadow focus:ring-cyan-500 focus:border-cyan-500 block p-2 cursor-pointer font-semibold outline-none">
+                    <option value="basic">Mode: Basic (Serology)</option>
+                    <option value="advanced">Mode: Advanced (Genetics)</option>
+                </select>
+                <button onclick="generateNewCase()" class="bg-cyan-700 hover:bg-cyan-600 text-white px-4 py-2 rounded shadow transition-colors border border-cyan-500 font-semibold flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 21v-5h5"/></svg>
+                    Generate New Case
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto w-full p-4 md:p-6 flex-grow grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Left Column: Case File & Tools -->
+        <div class="lg:col-span-1 space-y-6">
+            <!-- Case File Panel -->
+            <div class="bg-slate-800 rounded-lg border border-slate-700 shadow-xl overflow-hidden">
+                <div class="bg-slate-700 px-4 py-3 border-b border-slate-600 flex justify-between items-center">
+                    <h2 class="text-lg font-bold text-amber-400 uppercase tracking-wide">Case File <span id="case-number">#000</span></h2>
+                    <span class="px-2 py-1 bg-red-900/50 text-red-400 text-xs font-bold rounded border border-red-800">ACTIVE</span>
+                </div>
+                <div class="p-5">
+                    <h3 id="case-title" class="text-xl font-bold text-white mb-3">Loading Case...</h3>
+                    <p id="case-description" class="text-slate-300 text-sm leading-relaxed mb-4">
+                        Awaiting data uplink...
+                    </p>
+                    <div class="bg-slate-900 p-3 rounded border border-slate-700 text-sm">
+                        <span class="text-cyan-500 font-semibold">Evidence Recovered:</span>
+                        <p class="text-slate-300 mt-1" id="case-evidence">A single drop of blood left at the scene.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reference Guide Panel -->
+            <div class="bg-slate-800 rounded-lg border border-slate-700 shadow-xl">
+                <div class="bg-slate-700 px-4 py-3 border-b border-slate-600">
+                    <h2 class="text-lg font-bold text-slate-200 uppercase tracking-wide">Lab Reference Guide</h2>
+                </div>
+                <div class="p-5 text-sm text-slate-300 space-y-3">
+                    <p>To determine a blood type, look for <strong>agglutination (clumping)</strong> when reacting with different serums.</p>
+                    <ul class="list-disc pl-5 space-y-1 text-slate-400">
+                        <li><strong class="text-slate-200">Anti-A Serum:</strong> Clumps if <strong>A</strong> antigens are present.</li>
+                        <li><strong class="text-slate-200">Anti-B Serum:</strong> Clumps if <strong>B</strong> antigens are present.</li>
+                        <li><strong class="text-slate-200">Anti-Rh Serum:</strong> Clumps if <strong>Rh+</strong> (positive).</li>
+                    </ul>
+                    <div id="genetics-ref" class="hidden mt-4 pt-4 border-t border-slate-600 text-xs">
+                        <h4 class="text-cyan-400 font-bold uppercase mb-2">Genetics Quick Ref</h4>
+                        <ul class="list-disc pl-5 space-y-1 text-slate-400">
+                            <li><strong class="text-slate-200">A & B</strong> alleles are dominant over <strong class="text-slate-200">O</strong>.</li>
+                            <li><strong class="text-slate-200">A & B</strong> are codominant (creating Type AB).</li>
+                            <li><strong class="text-slate-200">Rh+</strong> is dominant over <strong class="text-slate-200">Rh-</strong>.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-900 p-2 rounded border border-slate-700 mt-4 flex justify-around text-center text-xs">
+                        <div>
+                            <div class="blood-drop w-6 h-6 mb-1"></div>
+                            <span>No Clump</span>
+                        </div>
+                        <div>
+                            <div class="blood-drop clumped w-6 h-6 mb-1"></div>
+                            <span>Clumped</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Lab Testing & Accusation -->
+        <div class="lg:col-span-2 space-y-6">
+            <!-- Lab Tray Panel -->
+            <div class="bg-slate-800 rounded-lg border border-slate-700 shadow-xl overflow-hidden">
+                <div class="bg-slate-700 px-4 py-3 border-b border-slate-600">
+                    <h2 class="text-lg font-bold text-slate-200 uppercase tracking-wide">Agglutination Test Tray</h2>
+                </div>
+                <div class="p-0 overflow-x-auto max-h-[500px] overflow-y-auto">
+                    <table class="w-full text-left border-collapse min-w-[600px] relative">
+                        <thead class="sticky top-0 z-10 bg-slate-800 shadow-md">
+                            <tr class="border-b border-slate-600 text-slate-400 text-sm uppercase tracking-wider">
+                                <th class="p-4 font-semibold">Subject</th>
+                                <th class="p-4 font-semibold text-center">Anti-A Test</th>
+                                <th class="p-4 font-semibold text-center">Anti-B Test</th>
+                                <th class="p-4 font-semibold text-center">Anti-Rh Test</th>
+                                <th class="p-4 font-semibold">Student Notes (Type)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="lab-tray-body" class="divide-y divide-slate-700">
+                            <!-- Rows will be injected by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Accusation Panel -->
+            <div class="bg-slate-800 rounded-lg border border-slate-700 shadow-xl overflow-hidden">
+                <div class="bg-cyan-900/40 px-4 py-3 border-b border-cyan-800">
+                    <h2 class="text-lg font-bold text-cyan-400 uppercase tracking-wide flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        Official Conclusion
+                    </h2>
+                </div>
+                <div class="p-5 flex flex-col md:flex-row items-start md:items-end gap-4">
+                    <div class="flex-grow w-full">
+                        <label for="culprit-select" class="block text-sm font-medium text-slate-300 mb-2">Based on the blood evidence, who is the guilty suspect?</label>
+                        <select id="culprit-select" class="w-full bg-slate-900 border border-slate-600 text-white text-base rounded-lg focus:ring-cyan-500 focus:border-cyan-500 block p-3">
+                            <option value="" disabled selected>Select a Suspect...</option>
+                            <!-- Options injected by JS -->
+                        </select>
+                    </div>
+                    <button onclick="solveCase()" class="w-full md:w-auto bg-amber-600 hover:bg-amber-500 text-white font-bold py-3 px-8 rounded-lg shadow-lg transition-colors focus:ring-4 focus:ring-amber-900 whitespace-nowrap">
+                        Submit Findings
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Custom Message Modal -->
+    <div id="msg-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center hidden" style="opacity: 0; transition: opacity 0.3s ease;">
+        <div id="msg-box" class="bg-slate-800 border border-slate-600 rounded-xl shadow-2xl max-w-md w-full mx-4 transform scale-95 transition-transform 0.3s ease flex flex-col overflow-hidden">
+            <div id="msg-header" class="px-6 py-4 border-b border-slate-700 flex items-center gap-3">
+                <div id="msg-icon"></div>
+                <h3 id="msg-title" class="text-xl font-bold text-white uppercase tracking-wide">Alert</h3>
+            </div>
+            <div class="p-6">
+                <p id="msg-content" class="text-slate-300 text-lg leading-relaxed"></p>
+            </div>
+            <div class="bg-slate-900 px-6 py-4 flex justify-end">
+                <button onclick="closeModal()" class="bg-slate-700 hover:bg-slate-600 text-white px-6 py-2 rounded font-semibold transition-colors">
+                    Understood
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Data & Configuration ---
+        const ALL_BLOOD_TYPES = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+        
+        const SCENARIOS = [
+            {
+                title: "The Great Cookie Caper",
+                desc: "Chef Gertrude's legendary batch of double-fudge cookies was stolen right from the cafeteria cooling rack. While making their escape, the thief accidentally scraped their hand on the sharp metal edge of the rack.",
+                evidence: "A single drop of blood left on the cafeteria cooling rack."
+            },
+            {
+                title: "The Sabotaged Volcano",
+                desc: "Disaster at the Science Fair! Timmy's prized papier-mâché volcano was filled with baking soda early, causing a premature eruption that ruined his poster board. The saboteur got a nasty papercut while handling the poster.",
+                evidence: "A tiny smudge of blood found on the corner of the ruined poster board."
+            },
+            {
+                title: "The Missing Mascot Mask",
+                desc: "The school's beloved eagle mascot head has vanished before the big game. Footprints led to the thorny bushes behind the gym, where the culprit had to squeeze through to escape.",
+                evidence: "A torn piece of fabric snagged on a thorn, containing a fresh drop of blood."
+            },
+            {
+                title: "The Deflated Dodgeballs",
+                desc: "Coach Muscles opened the gym equipment closet to find every single dodgeball had been popped with a thumbtack! In their rush, the vandal seemingly pricked their own finger.",
+                evidence: "A drop of blood discovered on the handle of the equipment closet door."
+            },
+            {
+                title: "The Stolen Sheet Music",
+                desc: "The band director's original composition for the spring concert was snatched from the music stand. The thief was careless and caught their finger in the heavy spring-loaded binder mechanism.",
+                evidence: "Blood residue swabbed directly from the metal rings of the binder."
+            }
+        ];
+
+        const SUSPECT_NAMES = [
+            "Principal Skinner", "Janitor Bob", "Coach Muscles", "Timmy the Tutor", 
+            "Sally the Star Athlete", "Librarian Linda", "Lunchlady Doris", 
+            "Band Geek Brian", "Hall Monitor Harriet", "Detention Dave",
+            "Science Teacher Sam", "Drama Club Daisy"
+        ];
+
+        // --- Game State ---
+        let currentGameState = {
+            scenario: null,
+            suspects: [],
+            guiltyIndex: -1,
+            evidenceBloodType: "",
+            isAdvanced: false
+        };
+
+        // --- Helper Functions ---
+        
+        // Shuffle an array
+        function shuffle(array) {
+            let currentIndex = array.length, randomIndex;
+            while (currentIndex !== 0) {
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+                [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+            }
+            return array;
+        }
+
+        // Get clumping rules for a blood type
+        function getClumping(bloodType) {
+            const hasA = bloodType.includes('A');
+            const hasB = bloodType.includes('B');
+            const isRhPos = bloodType.includes('+');
+            return { a: hasA, b: hasB, rh: isRhPos };
+        }
+
+        // Genetics logic: Extract possible alleles from a phenotype
+        function getPossibleAlleles(pheno) {
+            let abo = [], rh = [];
+            if (pheno.includes('AB')) abo = ['A', 'B'];
+            else if (pheno.includes('A')) abo = ['A', 'O'];
+            else if (pheno.includes('B')) abo = ['B', 'O'];
+            else if (pheno.includes('O')) abo = ['O']; 
+
+            if (pheno.includes('+')) rh = ['+', '-'];
+            else if (pheno.includes('-')) rh = ['-'];
+            
+            return {abo, rh};
+        }
+
+        // Genetics logic: Get all possible child phenotypes from two parent phenotypes
+        function getPossibleChildPhenotypes(p1Pheno, p2Pheno) {
+            let p1 = getPossibleAlleles(p1Pheno);
+            let p2 = getPossibleAlleles(p2Pheno);
+            
+            let possibleABO = new Set();
+            p1.abo.forEach(a1 => {
+                p2.abo.forEach(a2 => {
+                    let pair = [a1, a2].sort().join('');
+                    if (pair === 'AA' || pair === 'AO' || pair === 'OA') possibleABO.add('A');
+                    else if (pair === 'BB' || pair === 'BO' || pair === 'OB') possibleABO.add('B');
+                    else if (pair === 'AB') possibleABO.add('AB');
+                    else if (pair === 'OO') possibleABO.add('O');
+                });
+            });
+            
+            let possibleRh = new Set();
+            p1.rh.forEach(r1 => {
+                p2.rh.forEach(r2 => {
+                    if (r1 === '+' || r2 === '+') possibleRh.add('+');
+                    else possibleRh.add('-');
+                });
+            });
+            
+            let children = [];
+            possibleABO.forEach(abo => {
+                possibleRh.forEach(rh => {
+                    children.push(abo + rh);
+                });
+            });
+            return children;
+        }
+
+        // Generate drop HTML
+        function generateDropHTML(isClumped) {
+            const clumpClass = isClumped ? 'clumped' : '';
+            return `<div class="blood-drop ${clumpClass}"></div>`;
+        }
+
+        // Generate blood type select options
+        function generateTypeSelect(idPrefix, index) {
+            let options = `<option value="" disabled selected>Select Type...</option>`;
+            ALL_BLOOD_TYPES.forEach(bt => {
+                options += `<option value="${bt}">${bt}</option>`;
+            });
+            return `<select id="${idPrefix}-${index}" class="bg-slate-900 border border-slate-600 text-slate-200 text-sm rounded focus:ring-cyan-500 focus:border-cyan-500 block w-full p-2.5">
+                        ${options}
+                    </select>`;
+        }
+
+        // --- Main Logic ---
+
+        function generateNewCase() {
+            const isAdvanced = document.getElementById('mode-select').value === 'advanced';
+
+            // 1. Pick a random scenario
+            const scenario = SCENARIOS[Math.floor(Math.random() * SCENARIOS.length)];
+            
+            // 2. Pick 4 random distinct suspect names
+            const shuffledNames = shuffle([...SUSPECT_NAMES]);
+            const selectedNames = shuffledNames.slice(0, 4);
+
+            // 3. Setup core variables
+            const guiltyIndex = Math.floor(Math.random() * 4);
+            let suspects = [];
+            let evidenceType = "";
+
+            if (isAdvanced) {
+                // Genetics Mode
+                evidenceType = ALL_BLOOD_TYPES[Math.floor(Math.random() * ALL_BLOOD_TYPES.length)];
+                
+                for (let i = 0; i < 4; i++) {
+                    let p1, p2, possibleChildren;
+                    let isValid = false;
+                    
+                    while (!isValid) {
+                        // Generate random parents
+                        p1 = ALL_BLOOD_TYPES[Math.floor(Math.random() * ALL_BLOOD_TYPES.length)];
+                        p2 = ALL_BLOOD_TYPES[Math.floor(Math.random() * ALL_BLOOD_TYPES.length)];
+                        possibleChildren = getPossibleChildPhenotypes(p1, p2);
+                        
+                        if (i === guiltyIndex) {
+                            isValid = possibleChildren.includes(evidenceType);
+                        } else {
+                            isValid = !possibleChildren.includes(evidenceType);
+                        }
+                    }
+                    
+                    suspects.push({
+                        name: selectedNames[i],
+                        motherType: p1,
+                        fatherType: p2
+                    });
+                }
+            } else {
+                // Serology Mode (Basic)
+                const shuffledTypes = shuffle([...ALL_BLOOD_TYPES]);
+                const selectedTypes = shuffledTypes.slice(0, 4);
+                
+                suspects = selectedNames.map((name, index) => ({
+                    name: name,
+                    bloodType: selectedTypes[index]
+                }));
+                evidenceType = suspects[guiltyIndex].bloodType;
+            }
+
+            // Save to state
+            currentGameState = {
+                scenario: scenario,
+                suspects: suspects,
+                guiltyIndex: guiltyIndex,
+                evidenceBloodType: evidenceType,
+                isAdvanced: isAdvanced
+            };
+
+            updateUI();
+        }
+
+        function updateUI() {
+            // Update Case File
+            document.getElementById('case-number').innerText = "#" + Math.floor(Math.random() * 8999 + 1000);
+            document.getElementById('case-title').innerText = currentGameState.scenario.title;
+            document.getElementById('case-description').innerText = currentGameState.scenario.desc;
+            
+            const evidenceEl = document.getElementById('case-evidence');
+            if (currentGameState.isAdvanced) {
+                evidenceEl.innerHTML = currentGameState.scenario.evidence + "<br><span class='text-amber-400 mt-2 block text-xs'><strong>Advanced Mode:</strong> Suspects fled before samples could be taken. We subpoenaed their parents' blood. Use genetics to find who could have left the evidence!</span>";
+                document.getElementById('genetics-ref').classList.remove('hidden');
+            } else {
+                evidenceEl.innerText = currentGameState.scenario.evidence;
+                document.getElementById('genetics-ref').classList.add('hidden');
+            }
+
+            // Build Lab Tray
+            const tbody = document.getElementById('lab-tray-body');
+            tbody.innerHTML = ''; // Clear existing
+
+            // Add Evidence Row
+            const evClump = getClumping(currentGameState.evidenceBloodType);
+            tbody.innerHTML += `
+                <tr class="bg-cyan-900/20 border-b-4 border-cyan-800">
+                    <td class="p-4 font-bold text-cyan-300">Crime Scene Evidence</td>
+                    <td class="p-4 text-center">${generateDropHTML(evClump.a)}</td>
+                    <td class="p-4 text-center">${generateDropHTML(evClump.b)}</td>
+                    <td class="p-4 text-center">${generateDropHTML(evClump.rh)}</td>
+                    <td class="p-4">${generateTypeSelect('type', 'evidence')}</td>
+                </tr>
+            `;
+
+            // Add Suspect/Parent Rows
+            currentGameState.suspects.forEach((suspect, index) => {
+                if (currentGameState.isAdvanced) {
+                    // Mother
+                    const mClump = getClumping(suspect.motherType);
+                    tbody.innerHTML += `
+                        <tr class="hover:bg-slate-800/50 transition-colors border-t border-slate-700">
+                            <td class="p-4 font-medium text-slate-200">Suspect ${index + 1}'s Mother: <br><span class="text-slate-400 text-sm">(${suspect.name})</span></td>
+                            <td class="p-4 text-center">${generateDropHTML(mClump.a)}</td>
+                            <td class="p-4 text-center">${generateDropHTML(mClump.b)}</td>
+                            <td class="p-4 text-center">${generateDropHTML(mClump.rh)}</td>
+                            <td class="p-4">${generateTypeSelect('type', `s${index}-mother`)}</td>
+                        </tr>
+                    `;
+                    // Father
+                    const fClump = getClumping(suspect.fatherType);
+                    tbody.innerHTML += `
+                        <tr class="hover:bg-slate-800/50 transition-colors border-b border-slate-700">
+                            <td class="p-4 font-medium text-slate-200">Suspect ${index + 1}'s Father: <br><span class="text-slate-400 text-sm">(${suspect.name})</span></td>
+                            <td class="p-4 text-center">${generateDropHTML(fClump.a)}</td>
+                            <td class="p-4 text-center">${generateDropHTML(fClump.b)}</td>
+                            <td class="p-4 text-center">${generateDropHTML(fClump.rh)}</td>
+                            <td class="p-4">${generateTypeSelect('type', `s${index}-father`)}</td>
+                        </tr>
+                    `;
+                } else {
+                    // Basic Suspect
+                    const sClump = getClumping(suspect.bloodType);
+                    tbody.innerHTML += `
+                        <tr class="hover:bg-slate-800/50 transition-colors border-b border-slate-700">
+                            <td class="p-4 font-medium text-slate-200">Suspect ${index + 1}: <br><span class="text-slate-400 text-sm">${suspect.name}</span></td>
+                            <td class="p-4 text-center">${generateDropHTML(sClump.a)}</td>
+                            <td class="p-4 text-center">${generateDropHTML(sClump.b)}</td>
+                            <td class="p-4 text-center">${generateDropHTML(sClump.rh)}</td>
+                            <td class="p-4">${generateTypeSelect('type', `suspect-${index}`)}</td>
+                        </tr>
+                    `;
+                }
+            });
+
+            // Update Accusation Dropdown
+            const culpritSelect = document.getElementById('culprit-select');
+            culpritSelect.innerHTML = `<option value="" disabled selected>Select a Suspect...</option>`;
+            currentGameState.suspects.forEach((suspect, index) => {
+                culpritSelect.innerHTML += `<option value="${index}">${suspect.name}</option>`;
+            });
+
+            // Reset notes selections
+            const allSelects = document.querySelectorAll('select[id^="type-"]');
+            allSelects.forEach(s => s.selectedIndex = 0);
+        }
+
+        function solveCase() {
+            const culpritSelect = document.getElementById('culprit-select');
+            const selectedIndex = parseInt(culpritSelect.value);
+
+            if (isNaN(selectedIndex)) {
+                showModal('Missing Information', 'You must select a suspect before submitting your findings!', 'warning');
+                return;
+            }
+
+            const evidenceNote = document.getElementById('type-evidence').value;
+            const guiltyName = currentGameState.suspects[currentGameState.guiltyIndex].name;
+
+            if (selectedIndex === currentGameState.guiltyIndex) {
+                let extraMsg = "";
+                if (evidenceNote !== currentGameState.evidenceBloodType) {
+                    extraMsg = `<br><br><span class="text-amber-400 text-sm">Note: You found the right suspect, but your notes on the evidence blood type were wrong or blank! The evidence was actually Type <strong>${currentGameState.evidenceBloodType}</strong>.</span>`;
+                }
+                
+                if (currentGameState.isAdvanced) {
+                    showModal('Case Closed!', `Excellent deductive work! Based on the parents' genetics, only <strong>${guiltyName}</strong> could possibly possess the evidence blood type found at the scene. They have confessed to the crime. ${extraMsg}`, 'success');
+                } else {
+                    showModal('Case Closed!', `Excellent deductive work, detective! The blood evidence directly matches <strong>${guiltyName}</strong>. They have been apprehended and confessed to the crime. ${extraMsg}`, 'success');
+                }
+            } else {
+                const accusedName = currentGameState.suspects[selectedIndex].name;
+                if (currentGameState.isAdvanced) {
+                    showModal('Incorrect Conclusion', `You accused <strong>${accusedName}</strong>, but their parents' phenotypes make it genetically impossible for them to have the evidence blood type! Review your Punnett square logic and try again.`, 'error');
+                } else {
+                    showModal('Incorrect Conclusion', `You accused <strong>${accusedName}</strong>, but their blood type does not match the evidence found at the scene! Review the agglutination tests and try again.`, 'error');
+                }
+            }
+        }
+
+        // --- Custom Modal Logic ---
+        function showModal(title, message, type) {
+            const modal = document.getElementById('msg-modal');
+            const box = document.getElementById('msg-box');
+            const titleEl = document.getElementById('msg-title');
+            const contentEl = document.getElementById('msg-content');
+            const headerEl = document.getElementById('msg-header');
+            const iconEl = document.getElementById('msg-icon');
+
+            titleEl.innerText = title;
+            contentEl.innerHTML = message; // Using innerHTML to allow bold tags
+
+            // Style based on type
+            headerEl.className = 'px-6 py-4 border-b flex items-center gap-3 ';
+            if (type === 'success') {
+                headerEl.classList.add('bg-green-900/50', 'border-green-700');
+                titleEl.className = 'text-xl font-bold text-green-400 uppercase tracking-wide';
+                iconEl.innerHTML = `<svg class="text-green-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>`;
+            } else if (type === 'error') {
+                headerEl.classList.add('bg-red-900/50', 'border-red-700');
+                titleEl.className = 'text-xl font-bold text-red-400 uppercase tracking-wide';
+                iconEl.innerHTML = `<svg class="text-red-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>`;
+            } else {
+                headerEl.classList.add('bg-amber-900/50', 'border-amber-700');
+                titleEl.className = 'text-xl font-bold text-amber-400 uppercase tracking-wide';
+                iconEl.innerHTML = `<svg class="text-amber-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`;
+            }
+
+            // Show with fade
+            modal.classList.remove('hidden');
+            // Small delay to allow display:block to apply before changing opacity
+            setTimeout(() => {
+                modal.style.opacity = '1';
+                box.classList.remove('scale-95');
+                box.classList.add('scale-100');
+            }, 10);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('msg-modal');
+            const box = document.getElementById('msg-box');
+            
+            modal.style.opacity = '0';
+            box.classList.remove('scale-100');
+            box.classList.add('scale-95');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                // If it was a success modal, automatically generate a new case
+                if (document.getElementById('msg-title').innerText === 'Case Closed!') {
+                    generateNewCase();
+                }
+            }, 300); // Matches transition duration
+        }
+
+        // Initialize on load
+        window.onload = () => {
+            generateNewCase();
+        };
+
+    </script>
+</body>
+</html>
