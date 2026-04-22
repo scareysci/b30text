@@ -41,6 +41,17 @@
             right: auto; left: 50%;
             border-left: 2px solid #4b5563;
         }
+        
+        /* Offset logic to perfectly align the drop line with the biological child */
+        .tree li.has-spouse::before {
+            right: calc(50% + 85px);
+            width: calc(50% - 85px);
+        }
+        .tree li.has-spouse::after {
+            left: calc(50% - 85px);
+            width: calc(50% + 85px);
+        }
+
         /* Remove connectors from first/last child */
         .tree li:only-child::after, .tree li:only-child::before {
             display: none;
@@ -55,13 +66,6 @@
         }
         .tree li:first-child::after {
             border-radius: 5px 0 0 0;
-        }
-        /* Downward connectors from parents */
-        .tree ul ul::before {
-            content: '';
-            position: absolute; top: 0; left: 50%;
-            border-left: 2px solid #4b5563;
-            width: 0; height: 20px;
         }
         
         /* Node Styling */
@@ -116,16 +120,29 @@
             position: relative;
             z-index: 5;
         }
+        /* Horizontal line connecting spouses */
         .marriage-line::after {
             content: '';
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translateX(-50%);
-            width: 50px;
+            width: 40px;
             height: 2px;
             background-color: #4b5563;
-            z-index: 1;
+            z-index: 0;
+        }
+        /* Vertical line dropping from the marriage union down to the children */
+        .marriage-line::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: calc(50% + 20px);
+            background-color: #4b5563;
+            z-index: 0;
         }
 
         .tab-content { display: none; }
@@ -270,7 +287,7 @@
                                     </div>
                                     <ul>
                                         <!-- Gen III Branch 1 -->
-                                        <li>
+                                        <li class="has-spouse">
                                             <div class="text-xs font-bold text-gray-400 mb-2 mt-6 uppercase tracking-widest">Generation III</div>
                                             <div class="marriage-line">
                                                 <div class="node node-square">
@@ -300,7 +317,7 @@
                                             </ul>
                                         </li>
                                         <!-- Gen III Branch 2 -->
-                                        <li>
+                                        <li class="has-spouse">
                                             <div class="text-xs font-bold text-gray-400 mb-2 mt-6 uppercase tracking-widest">Generation III</div>
                                             <div class="marriage-line">
                                                 <div class="node node-circle">
@@ -339,16 +356,14 @@
                                         </div>
                                     </div>
                                     <ul>
-                                        <!-- Gen III Branch 3 (FIXED SHAPES) -->
-                                        <li>
+                                        <!-- Gen III Branch 3 -->
+                                        <li class="has-spouse">
                                             <div class="text-xs font-bold text-gray-400 mb-2 mt-6 uppercase tracking-widest">Generation III</div>
                                             <div class="marriage-line">
-                                                <!-- Paul (Male Biological Child) -->
                                                 <div class="node node-square">
                                                     <div class="node-name">Paul</div>
                                                     <div class="node-traits"><span class="trait-unknown">[?] Earlobes</span><br><span class="trait-unknown">[?] Hairline</span><br><span class="trait-unknown">[?] Thumb</span></div>
                                                 </div>
-                                                <!-- Olivia (Female Spouse) -->
                                                 <div class="node node-circle bg-gray-200 border-dashed border-gray-400">
                                                     <div class="node-name">Olivia</div>
                                                     <div class="node-traits">Attached Earlobes<br>Straight Hair<br>Hitchhiker Thumb</div>
@@ -372,7 +387,7 @@
                                             </ul>
                                         </li>
                                         <!-- Gen III Branch 4 -->
-                                        <li>
+                                        <li class="has-spouse">
                                             <div class="text-xs font-bold text-gray-400 mb-2 mt-6 uppercase tracking-widest">Generation III</div>
                                             <div class="marriage-line">
                                                 <div class="node node-circle">
