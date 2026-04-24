@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Math 7 Scaffolded Booklet (Pages 19-38)</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- html2pdf library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700&display=swap');
@@ -37,6 +38,14 @@
             margin: 2rem auto;
             box-shadow: 0 10px 25px rgba(0,0,0,0.1);
             position: relative;
+            /* Forces page breaks for both browser print and html2pdf */
+            page-break-after: always;
+            break-after: page;
+        }
+        
+        .worksheet-page:last-of-type {
+            page-break-after: auto;
+            break-after: auto;
         }
 
         /* Write-in box styles */
@@ -116,10 +125,7 @@
                 box-shadow: none;
                 margin: 0;
                 padding: 0;
-                page-break-after: always;
-                break-after: page;
             }
-            .worksheet-page:last-child { page-break-after: auto; break-after: auto; }
             .break-inside-avoid { break-inside: avoid; }
             .print-exact {
                 print-color-adjust: exact;
@@ -235,7 +241,7 @@
     // 2. SCAFFOLDING & RENDER ENGINE
     // =====================================================================
     
-    // Generates generic circle SVG to represent math concepts cleanly
+    // Generates generic circle SVG with correct xmlns namespace for PDF rendering
     function getSVG(type, textCenter, textSide) {
         let lines = '';
         if(type === 'angle') {
@@ -245,8 +251,10 @@
         } else if (type === 'd') {
             lines = `<line x1="10" y1="50" x2="90" y2="50" stroke="black" stroke-width="2" stroke-dasharray="4,4"/>`;
         }
+        
+        // xmlns attribute is strictly required for html2canvas to render SVGs
         return `
-        <svg viewBox="0 0 100 100" class="w-24 h-24 mx-auto mb-2">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" class="w-24 h-24 mx-auto mb-2">
             <circle cx="50" cy="50" r="40" fill="none" stroke="black" stroke-width="2"/>
             <circle cx="50" cy="50" r="3" fill="black"/>
             ${lines}
@@ -372,7 +380,6 @@
         }
 
         else if (type === 'elements' || type === 'measure' || type === 'draw_circles' || type === 'draw_target' || type === 'draw_from_c') {
-            // Visual/Drawing Tasks that are hard to code dynamically. Provide blank workspace.
             let label = Array.isArray(qData) ? `${qData[0]} = ${qData[1]}${qData[2]?qData[2]:''}` : (typeof qData === 'number' ? `C = ${qData}` : `Identify parts`);
             html += `<div class="text-center font-bold text-md mb-2">${label}</div>
                      <div class="w-full h-32 border-2 border-dashed border-gray-300 flex items-center justify-center bg-gray-50"><div class="w-2 h-2 bg-black rounded-full"></div></div>
@@ -416,7 +423,8 @@
                         <h1 class="title-text">${pageObj.title}</h1>
                     </div>
                     
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- EXPLICITLY LOCKED TO TWO COLUMNS (grid-cols-2) to prevent mobile-style print collapsing -->
+                    <div class="grid grid-cols-2 gap-6">
             `;
 
             // Render Questions
@@ -482,28 +490,25 @@
         // Show loading screen
         overlay.style.display = 'flex';
         
-        // Temporary style injection for perfect PDF page breaks
-        const style = document.createElement('style');
-        style.innerHTML = `
-            .worksheet-page { margin: 0; padding: 0.25in; box-shadow: none; page-break-after: always !important; break-after: page !important; }
-            .worksheet-page[style*="display: none"] { page-break-after: auto !important; break-after: auto !important; }
-            #booklet > .worksheet-page:not([style*="display: none"]):last-of-type { page-break-after: auto !important; break-after: auto !important; }
-        `;
-        document.head.appendChild(style);
-
         const opt = {
-            margin:       0.2, // Tiny margin so internal 0.25in padding handles content
+            margin:       0.3,
             filename:     `Math7_Full_Packet_${dateStr}.pdf`,
-            image:        { type: 'jpeg', quality: 0.95 }, // slightly compressed to handle 20 pages easily
-            html2canvas:  { scale: 2, useCORS: true },
-            jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+            image:        { type: 'jpeg', quality: 0.98 },
+            /* scrollY: 0 is critical. It prevents the renderer from capturing a blank area if the user scrolled down */
+            html2canvas:  { scale: 2, useCORS: true, scrollY: 0 },
+            jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' },
+            /* Uses the explicitly defined CSS rule on .worksheet-page to insert page breaks perfectly */
+            pagebreak:    { mode: 'css', after: '.worksheet-page' }
         };
         
-        // Allow DOM to update overlay before heavy processing
+        // Brief timeout ensures the "Loading..." UI displays before the thread locks up processing 20 pages
         setTimeout(() => {
             html2pdf().set(opt).from(element).save().then(() => {
-                document.head.removeChild(style);
                 overlay.style.display = 'none';
+            }).catch(err => {
+                console.error("PDF generation error:", err);
+                overlay.style.display = 'none';
+                alert("There was an issue generating the PDF. Please try 'Print via Browser' instead.");
             });
         }, 500);
     }
