@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math 7 Scaffolded Booklet (Pages 19-38)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700&display=swap');
+        
+        body {
+            font-family: 'Lexend', sans-serif;
+            background-color: #e5e7eb;
+            color: #000;
+        }
+
+        /* UI Controls Styling */
+        .controls-panel {
+            background: #1f2937;
+            color: white;
+            padding: 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            max-height: 40vh;
+            overflow-y: auto;
+        }
+
+        .booklet-container {
+            max-width: 8.5in;
+            margin: 0 auto;
+        }
+
+        .worksheet-page {
+            background: white;
+            padding: 0.5in;
+            margin: 2rem auto;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        /* Write-in box styles */
+        .write-box {
+            display: inline-block;
+            min-width: 3.5rem;
+            height: 2.25rem;
+            border: 2px solid #374151;
+            border-radius: 0.25rem;
+            background-color: #f9fafb;
+            vertical-align: middle;
+            text-align: center;
+            line-height: 2rem;
+            font-weight: bold;
+        }
+        
+        .write-box.large { min-width: 6rem; }
+        .write-box.small { min-width: 2.5rem; height: 1.75rem; line-height: 1.5rem; }
+
+        .pre-filled {
+            display: inline-block;
+            min-width: 2.5rem;
+            text-align: center;
+            border-bottom: 2px solid #2563eb;
+            font-weight: bold;
+            padding: 0 0.25rem;
+            color: #1e40af;
+        }
+
+        .title-text {
+            font-size: 1.8rem;
+            font-weight: 800;
+            text-align: center;
+            color: white;
+            text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000, 4px 4px 0 #666;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+
+        .checkbox-wrapper input:checked + div {
+            background-color: #3b82f6;
+            border-color: #3b82f6;
+        }
+
+        #loading-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        @media print {
+            .no-print { display: none !important; }
+            body { background-color: white; }
+            .worksheet-page {
+                box-shadow: none;
+                margin: 0;
+                padding: 0;
+                page-break-after: always;
+                break-after: page;
+            }
+            .worksheet-page:last-child { page-break-after: auto; break-after: auto; }
+            .break-inside-avoid { break-inside: avoid; }
+            .print-exact {
+                print-color-adjust: exact;
+                -webkit-print-color-adjust: exact;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Loading Overlay for PDF Generation -->
+    <div id="loading-overlay">
+        <svg class="animate-spin h-12 w-12 text-blue-500 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <h2 class="text-2xl font-bold">Generating PDF Packet...</h2>
+        <p class="text-gray-300 mt-2">This may take a few seconds for all 20 pages.</p>
+    </div>
+
+    <!-- TEACHER CONTROL PANEL -->
+    <div class="controls-panel no-print" id="control-panel">
+        <div class="max-w-6xl mx-auto">
+            <div class="flex justify-between items-center mb-4 border-b border-gray-600 pb-4">
+                <h2 class="text-xl font-bold flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                    Select Worksheets for Packet
+                </h2>
+                <div class="flex gap-4">
+                    <button onclick="selectAll(true)" class="text-sm bg-gray-600 hover:bg-gray-500 px-3 py-1 rounded">Select All</button>
+                    <button onclick="selectAll(false)" class="text-sm bg-gray-600 hover:bg-gray-500 px-3 py-1 rounded">Deselect All</button>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 mb-6" id="checkbox-container">
+                <!-- Checkboxes injected by JS -->
+            </div>
+
+            <div class="flex gap-4 border-t border-gray-600 pt-4 justify-center">
+                <button onclick="generatePDF()" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-blue-500 transition flex items-center gap-2 shadow-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm5 6a1 1 0 10-2 0v3.586l-1.293-1.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V8z" clip-rule="evenodd" /></svg>
+                    Download Packet as PDF
+                </button>
+                <button onclick="window.print()" class="bg-gray-700 text-white px-8 py-3 rounded-lg font-bold hover:bg-gray-600 transition flex items-center gap-2">
+                    Print via Browser
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN BOOKLET CONTAINER -->
+    <div id="booklet" class="booklet-container print-exact">
+        <!-- Pages injected by JS -->
+    </div>
+
+<script>
+    // =====================================================================
+    // 1. DATA DEFINITIONS (Pages 19 - 38)
+    // =====================================================================
+    const PDF_PAGES = [
+      { id: 'p19', num: 19, title: 'Constructing Angles Up To 360°', type: 'draw_angles', q: [200, 275, 350, 287, 322, 196, 248, 318, 264] },
+      { id: 'p20', num: 20, title: 'Constructing Angles (Practice)', type: 'draw_angles', q: [267, 236, 184, 326, 241, 279, 351, 249, 355] },
+      { id: 'p21', num: 21, title: 'Introduction to Central Angles', type: 'missing_central', q: [[121], [168], [259], [152], [180], [314], [90], [166], [328]] },
+      { id: 'p22', num: 22, title: 'Finding the Missing Angle', type: 'missing_central', q: [[82,64], [94,168], [145,180], [126,148], [101,90], [125,198], [120,120], [168,95], [241,29], [121,129], [93,189], [259,51]] },
+      { id: 'p23', num: 23, title: 'Central Angles - Word Problems', type: 'wp_central', q: [
+          {q: 'At a pizza party, a large pizza is sliced into 8 equal pieces. What is the measure of the central angle formed by each slice?', calc: "360 ÷ 8"},
+          {q: 'A clock\'s hour and minute hands form a central angle of 120 degrees at 4:00 PM. What would be the central angle when it is 8:00 PM?', calc: "120 × 2"},
+          {q: 'A circular pie chart shows different ice cream preferences. The central angle for chocolate is 165°. What is the measure of the central angle for all other flavors combined?', calc: "360 - 165"},
+          {q: 'At a science fair, a table is divided into two sections. Project A is 160°. What is the central angle for project B?', calc: "360 - 160"},
+          {q: 'On a clock, the angle between 4 and 7 is 90°. If the central angle for 4 is 120°, what is the central angle for 7?', calc: "120 + 90"}
+        ]},
+      { id: 'p24', num: 24, title: 'Missing Angle - Intersecting', type: 'missing_central', q: [[128,49,41], [48,102,86], [92,91,63], [96,52,54,83], [51,73,66,19,79], [83,38,24,50,46,53]] },
+      { id: 'p25', num: 25, title: 'Central Angles - Word Problems II', type: 'wp_central', q: [
+          {q: 'A circular pizza is divided into 3 sections. Pepperoni is 130°, cheese is 110°. What is the veggie section?', calc: "360 - 240"},
+          {q: 'A playground is divided into 4 areas. The first three are 60°, 100°, and 120°. What is the fourth?', calc: "360 - 280"},
+          {q: 'A pie chart displays 4 smartphone brands. Brands A, B, and C are 85°, 135°, and 55°. What is brand D?', calc: "360 - 275"}
+        ]},
+      { id: 'p26', num: 26, title: 'Intro - Radius and Diameter', type: 'elements', q: [1,2,3,4,5,6] },
+      { id: 'p27', num: 27, title: 'Radius & Diameter Relationship', type: 'elements', q: [1,2,3,4,5,6] },
+      { id: 'p28', num: 28, title: 'Calculating Radius and Diameter', type: 'calc_rd', q: [['r',5,'mm'], ['r',8,'cm'], ['d',16,'cm'], ['d',44,'m'], ['d',7,'cm'], ['r',11,'cm'], ['r',9,'m'], ['d',17,'mm'], ['r',23,'cm'], ['d',64,'mm'], ['d',14,'m'], ['r',32,'m']] },
+      { id: 'p29', num: 29, title: 'Calculating Radius & Diameter (2)', type: 'calc_rd', q: [['d',17,'m'], ['r',5.5,'cm'], ['r',33,'mm'], ['d',9.6,'m'], ['d',8.2,'m'], ['d',17.3,'cm'], ['r',6,'cm'], ['d',17,'m'], ['d',22,'m'], ['d',46,'cm'], ['r',16,'mm']] },
+      { id: 'p30', num: 30, title: 'Radius and Diameter Word Problems', type: 'wp_rd', q: [
+          {q: 'Emily found a stone with diameter 3 cm. She needs a hole in the middle. How far from the edge is the middle?', t:'d', v:3, u:'cm'},
+          {q: 'A pizza has a diameter of 31 cm. How many cm is the middle from the outside?', t:'d', v:31, u:'cm'},
+          {q: 'A pond has a radius of 7 meters. A bridge goes straight across. What is the length?', t:'r', v:7, u:'m'},
+          {q: 'An ice rink has a radius of 15 meters. A divider goes straight across. How long is the divider?', t:'r', v:15, u:'m'},
+          {q: 'A flower bed has a diameter of 16 meters. A plank goes halfway across. How long is the plank?', t:'d', v:16, u:'m'}
+        ]},
+      { id: 'p31', num: 31, title: 'Estimating Circumference (x 3)', type: 'est_circ', q: [['d',7,'mm'], ['d',11,'cm'], ['d',22,'cm'], ['d',31,'m'], ['d',7.2,'m'], ['r',5.5,'cm']] },
+      { id: 'p32', num: 32, title: 'Calculating Circumference (x 3.14)', type: 'calc_circ', q: [['r',15,'cm'], ['d',18,'cm'], ['d',8,'mm'], ['d',31,'m'], ['d',7,'m'], ['r',13,'cm'], ['d',22,'cm'], ['r',43,'m'], ['d',11,'m']] },
+      { id: 'p33', num: 33, title: 'Calculating Circumference (Table)', type: 'calc_circ', q: [['r',6,'cm'], ['d',17,'m'], ['d',22,'m'], ['d',46,'cm'], ['r',16,'mm'], ['d',33,'m'], ['r',2.5,'km'], ['r',6.8,'m'], ['d',15.8,'m'], ['d',48.6,'mm']] },
+      { id: 'p34', num: 34, title: 'Circumference Word Problems', type: 'wp_circ', q: [
+          {q: 'A crater has a diameter of 31.2km. What is the circumference?', t:'d', v:31.2},
+          {q: 'A circular yard has a distance of 15.5m from the center to the edge. What is the perimeter?', t:'r', v:15.5},
+          {q: 'A circular track has a diameter of 16m. What distance is the track?', t:'d', v:16},
+          {q: 'A bicycle wheel has a radius of 40cm. How far will it move in one full turn?', t:'r', v:40}
+        ]},
+      { id: 'p35', num: 35, title: 'Radius & Diameter from Circumference', type: 'calc_from_c', q: [['C',28,'mm'], ['C',15,'cm'], ['C',36,'m'], ['C',47,'cm'], ['C',55,'m'], ['C',32,'mm'], ['C',59,'km'], ['C',64,'m'], ['C',71,'cm'], ['C',68,'mm']] },
+      { id: 'p36', num: 36, title: 'Drawing Circles (Radius & Diameter)', type: 'draw_circles', q: [['r',2,'cm'], ['d',3,'cm'], ['d',6,'cm'], ['r',2.5,'cm'], ['d',40,'mm'], ['r',1,'cm']] },
+      { id: 'p37', num: 37, title: 'Drawing Circles (Target)', type: 'draw_circles', q: [['r',9,'cm'], ['d',14,'cm'], ['r',5,'cm'], ['r',3,'cm'], ['d',2,'cm']] },
+      { id: 'p38', num: 38, title: 'Drawing Circles (Circumference)', type: 'draw_from_c', q: [12.5, 62.8, 19, 15.7, 20.4, 14.1] }
+    ];
+
+    // =====================================================================
+    // 2. SCAFFOLDING & RENDER ENGINE
+    // =====================================================================
+    
+    // Generates generic circle SVG to represent math concepts cleanly
+    function getSVG(type, textCenter, textSide) {
+        let lines = '';
+        if(type === 'angle') {
+            lines = `<line x1="50" y1="50" x2="10" y2="50" stroke="black" stroke-width="2" transform="rotate(45 50 50)"/><line x1="50" y1="50" x2="10" y2="50" stroke="black" stroke-width="2" transform="rotate(-45 50 50)"/>`;
+        } else if (type === 'r') {
+            lines = `<line x1="50" y1="50" x2="90" y2="50" stroke="black" stroke-width="2" stroke-dasharray="4,4"/>`;
+        } else if (type === 'd') {
+            lines = `<line x1="10" y1="50" x2="90" y2="50" stroke="black" stroke-width="2" stroke-dasharray="4,4"/>`;
+        }
+        return `
+        <svg viewBox="0 0 100 100" class="w-24 h-24 mx-auto mb-2">
+            <circle cx="50" cy="50" r="40" fill="none" stroke="black" stroke-width="2"/>
+            <circle cx="50" cy="50" r="3" fill="black"/>
+            ${lines}
+            ${textCenter ? `<text x="50" y="30" font-size="14" font-weight="bold" text-anchor="middle">${textCenter}</text>` : ''}
+            ${textSide ? `<text x="50" y="80" font-size="14" font-weight="bold" text-anchor="middle">${textSide}</text>` : ''}
+        </svg>`;
+    }
+
+    function renderQuestion(qData, type, index, total) {
+        // Determine Support Level
+        let level = 'ind';
+        if (index < total * 0.35) level = 'high';
+        else if (index < total * 0.70) level = 'med';
+
+        let html = `<div class="border-2 border-gray-400 p-4 rounded bg-white break-inside-avoid">
+                    <div class="font-bold text-xl mb-2">${index + 1})</div>`;
+
+        // Routing based on question type
+        if (type === 'draw_angles') {
+            html += `<div class="text-center font-bold text-lg mb-4">${qData}°</div>`;
+            if (level === 'high') {
+                html += `<div class="text-sm space-y-2"><p>☐ Draw baseline</p><p>☐ Place protractor</p><p>☐ Mark dot at ${qData}°</p><p>☐ Draw line</p></div>`;
+            } else if (level === 'med') {
+                html += `<div class="text-sm space-y-2"><p>☐ Use protractor to mark ${qData}°</p><br><br></div>`;
+            } else {
+                html += `<div class="h-20"></div>`;
+            }
+        } 
+        
+        else if (type === 'missing_central') {
+            let sum = qData.reduce((a, b) => a + b, 0);
+            html += getSVG('angle', qData.join('° & ') + '°', 'x');
+            html += `<div class="text-sm space-y-2 text-center mt-2">`;
+            if (level === 'high') {
+                html += `<p>Total = 360°</p><p>x = 360 - <span class="pre-filled">${sum}</span></p><p class="mt-2 font-bold text-lg">x = <span class="write-box"></span>°</p>`;
+            } else if (level === 'med') {
+                html += `<p>x = <span class="write-box small"></span> - <span class="write-box small"></span></p><p class="mt-2 font-bold text-lg">x = <span class="write-box"></span>°</p>`;
+            } else {
+                html += `<br><p class="mt-2 font-bold text-lg">x = <span class="write-box"></span>°</p>`;
+            }
+            html += `</div>`;
+        }
+
+        else if (type === 'wp_central') {
+            html += `<div class="text-md mb-4">${qData.q}</div><div class="text-center space-y-2">`;
+            let parts = qData.calc.split(' ');
+            if (level === 'high') {
+                html += `<p>Calculation: <span class="pre-filled">${parts[0]}</span> ${parts[1]} <span class="pre-filled">${parts[2]}</span></p><p class="font-bold text-lg mt-2">Answer = <span class="write-box"></span>°</p>`;
+            } else if (level === 'med') {
+                html += `<p>Calculation: <span class="write-box small"></span> ${parts[1]} <span class="write-box small"></span></p><p class="font-bold text-lg mt-2">Answer = <span class="write-box"></span>°</p>`;
+            } else {
+                html += `<br><p class="font-bold text-lg mt-2">Answer = <span class="write-box large"></span>°</p>`;
+            }
+            html += `</div>`;
+        }
+
+        else if (type === 'calc_rd') {
+            let t = qData[0], val = qData[1], unit = qData[2];
+            html += getSVG(t, '', `${val}${unit}`);
+            html += `<div class="text-sm space-y-2 text-center mt-2">`;
+            if (t === 'r') {
+                if (level === 'high') html += `<p>Formula: d = r × 2</p><p>d = <span class="pre-filled">${val}</span> × 2</p>`;
+                else if (level === 'med') html += `<p>d = <span class="write-box small"></span> × 2</p>`;
+                html += `<p class="font-bold text-lg">Diameter = <span class="write-box"></span> ${unit}</p>`;
+            } else {
+                if (level === 'high') html += `<p>Formula: r = d ÷ 2</p><p>r = <span class="pre-filled">${val}</span> ÷ 2</p>`;
+                else if (level === 'med') html += `<p>r = <span class="write-box small"></span> ÷ 2</p>`;
+                html += `<p class="font-bold text-lg">Radius = <span class="write-box"></span> ${unit}</p>`;
+            }
+            html += `</div>`;
+        }
+
+        else if (type === 'wp_rd') {
+            html += `<div class="text-md mb-4">${qData.q}</div><div class="text-center space-y-2">`;
+            if (qData.t === 'd') { // Given d, find r
+                if(level==='high') html += `<p>Radius = <span class="pre-filled">${qData.v}</span> ÷ 2</p>`;
+                else if(level==='med') html += `<p>Radius = <span class="write-box small"></span> ÷ 2</p>`;
+                html += `<p class="font-bold text-lg mt-2">Radius = <span class="write-box"></span> ${qData.u}</p>`;
+            } else { // Given r, find d
+                if(level==='high') html += `<p>Diameter = <span class="pre-filled">${qData.v}</span> × 2</p>`;
+                else if(level==='med') html += `<p>Diameter = <span class="write-box small"></span> × 2</p>`;
+                html += `<p class="font-bold text-lg mt-2">Diameter = <span class="write-box"></span> ${qData.u}</p>`;
+            }
+            html += `</div>`;
+        }
+
+        else if (type === 'est_circ' || type === 'calc_circ') {
+            let t = qData[0], val = qData[1], unit = qData[2];
+            let mult = type === 'est_circ' ? '3' : '3.14';
+            html += getSVG(t, '', `${val}${unit}`);
+            html += `<div class="text-sm space-y-2 text-center mt-2">`;
+            
+            if (t === 'r') {
+                if(level==='high') html += `<p>1) d = <span class="pre-filled">${val}</span> × 2 = <span class="pre-filled">${val*2}</span></p>`;
+                else if(level==='med') html += `<p>1) d = <span class="write-box small"></span> × 2 = <span class="write-box small"></span></p>`;
+                val = val * 2; // update val for next step display logic
+            }
+
+            if(level==='high') html += `<p>C = <span class="pre-filled">${val}</span> × ${mult}</p>`;
+            else if(level==='med') html += `<p>C = <span class="write-box small"></span> × ${mult}</p>`;
+            
+            html += `<p class="font-bold text-lg mt-2">C = <span class="write-box"></span> ${unit}</p></div>`;
+        }
+        
+        else if (type === 'wp_circ') {
+            html += `<div class="text-md mb-4">${qData.q}</div><div class="text-center space-y-2">`;
+            let val = qData.v;
+            if(qData.t === 'r') {
+                 if(level==='high') html += `<p>d = <span class="pre-filled">${val}</span> × 2 = <span class="pre-filled">${val*2}</span></p>`;
+                 val = val * 2;
+            }
+            if(level==='high') html += `<p>C = <span class="pre-filled">${val}</span> × 3.14</p>`;
+            else if(level==='med') html += `<p>C = <span class="write-box small"></span> × 3.14</p>`;
+            html += `<p class="font-bold text-lg mt-2">C = <span class="write-box large"></span></p></div>`;
+        }
+
+        else if (type === 'calc_from_c') {
+            let t = qData[0], val = qData[1], unit = qData[2];
+            html += `<div class="text-center text-lg font-bold py-4">Circumference = ${val}${unit}</div><div class="text-sm space-y-2 text-center mt-2">`;
+            if (level === 'high') html += `<p>d = <span class="pre-filled">${val}</span> ÷ 3.14</p>`;
+            else if (level === 'med') html += `<p>d = <span class="write-box small"></span> ÷ 3.14</p>`;
+            html += `<p class="font-bold text-lg mt-2">Diameter = <span class="write-box"></span> ${unit}</p></div>`;
+        }
+
+        else if (type === 'elements' || type === 'measure' || type === 'draw_circles' || type === 'draw_target' || type === 'draw_from_c') {
+            // Visual/Drawing Tasks that are hard to code dynamically. Provide blank workspace.
+            let label = Array.isArray(qData) ? `${qData[0]} = ${qData[1]}${qData[2]?qData[2]:''}` : (typeof qData === 'number' ? `C = ${qData}` : `Identify parts`);
+            html += `<div class="text-center font-bold text-md mb-2">${label}</div>
+                     <div class="w-full h-32 border-2 border-dashed border-gray-300 flex items-center justify-center bg-gray-50"><div class="w-2 h-2 bg-black rounded-full"></div></div>
+                     <div class="mt-4 flex gap-2 justify-center"><span class="text-sm text-gray-500">Workspace</span></div>`;
+        }
+
+        html += `</div>`;
+        return html;
+    }
+
+    // =====================================================================
+    // 3. INITIALIZATION & RENDER LOOP
+    // =====================================================================
+    function initializeBooklet() {
+        const booklet = document.getElementById('booklet');
+        const checkboxes = document.getElementById('checkbox-container');
+        let htmlContent = '';
+        let checkboxContent = '';
+
+        PDF_PAGES.forEach((pageObj) => {
+            // Build Checkbox
+            checkboxContent += `
+                <label class="cursor-pointer flex items-center gap-2 bg-gray-700 p-2 rounded hover:bg-gray-600 transition checkbox-wrapper text-sm">
+                    <input type="checkbox" class="hidden toggle-ws" value="page-${pageObj.num}" checked onchange="toggleWorksheets()">
+                    <div class="w-5 h-5 border-2 border-gray-400 rounded flex items-center justify-center transition-colors">
+                        <svg class="w-3 h-3 text-white hidden pointer-events-none" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                    </div>
+                    <span>Pg ${pageObj.num}</span>
+                </label>
+            `;
+
+            // Build Page
+            htmlContent += `
+                <div id="page-${pageObj.num}" class="worksheet-page">
+                    <div class="border-4 border-black p-4 mb-6 rounded-lg">
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="text-lg"><span class="font-bold">Name:</span> <span class="inline-block w-64 border-b-2 border-black"></span></div>
+                            <div class="text-xl font-bold">${pageObj.num}</div>
+                            <div class="text-xs text-right border-2 border-black p-1"><u>Curriculum Connection</u><br>SS7.1</div>
+                        </div>
+                        <h1 class="title-text">${pageObj.title}</h1>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            `;
+
+            // Render Questions
+            pageObj.q.forEach((qData, index) => {
+                htmlContent += renderQuestion(qData, pageObj.type, index, pageObj.q.length);
+            });
+
+            htmlContent += `</div></div>`; // Close grid and page
+        });
+
+        checkboxes.innerHTML = checkboxContent;
+        booklet.innerHTML = htmlContent;
+        toggleWorksheets(); // Run once to set initial visibility
+    }
+
+    // =====================================================================
+    // 4. UI INTERACTIONS
+    // =====================================================================
+    function toggleWorksheets() {
+        const checkboxes = document.querySelectorAll('.toggle-ws');
+        checkboxes.forEach(box => {
+            const worksheet = document.getElementById(box.value);
+            const checkIcon = box.nextElementSibling.querySelector('svg');
+            if (box.checked) {
+                worksheet.style.display = 'block';
+                checkIcon.classList.remove('hidden');
+            } else {
+                worksheet.style.display = 'none';
+                checkIcon.classList.add('hidden');
+            }
+        });
+    }
+
+    function selectAll(state) {
+        document.querySelectorAll('.toggle-ws').forEach(box => box.checked = state);
+        toggleWorksheets();
+    }
+
+    function generatePDF() {
+        const element = document.getElementById('booklet');
+        const overlay = document.getElementById('loading-overlay');
+        const dateStr = new Date().toISOString().slice(0,10);
+        
+        // Show loading screen
+        overlay.style.display = 'flex';
+        
+        // Temporary style injection for perfect PDF page breaks
+        const style = document.createElement('style');
+        style.innerHTML = `
+            .worksheet-page { margin: 0; padding: 0.25in; box-shadow: none; page-break-after: always !important; break-after: page !important; }
+            .worksheet-page[style*="display: none"] { page-break-after: auto !important; break-after: auto !important; }
+            #booklet > .worksheet-page:not([style*="display: none"]):last-of-type { page-break-after: auto !important; break-after: auto !important; }
+        `;
+        document.head.appendChild(style);
+
+        const opt = {
+            margin:       0.2, // Tiny margin so internal 0.25in padding handles content
+            filename:     `Math7_Full_Packet_${dateStr}.pdf`,
+            image:        { type: 'jpeg', quality: 0.95 }, // slightly compressed to handle 20 pages easily
+            html2canvas:  { scale: 2, useCORS: true },
+            jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+        };
+        
+        // Allow DOM to update overlay before heavy processing
+        setTimeout(() => {
+            html2pdf().set(opt).from(element).save().then(() => {
+                document.head.removeChild(style);
+                overlay.style.display = 'none';
+            });
+        }, 500);
+    }
+
+    // Boot up!
+    document.addEventListener("DOMContentLoaded", initializeBooklet);
+
+</script>
+</body>
+</html>
