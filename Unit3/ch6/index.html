@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biology 30 Saskatchewan - Chapter 6</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400&family=Inter:wght@300;400;600;800&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+            line-height: 1.8;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Merriweather', serif;
+        }
+
+        .feature-box {
+            border: 2px dashed #cbd5e1;
+            background-color: #f1f5f9;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            position: relative;
+        }
+
+        .feature-tag {
+            position: absolute;
+            top: -12px;
+            left: 1rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .tag-interactive { background-color: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+        .tag-video { background-color: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+
+        .sask-context {
+            border-left: 4px solid #16a34a;
+            background-color: #f0fdf4;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 0 0.5rem 0.5rem 0;
+        }
+
+        .indigenous-context {
+            border-left: 4px solid #b45309;
+            background-color: #fffbeb;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 0 0.5rem 0.5rem 0;
+        }
+
+        .learning-objective {
+            background-color: #eff6ff;
+            border-left: 4px solid #2563eb;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+        }
+        
+        .formative-check {
+            background-color: #fff7ed;
+            border: 1px solid #fed7aa;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            border-radius: 0.5rem;
+        }
+
+        .img-container {
+            margin: 2.5rem 0;
+            background-color: #ffffff;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+
+        .img-placeholder {
+            min-height: 300px;
+            background: repeating-linear-gradient(
+                45deg,
+                #f8fafc,
+                #f8fafc 10px,
+                #f1f5f9 10px,
+                #f1f5f9 20px
+            );
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            font-style: italic;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            font-size: 0.95rem;
+        }
+        th, td {
+            border: 1px solid #e2e8f0;
+            padding: 1rem;
+            text-align: left;
+        }
+        th {
+            background-color: #f1f5f9;
+            font-weight: 700;
+            color: #334155;
+        }
+        tr:nth-child(even) { background-color: #f8fafc; }
+
+        @media print {
+            nav, footer, .print-hidden { display: none !important; }
+            body { background-color: white; color: black; font-size: 12pt; }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50 print-hidden">
+        <div class="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center gap-4">
+            <div class="flex items-center gap-4">
+                <a href="#" class="flex items-center gap-2 text-slate-500 hover:text-green-700 transition-colors">
+                    <i data-lucide="arrow-left" class="w-5 h-5"></i>
+                </a>
+                <span class="font-bold text-xl text-green-700 tracking-tight">Biology 30</span>
+            </div>
+            <div class="text-sm text-slate-500 font-medium hidden md:block">
+                Unit 3: How are characteristics passed on?
+            </div>
+            <div class="relative flex-grow max-w-xs">
+                <input type="text" placeholder="Search chapter..." class="block w-full pl-10 pr-3 py-1.5 border border-slate-300 rounded-md text-sm">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i data-lucide="search" class="w-4 h-4 text-slate-400"></i>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-4 py-12">
+        
+        <header class="mb-16">
+            <div class="text-sm font-bold text-indigo-600 tracking-widest uppercase mb-2">Unit 3 Schema Activator</div>
+            <h1 class="text-4xl md:text-5xl font-black text-slate-900 mb-6 border-b-4 border-indigo-600 pb-4">Chapter 6: Molecular Genetics</h1>
+            
+            <div class="feature-box mt-8 mb-8 border-indigo-200 bg-indigo-50">
+                <h4 class="font-bold text-indigo-900 mb-2 flex items-center gap-2">
+                    <i data-lucide="zoom-in" class="w-5 h-5 text-indigo-600"></i>
+                    [Interactive Feature]: The Scale of Heredity
+                </h4>
+                <p class="text-sm text-indigo-800 mb-4">In Chapter 5, we looked at the macro-level: how eye color or pea shape is passed down. We learned that chromosomes are the vehicles of inheritance. Now, use this interactive slider to zoom in past the chromosome, deep into the nucleus, down to the atomic level. Watch as the "X" shape of a chromosome unravels to reveal the twisting ladder of the DNA double helix. This is the chemical code of life.</p>
+                <div class="w-full bg-slate-900 rounded-lg h-48 flex items-center justify-center border border-indigo-200">
+                    <span class="text-slate-400 italic font-medium flex flex-col items-center gap-2">
+                        <i data-lucide="mouse-pointer-click" class="w-8 h-8"></i>
+                        Interactive Zoom Tool: Chromosome to DNA Nucleotides
+                    </span>
+                </div>
+            </div>
+
+            <div class="prose prose-lg text-slate-700 max-w-none mt-8">
+                <p>Gregor Mendel discovered the rules of inheritance without ever knowing what a gene actually was. For nearly a century, biological traits were treated like abstract mathematical concepts. It wasn't until the mid-20th century that scientists asked a profound physical question: <em>What exactly is a gene made of?</em></p>
+                
+                <p>In this chapter, we transition from the abstract to the concrete. We will explore the fierce, highly competitive race to discover the structure of DNA. We will decode the "Central Dogma" of biology—how a sequence of chemical letters is translated into the proteins that build a living organism. Finally, we will examine how mutations drive evolution, how our environment can alter our genes (epigenetics), and how modern scientists manipulate this code in the laboratory.</p>
+            </div>
+        </header>
+
+        <!-- Section 6.1 -->
+        <section class="mb-20" id="section-6-1">
+            <h3 class="text-3xl font-bold text-slate-800 mb-6">6.1 The Race for the Double Helix [BI30-GB2a, b, c]</h3>
+            
+            <div class="learning-objective">
+                <strong>Learning Objective:</strong> Research the scientific culture surrounding the discovery of DNA's structure and assess how this double helix structure allows DNA to store, transmit, and express information.
+            </div>
+
+            <div class="prose prose-lg text-slate-700 max-w-none">
+                <p class="mb-6">The discovery of the DNA molecule's structure is arguably the most transformative event in the history of biology. However, it was not the work of a lone genius having a "eureka" moment. It was a heated, competitive race during the 1950s, characterized by brilliant insights, clashing egos, and ethical controversies.</p>
+
+                <h4 class="font-bold text-slate-900 mt-8 mb-4">The Scientific Culture of the 1950s</h4>
+                <p class="mb-4">Post-World War II science was heavily male-dominated and highly competitive. While we often celebrate collaborative science today, the race for DNA was driven by rival laboratories in England and the United States racing to publish first. Several key figures contributed pieces to the puzzle:</p>
+                
+                <ul class="list-disc pl-6 space-y-4 mb-6">
+                    <li><strong>Erwin Chargaff:</strong> A biochemist who discovered a crucial chemical rule. He found that in any sample of DNA, the amount of Adenine (A) always equalled the amount of Thymine (T), and the amount of Cytosine (C) always equalled Guanine (G). This became known as <em>Chargaff's Rules</em>, hinting that these bases must pair up.</li>
+                    <li><strong>Rosalind Franklin & Maurice Wilkins:</strong> Working at King's College London, they used X-ray crystallography to take pictures of DNA molecules. Franklin, a brilliant and meticulous chemist, produced "Photo 51"—an X-ray diffraction image that clearly showed DNA possessed a helical (corkscrew) shape.</li>
+                    <li><strong>James Watson & Francis Crick:</strong> Working at Cambridge University, these two were theoretical model builders. They were struggling to figure out how the chemical pieces fit together.</li>
+                </ul>
+
+                <div class="bg-amber-50 border-l-4 border-amber-500 p-6 rounded-r-lg mb-8">
+                    <h5 class="font-bold text-amber-900 mb-2">The Ethical Controversy of Photo 51</h5>
+                    <p class="mb-4 text-slate-700">Without Rosalind Franklin's knowledge or permission, Maurice Wilkins showed Watson her unpublished "Photo 51". The moment Watson saw the distinct 'X' pattern in the X-ray image, he knew the molecule was a double helix. Watson and Crick used her data to build their famous 1953 model and eventually won the Nobel Prize. Franklin passed away from ovarian cancer before the prize was awarded (Nobel prizes are not awarded posthumously), and her critical contribution was largely overlooked for decades.</p>
+                </div>
+
+                <h4 class="font-bold text-slate-900 mt-8 mb-4">The Elegance of the Double Helix</h4>
+                <p class="mb-4">Why was discovering the structure so important? Because in biology, <strong>structure dictates function</strong>. The moment Watson and Crick built the double helix model, it instantly explained how DNA could copy itself.</p>
+
+                <p class="mb-4">DNA is a polymer made of repeating units called <strong>nucleotides</strong>. Each nucleotide has three parts: a deoxyribose sugar, a phosphate group, and a nitrogenous base (A, T, C, or G).</p>
+
+                <figure class="img-container">
+                    <div class="img-placeholder bg-slate-100 flex flex-col gap-4 p-8">
+                        <i data-lucide="dna" class="w-16 h-16 text-indigo-400"></i>
+                        <span>[Detailed Diagram: The DNA Double Helix showing the Sugar-Phosphate backbone and the Hydrogen bonds between A-T and C-G base pairs.]</span>
+                    </div>
+                    <figcaption class="p-4 text-center text-sm text-slate-600 italic bg-slate-50">
+                        <strong>Figure 6.1:</strong> The Double Helix. The strong covalent bonds on the outside protect the code, while the weak hydrogen bonds in the middle allow the molecule to unzip for replication.
+                    </figcaption>
+                </figure>
+
+                <ul class="list-disc pl-6 space-y-4 mb-6">
+                    <li><strong>Storage:</strong> The sequence of the bases (A, T, C, G) along the center acts like letters in a book. This specific sequence <em>is</em> the genetic code.</li>
+                    <li><strong>Transmission (Copying):</strong> The two sides are held together by weak <strong>hydrogen bonds</strong>. Like a zipper, the DNA can easily be pulled apart down the middle. Because A only pairs with T, and C only pairs with G, each separated half serves as a perfect template to build a new, identical DNA molecule.</li>
+                    <li><strong>Protection:</strong> The outside of the helix is a tough "sugar-phosphate backbone" held together by strong covalent bonds, protecting the fragile genetic code inside from chemical damage.</li>
+                </ul>
+            </div>
+            
+            <div class="feature-box mt-12 mb-4">
+                <h4 class="font-bold text-slate-800 mb-2 flex items-center gap-2">
+                    <i data-lucide="box" class="w-5 h-5 text-indigo-600"></i>
+                    [Digital Feature]: 3D DNA Builder
+                </h4>
+                <span class="feature-tag tag-interactive">Interactive Model</span>
+                <p class="text-sm text-slate-600 mb-4">Experience the structural elegance yourself. Use this interactive 3D model to drag and drop nucleotides. Notice how the molecular shape of Adenine physically cannot form stable hydrogen bonds with Cytosine—it only fits perfectly with Thymine like a puzzle piece.</p>
+                <div class="w-full bg-slate-900 rounded-lg h-64 flex items-center justify-center border border-slate-700 shadow-inner">
+                     <span class="text-slate-400 font-mono text-sm">[Interactive 3D Canvas: Assemble the Double Helix]</span>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Section 6.2 -->
+        <section class="mb-20" id="section-6-2">
+            <h3 class="text-3xl font-bold text-slate-800 mb-6">6.2 From DNA to Protein: The Central Dogma [BI30-GB2d]</h3>
+            
+            <div class="learning-objective">
+                <strong>Learning Objective:</strong> Model the molecular genetic processes of DNA replication and protein synthesis (transcription and translation), distinguishing the specific roles of DNA, mRNA, tRNA, and rRNA.
+            </div>
+
+            <div class="prose prose-lg text-slate-700 max-w-none">
+                <p class="mb-6">DNA contains the instructions, but DNA doesn't actually <em>do</em> the physical work in your body. Proteins do. Proteins build muscle, digest food, carry oxygen, and fight viruses. The process of converting the written DNA code into a physical, working 3D protein is called the <strong>Central Dogma of Molecular Biology</strong>. It flows in one direction: <strong>DNA &rarr; RNA &rarr; Protein</strong>.</p>
+                
+                <h4 class="font-bold text-slate-900 mt-8 mb-4">Step 1: DNA Replication (Copying the Manual)</h4>
+                <p class="mb-4">Before a cell can divide, it must copy its entire DNA so the new cell has a manual. This process is called <em>semi-conservative</em> replication because each new DNA molecule keeps one "old" strand and builds one "new" strand.</p>
+                <ol class="list-decimal pl-6 space-y-2 mb-6">
+                    <li>An enzyme called <strong>Helicase</strong> unzips the double helix by breaking the weak hydrogen bonds between the bases.</li>
+                    <li>An enzyme called <strong>DNA Polymerase</strong> reads the exposed bases and attaches free-floating, matching nucleotides (A with T, C with G) to build the new complementary strand.</li>
+                </ol>
+
+                <h4 class="font-bold text-slate-900 mt-8 mb-4">Step 2: Transcription (Writing the Message)</h4>
+                <p class="mb-4">Your DNA is a master blueprint permanently locked inside the nucleus for protection. To build a protein, the cell needs to send a temporary copy of a specific gene out to the cytoplasm. This copy is made of <strong>mRNA (messenger RNA)</strong>.</p>
+                <ul class="list-disc pl-6 space-y-2 mb-6">
+                    <li>An enzyme called <strong>RNA Polymerase</strong> binds to the gene, opens the DNA, and builds a single-stranded mRNA copy.</li>
+                    <li><strong>Crucial Difference:</strong> RNA does not contain the base Thymine (T). Instead, it uses <strong>Uracil (U)</strong>. So, if the DNA reads 'A', the mRNA will add a 'U'.</li>
+                </ul>
+
+                <h4 class="font-bold text-slate-900 mt-8 mb-4">Step 3: Translation (Building the Machine)</h4>
+                <p class="mb-4">The mRNA leaves the nucleus and enters the cytoplasm, where it finds a <strong>Ribosome</strong>. The ribosome is a molecular factory made primarily of <strong>rRNA (ribosomal RNA)</strong>. Here, the language of nucleic acids is translated into the language of amino acids.</p>
+                
+                <p class="mb-4">The ribosome reads the mRNA sequence three letters at a time. Every three letters is called a <strong>Codon</strong>, and it codes for one specific amino acid. For example, the mRNA sequence <code>AUG</code> is the "Start" codon and codes for the amino acid Methionine.</p>
+                
+                <p class="mb-6">To bring the correct amino acids to the factory, the cell uses a delivery service: <strong>tRNA (transfer RNA)</strong>. Each tRNA carries a specific amino acid on one end, and has an <em>anti-codon</em> on the other end that perfectly matches the mRNA codon. As the ribosome reads the mRNA, tRNA molecules drop off their amino acids, which link together to form a long polypeptide chain. When the ribosome hits a "Stop" codon, the chain is released, folds into a 3D shape, and becomes a functional protein!</p>
+
+                <figure class="img-container">
+                    <div class="img-placeholder bg-blue-50 flex flex-col gap-4 p-8">
+                        <i data-lucide="factory" class="w-16 h-16 text-blue-400"></i>
+                        <span>[Detailed Diagram: Translation in action. Showing mRNA moving through an rRNA Ribosome, while tRNA molecules carrying colorful amino acids match their anti-codons to the mRNA codons.]</span>
+                    </div>
+                    <figcaption class="p-4 text-center text-sm text-slate-600 italic bg-slate-50">
+                        <strong>Figure 6.2:</strong> Translation. The rRNA ribosome coordinates the meeting of the mRNA message and the tRNA delivery molecules, building a protein chain one amino acid at a time.
+                    </figcaption>
+                </figure>
+            </div>
+
+            <div class="feature-box mt-12 mb-4">
+                <h4 class="font-bold text-slate-800 mb-2 flex items-center gap-2">
+                    <i data-lucide="play-circle" class="w-5 h-5 text-blue-600"></i>
+                    [Digital Feature]: Protein Synthesis Simulator
+                </h4>
+                <span class="feature-tag tag-interactive" style="background-color: #eff6ff; color: #1d4ed8; border-color: #bfdbfe;">Interactive Lab</span>
+                <p class="text-sm text-slate-600 mb-4">Take control of the Ribosome! In this simulation, you are given a strand of DNA. You must first transcribe it into mRNA by selecting the correct base pairings (remembering Uracil!). Then, you must use the digital Codon Wheel to translate the mRNA, dragging and dropping the correct tRNA molecules to build the protein.</p>
+                <div class="w-full bg-slate-800 rounded-lg h-64 flex flex-col items-center justify-center border border-slate-700 shadow-inner text-slate-300">
+                     <i data-lucide="gamepad-2" class="w-10 h-10 mb-2 opacity-50"></i>
+                     <span class="font-mono text-sm">Launch Translation Simulation</span>
+                </div>
+            </div>
+            
+            <div class="sask-context mt-8">
+                <h4 class="font-bold text-green-800 mb-2 flex items-center gap-2">
+                    <i data-lucide="sprout" class="w-5 h-5"></i> Saskatchewan Connection: Designer Proteins in Agriculture
+                </h4>
+                <p class="text-slate-700">Understanding translation is at the heart of agricultural innovation in Saskatchewan. At the Global Institute for Food Security (GIFS) at the University of Saskatchewan, scientists study the specific mRNA sequences in crop plants like canola and lentils. By understanding exactly how these plants translate their DNA into proteins that manage drought stress or disease resistance, researchers can selectively breed or genetically engineer crops that yield more food in the harsh, unpredictable prairie climate.</p>
+            </div>
+
+        </section>
+
+        <!-- Section 6.3 -->
+        <section class="mb-20" id="section-6-3">
+            <h3 class="text-3xl font-bold text-slate-800 mb-6">6.3 Mutations and Repair [BI30-GB2e, f, g]</h3>
+            
+            <div class="learning-objective">
+                <strong>Learning Objective:</strong> Discuss types of point mutations (substitution, insertion, deletion) and their effects (missense, nonsense, neutrality/silent) including reading frameshifts. Assess the value of DNA proofreading and the role of mutation in evolution.
+            </div>
+
+            <div class="prose prose-lg text-slate-700 max-w-none">
+                <p class="mb-6">DNA replication is incredibly fast—up to 50 nucleotides per second in human cells. With 3 billion base pairs to copy, mistakes happen. A permanent change in the DNA sequence is called a <strong>mutation</strong>. While radiation and toxic chemicals (mutagens) can cause mutations, many are simply natural "typos" made by DNA Polymerase.</p>
+
+                <h4 class="font-bold text-slate-900 mt-8 mb-4">Point Mutations (Substitutions)</h4>
+                <p class="mb-4">A point mutation occurs when a single nucleotide is swapped for another (e.g., an 'A' is accidentally swapped for a 'C'). Because the genetic code is read in three-letter codons, this substitution only affects one single amino acid. The effect depends on where it happens:</p>
+                <ul class="list-disc pl-6 space-y-4 mb-6">
+                    <li><strong>Neutrality (Silent Mutation):</strong> The mutation changes a base, but because the genetic code has redundancies, the new codon still codes for the <em>exact same</em> amino acid. The protein functions perfectly. The mutation is silent.</li>
+                    <li><strong>Missense Mutation:</strong> The substitution changes the codon to code for a <em>different</em> amino acid. The resulting protein might work slightly differently, barely work at all, or in rare cases, work better. (Sickle Cell Anemia is caused by a single missense mutation).</li>
+                    <li><strong>Nonsense Mutation:</strong> The substitution accidentally changes an amino acid codon into a <strong>"STOP"</strong> codon. The ribosome stops building prematurely. The protein is cut short and is almost always completely non-functional.</li>
+                </ul>
+
+                <h4 class="font-bold text-slate-900 mt-8 mb-4">Frameshift Mutations (Insertions and Deletions)</h4>
+                <p class="mb-4">These are often much more devastating. If DNA Polymerase accidentally inserts an extra nucleotide, or deletes a nucleotide, it disrupts the entire <strong>reading frame</strong>.</p>
+                
+                <div class="bg-white p-6 rounded-lg border border-slate-200 shadow-sm mb-6 font-mono text-sm md:text-base">
+                    <p class="text-slate-500 mb-2 font-sans font-bold">Consider this English sentence of three-letter words:</p>
+                    <p class="bg-slate-100 p-2 rounded text-center mb-4">THE FAT CAT ATE THE RAT</p>
+                    <p class="text-slate-500 mb-2 font-sans font-bold">If we <strong>Delete</strong> the 'C' in CAT, the ribosome still reads in threes, shifting everything over:</p>
+                    <p class="bg-red-50 p-2 rounded text-center text-red-700 mb-2">THE FAT ATA TET HER AT</p>
+                    <p class="text-sm font-sans text-slate-600 mt-2">The entire sentence (protein) after the deletion is completely ruined and unrecognizable.</p>
+                </div>
+
+                <h4 class="font-bold text-slate-900 mt-8 mb-4">DNA Proofreading and Evolution</h4>
+                <p class="mb-4">If mutations are so dangerous, how do we survive? DNA Polymerase isn't just a builder; it's also a proofreader. It checks its work as it goes. If it adds the wrong base, it can back up, cut the mistake out, and try again. This proofreading prevents 99% of mutations. Other specialized repair enzymes constantly patrol the DNA looking for damage from UV light to fix.</p>
+                
+                <p class="mb-4">However, a perfect repair system would mean no mutations ever survive. <strong>Mutations are the raw material of evolution.</strong> Without these random genetic variations, natural selection would have no new traits to "select" from. A mutation might break a protein today, but in a changing environment tomorrow, that broken protein might accidentally provide a survival advantage.</p>
+            </div>
+
+            <div class="sask-context mt-8">
+                <h4 class="font-bold text-green-800 mb-2 flex items-center gap-2">
+                    <i data-lucide="tractor" class="w-5 h-5"></i> Saskatchewan Connection: The Kochia Weed Arms Race
+                </h4>
+                <p class="text-slate-700">Saskatchewan farmers rely on herbicides to control weeds. However, Kochia (a tumbleweed-like plant) has become a massive agricultural nightmare. How? A random <strong>missense point mutation</strong> occurred in the DNA of a few Kochia plants, slightly altering the shape of a specific protein targeted by herbicides. The herbicide could no longer bind to the mutant protein. The weed survived, reproduced, and passed on the mutation. In the environment of a sprayed field, this random "typo" was a brilliant evolutionary advantage, leading to herbicide-resistant "superweeds" across the prairies.</p>
+            </div>
+
+            <div class="formative-check">
+                <h4 class="font-bold text-orange-800 mb-3"><i data-lucide="check-circle-2" class="inline w-5 h-5 mr-1"></i> Formative Check</h4>
+                <ul class="space-y-3 text-slate-700">
+                    <li>1. Explain why a <em>deletion</em> mutation usually causes more damage to a protein than a <em>substitution</em> mutation.</li>
+                    <li>2. If a point mutation changes a codon from <code>UAC</code> to <code>UAA</code> (a STOP codon), what type of mutation is this, and what is the effect on the protein?</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Section 6.4 -->
+        <section class="mb-20" id="section-6-4">
+            <h3 class="text-3xl font-bold text-slate-800 mb-6">6.4 Nature vs. Nurture: Epigenetics [BI30-GB2h]</h3>
+            
+            <div class="learning-objective">
+                <strong>Learning Objective:</strong> Describe how environmental and epigenetic factors influence genetic expression without changing the underlying DNA sequence.
+            </div>
+
+            <div class="prose prose-lg text-slate-700 max-w-none">
+                <p class="mb-6">For decades, scientists believed that your traits were completely locked in by the DNA sequence you inherited from your parents. You were a product of your genes ("Nature"). But what about identical twins who share the exact same DNA, yet one develops a disease and the other doesn't? The answer lies in <strong>Epigenetics</strong> (meaning "above" the genome).</p>
+
+                <p class="mb-4">Your DNA is hardware. Epigenetics is the software that tells the hardware what to do. Every cell in your body has the exact same DNA, but a heart cell looks and acts completely different from a skin cell. This is because cells can turn specific genes "ON" or "OFF."</p>
+
+                <h4 class="font-bold text-slate-900 mt-8 mb-4">How Epigenetics Works</h4>
+                <p class="mb-4">The environment (diet, stress, toxins, exercise) can cause chemical tags to attach to your DNA or the proteins that wrap it (histones). </p>
+                <ul class="list-disc pl-6 space-y-4 mb-6">
+                    <li><strong>DNA Methylation:</strong> The most common tag is a methyl group. When methyl groups attach to a gene, they physically block RNA Polymerase. The gene is silenced (turned OFF) and cannot be transcribed into mRNA.</li>
+                    <li>These epigenetic tags can change throughout your life based on your lifestyle and environment ("Nurture").</li>
+                </ul>
+
+                <p class="mb-6">Astonishingly, recent research shows that these epigenetic tags <strong>can sometimes be inherited</strong> by the next generation. If an organism experiences severe trauma or starvation, the epigenetic changes designed to help it survive can be passed to its offspring, preparing the offspring's biology for a harsh environment before they are even born.</p>
+            </div>
+
+            <div class="indigenous-context mt-8">
+                <h4 class="font-bold text-amber-900 mb-2 flex items-center gap-2">
+                    <i data-lucide="heart-handshake" class="w-5 h-5"></i> Intergenerational Trauma and Epigenetics
+                </h4>
+                <p class="text-slate-800 mb-4">Indigenous Knowledge Systems have long maintained that the experiences of the ancestors live within the present generations. A core aspect of <em>Wâhkôhtowin</em> is understanding that our physical and spiritual health is deeply connected to the generations before us and those yet to come.</p>
+                <p class="text-slate-800">Western molecular biology is now finding empirical evidence for this reality through epigenetics. Groundbreaking research is demonstrating that historical traumas—such as the starvation policies enacted on the Great Plains in the 1880s, or the systemic stress, abuse, and cultural suppression of the Residential School system—caused profound physiological stress in Indigenous ancestors. This extreme stress altered their epigenetic markers, particularly those regulating the stress hormone cortisol.</p>
+                <p class="text-slate-800">These altered epigenetic tags (turning certain stress-response genes permanently "on" or "off") can be biologically inherited by subsequent generations. This means that a grandchild of a Residential School survivor may be born with a biological predisposition to heightened anxiety or altered metabolic responses, even if they never experienced the original trauma themselves. Understanding epigenetics bridges Western biological science with Indigenous historical experiences, highlighting the deep, molecular impact of colonialism and emphasizing the biological importance of community healing.</p>
+            </div>
+        </section>
+
+        <!-- Section 6.5 -->
+        <section class="mb-20" id="section-6-5">
+            <h3 class="text-3xl font-bold text-slate-800 mb-6">6.5 The Molecular Toolbox [BI30-GB2i]</h3>
+            
+            <div class="learning-objective">
+                <strong>Learning Objective:</strong> Model or simulate common techniques used by molecular geneticists, such as PCR, agarose gel electrophoresis, and DNA fingerprinting.
+            </div>
+
+            <div class="prose prose-lg text-slate-700 max-w-none">
+                <p class="mb-6">Understanding DNA is one thing; manipulating it is another. Over the last forty years, scientists have developed a "toolbox" of biochemical techniques that allow us to cut, copy, sort, and read DNA. These tools are the foundation of modern forensics, medicine, and agriculture.</p>
+
+                <h4 class="font-bold text-slate-900 mt-8 mb-4">1. Polymerase Chain Reaction (PCR)</h4>
+                <p class="mb-4">Imagine finding a tiny speck of blood at a crime scene. It contains DNA, but not nearly enough to analyze. <strong>PCR</strong> is a molecular photocopier. By utilizing a heat-resistant DNA Polymerase enzyme (discovered in extreme thermophilic bacteria!), scientists can force DNA to replicate in a test tube. By rapidly heating and cooling the sample, a single copy of DNA can be amplified into billions of copies in just a few hours.</p>
+
+                <h4 class="font-bold text-slate-900 mt-8 mb-4">2. Restriction Enzymes (Molecular Scissors)</h4>
+                <p class="mb-4">To analyze DNA, we often need to cut it into smaller pieces. Scientists use <strong>Restriction Enzymes</strong> (originally discovered in bacteria as a defense against viruses). These enzymes scan the DNA and cut the strands only at very specific letter sequences (e.g., every time they see <code>GAATTC</code>).</p>
+
+                <h4 class="font-bold text-slate-900 mt-8 mb-4">3. Agarose Gel Electrophoresis (Sorting the Pieces)</h4>
+                <p class="mb-4">Once DNA is cut into fragments, how do we see them? We sort them by size using <strong>Gel Electrophoresis</strong>. </p>
+                <ol class="list-decimal pl-6 space-y-2 mb-6">
+                    <li>The chopped-up DNA mixture is loaded into small wells inside a slab of agarose gel (which acts like a microscopic sponge or sieve).</li>
+                    <li>An electrical current is turned on. Because the phosphate backbone of DNA is <strong>negatively charged</strong>, the DNA fragments are pulled through the gel towards the positive electrical pole.</li>
+                    <li><strong>The Sorting:</strong> Small, short pieces of DNA slip through the gel's pores easily and travel very fast. Large, bulky pieces of DNA get tangled in the gel and travel very slowly.</li>
+                    <li>After an hour, the current is turned off. The DNA is now separated by size into visible "bands."</li>
+                </ol>
+
+                <h4 class="font-bold text-slate-900 mt-8 mb-4">4. DNA Fingerprinting</h4>
+                <p class="mb-4">While 99.9% of human DNA is identical, we all have regions of "junk DNA" that vary wildly in length between individuals. If we use restriction enzymes to cut a suspect's DNA around these varying regions, and then run it through a gel, we get a unique barcode-like pattern of bands. If the suspect's barcode perfectly matches the barcode from the crime scene blood, it's a definitive match.</p>
+
+                <figure class="img-container">
+                    <div class="img-placeholder bg-slate-900 flex flex-col gap-4 p-8 items-center">
+                        <div class="w-48 h-32 border-4 border-slate-700 flex justify-between p-2">
+                            <div class="w-8 h-full bg-slate-800 flex flex-col gap-2 opacity-80"><div class="w-full h-2 bg-blue-400 mt-2"></div><div class="w-full h-2 bg-blue-400 mt-4"></div><div class="w-full h-2 bg-blue-400 mt-8"></div></div>
+                            <div class="w-8 h-full bg-slate-800 flex flex-col gap-2 opacity-80"><div class="w-full h-2 bg-blue-400 mt-6"></div><div class="w-full h-2 bg-blue-400 mt-2"></div></div>
+                            <div class="w-8 h-full bg-slate-800 flex flex-col gap-2 opacity-80"><div class="w-full h-2 bg-blue-400 mt-2"></div><div class="w-full h-2 bg-blue-400 mt-4"></div><div class="w-full h-2 bg-blue-400 mt-8"></div></div>
+                        </div>
+                        <span class="text-slate-400 mt-2">[Diagram: Simulated Gel Electrophoresis showing matching banding patterns between Crime Scene DNA and Suspect 2]</span>
+                    </div>
+                    <figcaption class="p-4 text-center text-sm text-slate-600 italic bg-slate-50">
+                        <strong>Figure 6.3:</strong> DNA Fingerprinting. The bands represent different lengths of DNA fragments. Notice how the banding pattern in the first lane (Crime Scene) perfectly matches the third lane (Suspect 2).
+                    </figcaption>
+                </figure>
+            </div>
+
+            <div class="feature-box mt-12 mb-4">
+                <h4 class="font-bold text-slate-800 mb-2 flex items-center gap-2">
+                    <i data-lucide="flask-conical" class="w-5 h-5 text-indigo-600"></i>
+                    [Digital Feature]: Virtual Gel Electrophoresis Forensics Lab
+                </h4>
+                <span class="feature-tag tag-interactive">Interactive Lab</span>
+                <p class="text-sm text-slate-600 mb-4">Step into the role of a forensic geneticist. You have recovered a hair follicle from an endangered Saskatchewan Woodland Caribou that was illegally poached. You also have meat confiscated from three suspected poachers. You will virtually use a micropipette to load the DNA samples into the gel, turn on the electrical current, and interpret the banding patterns to identify the culprit.</p>
+                <div class="w-full bg-slate-100 rounded-lg h-64 flex flex-col items-center justify-center border border-slate-300 shadow-inner">
+                     <i data-lucide="activity" class="w-10 h-10 mb-2 text-indigo-500"></i>
+                     <span class="font-mono text-sm text-slate-500">Load Simulation: Wildlife Forensics Module</span>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Chapter Review -->
+        <section class="bg-slate-900 text-white p-8 rounded-lg shadow-xl">
+            <h3 class="text-2xl font-bold mb-4">Chapter 6 Review: Narrative Lab Report</h3>
+            <p class="mb-4 text-slate-300 font-semibold italic">Activity: Virtual Gel Electrophoresis Forensics Lab.</p>
+            <ol class="list-decimal pl-6 space-y-4 text-slate-200">
+                <li><strong>What was I looking for?</strong> (I was looking to determine if the DNA extracted from confiscated meat matched the DNA from a poached Woodland Caribou crime scene).</li>
+                <li><strong>How did I look for it?</strong> (I utilized the virtual gel electrophoresis simulator. I loaded the DNA fragments into the agarose gel and applied an electrical current to separate the fragments based on their size and negative electrical charge).</li>
+                <li><strong>What did I find?</strong> (After running the gel, I compared the DNA fingerprint bands. The banding pattern of Suspect #2's confiscated meat perfectly matched the banding pattern of the crime scene caribou DNA. The other suspects had completely different barcode patterns).</li>
+                <li><strong>What do these findings mean?</strong> (These findings mean that the meat in Suspect #2's possession came from the exact same animal found poached at the crime scene. Because DNA sequences are unique to individuals, this biological evidence connects the suspect directly to the crime).</li>
+            </ol>
+        </section>
+
+    </main>
+
+    <footer class="bg-slate-100 py-8 mt-12 border-t border-slate-200">
+        <div class="max-w-4xl mx-auto px-4 text-center text-slate-500 text-sm">
+            <p>Biology 30 Saskatchewan Digital Textbook - Unit 3, Chapter 6</p>
+            <button onclick="window.print()" class="mt-4 bg-slate-800 text-white px-4 py-2 rounded-lg text-xs hover:bg-slate-700 transition-colors">Print to PDF</button>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        });
+    </script>
+</body>
+</html>
