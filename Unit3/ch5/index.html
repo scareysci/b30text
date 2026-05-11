@@ -656,14 +656,18 @@
                 
                 <p class="mb-6">Meiosis doesn't just cut the number in half; it actively scrambles the genetic code to ensure every sperm and egg is entirely unique. During early meiosis, homologous chromosomes pair up and physically swap chunks of DNA in a process called <strong>Crossing-Over</strong>. This recombination is why you look different from your siblings even though you share the same parents.</p>
 
-                <figure class="img-container">
-                    <div class="img-placeholder">
-                        [Illustration: Homologous chromosomes undergoing crossing-over and exchanging genetic material]
+                <div class="feature-box mt-8 mb-8">
+                    <h4 class="font-bold text-slate-800 mb-2 flex items-center gap-2">
+                        <i data-lucide="video" class="w-5 h-5 text-indigo-600"></i>
+                        [Video Feature]: Crossing Over in Meiosis
+                    </h4>
+                    <span class="feature-tag tag-interactive" style="background-color: #eff6ff; color: #1d4ed8; border-color: #bfdbfe;">Explainer</span>
+                    <p class="text-sm text-slate-600 mb-4">Watch this animation to visualize how homologous chromosomes physically exchange genetic material. This swapping of alleles is what ensures infinite genetic variation in the offspring.</p>
+                    
+                    <div class="w-full bg-black rounded-lg overflow-hidden shadow-md aspect-video">
+                        <iframe width="100%" height="100%" src="https://www.youtube.com/embed/c57rjL-30rs" title="Crossing Over Animation" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
                     </div>
-                    <figcaption class="p-4 text-center text-sm text-slate-600 italic bg-slate-50">
-                        <strong>Figure 5.4:</strong> Crossing-over during Meiosis I. This swapping of alleles ensures infinite genetic variation in the offspring.
-                    </figcaption>
-                </figure>
+                </div>
 
                 <h4 class="font-bold text-slate-900 mt-8 mb-4">Chromosomal Mutations and Nondisjunction</h4>
                 <p class="mb-4">The complex dance of meiosis sometimes experiences errors. If entire sections of a chromosome break or reattach incorrectly, large-scale mutations occur:</p>
@@ -713,11 +717,15 @@
                     <span class="feature-tag tag-interactive">Interactive Lab</span>
                     <p class="text-sm text-slate-600 mb-4">Step into the role of a clinical geneticist. You will be presented with raw, scrambled chromosome images from three different "patients." You must match the homologous pairs based on length, centromere location, and banding patterns to build the karyotype, then diagnose any nondisjunction mutations present.</p>
                     
-                    <div class="w-full bg-slate-900 rounded-lg border border-slate-300 overflow-hidden mb-5 shadow-inner" style="height: 350px;">
-                        <div class="w-full h-full flex flex-col items-center justify-center text-slate-400">
-                            <i data-lucide="activity" class="w-12 h-12 mb-4 opacity-50"></i>
-                            <p>Virtual Karyotype Builder Application</p>
-                        </div>
+                    <div class="w-full bg-white rounded-lg border border-slate-300 overflow-hidden mb-4 shadow-inner" style="height: 600px;">
+                        <iframe src="https://scareysci.github.io/b30text/Unit3/ch5/karyo.html" title="Interactive Virtual Karyotyping Lab" class="w-full h-full border-0"></iframe>
+                    </div>
+                    
+                    <div class="text-center mt-4">
+                        <a href="https://scareysci.github.io/b30text/Unit3/ch5/karyo.html" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-6 rounded-lg transition-colors shadow-sm">
+                            <i data-lucide="external-link" class="w-4 h-4"></i>
+                            Open Karyotype Lab in New Tab
+                        </a>
                     </div>
                 </div>
 
