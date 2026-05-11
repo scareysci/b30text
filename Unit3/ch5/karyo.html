@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biology 30 - Karyotyping Virtual Lab</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        /* Custom Styles for Drag and Drop & Visual Polish */
+        body { font-family: 'Inter', system-ui, sans-serif; }
+        
+        .bank-container {
+            display: flex;
+            flex-wrap: wrap;
+            align-content: flex-start;
+            gap: 0.5rem;
+            min-height: 250px;
+        }
+
+        .chromosome {
+            cursor: grab;
+            transition: transform 0.2s, box-shadow 0.2s, filter 0.2s;
+            border-radius: 8px;
+            padding: 2px;
+            user-select: none;
+            touch-action: none; /* Helps with touch drag */
+        }
+
+        .chromosome:active { cursor: grabbing; }
+
+        .chromosome:hover { filter: brightness(0.9); }
+
+        .chromosome.selected {
+            box-shadow: 0 0 0 3px #3b82f6;
+            transform: scale(1.05) !important;
+            z-index: 50;
+        }
+
+        .chromosome.correct { box-shadow: 0 0 0 3px #22c55e; }
+        .chromosome.incorrect { box-shadow: 0 0 0 3px #ef4444; }
+
+        .drop-zone {
+            min-height: 160px;
+            transition: background-color 0.2s, border-color 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end; /* Align centromeres visually closer */
+            gap: 4px;
+            padding-bottom: 8px;
+        }
+
+        .drop-zone.drag-over {
+            background-color: #e2e8f0;
+            border-color: #3b82f6;
+            border-style: solid;
+        }
+
+        /* Modal styling */
+        .modal-overlay {
+            background-color: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(4px);
+        }
+
+        /* Hide scrollbar for a cleaner look */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 h-screen flex flex-col overflow-hidden">
+
+    <!-- Header -->
+    <header class="bg-white border-b border-slate-200 px-6 py-4 flex justify-between items-center shrink-0 shadow-sm z-10">
+        <div>
+            <h1 class="text-2xl font-bold text-slate-900">Virtual Karyotyping Lab</h1>
+            <p class="text-sm text-slate-500">Biology 30 • Genetics & Human Disorders</p>
+        </div>
+        <div class="flex gap-3">
+            <button id="legend-btn" onclick="printLegend()" class="px-3 py-2 bg-white hover:bg-slate-50 text-slate-600 border border-slate-200 text-sm font-semibold rounded-lg transition-colors flex items-center gap-2 shadow-sm" title="Print a completed Normal Male karyotype as a reference">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                Print Legend
+            </button>
+            <button onclick="generateNewCase()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-lg transition-colors flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                New Patient Case
+            </button>
+            <button onclick="checkSorting()" class="px-4 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 font-semibold rounded-lg transition-colors">
+                Check Sorting
+            </button>
+            <button onclick="openDiagnosisModal()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow transition-colors">
+                Diagnose Patient
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <main class="flex-1 flex overflow-hidden">
+        
+        <!-- Left Panel: Chromosome Bank -->
+        <aside class="w-1/4 min-w-[300px] bg-slate-100 border-r border-slate-200 flex flex-col shrink-0">
+            <div class="p-4 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
+                <h2 class="font-semibold text-slate-700">Scattered Chromosomes</h2>
+                <span id="chromosomes-remaining" class="text-xs font-bold bg-slate-200 text-slate-600 px-2 py-1 rounded-full">0 left</span>
+            </div>
+            <div class="p-4 text-xs text-slate-500 bg-white border-b border-slate-200">
+                <strong>Instructions:</strong> Drag and drop the chromosomes into their homologous pairs on the karyogram board. You can also <strong>click to select</strong>, then <strong>click a box</strong> to place it. Match them by size, centromere position, and banding patterns.
+            </div>
+            
+            <div id="bank" class="flex-1 overflow-y-auto p-4 bank-container drop-zone bg-slate-100 relative" data-pair="bank">
+                <!-- Chromosomes are injected here -->
+            </div>
+        </aside>
+
+        <!-- Right Panel: Karyogram Board -->
+        <section class="flex-1 overflow-y-auto bg-white p-6 relative">
+            <div class="max-w-5xl mx-auto">
+                <div class="mb-6 flex justify-between items-end">
+                    <h2 class="text-xl font-bold text-slate-800">Patient Karyogram</h2>
+                    <div id="patient-id-display" class="text-sm font-mono bg-slate-100 px-3 py-1 rounded border border-slate-200 text-slate-600">Case ID: ---</div>
+                </div>
+
+                <!-- Autosomes Grid (1-22) + Sex -->
+                <div class="grid grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4" id="karyogram-grid">
+                    <!-- Javascript will populate this grid -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Diagnosis Modal -->
+    <div id="diagnosis-modal" class="fixed inset-0 modal-overlay z-50 hidden flex justify-center items-center opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg overflow-hidden transform scale-95 transition-transform duration-300" id="diagnosis-modal-content">
+            <div class="bg-blue-600 px-6 py-4 flex justify-between items-center">
+                <h3 class="text-lg font-bold text-white">Clinical Diagnosis Report</h3>
+                <button onclick="closeDiagnosisModal()" class="text-blue-100 hover:text-white transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            
+            <div class="p-6">
+                <p class="text-sm text-slate-600 mb-6">Based on the karyotype you have organized, please select the appropriate diagnosis for this patient.</p>
+                
+                <div class="space-y-6">
+                    <!-- Question 1: Sex -->
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">1. Biological Sex</label>
+                        <div class="grid grid-cols-3 gap-3">
+                            <label class="border border-slate-200 rounded-lg p-3 flex flex-col items-center cursor-pointer hover:bg-slate-50 transition-colors [&:has(input:checked)]:border-blue-500 [&:has(input:checked)]:bg-blue-50">
+                                <input type="radio" name="diag-sex" value="male" class="sr-only">
+                                <span class="font-medium text-slate-800">Male</span>
+                                <span class="text-xs text-slate-500">(XY)</span>
+                            </label>
+                            <label class="border border-slate-200 rounded-lg p-3 flex flex-col items-center cursor-pointer hover:bg-slate-50 transition-colors [&:has(input:checked)]:border-blue-500 [&:has(input:checked)]:bg-blue-50">
+                                <input type="radio" name="diag-sex" value="female" class="sr-only">
+                                <span class="font-medium text-slate-800">Female</span>
+                                <span class="text-xs text-slate-500">(XX)</span>
+                            </label>
+                            <label class="border border-slate-200 rounded-lg p-3 flex flex-col items-center cursor-pointer hover:bg-slate-50 transition-colors [&:has(input:checked)]:border-blue-500 [&:has(input:checked)]:bg-blue-50">
+                                <input type="radio" name="diag-sex" value="turner" class="sr-only">
+                                <span class="font-medium text-slate-800">Monosomy</span>
+                                <span class="text-xs text-slate-500">(X0)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Question 2: Condition -->
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">2. Chromosomal Abnormality</label>
+                        <div class="grid grid-cols-2 gap-3">
+                            <label class="border border-slate-200 rounded-lg p-3 cursor-pointer hover:bg-slate-50 transition-colors [&:has(input:checked)]:border-blue-500 [&:has(input:checked)]:bg-blue-50">
+                                <input type="radio" name="diag-condition" value="normal" class="sr-only">
+                                <span class="font-medium text-slate-800 block">Normal Karyotype</span>
+                                <span class="text-xs text-slate-500">46 Chromosomes</span>
+                            </label>
+                            <label class="border border-slate-200 rounded-lg p-3 cursor-pointer hover:bg-slate-50 transition-colors [&:has(input:checked)]:border-blue-500 [&:has(input:checked)]:bg-blue-50">
+                                <input type="radio" name="diag-condition" value="trisomy21" class="sr-only">
+                                <span class="font-medium text-slate-800 block">Trisomy 21</span>
+                                <span class="text-xs text-slate-500">Down Syndrome</span>
+                            </label>
+                            <label class="border border-slate-200 rounded-lg p-3 cursor-pointer hover:bg-slate-50 transition-colors [&:has(input:checked)]:border-blue-500 [&:has(input:checked)]:bg-blue-50">
+                                <input type="radio" name="diag-condition" value="trisomy18" class="sr-only">
+                                <span class="font-medium text-slate-800 block">Trisomy 18</span>
+                                <span class="text-xs text-slate-500">Edwards Syndrome</span>
+                            </label>
+                            <label class="border border-slate-200 rounded-lg p-3 cursor-pointer hover:bg-slate-50 transition-colors [&:has(input:checked)]:border-blue-500 [&:has(input:checked)]:bg-blue-50">
+                                <input type="radio" name="diag-condition" value="turner" class="sr-only">
+                                <span class="font-medium text-slate-800 block">Monosomy X</span>
+                                <span class="text-xs text-slate-500">Turner Syndrome</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feedback Area -->
+                <div id="diagnosis-feedback" class="mt-6 hidden rounded-lg p-4 text-sm font-medium"></div>
+
+                <div class="mt-6 flex justify-end gap-3 border-t border-slate-100 pt-4">
+                    <button onclick="closeDiagnosisModal()" class="px-4 py-2 text-slate-600 hover:text-slate-800 font-medium transition-colors">Cancel</button>
+                    <button id="submit-btn" onclick="submitDiagnosis()" class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow transition-colors">Submit Report</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden Printable Report Template -->
+    <div id="report-wrapper" style="display: none; position: absolute; top: 0; left: 0; z-index: -100;">
+        <div id="report-container" class="bg-white p-6 text-slate-800" style="width: 720px;">
+            <div class="border-b-2 border-slate-800 pb-4 mb-6">
+                <h1 class="text-3xl font-bold">Karyotyping Clinical Report</h1>
+                <div class="flex justify-between mt-2">
+                    <p class="text-lg"><strong>Patient Case ID:</strong> <span id="report-case-id"></span></p>
+                    <p class="text-lg"><strong>Diagnosis:</strong> <span id="report-diagnosis" class="text-blue-700 font-semibold"></span></p>
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <h2 class="text-xl font-bold mb-4 text-slate-700 border-b border-slate-200 pb-2">Organized Karyogram</h2>
+                <div id="report-karyogram" class="w-full"></div>
+            </div>
+
+            <div class="border-2 border-slate-400 rounded-lg p-4 mt-8" style="min-height: 200px;">
+                <h2 class="text-lg font-bold text-slate-800 mb-2">Student Explanation & Reasoning:</h2>
+                <p class="text-slate-500 italic text-sm mb-4">Explain how you determined the biological sex and identified any chromosomal abnormalities based on the karyogram above.</p>
+                <div class="border-b border-slate-300 mt-10"></div>
+                <div class="border-b border-slate-300 mt-10"></div>
+                <div class="border-b border-slate-300 mt-10"></div>
+                <div class="border-b border-slate-300 mt-10"></div>
+            </div>
+            
+            <div class="mt-8 text-sm text-slate-500 text-center">
+                Generated via Virtual Karyotyping Lab - Biology 30
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden Printable Legend Template -->
+    <div id="legend-wrapper" style="display: none; position: absolute; top: 0; left: 0; z-index: -100;">
+        <div id="legend-container" class="bg-white p-6 text-slate-800" style="width: 720px;">
+            <div class="border-b-2 border-slate-800 pb-4 mb-6">
+                <h1 class="text-3xl font-bold">Karyotype Reference Legend</h1>
+                <div class="mt-2">
+                    <p class="text-lg"><strong>Diagnosis:</strong> <span class="text-blue-700 font-semibold">Normal Male (46, XY)</span></p>
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <div id="legend-karyogram" class="w-full"></div>
+            </div>
+            
+            <div class="mt-8 text-sm text-slate-500 text-center">
+                Generated via Virtual Karyotyping Lab - Biology 30
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Logic -->
+    <script>
+        // --- Core Data & Karyotype Specifications ---
+        // Heights (in pixels) and Centromere Ratios (0.1 to 0.5) to mathematically build accurate-looking SVGs
+        const CHROMO_SPECS = {
+            '1': { h: 140, cen: 0.48 }, '2': { h: 132, cen: 0.38 }, '3': { h: 120, cen: 0.46 },
+            '4': { h: 112, cen: 0.28 }, '5': { h: 108, cen: 0.28 }, '6': { h: 102, cen: 0.38 },
+            '7': { h: 96, cen: 0.38 },  '8': { h: 90, cen: 0.35 },  '9': { h: 86, cen: 0.35 },
+            '10': { h: 82, cen: 0.35 }, '11': { h: 82, cen: 0.40 }, '12': { h: 78, cen: 0.30 },
+            '13': { h: 72, cen: 0.15 }, '14': { h: 68, cen: 0.15 }, '15': { h: 64, cen: 0.15 },
+            '16': { h: 58, cen: 0.40 }, '17': { h: 54, cen: 0.35 }, '18': { h: 50, cen: 0.25 }, // T18 target
+            '19': { h: 44, cen: 0.45 }, '20': { h: 42, cen: 0.45 }, '21': { h: 36, cen: 0.15 }, // T21 target
+            '22': { h: 32, cen: 0.15 },
+            'X': { h: 98, cen: 0.38 },  'Y': { h: 34, cen: 0.20 }
+        };
+
+        const SCENARIOS = [
+            { id: 'normal_m',  letter: 'A', sexData: 'male',   condData: 'normal',    desc: 'Normal Male (46, XY)', extras: [], missing: [] },
+            { id: 'normal_f',  letter: 'B', sexData: 'female', condData: 'normal',    desc: 'Normal Female (46, XX)', extras: [], missing: [] },
+            { id: 'trisomy21_m', letter: 'C', sexData: 'male', condData: 'trisomy21', desc: 'Down Syndrome Male (47, XY, +21)', extras: ['21'], missing: [] },
+            { id: 'trisomy21_f', letter: 'D', sexData: 'female',condData: 'trisomy21', desc: 'Down Syndrome Female (47, XX, +21)', extras: ['21'], missing: [] },
+            { id: 'trisomy18_m', letter: 'E', sexData: 'male', condData: 'trisomy18', desc: 'Edwards Syndrome Male (47, XY, +18)', extras: ['18'], missing: [] },
+            { id: 'trisomy18_f', letter: 'F', sexData: 'female',condData: 'trisomy18', desc: 'Edwards Syndrome Female (47, XX, +18)', extras: ['18'], missing: [] },
+            { id: 'turner',    letter: 'G', sexData: 'turner', condData: 'turner',    desc: 'Turner Syndrome (45, X0)', extras: [], missing: ['Y'] } // Modeled as missing Y for initial generation logic
+        ];
+
+        let currentScenario = null;
+        let selectedChromosomeElement = null;
+        let availableScenarios = []; // Tracks unused scenarios to prevent duplicates
+
+        // --- Initialization ---
+        document.addEventListener('DOMContentLoaded', () => {
+            buildKaryogramGrid();
+            setupInteractions();
+            generateNewCase();
+        });
+
+        // --- UI Builders ---
+        function buildKaryogramGrid() {
+            const grid = document.getElementById('karyogram-grid');
+            grid.innerHTML = '';
+            
+            // Generate standard pairs 1-22
+            for (let i = 1; i <= 22; i++) {
+                grid.innerHTML += `
+                    <div class="flex flex-col items-center bg-slate-50 p-2 rounded border border-slate-200">
+                        <div class="drop-zone w-full h-40 border-2 border-dashed border-slate-300 rounded" data-pair="${i}"></div>
+                        <span class="text-xs font-bold mt-2 text-slate-500">Pair ${i}</span>
+                    </div>
+                `;
+            }
+            
+            // Sex Chromosomes Zone (Span 2 columns for emphasis)
+            grid.innerHTML += `
+                <div class="flex flex-col items-center bg-slate-50 p-2 rounded border border-slate-200 col-span-2 md:col-span-1 lg:col-span-2">
+                    <div class="drop-zone w-full h-40 border-2 border-dashed border-slate-300 rounded" data-pair="sex"></div>
+                    <span class="text-xs font-bold mt-2 text-indigo-500">Sex Chromosomes (XX/XY)</span>
+                </div>
+            `;
+        }
+
+        function generateNewCase() {
+            // Reset UI
+            document.getElementById('bank').innerHTML = '';
+            document.querySelectorAll('#karyogram-grid .drop-zone').forEach(zone => zone.innerHTML = '');
+            clearSelection();
+            
+            // Refill available scenarios if the pool is empty
+            if (availableScenarios.length === 0) {
+                availableScenarios = [...SCENARIOS];
+                // True Fisher-Yates Shuffle for absolute randomness
+                for (let i = availableScenarios.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [availableScenarios[i], availableScenarios[j]] = [availableScenarios[j], availableScenarios[i]];
+                }
+            }
+            
+            // Draw from the top of the shuffled deck
+            currentScenario = availableScenarios.pop();
+            
+            // Set Case ID visually (Appends the secret scenario letter)
+            const caseId = "CASE-" + Math.floor(Math.random() * 90000 + 10000) + "-" + currentScenario.letter;
+            document.getElementById('patient-id-display').textContent = `Case ID: ${caseId}`;
+            
+            // Generate Chromosomes
+            let chromosomesToSpawn = [];
+            
+            // Add Autosomes (Pairs 1-22)
+            for (let i = 1; i <= 22; i++) {
+                chromosomesToSpawn.push(i.toString(), i.toString()); // Two of each
+            }
+            
+            // Add Sex Chromosomes
+            if (currentScenario.sexData === 'male') {
+                chromosomesToSpawn.push('X', 'Y');
+            } else if (currentScenario.sexData === 'female') {
+                chromosomesToSpawn.push('X', 'X');
+            } else if (currentScenario.sexData === 'turner') {
+                chromosomesToSpawn.push('X'); // Only one X
+            }
+
+            // Apply specific conditions (Aneuploidy)
+            currentScenario.extras.forEach(ext => chromosomesToSpawn.push(ext));
+            currentScenario.missing.forEach(ms => {
+                const idx = chromosomesToSpawn.indexOf(ms);
+                if (idx > -1) chromosomesToSpawn.splice(idx, 1);
+            });
+
+            // True Fisher-Yates Shuffle for the scattered chromosomes
+            for (let i = chromosomesToSpawn.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [chromosomesToSpawn[i], chromosomesToSpawn[j]] = [chromosomesToSpawn[j], chromosomesToSpawn[i]];
+            }
+
+            // Create DOM elements
+            const bank = document.getElementById('bank');
+            chromosomesToSpawn.forEach((type, index) => {
+                const element = createChromosomeElement(type, index);
+                
+                // Add scattered rotation for visual effect in the bank
+                const randomRotate = Math.floor(Math.random() * 40) - 20;
+                element.style.transform = `rotate(${randomRotate}deg)`;
+                
+                bank.appendChild(element);
+            });
+
+            updateRemainingCount();
+            resetDiagnosisModal();
+        }
+
+        // --- Procedural SVG Generation ---
+        function createChromosomeElement(pairType, uniqueId) {
+            const spec = CHROMO_SPECS[pairType];
+            const div = document.createElement('div');
+            div.className = 'chromosome bg-transparent';
+            div.draggable = true;
+            div.id = `chromo-${uniqueId}`;
+            div.dataset.truePair = pairType; // Hidden data answer
+
+            const h = spec.h;
+            const p = h * spec.cen;
+            const cenY = Math.max(5, p); 
+            
+            // Procedural Banding: Seed based on pairType to ensure identical pairs look identical
+            let seed = pairType === 'X' ? 23 : (pairType === 'Y' ? 24 : parseInt(pairType));
+            
+            const generateBands = (xOffset) => {
+                let bandsHTML = '';
+                const numBands = 2 + (seed % 4); 
+                for(let i=1; i<=numBands; i++) {
+                    let yPos = (seed * i * 31) % h;
+                    if (yPos < 6 || yPos > h - 6 || Math.abs(yPos - cenY) < 8) continue;
+                    let bandH = 2 + ((seed + i) % 3);
+                    bandsHTML += `<rect x="${xOffset}" y="${yPos}" width="8" height="${bandH}" fill="#334155" opacity="0.6"/>`;
+                }
+                return bandsHTML;
+            };
+
+            // SVG Construction (Two chromatids pinched at the centromere)
+            const leftChromatid = `
+                <path d="M 2 ${cenY} Q 2 2 6 2 Q 10 2 10 ${cenY} Q 10 ${h-2} 6 ${h-2} Q 2 ${h-2} 2 ${cenY}" fill="#cbd5e1" stroke="#64748b"/>
+                ${generateBands(2)}
+            `;
+            const rightChromatid = `
+                <path d="M 12 ${cenY} Q 12 2 16 2 Q 20 2 20 ${cenY} Q 20 ${h-2} 16 ${h-2} Q 12 ${h-2} 12 ${cenY}" fill="#cbd5e1" stroke="#64748b"/>
+                ${generateBands(12)}
+            `;
+
+            div.innerHTML = `
+                <svg width="22" height="${h}" viewBox="0 0 22 ${h}" style="pointer-events: none; display: block;">
+                    ${leftChromatid}
+                    ${rightChromatid}
+                    <circle cx="11" cy="${cenY}" r="3" fill="#475569"/>
+                </svg>
+            `;
+            
+            return div;
+        }
+
+        // --- Interaction Logic (Drag & Drop + Click & Place) ---
+        function setupInteractions() {
+            // Event Delegation for clicking (Click to select/place)
+            document.addEventListener('click', (e) => {
+                // If clicked a chromosome
+                const chromo = e.target.closest('.chromosome');
+                if (chromo) {
+                    e.stopPropagation(); // prevent triggering drop-zone
+                    
+                    if (selectedChromosomeElement === chromo) {
+                        clearSelection(); // Deselect if clicking same one
+                    } else {
+                        clearSelection();
+                        selectedChromosomeElement = chromo;
+                        chromo.classList.add('selected');
+                    }
+                    return;
+                }
+
+                // If clicked a drop zone and we have a selection
+                const dropZone = e.target.closest('.drop-zone');
+                if (dropZone && selectedChromosomeElement) {
+                    placeChromosome(selectedChromosomeElement, dropZone);
+                    clearSelection();
+                } else if (selectedChromosomeElement) {
+                    // Clicked nowhere useful, clear selection
+                    clearSelection();
+                }
+            });
+
+            // HTML5 Drag and Drop setup
+            document.addEventListener('dragstart', (e) => {
+                if (e.target.classList.contains('chromosome')) {
+                    clearSelection();
+                    e.target.classList.add('opacity-50');
+                    e.dataTransfer.setData('text/plain', e.target.id);
+                    e.dataTransfer.effectAllowed = 'move';
+                }
+            });
+
+            document.addEventListener('dragend', (e) => {
+                if (e.target.classList.contains('chromosome')) {
+                    e.target.classList.remove('opacity-50');
+                }
+            });
+
+            // Setup Drop Zones
+            const dropZones = document.querySelectorAll('.drop-zone');
+            dropZones.forEach(zone => {
+                zone.addEventListener('dragover', (e) => {
+                    e.preventDefault(); // Necessary to allow dropping
+                    e.dataTransfer.dropEffect = 'move';
+                    zone.classList.add('drag-over');
+                });
+
+                zone.addEventListener('dragleave', () => {
+                    zone.classList.remove('drag-over');
+                });
+
+                zone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    zone.classList.remove('drag-over');
+                    const id = e.dataTransfer.getData('text/plain');
+                    const element = document.getElementById(id);
+                    if (element) {
+                        placeChromosome(element, zone);
+                    }
+                });
+            });
+        }
+
+        function placeChromosome(element, zone) {
+            zone.appendChild(element);
+            
+            // Remove selection classes or validation classes when moved
+            element.classList.remove('correct', 'incorrect');
+            
+            // Visual logic based on where it lands
+            if (zone.id === 'bank') {
+                // Randomize scatter again if dropped back in bank
+                const randomRotate = Math.floor(Math.random() * 40) - 20;
+                element.style.transform = `rotate(${randomRotate}deg)`;
+                element.style.margin = '0';
+            } else {
+                // Straighten out inside the karyogram grid
+                element.style.transform = 'rotate(0deg)';
+                element.style.margin = '0 2px';
+            }
+            updateRemainingCount();
+        }
+
+        function clearSelection() {
+            if (selectedChromosomeElement) {
+                selectedChromosomeElement.classList.remove('selected');
+                selectedChromosomeElement = null;
+            }
+        }
+
+        function updateRemainingCount() {
+            const bank = document.getElementById('bank');
+            const count = bank.querySelectorAll('.chromosome').length;
+            const badge = document.getElementById('chromosomes-remaining');
+            badge.textContent = `${count} left`;
+            
+            if(count === 0) {
+                badge.classList.replace('bg-slate-200', 'bg-green-100');
+                badge.classList.replace('text-slate-600', 'text-green-700');
+            } else {
+                badge.classList.replace('bg-green-100', 'bg-slate-200');
+                badge.classList.replace('text-green-700', 'text-slate-600');
+            }
+        }
+
+        // --- Validation Logic ---
+        function checkSorting() {
+            clearSelection();
+            const allChromosomes = document.querySelectorAll('.chromosome');
+            let allPlaced = true;
+            let allCorrect = true;
+
+            allChromosomes.forEach(c => {
+                c.classList.remove('correct', 'incorrect');
+                const parentZone = c.closest('.drop-zone');
+                
+                if (parentZone.id === 'bank') {
+                    allPlaced = false;
+                    return;
+                }
+
+                const zonePair = parentZone.dataset.pair;
+                const truePair = c.dataset.truePair;
+                
+                let isCorrect = false;
+                if (zonePair === 'sex') {
+                    isCorrect = (truePair === 'X' || truePair === 'Y');
+                } else {
+                    isCorrect = (zonePair === truePair);
+                }
+
+                if (isCorrect) {
+                    c.classList.add('correct');
+                } else {
+                    c.classList.add('incorrect');
+                    allCorrect = false;
+                }
+            });
+
+            if (!allPlaced) {
+                // Soft warning
+                return;
+            }
+        }
+
+        // --- Diagnosis Modal Logic ---
+        function openDiagnosisModal() {
+            const modal = document.getElementById('diagnosis-modal');
+            const content = document.getElementById('diagnosis-modal-content');
+            modal.classList.remove('hidden');
+            // Small timeout for CSS transition to apply
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                content.classList.remove('scale-95');
+            }, 10);
+        }
+
+        function closeDiagnosisModal() {
+            const modal = document.getElementById('diagnosis-modal');
+            const content = document.getElementById('diagnosis-modal-content');
+            modal.classList.add('opacity-0');
+            content.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        function resetDiagnosisModal() {
+            const radios = document.querySelectorAll('input[type="radio"]');
+            radios.forEach(r => r.checked = false);
+            
+            const feedback = document.getElementById('diagnosis-feedback');
+            if (feedback) {
+                feedback.className = 'mt-6 hidden rounded-lg p-4 text-sm font-medium'; // Reset classes
+            }
+            
+            const submitBtn = document.getElementById('submit-btn');
+            if (submitBtn) {
+                submitBtn.textContent = 'Submit Report';
+                submitBtn.onclick = submitDiagnosis;
+                submitBtn.className = 'px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow transition-colors';
+            }
+        }
+
+        function submitDiagnosis() {
+            const sexInput = document.querySelector('input[name="diag-sex"]:checked');
+            const condInput = document.querySelector('input[name="diag-condition"]:checked');
+            const feedback = document.getElementById('diagnosis-feedback');
+            
+            // Reset feedback base styling
+            feedback.className = 'mt-6 rounded-lg p-4 text-sm font-medium';
+            
+            if (!sexInput || !condInput) {
+                feedback.classList.add('bg-amber-100', 'text-amber-800');
+                feedback.innerHTML = '<strong>Incomplete Report:</strong><br>Please select an option for both biological sex and chromosomal abnormality.';
+                feedback.classList.remove('hidden');
+                return;
+            }
+
+            const userSex = sexInput.value;
+            const userCond = condInput.value;
+            
+            const isSexCorrect = (userSex === currentScenario.sexData);
+            const isCondCorrect = (userCond === currentScenario.condData);
+
+            if (isSexCorrect && isCondCorrect) {
+                feedback.classList.add('bg-green-100', 'text-green-800');
+                feedback.innerHTML = `<strong>Diagnosis Correct!</strong><br>You successfully identified: ${currentScenario.desc}. Excellent work!`;
+                
+                // Change button state to "Correct"
+                const submitBtn = document.getElementById('submit-btn');
+                if (submitBtn) {
+                    submitBtn.textContent = 'Generate PDF Report & Close';
+                    submitBtn.onclick = generatePDFReport;
+                    submitBtn.className = 'px-6 py-2 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg shadow transition-colors';
+                }
+            } else {
+                feedback.classList.add('bg-red-100', 'text-red-800');
+                let errStr = "<strong>Incorrect Diagnosis.</strong><br>";
+                if (!isSexCorrect) errStr += "• The biological sex identified is incorrect. Look closely at the sex chromosomes.<br>";
+                if (!isCondCorrect) errStr += "• The chromosomal abnormality identified is incorrect. Check pairs 18, 21, and the sex chromosomes for aneuploidy.";
+                feedback.innerHTML = errStr;
+            }
+            
+            feedback.classList.remove('hidden');
+        }
+
+        function generatePDFReport() {
+            const btn = document.getElementById('submit-btn');
+            const originalText = btn.textContent;
+            btn.textContent = "Generating PDF...";
+            btn.disabled = true;
+            btn.classList.add('opacity-75', 'cursor-not-allowed');
+
+            // Populate Report Data
+            const caseIdText = document.getElementById('patient-id-display').textContent.replace('Case ID: ', '');
+            document.getElementById('report-case-id').textContent = caseIdText;
+            document.getElementById('report-diagnosis').textContent = currentScenario.desc;
+
+            const reportKaryogram = document.getElementById('report-karyogram');
+            reportKaryogram.innerHTML = '';
+            
+            // Split into two grids with inline styles to guarantee 5 columns in the PDF
+            const grid1 = document.createElement('div');
+            grid1.style.display = 'grid';
+            grid1.style.gridTemplateColumns = 'repeat(5, 1fr)';
+            grid1.style.gap = '16px';
+            
+            const grid2 = document.createElement('div');
+            grid2.style.display = 'grid';
+            grid2.style.gridTemplateColumns = 'repeat(5, 1fr)';
+            grid2.style.gap = '16px';
+            grid2.style.marginTop = '24px';
+
+            const originalCells = Array.from(document.getElementById('karyogram-grid').children);
+            
+            originalCells.forEach((cell, index) => {
+                const cellClone = cell.cloneNode(true);
+                
+                // Clean up visual artifacts on the clone
+                cellClone.querySelectorAll('.chromosome').forEach(c => {
+                    c.classList.remove('selected', 'correct', 'incorrect');
+                    c.style.boxShadow = 'none';
+                });
+
+                // Guarantee the sex cell spans 2 columns in the PDF
+                if (index === 22) {
+                    cellClone.style.gridColumn = 'span 2 / span 2';
+                }
+
+                if (index < 15) { // Pairs 1-15 go to first page
+                    grid1.appendChild(cellClone);
+                } else { // Pairs 16-22 & Sex go to second page
+                    grid2.appendChild(cellClone);
+                }
+            });
+
+            reportKaryogram.appendChild(grid1);
+            
+            // Insert Hard Page Break
+            const pageBreak = document.createElement('div');
+            pageBreak.className = "page-break";
+            pageBreak.style.pageBreakBefore = "always";
+            reportKaryogram.appendChild(pageBreak);
+            
+            reportKaryogram.appendChild(grid2);
+
+            // Temporarily display the wrapper to allow html2pdf to render it
+            const reportWrapper = document.getElementById('report-wrapper');
+            reportWrapper.style.display = 'block';
+
+            // PDF generation options
+            const opt = {
+                margin:       [0.4, 0.4, 0.4, 0.4],
+                filename:     `Biology30_Karyotype_${caseIdText}.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true },
+                jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' },
+                pagebreak:    { mode: 'css', before: '.page-break' }
+            };
+
+            // Generate and save
+            html2pdf().set(opt).from(document.getElementById('report-container')).save().then(() => {
+                reportWrapper.style.display = 'none'; // Hide template
+                
+                // Restore button and close modal
+                btn.textContent = originalText;
+                btn.disabled = false;
+                btn.classList.remove('opacity-75', 'cursor-not-allowed');
+                closeDiagnosisModal();
+            }).catch(err => {
+                console.error("PDF Generation failed", err);
+                reportWrapper.style.display = 'none';
+                btn.textContent = "Error! Try Again";
+                btn.disabled = false;
+                btn.classList.remove('opacity-75', 'cursor-not-allowed');
+            });
+        }
+
+        function printLegend() {
+            const btn = document.getElementById('legend-btn');
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = "Generating PDF...";
+            btn.disabled = true;
+            btn.classList.add('opacity-75', 'cursor-not-allowed');
+
+            const legendKaryogram = document.getElementById('legend-karyogram');
+            legendKaryogram.innerHTML = ''; // Clear previous
+
+            // Split into two grids with inline styles to guarantee 5 columns in the PDF
+            const grid1 = document.createElement('div');
+            grid1.style.display = 'grid';
+            grid1.style.gridTemplateColumns = 'repeat(5, 1fr)';
+            grid1.style.gap = '16px';
+            
+            const grid2 = document.createElement('div');
+            grid2.style.display = 'grid';
+            grid2.style.gridTemplateColumns = 'repeat(5, 1fr)';
+            grid2.style.gap = '16px';
+            grid2.style.marginTop = '24px';
+
+            // Build perfect grid cells for pairs 1-22
+            for (let i = 1; i <= 22; i++) {
+                const cell = document.createElement('div');
+                cell.className = "flex flex-col items-center bg-slate-50 p-2 rounded border border-slate-200";
+                
+                const dropZone = document.createElement('div');
+                dropZone.className = "w-full h-40 flex justify-center items-end gap-[4px] pb-2";
+                
+                // Create exactly 2 chromosomes per autosome pair
+                const c1 = createChromosomeElement(i.toString(), `leg-${i}-a`);
+                const c2 = createChromosomeElement(i.toString(), `leg-${i}-b`);
+                
+                // Format them for strict static display (remove drag/hover styling)
+                [c1, c2].forEach(c => {
+                    c.style.transform = 'rotate(0deg)';
+                    c.style.margin = '0 2px';
+                    c.draggable = false;
+                    c.classList.remove('chromosome', 'cursor-grab'); 
+                    dropZone.appendChild(c);
+                });
+
+                cell.appendChild(dropZone);
+                cell.innerHTML += `<span class="text-xs font-bold mt-2 text-slate-500">Pair ${i}</span>`;
+                
+                if (i <= 15) {
+                    grid1.appendChild(cell);
+                } else {
+                    grid2.appendChild(cell);
+                }
+            }
+
+            // Build perfect Sex chromosomes (XY)
+            const sexCell = document.createElement('div');
+            sexCell.className = "flex flex-col items-center bg-slate-50 p-2 rounded border border-slate-200";
+            sexCell.style.gridColumn = "span 2 / span 2"; // Explicit inline style for PDF
+            const sexDropZone = document.createElement('div');
+            sexDropZone.className = "w-full h-40 flex justify-center items-end gap-[4px] pb-2";
+            
+            const cx = createChromosomeElement('X', 'leg-x');
+            const cy = createChromosomeElement('Y', 'leg-y');
+            
+            [cx, cy].forEach(c => {
+                c.style.transform = 'rotate(0deg)';
+                c.style.margin = '0 2px';
+                c.draggable = false;
+                c.classList.remove('chromosome', 'cursor-grab');
+                sexDropZone.appendChild(c);
+            });
+            
+            sexCell.appendChild(sexDropZone);
+            sexCell.innerHTML += `<span class="text-xs font-bold mt-2 text-indigo-500">Sex Chromosomes (XY)</span>`;
+            grid2.appendChild(sexCell);
+
+            legendKaryogram.appendChild(grid1);
+            
+            // Insert Hard Page Break
+            const pageBreak = document.createElement('div');
+            pageBreak.className = "page-break";
+            pageBreak.style.pageBreakBefore = "always";
+            legendKaryogram.appendChild(pageBreak);
+            
+            legendKaryogram.appendChild(grid2);
+
+            // Trigger PDF Generation
+            const wrapper = document.getElementById('legend-wrapper');
+            wrapper.style.display = 'block';
+
+            const opt = {
+                margin:       [0.4, 0.4, 0.4, 0.4],
+                filename:     `Biology30_Legend_Normal_Male.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true },
+                jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' },
+                pagebreak:    { mode: 'css', before: '.page-break' }
+            };
+
+            html2pdf().set(opt).from(document.getElementById('legend-container')).save().then(() => {
+                wrapper.style.display = 'none';
+                btn.innerHTML = originalHTML;
+                btn.disabled = false;
+                btn.classList.remove('opacity-75', 'cursor-not-allowed');
+            }).catch(err => {
+                console.error("PDF Generation failed", err);
+                wrapper.style.display = 'none';
+                btn.innerHTML = "Error!";
+                setTimeout(() => { 
+                    btn.innerHTML = originalHTML; 
+                    btn.disabled = false; 
+                    btn.classList.remove('opacity-75', 'cursor-not-allowed');
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
