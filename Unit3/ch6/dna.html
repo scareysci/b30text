@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Molecular Genetics Lab</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
+        .mono { font-family: 'Roboto Mono', monospace; }
+        
+        /* Nucleotide Styles */
+        .base { 
+            width: 36px; height: 36px; 
+            display: inline-flex; align-items: center; justify-content: center; 
+            border-radius: 6px; font-weight: 700; font-size: 1.1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: all 0.2s ease;
+            user-select: none;
+            cursor: pointer;
+        }
+        .base.disabled { cursor: not-allowed; opacity: 0.9; }
+        
+        .bg-A { background-color: #ef4444; color: white; border: 2px solid #b91c1c; } /* Red */
+        .bg-T { background-color: #3b82f6; color: white; border: 2px solid #1d4ed8; } /* Blue */
+        .bg-C { background-color: #eab308; color: black; border: 2px solid #a16207; } /* Yellow */
+        .bg-G { background-color: #22c55e; color: white; border: 2px solid #15803d; } /* Green */
+        .bg-U { background-color: #a855f7; color: white; border: 2px solid #7e22ce; } /* Purple */
+        .bg-empty { background-color: #e5e7eb; border: 2px dashed #9ca3af; color: transparent; }
+        .bg-empty:hover:not(.disabled) { background-color: #d1d5db; }
+
+        .selected-tool {
+            transform: scale(1.15);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.5);
+            z-index: 10;
+        }
+
+        /* Animations */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        .shake { animation: shake 0.3s ease-in-out; }
+        
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .pop-in { animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+
+        .strand-container { transition: transform 1s ease-in-out, opacity 1s ease; }
+        .unzipped-top { transform: translateY(-60px); }
+        .unzipped-bottom { transform: translateY(60px); }
+
+        /* Ribosome Subunits */
+        .ribosome-large {
+            background: linear-gradient(135deg, #fcd34d 0%, #f59e0b 100%);
+            border-radius: 90px 90px 15px 15px;
+            box-shadow: inset 0 -4px 10px rgba(0,0,0,0.1), 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+        }
+        .ribosome-small {
+            background: linear-gradient(135deg, #fcd34d 0%, #f59e0b 100%);
+            border-radius: 15px 15px 90px 90px;
+            box-shadow: inset 0 4px 10px rgba(0,0,0,0.1), 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Amino Acids */
+        .amino-acid {
+            width: 45px; height: 45px;
+            border-radius: 50%;
+            display: inline-flex; align-items: center; justify-content: center;
+            font-size: 0.8rem; font-weight: bold; color: white;
+            box-shadow: inset -2px -2px 6px rgba(0,0,0,0.2), 0 2px 4px rgba(0,0,0,0.2);
+            margin-right: 4px;
+            position: relative;
+        }
+        .amino-acid::after {
+            content: '';
+            position: absolute;
+            right: -6px; top: 50%; transform: translateY(-50%);
+            width: 6px; height: 4px; background-color: #4b5563;
+        }
+        .amino-acid:last-child::after { display: none; }
+        .peptide-bond-anim { animation: popIn 0.5s ease forwards; }
+
+        /* Prevent inner text dragging on tRNA buttons */
+        .trna-btn * { pointer-events: none; }
+
+        /* Print styles for Lab Report */
+        @media print {
+            body { background-color: white; }
+            #controls, #tool-panel, header, .no-print { display: none !important; }
+            #app-container { box-shadow: none; max-width: 100%; padding: 0; }
+            .print-border { border: 1px solid #ccc; padding: 20px; border-radius: 8px; }
+        }
+    </style>
+</head>
+<body class="text-gray-800 h-screen flex flex-col">
+
+    <header class="bg-slate-800 text-white p-4 shadow-md z-10 no-print">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-bold flex items-center gap-2">
+                <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+                Virtual Molecular Genetics Lab
+            </h1>
+            <div class="flex gap-2" id="progress-dots">
+                <!-- Dots populated by JS -->
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow overflow-auto p-4 md:p-8 flex justify-center items-start">
+        <div id="app-container" class="bg-white max-w-5xl w-full rounded-xl shadow-xl overflow-hidden min-h-[600px] flex flex-col print-border">
+            
+            <!-- Dynamic Content Area -->
+            <div id="stage-content" class="flex-grow p-6 relative flex flex-col">
+                <!-- Content injected via JS -->
+            </div>
+
+            <!-- Tool Panel (Bottom) -->
+            <div id="tool-panel" class="bg-gray-100 p-4 border-t border-gray-200 hidden">
+                <div class="text-center mb-2 text-sm font-semibold text-gray-600 uppercase tracking-wider" id="tool-instructions">Select a base to place</div>
+                <div class="flex justify-center gap-4" id="tool-buttons">
+                    <!-- Tools injected via JS -->
+                </div>
+            </div>
+            
+            <!-- Controls (Footer) -->
+            <div id="controls" class="bg-slate-50 p-4 border-t border-gray-200 flex justify-between items-center hidden">
+                <div id="feedback-msg" class="text-sm font-medium"></div>
+                <button id="action-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                    Next
+                </button>
+            </div>
+        </div>
+    </main>
+
+<script>
+    // --- Data & State ---
+    // 6 codons = 18 bases. Codes for 5 AAs + STOP.
+    const CODING_STRAND = "ATGGCGCTGACCTTTTAG";
+    const TEMPLATE_STRAND="TACCGCGACTGGAAAATC";
+    const MRNA_STRAND =   "AUGGCGCUGACCUUUUAG";
+    
+    const AMINO_ACIDS = [
+        { codon: 'AUG', name: 'Met', color: '#ef4444' }, // Start
+        { codon: 'GCG', name: 'Ala', color: '#f59e0b' },
+        { codon: 'CUG', name: 'Leu', color: '#10b981' },
+        { codon: 'ACC', name: 'Thr', color: '#3b82f6' },
+        { codon: 'UUU', name: 'Phe', color: '#8b5cf6' },
+        { codon: 'GAG', name: 'Glu', color: '#ec4899' },
+        { codon: 'CAU', name: 'His', color: '#06b6d4' },
+        { codon: 'CCC', name: 'Pro', color: '#f97316' },
+        { codon: 'UAG', name: 'STOP', color: '#111827' }
+    ];
+
+    const STAGES = [
+        { id: 'intro', title: 'Welcome to the Lab' },
+        { id: 'replication', title: 'Part 1: DNA Replication' },
+        { id: 'transcription', title: 'Part 2: Transcription (DNA to mRNA)' },
+        { id: 'translation', title: 'Part 3: Translation (mRNA to Protein)' },
+        { id: 'report', title: 'Lab Report' }
+    ];
+
+    let state = {
+        stageIndex: 0,
+        selectedTool: null,
+        metrics: { errors: 0, startTime: Date.now(), endTime: null },
+        rep: { topFilled: 0, botFilled: 0, unzipped: false },
+        trans: { filled: 0, unzipped: false },
+        transl: { currentCodonIndex: 0, peptideChain: [] }
+    };
+
+    // --- DOM Elements ---
+    const DOM = {
+        content: document.getElementById('stage-content'),
+        toolPanel: document.getElementById('tool-panel'),
+        tools: document.getElementById('tool-buttons'),
+        controls: document.getElementById('controls'),
+        actionBtn: document.getElementById('action-btn'),
+        feedback: document.getElementById('feedback-msg'),
+        progress: document.getElementById('progress-dots'),
+        instructions: document.getElementById('tool-instructions')
+    };
+
+    // --- Core Engine ---
+    function init() {
+        renderProgress();
+        loadStage();
+    }
+
+    function renderProgress() {
+        DOM.progress.innerHTML = STAGES.map((s, i) => `
+            <div class="w-3 h-3 rounded-full ${i === state.stageIndex ? 'bg-blue-400 scale-125 shadow-[0_0_8px_rgba(96,165,250,0.8)]' : (i < state.stageIndex ? 'bg-green-400' : 'bg-slate-600')} transition-all"></div>
+        `).join('');
+    }
+
+    function setFeedback(msg, isError = false) {
+        DOM.feedback.textContent = msg;
+        DOM.feedback.className = `text-sm font-medium ${isError ? 'text-red-600' : 'text-green-600'}`;
+        if (!isError && msg) setTimeout(() => DOM.feedback.textContent = '', 3000);
+    }
+
+    function loadStage() {
+        DOM.content.innerHTML = '';
+        DOM.toolPanel.classList.add('hidden');
+        DOM.controls.classList.add('hidden');
+        DOM.actionBtn.disabled = true;
+        DOM.actionBtn.onclick = nextStage;
+        state.selectedTool = null;
+        setFeedback('');
+
+        const stageId = STAGES[state.stageIndex].id;
+        
+        switch(stageId) {
+            case 'intro': renderIntro(); break;
+            case 'replication': renderReplication(); break;
+            case 'transcription': renderTranscription(); break;
+            case 'translation': renderTranslation(); break;
+            case 'report': renderReport(); break;
+        }
+        renderProgress();
+    }
+
+    function nextStage() {
+        if (state.stageIndex < STAGES.length - 1) {
+            state.stageIndex++;
+            loadStage();
+        }
+    }
+
+    // --- Helper: Build Strand HTML ---
+    function buildStrandHTML(sequence, type, interactive = false, expectedSeq = "") {
+        let html = `<div class="flex gap-1 justify-center flex-wrap">`;
+        for (let i = 0; i < sequence.length; i++) {
+            const base = sequence[i];
+            if (interactive && base === ' ') {
+                const expected = expectedSeq[i];
+                html += `<div class="base bg-empty mono target-box" data-index="${i}" data-expected="${expected}" data-type="${type}" onclick="handleTargetClick(this)" ondragover="event.preventDefault()" ondrop="handleDrop(event, this)"></div>`;
+            } else {
+                html += `<div class="base bg-${base} mono disabled">${base}</div>`;
+            }
+        }
+        html += `</div>`;
+        return html;
+    }
+
+    // --- Drag and Drop Handlers ---
+    function handleDrop(e, el) {
+        e.preventDefault();
+        const draggedValue = e.dataTransfer.getData('text/plain');
+        if (draggedValue) state.selectedTool = draggedValue.trim();
+        handleTargetClick(el);
+    }
+
+    function handleTRNADropEvent(e) {
+        e.preventDefault();
+        const draggedValue = e.dataTransfer.getData('text/plain');
+        if (draggedValue) state.selectedTool = draggedValue.trim();
+        handleTRNADrop();
+    }
+
+    // --- Tool Selection Logic ---
+    function setupTools(bases, type = 'nucleotide') {
+        DOM.toolPanel.classList.remove('hidden');
+        DOM.instructions.textContent = type === 'nucleotide' ? "Step 1: Click or Drag a base below. Step 2: Click or Drop on an empty box to place it." : "Select or Drag the correct tRNA molecule for the highlighted codon.";
+        DOM.tools.innerHTML = '';
+        
+        if (type === 'nucleotide') {
+            bases.forEach(b => {
+                const btn = document.createElement('div');
+                btn.className = `base bg-${b} mono cursor-pointer hover:scale-110`;
+                btn.textContent = b;
+                btn.draggable = true;
+                btn.ondragstart = (e) => {
+                    selectTool(btn, b);
+                    e.dataTransfer.setData('text/plain', b);
+                };
+                btn.onclick = () => selectTool(btn, b);
+                DOM.tools.appendChild(btn);
+            });
+        }
+    }
+
+    function selectTool(element, value) {
+        document.querySelectorAll('#tool-buttons .base, #tool-buttons .trna-btn').forEach(el => el.classList.remove('selected-tool'));
+        element.classList.add('selected-tool');
+        state.selectedTool = value;
+    }
+
+    function handleTargetClick(el) {
+        if (!state.selectedTool) {
+            setFeedback("Please select a tool from the bottom panel first!", true);
+            el.classList.add('shake');
+            setTimeout(() => el.classList.remove('shake'), 300);
+            return;
+        }
+
+        const expected = el.dataset.expected;
+        if (state.selectedTool === expected) {
+            // Success
+            el.textContent = expected;
+            el.className = `base bg-${expected} mono disabled pop-in target-box-filled`;
+            el.onclick = null;
+            setFeedback("Correct match!");
+            
+            // Trigger specific stage logic
+            if (STAGES[state.stageIndex].id === 'replication') checkReplicationProgress();
+            if (STAGES[state.stageIndex].id === 'transcription') checkTranscriptionProgress();
+            
+        } else {
+            // Error
+            state.metrics.errors++;
+            el.classList.add('shake');
+            
+            const idx = parseInt(el.dataset.index);
+            const type = el.dataset.type;
+            
+            // Provide explicit, idiot-proof feedback based on exactly what they are clicking
+            if (type === 'mrna') {
+                const templateBase = TEMPLATE_STRAND[idx];
+                setFeedback(`Incorrect. The template base is ${templateBase}. In RNA, ${templateBase} pairs with ${expected}.`, true);
+            } else if (type === 'new-bot') {
+                const templateBase = CODING_STRAND[idx];
+                setFeedback(`Incorrect. The template base is ${templateBase}. In DNA, ${templateBase} pairs with ${expected}.`, true);
+            } else if (type === 'new-top') {
+                const templateBase = TEMPLATE_STRAND[idx];
+                setFeedback(`Incorrect. The template base is ${templateBase}. In DNA, ${templateBase} pairs with ${expected}.`, true);
+            } else {
+                setFeedback("Incorrect base pairing. Try again.", true);
+            }
+            
+            setTimeout(() => el.classList.remove('shake'), 300);
+        }
+    }
+
+    // --- Stage 1: Intro ---
+    function renderIntro() {
+        DOM.content.innerHTML = `
+            <div class="text-center max-w-2xl mx-auto mt-10">
+                <div class="bg-blue-100 text-blue-800 p-4 rounded-full inline-block mb-6">
+                    <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+                </div>
+                <h2 class="text-3xl font-bold mb-4 text-slate-800">Welcome to the Gene Expression Lab</h2>
+                <p class="text-lg text-gray-600 mb-8 leading-relaxed">
+                    In this simulation, you will guide a cell through the central dogma of molecular biology. 
+                    You will replicate a segment of DNA, transcribe it into messenger RNA, and finally translate it into a polypeptide chain (protein).
+                </p>
+                <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 text-left mb-8 shadow-sm">
+                    <h3 class="font-bold text-yellow-800 mb-2">Lab Objectives:</h3>
+                    <ul class="list-disc pl-5 text-yellow-900 space-y-1">
+                        <li>Understand complementary base pairing rules for DNA and RNA.</li>
+                        <li>Visualize the sequence of events in Replication, Transcription, and Translation.</li>
+                        <li>Use codons to build an 8-amino acid polypeptide.</li>
+                    </ul>
+                </div>
+                
+                <div class="flex justify-center mt-2 mb-4">
+                    <button onclick="state.stageIndex = 4; loadStage();" class="bg-purple-100 text-purple-700 hover:bg-purple-200 border border-purple-300 px-6 py-3 rounded-lg font-bold shadow-sm transition-colors flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                        Print Lab Worksheet First
+                    </button>
+                </div>
+            </div>
+        `;
+        DOM.controls.classList.remove('hidden');
+        DOM.actionBtn.disabled = false;
+        DOM.actionBtn.textContent = "Enter Lab";
+    }
+
+    // --- Stage 2: Replication ---
+    function renderReplication() {
+        DOM.controls.classList.remove('hidden');
+        DOM.actionBtn.textContent = "Unzip DNA (Helicase)";
+        DOM.actionBtn.disabled = false;
+        
+        DOM.content.innerHTML = `
+            <div class="mb-6">
+                <h2 class="text-2xl font-bold text-slate-800">Part 1: DNA Replication</h2>
+                <p class="text-gray-600">DNA replication creates two identical copies of a DNA molecule. Click 'Unzip DNA' to begin.</p>
+            </div>
+            
+            <div class="flex-grow relative w-full h-[350px]" id="rep-area">
+                <div id="strand-top-container" class="absolute top-[130px] w-full transition-all duration-1000 z-10">
+                    <div class="text-xs text-gray-400 font-bold text-center mb-1">5' Coding Strand 3'</div>
+                    ${buildStrandHTML(CODING_STRAND, 'original')}
+                    <div id="new-bottom" class="mt-2 opacity-0 transition-opacity duration-500 pointer-events-none">
+                        ${buildStrandHTML(' '.repeat(CODING_STRAND.length), 'new-bot', true, TEMPLATE_STRAND)}
+                    </div>
+                </div>
+                
+                <div id="strand-bot-container" class="absolute top-[180px] w-full transition-all duration-1000 z-10">
+                    <div id="new-top" class="mb-2 opacity-0 transition-opacity duration-500 pointer-events-none">
+                        ${buildStrandHTML(' '.repeat(CODING_STRAND.length), 'new-top', true, CODING_STRAND)}
+                    </div>
+                    ${buildStrandHTML(TEMPLATE_STRAND, 'original')}
+                    <div class="text-xs text-gray-400 font-bold text-center mt-1">3' Template Strand 5'</div>
+                </div>
+                
+                <button id="auto-complete-btn" class="hidden absolute right-4 top-4 bg-purple-100 text-purple-700 hover:bg-purple-200 px-4 py-2 rounded-md font-semibold text-sm transition-colors border border-purple-300 shadow-sm z-20" onclick="autoFillReplication()">
+                    Auto-Complete Remaining
+                </button>
+            </div>
+        `;
+
+        DOM.actionBtn.onclick = () => {
+            if (!state.rep.unzipped) {
+                document.getElementById('strand-top-container').style.top = '40px';
+                document.getElementById('strand-bot-container').style.top = '220px';
+                
+                setTimeout(() => {
+                    document.getElementById('new-bottom').classList.remove('opacity-0', 'pointer-events-none');
+                    document.getElementById('new-top').classList.remove('opacity-0', 'pointer-events-none');
+                    setupTools(['A', 'T', 'C', 'G'], 'nucleotide');
+                    DOM.actionBtn.textContent = "Next Phase";
+                    DOM.actionBtn.disabled = true;
+                    DOM.actionBtn.onclick = nextStage;
+                    state.rep.unzipped = true;
+                }, 1000);
+            }
+        };
+    }
+
+    function checkReplicationProgress() {
+        const totalTargets = document.querySelectorAll('.target-box').length;
+        const filledTargets = document.querySelectorAll('.target-box-filled').length;
+        
+        // Show auto-complete after 6 bases are filled manually
+        if (filledTargets >= 6 && filledTargets < totalTargets) {
+            document.getElementById('auto-complete-btn').classList.remove('hidden');
+        }
+
+        if (filledTargets === totalTargets) {
+            completeReplication();
+        }
+    }
+
+    function autoFillReplication() {
+        document.querySelectorAll('.target-box').forEach(el => {
+            if (!el.classList.contains('target-box-filled')) {
+                const expected = el.dataset.expected;
+                el.textContent = expected;
+                el.className = `base bg-${expected} mono disabled pop-in target-box-filled`;
+                el.onclick = null;
+            }
+        });
+        completeReplication();
+    }
+
+    function completeReplication() {
+        document.getElementById('auto-complete-btn')?.classList.add('hidden');
+        DOM.toolPanel.classList.add('hidden');
+        DOM.actionBtn.disabled = false;
+        setFeedback("Replication Complete! You now have two identical DNA double helices.");
+        
+        // Visual polish: zip them up slightly
+        document.getElementById('strand-top-container').style.top = '60px';
+        document.getElementById('strand-bot-container').style.top = '200px';
+    }
+
+    // --- Stage 3: Transcription ---
+    function renderTranscription() {
+        DOM.controls.classList.remove('hidden');
+        DOM.actionBtn.textContent = "Start Transcription";
+        DOM.actionBtn.disabled = false;
+        
+        DOM.content.innerHTML = `
+            <div class="mb-6">
+                <h2 class="text-2xl font-bold text-slate-800">Part 2: Transcription</h2>
+                <p class="text-gray-600">RNA Polymerase uses the DNA template strand to build a complementary mRNA strand. Remember, RNA uses Uracil (U) instead of Thymine (T).</p>
+            </div>
+            
+            <div class="flex-grow relative w-full h-[350px]" id="trans-area">
+                
+                <div id="trans-top" class="absolute top-[120px] w-full transition-all duration-1000 z-10 opacity-50">
+                    <div class="text-xs text-gray-400 font-bold text-center mb-1">Non-Template Strand (5' to 3')</div>
+                    ${buildStrandHTML(CODING_STRAND, 'original')}
+                </div>
+
+                <div id="trans-bot" class="absolute top-[165px] w-full transition-all duration-1000 z-10">
+                    ${buildStrandHTML(TEMPLATE_STRAND, 'original')}
+                    <div class="text-xs text-blue-600 font-bold text-center mt-1">Template Strand (3' to 5')</div>
+                </div>
+
+                <div id="mrna-builder" class="absolute top-[120px] w-full opacity-0 transition-all duration-500 z-20 pointer-events-none">
+                     <div class="text-xs text-purple-600 font-bold text-center mb-1">New mRNA (5' to 3')</div>
+                    ${buildStrandHTML(' '.repeat(CODING_STRAND.length), 'mrna', true, MRNA_STRAND)}
+                </div>
+
+                <button id="auto-complete-mrna-btn" class="hidden absolute right-4 bottom-4 bg-purple-100 text-purple-700 hover:bg-purple-200 px-4 py-2 rounded-md font-semibold text-sm transition-colors border border-purple-300 shadow-sm z-20" onclick="autoFillTranscription()">
+                    Auto-Complete mRNA
+                </button>
+            </div>
+        `;
+
+        DOM.actionBtn.onclick = () => {
+            if (!state.trans.unzipped) {
+                document.getElementById('trans-top').style.top = '20px';
+                document.getElementById('trans-bot').style.top = '190px';
+                
+                setTimeout(() => {
+                    const mrna = document.getElementById('mrna-builder');
+                    mrna.classList.remove('opacity-0', 'pointer-events-none');
+                    mrna.style.top = '120px';
+                    
+                    setupTools(['A', 'U', 'C', 'G'], 'nucleotide');
+                    DOM.actionBtn.textContent = "Translate to Protein";
+                    DOM.actionBtn.disabled = true;
+                    DOM.actionBtn.onclick = nextStage;
+                    state.trans.unzipped = true;
+                }, 800);
+            }
+        };
+    }
+
+    function checkTranscriptionProgress() {
+        const totalTargets = document.querySelectorAll('#mrna-builder .target-box').length;
+        const filledTargets = document.querySelectorAll('#mrna-builder .target-box-filled').length;
+        
+        if (filledTargets >= 6 && filledTargets < totalTargets) {
+            document.getElementById('auto-complete-mrna-btn').classList.remove('hidden');
+        }
+
+        if (filledTargets === totalTargets) {
+            completeTranscription();
+        }
+    }
+
+    function autoFillTranscription() {
+        document.querySelectorAll('#mrna-builder .target-box').forEach(el => {
+            if (!el.classList.contains('target-box-filled')) {
+                const expected = el.dataset.expected;
+                el.textContent = expected;
+                el.className = `base bg-${expected} mono disabled pop-in target-box-filled`;
+                el.onclick = null;
+            }
+        });
+        completeTranscription();
+    }
+
+    function completeTranscription() {
+        document.getElementById('auto-complete-mrna-btn')?.classList.add('hidden');
+        DOM.toolPanel.classList.add('hidden');
+        DOM.actionBtn.disabled = false;
+        setFeedback("Transcription Complete! The mRNA transcript is ready to leave the nucleus.");
+        
+        // Animate mRNA detachment
+        const mrna = document.getElementById('mrna-builder');
+        mrna.style.top = '250px';
+        mrna.style.padding = '10px';
+        mrna.style.backgroundColor = 'rgba(168, 85, 247, 0.1)';
+        mrna.style.borderRadius = '8px';
+        
+        // DNA zips back
+        setTimeout(() => {
+            document.getElementById('trans-top').style.top = '120px';
+            document.getElementById('trans-bot').style.top = '165px';
+            document.getElementById('trans-top').classList.remove('opacity-50');
+        }, 500);
+    }
+
+
+    // --- Stage 4: Translation ---
+    function renderTranslation() {
+        DOM.controls.classList.remove('hidden');
+        DOM.actionBtn.textContent = "Finish Lab";
+        DOM.actionBtn.disabled = true;
+        DOM.actionBtn.onclick = nextStage;
+        state.transl.currentCodonIndex = 0;
+        state.transl.peptideChain = [];
+
+        DOM.content.innerHTML = `
+            <div class="mb-4">
+                <h2 class="text-2xl font-bold text-slate-800">Part 3: Translation</h2>
+                <p class="text-gray-600 text-sm">The ribosome reads mRNA codons (groups of 3). Match the correct tRNA (with its anticodon) to add an amino acid to the growing polypeptide chain.</p>
+            </div>
+            
+            <div class="flex-grow flex flex-col items-center relative w-full overflow-hidden">
+                
+                <!-- Polypeptide Chain Area -->
+                <div class="h-20 w-full flex items-center justify-center mb-4" id="peptide-container">
+                    <div class="text-sm font-bold text-gray-400 mr-4" id="chain-label" style="display:none;">N-terminus</div>
+                    <div id="growing-chain" class="flex items-center"></div>
+                </div>
+
+                <!-- Ribosome Complex -->
+                <div class="relative w-full max-w-4xl h-32 flex items-center bg-gray-50 rounded-lg border border-gray-200 overflow-hidden shadow-inner" id="ribosome-track">
+                    
+                    <!-- Ribosome Large Subunit (Expanded to properly cover E, P, and A sites) -->
+                    <div class="absolute w-[350px] h-[64px] left-[70px] top-[4px] z-0 opacity-95 ribosome-large pointer-events-none flex flex-col justify-end pb-1">
+                        <div class="absolute right-[12px] bottom-1 flex w-[324px]">
+                             <div class="w-[108px] text-center text-sm font-bold text-amber-900 opacity-60">E</div>
+                             <div class="w-[108px] text-center text-sm font-bold text-amber-900">P</div>
+                             <div class="w-[108px] text-center text-sm font-bold text-amber-900">A</div>
+                        </div>
+                    </div>
+
+                    <!-- mRNA Strand (Added left-0 to fix flex-centering coordinate bug) -->
+                    <div class="absolute left-0 w-[150%] flex gap-1 pl-[300px] transition-transform duration-500 ease-in-out z-10" id="mrna-track">
+                        ${Array.from(MRNA_STRAND).map((b, i) => `<div class="base bg-${b} mono disabled text-sm w-8 h-8 flex-shrink-0" id="mrna-base-${i}">${b}</div>`).join('')}
+                    </div>
+
+                    <!-- Ribosome Small Subunit -->
+                    <div class="absolute w-[330px] h-[35px] left-[80px] bottom-[5px] z-30 opacity-95 ribosome-small pointer-events-none flex justify-center pt-1">
+                        <div class="w-32 h-1 bg-amber-800 opacity-20 rounded-full"></div>
+                    </div>
+                    
+                    <!-- Active Codon Highlight (A-site focus) -->
+                    <div class="absolute left-[298px] w-[108px] h-[40px] border-4 border-blue-500 rounded z-20 pointer-events-none bg-blue-400 bg-opacity-20 shadow-[0_0_10px_rgba(59,130,246,0.5)]" id="codon-highlight"></div>
+                </div>
+
+                <!-- Active Target Zone for tRNA -->
+                <div id="trna-target" class="w-[88px] h-[75px] border-2 border-dashed border-gray-400 rounded-lg mt-4 flex items-center justify-center cursor-pointer hover:bg-gray-100 transition-colors z-20" onclick="handleTRNADrop()" ondragover="event.preventDefault()" ondrop="handleTRNADropEvent(event)">
+                    <span class="text-gray-500 text-sm font-medium text-center px-1">Click or Drop match here</span>
+                </div>
+
+            </div>
+        `;
+
+        updateTranslationUI();
+    }
+
+    function getAntiCodon(codon) {
+        const map = { 'A':'U', 'U':'A', 'C':'G', 'G':'C' };
+        return Array.from(codon).map(b => map[b]).join('');
+    }
+
+    function updateTranslationUI() {
+        const idx = state.transl.currentCodonIndex;
+        if (idx >= 6) return; // Done
+
+        const currentCodon = MRNA_STRAND.substring(idx * 3, (idx * 3) + 3);
+        const isStopCodon = currentCodon === 'UAG' || currentCodon === 'UAA' || currentCodon === 'UGA';
+        
+        // Move mRNA track to left
+        const track = document.getElementById('mrna-track');
+        track.style.transform = `translateX(-${idx * 108}px)`; // 3 bases * (32px w + 4px gap) = ~108px
+
+        // Find correct target using FIND, not index (fixes bug)
+        const targetAA = AMINO_ACIDS.find(a => a.codon === currentCodon);
+
+        // Generate tRNA pool (Correct one + 3 random distractors)
+        let pool = [targetAA];
+        while(pool.length < 4) {
+            const randomAA = AMINO_ACIDS[Math.floor(Math.random() * AMINO_ACIDS.length)];
+            if(!pool.includes(randomAA) && randomAA.codon !== currentCodon) {
+                pool.push(randomAA);
+            }
+        }
+        // Shuffle
+        pool.sort(() => Math.random() - 0.5);
+
+        DOM.toolPanel.classList.remove('hidden');
+        
+        if (isStopCodon) {
+            DOM.instructions.textContent = `Codon: ${currentCodon} is a STOP Codon. Select the Release Factor.`;
+        } else {
+            DOM.instructions.textContent = `Codon: ${currentCodon}. Select tRNA with anticodon ${getAntiCodon(currentCodon)}.`;
+        }
+        
+        DOM.tools.innerHTML = '';
+
+        pool.forEach(aa => {
+            const isStop = aa.name === 'STOP';
+            const anticodon = isStop ? 'None' : getAntiCodon(aa.codon);
+            
+            const btn = document.createElement('div');
+            btn.className = `trna-btn flex flex-col items-center cursor-pointer p-2 rounded-lg hover:bg-gray-200 transition-all border-2 border-transparent`;
+            btn.dataset.codon = aa.codon;
+            
+            // AA or Release Factor graphic
+            const aaGraphic = document.createElement('div');
+            if (isStop) {
+                aaGraphic.className = 'w-[45px] h-[45px] rounded border-2 border-gray-800 flex items-center justify-center mb-1 text-xs font-bold text-white shadow-[inset_-2px_-2px_6px_rgba(0,0,0,0.3),_0_2px_4px_rgba(0,0,0,0.2)]';
+                aaGraphic.style.backgroundColor = aa.color;
+                aaGraphic.textContent = 'RF';
+            } else {
+                aaGraphic.className = 'amino-acid mb-1';
+                aaGraphic.style.backgroundColor = aa.color;
+                aaGraphic.textContent = aa.name;
+            }
+            
+            // Anticodon Label
+            const antiText = document.createElement('div');
+            antiText.className = 'font-bold font-mono text-sm tracking-widest text-slate-700 bg-white px-2 py-1 rounded shadow-sm border border-gray-300';
+            antiText.textContent = anticodon;
+
+            btn.appendChild(aaGraphic);
+            btn.appendChild(antiText);
+            
+            btn.draggable = true;
+            btn.ondragstart = (e) => {
+                selectTool(btn, aa.codon);
+                e.dataTransfer.setData('text/plain', aa.codon);
+            };
+            btn.onclick = () => selectTool(btn, aa.codon);
+            
+            DOM.tools.appendChild(btn);
+        });
+        
+        // Reset target area
+        const target = document.getElementById('trna-target');
+        target.innerHTML = '<span class="text-gray-500 text-sm font-medium text-center px-1">Click or Drop match here</span>';
+        target.className = "w-[88px] h-[75px] border-2 border-dashed border-gray-400 rounded-lg mt-4 flex items-center justify-center cursor-pointer hover:bg-gray-100 transition-colors z-20";
+    }
+
+    function handleTRNADrop() {
+        if (!state.selectedTool) {
+            setFeedback("Select a molecule first!", true);
+            return;
+        }
+
+        if (state.selectedTool.length === 1) {
+            setFeedback("In translation, you must drag the entire molecule, not individual bases.", true);
+            document.getElementById('trna-target').classList.add('shake');
+            setTimeout(() => document.getElementById('trna-target').classList.remove('shake'), 300);
+            return;
+        }
+
+        const idx = state.transl.currentCodonIndex;
+        const currentCodon = MRNA_STRAND.substring(idx * 3, (idx * 3) + 3);
+
+        if (state.selectedTool === currentCodon) {
+            // Correct!
+            const aaData = AMINO_ACIDS.find(a => a.codon === currentCodon);
+            const isStop = aaData.name === 'STOP';
+            
+            // Visual update on target
+            const target = document.getElementById('trna-target');
+            target.className = "w-[88px] h-[75px] flex items-center justify-center z-20 pop-in";
+            target.innerHTML = `
+                <div class="flex flex-col items-center">
+                    ${isStop 
+                        ? `<div class="w-[45px] h-[45px] rounded border-2 border-gray-800 flex items-center justify-center mb-1 text-xs font-bold text-white shadow-[inset_-2px_-2px_6px_rgba(0,0,0,0.3),_0_2px_4px_rgba(0,0,0,0.2)]" style="background-color: ${aaData.color}">RF</div>` 
+                        : `<div class="amino-acid mb-1" style="background-color: ${aaData.color}">${aaData.name}</div>`
+                    }
+                    <div class="font-bold font-mono text-sm tracking-widest text-slate-700 bg-white px-1 rounded shadow-sm border">${isStop ? 'None' : getAntiCodon(aaData.codon)}</div>
+                </div>
+            `;
+            
+            setTimeout(() => {
+                addToChain(aaData);
+                state.transl.currentCodonIndex++;
+                state.selectedTool = null;
+                
+                if (aaData.name === 'STOP' || state.transl.currentCodonIndex >= 6) {
+                    completeTranslation();
+                } else {
+                    updateTranslationUI();
+                }
+            }, 800);
+
+        } else {
+            state.metrics.errors++;
+            const isTargetStop = currentCodon === 'UAG' || currentCodon === 'UAA' || currentCodon === 'UGA';
+            
+            if (isTargetStop) {
+                setFeedback(`Incorrect. Codon ${currentCodon} is a STOP codon. It needs a Release Factor (RF), not a tRNA.`, true);
+            } else {
+                const expectedAnti = getAntiCodon(currentCodon);
+                setFeedback(`Incorrect tRNA. Codon ${currentCodon} needs anticodon ${expectedAnti}.`, true);
+            }
+            
+            document.getElementById('trna-target').classList.add('shake');
+            setTimeout(() => document.getElementById('trna-target').classList.remove('shake'), 300);
+        }
+    }
+
+    function addToChain(aaData) {
+        if (aaData.name === 'STOP') return; // Stop codon doesn't add an AA
+        
+        document.getElementById('chain-label').style.display = 'block';
+        const chain = document.getElementById('growing-chain');
+        
+        const newAA = document.createElement('div');
+        newAA.className = 'amino-acid peptide-bond-anim';
+        newAA.style.backgroundColor = aaData.color;
+        newAA.textContent = aaData.name;
+        
+        chain.appendChild(newAA);
+    }
+
+    function completeTranslation() {
+        DOM.toolPanel.classList.add('hidden');
+        DOM.actionBtn.disabled = false;
+        DOM.actionBtn.textContent = "Finish & Generate Lab Report";
+        setFeedback("Translation Complete! The polypeptide chain detaches and folds into a functional protein.", false);
+        
+        // Hide ribosome parts, show full chain
+        document.getElementById('trna-target').style.display = 'none';
+        document.getElementById('codon-highlight').style.display = 'none';
+        
+        const chainLabel = document.createElement('div');
+        chainLabel.className = "text-sm font-bold text-gray-400 ml-4 pop-in";
+        chainLabel.textContent = "C-terminus";
+        document.getElementById('growing-chain').appendChild(chainLabel);
+        
+        state.metrics.endTime = Date.now();
+    }
+
+    // --- Stage 5: Lab Report ---
+    function renderReport() {
+        DOM.controls.classList.add('hidden');
+        
+        // Smart button that knows if they printed it early or generated it at the end
+        const isFinished = state.metrics.endTime !== null;
+        const btnText = isFinished ? "Restart Lab" : "Start Interactive Lab";
+        const btnAction = isFinished ? "location.reload()" : "state.stageIndex = 1; loadStage()";
+        
+        DOM.content.innerHTML = `
+            <div class="print-border">
+                <div class="text-center mb-8 border-b-2 border-gray-800 pb-4">
+                    <h1 class="text-3xl font-bold uppercase tracking-wider text-slate-800">Lab Worksheet</h1>
+                    <h2 class="text-xl text-gray-600 mt-2">Molecular Genetics: Gene Expression</h2>
+                </div>
+
+                <div class="grid grid-cols-2 gap-6 mb-8 text-lg">
+                    <div>
+                        <label class="block font-bold text-gray-700 mb-1">Student Name: ___________________________</label>
+                    </div>
+                    <div>
+                        <label class="block font-bold text-gray-700 mb-1">Date: ___________________________</label>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 border border-gray-200 rounded p-6 mb-8">
+                    <h3 class="font-bold text-lg text-slate-800 mb-4 border-b border-gray-300 pb-2">Part 1: Sequence Translation Data</h3>
+                    
+                    <div class="mb-6">
+                        <p class="font-bold text-gray-800 mb-2">Original DNA Template Strand:</p>
+                        <p class="font-mono text-lg tracking-[0.2em] text-blue-800 bg-white p-3 border border-blue-200 rounded shadow-sm inline-block">TAC CGC GAC TGG AAA ATC</p>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <p class="font-bold text-gray-800 mb-2">1. Complementary DNA Strand (Replication):</p>
+                        <div class="h-10 border-b-2 border-gray-400 w-full"></div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <p class="font-bold text-gray-800 mb-2">2. Transcribed mRNA Strand (Transcription):</p>
+                        <div class="h-10 border-b-2 border-gray-400 w-full"></div>
+                    </div>
+                    
+                    <div class="mb-2">
+                        <p class="font-bold text-gray-800 mb-2">3. Polypeptide Sequence (Translation / Amino Acids):</p>
+                        <div class="h-10 border-b-2 border-gray-400 w-full"></div>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <h3 class="font-bold text-lg text-slate-800 border-b border-gray-300 pb-2">Part 2: Analysis Questions</h3>
+                    
+                    <div>
+                        <label class="block font-semibold text-gray-800 mb-2">1. In your own words, describe the main difference between DNA replication and transcription based on what you did in the simulation.</label>
+                        <div class="w-full border border-gray-300 rounded h-28 bg-white shadow-inner"></div>
+                    </div>
+
+                    <div>
+                        <label class="block font-semibold text-gray-800 mb-2">2. Explain the role of tRNA in the translation process.</label>
+                        <div class="w-full border border-gray-300 rounded h-28 bg-white shadow-inner"></div>
+                    </div>
+
+                    <div>
+                        <label class="block font-semibold text-gray-800 mb-2">3. What would have happened to the final protein if a mutation changed the first DNA template triplet from TAC to ATC?</label>
+                        <div class="w-full border border-gray-300 rounded h-28 bg-white shadow-inner"></div>
+                    </div>
+                </div>
+
+                <div class="mt-10 flex justify-center gap-4 no-print">
+                    <button onclick="window.print()" class="bg-slate-800 hover:bg-slate-900 text-white px-8 py-3 rounded-lg font-bold shadow-lg transition-transform hover:-translate-y-1 flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                        Print / Save PDF
+                    </button>
+                    <button onclick="${btnAction}" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-bold transition-colors">
+                        ${btnText}
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+
+    // Start App
+    init();
+
+</script>
+</body>
+</html>
