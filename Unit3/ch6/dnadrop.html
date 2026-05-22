@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Nucleotide Drop</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;800&display=swap');
+        
+        body {
+            font-family: 'Orbitron', sans-serif;
+            background-color: #0f172a; /* Slate 900 */
+            color: #f8fafc;
+            touch-action: manipulation; /* Prevent double-tap zoom on mobile */
+        }
+
+        #game-container {
+            box-shadow: 0 0 30px rgba(56, 189, 248, 0.2);
+        }
+
+        .btn-control {
+            transition: transform 0.1s, background-color 0.2s;
+        }
+        .btn-control:active {
+            transform: scale(0.95);
+            background-color: #475569;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-4">
+
+    <!-- Header Section -->
+    <div class="text-center mb-6">
+        <h1 class="text-3xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500 drop-shadow-lg mb-2">
+            NUCLEOTIDE DROP
+        </h1>
+        <p class="text-slate-300 text-sm md:text-base">
+            Match complementary bases to clear the sequence! <br/>
+            <span class="text-red-400 font-bold">A</span> pairs with <span class="text-blue-400 font-bold">T</span> &nbsp;|&nbsp; 
+            <span class="text-yellow-400 font-bold">C</span> pairs with <span class="text-green-400 font-bold">G</span>
+        </p>
+    </div>
+
+    <!-- Main Game UI -->
+    <div class="flex flex-row gap-4 md:gap-8 items-start">
+        
+        <!-- Left Side Panel (Desktop) -->
+        <div class="hidden md:flex flex-col items-center w-32">
+            <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 w-full mb-6">
+                <h2 class="text-center text-sm text-slate-400 mb-2">NEXT</h2>
+                <div class="flex justify-center">
+                    <canvas id="nextCanvas" width="60" height="120" class="rounded bg-slate-900"></canvas>
+                </div>
+            </div>
+            
+            <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 w-full text-center">
+                <h2 class="text-sm text-slate-400 mb-1">SCORE</h2>
+                <p id="scoreDisplay" class="text-2xl font-bold text-yellow-300">0</p>
+            </div>
+            
+            <div class="mt-8 text-xs text-slate-400 text-center leading-loose">
+                <p><b>[ &larr; ] [ &rarr; ]</b><br/>Move Base</p>
+                <p><b>[ &uarr; ]</b><br/>Swap Bases</p>
+                <p><b>[ &darr; ]</b><br/>Fast Drop</p>
+            </div>
+        </div>
+
+        <!-- Center: Game Canvas -->
+        <div id="game-container" class="relative bg-slate-900 border-4 border-slate-700 rounded-xl overflow-hidden">
+            <canvas id="gameCanvas" width="320" height="600"></canvas>
+            
+            <!-- Game Over Overlay -->
+            <div id="gameOverModal" class="hidden absolute inset-0 bg-black/85 flex flex-col items-center justify-center p-4 text-center z-10">
+                <h2 class="text-4xl md:text-5xl font-bold text-red-500 mb-2 drop-shadow-[0_0_10px_rgba(239,68,68,0.8)]">MUTATION!</h2>
+                <p class="text-slate-300 mb-6">The stack reached the top.</p>
+                <p class="text-xl mb-8">Final Score: <span id="finalScore" class="text-yellow-400 font-bold">0</span></p>
+                <button onclick="resetGame()" class="px-8 py-4 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 rounded-full text-xl font-bold transition shadow-lg shadow-cyan-500/50">
+                    Sequence Again
+                </button>
+            </div>
+            
+            <!-- Mobile Stats Overlay -->
+            <div class="md:hidden absolute top-2 left-2 right-2 flex justify-between pointer-events-none">
+                <div class="bg-slate-800/80 px-3 py-1 rounded border border-slate-700 backdrop-blur-sm pointer-events-auto text-xs">
+                    Next: <canvas id="nextCanvasMobile" width="20" height="40" class="inline-block align-middle ml-1"></canvas>
+                </div>
+                <div class="bg-slate-800/80 px-3 py-1 rounded border border-slate-700 backdrop-blur-sm pointer-events-auto font-bold text-yellow-300">
+                    <span id="scoreDisplayMobile">0</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Touch Controls -->
+    <div class="md:hidden grid grid-cols-4 gap-2 w-full max-w-[320px] mt-4 select-none">
+        <button id="btnLeft" class="btn-control bg-slate-800 text-cyan-400 p-4 rounded-xl text-2xl font-bold border border-slate-700 shadow-lg">&larr;</button>
+        <button id="btnSwap" class="btn-control bg-slate-800 text-purple-400 p-4 rounded-xl text-xl font-bold border border-slate-700 shadow-lg flex flex-col items-center justify-center leading-none">
+            <span>&uarr;&darr;</span>
+            <span class="text-[10px] mt-1 font-sans">SWAP</span>
+        </button>
+        <button id="btnDrop" class="btn-control bg-slate-800 text-yellow-400 p-4 rounded-xl text-xl font-bold border border-slate-700 shadow-lg flex flex-col items-center justify-center leading-none">
+            <span>&darr;</span>
+            <span class="text-[10px] mt-1 font-sans">DROP</span>
+        </button>
+        <button id="btnRight" class="btn-control bg-slate-800 text-cyan-400 p-4 rounded-xl text-2xl font-bold border border-slate-700 shadow-lg">&rarr;</button>
+    </div>
+
+    <script>
+        // --- GAME CONSTANTS & CONFIG ---
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const nextCanvas = document.getElementById('nextCanvas');
+        const nextCtx = nextCanvas.getContext('2d');
+        const nextCanvasMobile = document.getElementById('nextCanvasMobile');
+        const nextCtxMobile = nextCanvasMobile.getContext('2d');
+        
+        const COLS = 8;
+        const ROWS = 15;
+        const BLOCK_SIZE = canvas.width / COLS; // 40px
+        
+        const BASES = ['A', 'T', 'C', 'G'];
+        
+        // Base pair rules & colors
+        const BIO = {
+            'A': { comp: 'T', color: '#ef4444', glow: 'rgba(239, 68, 68, 0.5)' },   // Red
+            'T': { comp: 'A', color: '#3b82f6', glow: 'rgba(59, 130, 246, 0.5)' },   // Blue
+            'C': { comp: 'G', color: '#eab308', glow: 'rgba(234, 179, 8, 0.5)' },    // Yellow
+            'G': { comp: 'C', color: '#22c55e', glow: 'rgba(34, 197, 94, 0.5)' }     // Green
+        };
+
+        // --- GAME STATE ---
+        let grid = [];
+        let score = 0;
+        let currentPiece = null;
+        let nextPiece = null;
+        let animationId = null;
+        let lastTime = 0;
+        let dropCounter = 0;
+        let dropInterval = 1000;
+        let isResolving = false;
+        let isGameOver = false;
+
+        // --- UTILITIES ---
+        function randomBase() {
+            return BASES[Math.floor(Math.random() * BASES.length)];
+        }
+
+        function createPiece() {
+            return {
+                x: Math.floor(COLS / 2),
+                y: 0, // y is the bottom block. Top block is at y-1
+                top: randomBase(),
+                bottom: randomBase()
+            };
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        // --- DRAWING LOGIC ---
+        function drawRoundedRect(context, x, y, width, height, radius) {
+            context.beginPath();
+            context.moveTo(x + radius, y);
+            context.lineTo(x + width - radius, y);
+            context.quadraticCurveTo(x + width, y, x + width, y + radius);
+            context.lineTo(x + width, y + height - radius);
+            context.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+            context.lineTo(x + radius, y + height);
+            context.quadraticCurveTo(x, y + height, x, y + height - radius);
+            context.lineTo(x, y + radius);
+            context.quadraticCurveTo(x, y, x + radius, y);
+            context.closePath();
+            context.fill();
+        }
+
+        function drawBlock(context, x, y, base, size = BLOCK_SIZE, isHighlight = false) {
+            if (!base) return;
+            const props = BIO[base];
+            const px = x * size;
+            const py = y * size;
+
+            // Main block background
+            context.fillStyle = isHighlight ? '#ffffff' : props.color;
+            drawRoundedRect(context, px + 2, py + 2, size - 4, size - 4, 8);
+
+            if (!isHighlight) {
+                // Glass highlight effect
+                context.fillStyle = 'rgba(255, 255, 255, 0.2)';
+                drawRoundedRect(context, px + 4, py + 4, size - 8, size * 0.4, 4);
+
+                // Letter
+                context.fillStyle = 'white';
+                context.font = `bold ${size * 0.55}px Orbitron`;
+                context.textAlign = 'center';
+                context.textBaseline = 'middle';
+                context.shadowColor = 'rgba(0,0,0,0.8)';
+                context.shadowBlur = 4;
+                context.fillText(base, px + size / 2, py + size / 2 + 2);
+                context.shadowBlur = 0;
+            }
+        }
+
+        function drawGrid() {
+            // Draw background lines
+            ctx.strokeStyle = '#1e293b';
+            ctx.lineWidth = 1;
+            for(let i=0; i<=COLS; i++) {
+                ctx.beginPath(); ctx.moveTo(i*BLOCK_SIZE, 0); ctx.lineTo(i*BLOCK_SIZE, canvas.height); ctx.stroke();
+            }
+            for(let i=0; i<=ROWS; i++) {
+                ctx.beginPath(); ctx.moveTo(0, i*BLOCK_SIZE); ctx.lineTo(canvas.width, i*BLOCK_SIZE); ctx.stroke();
+            }
+
+            // Draw placed blocks
+            for (let y = 0; y < ROWS; y++) {
+                for (let x = 0; x < COLS; x++) {
+                    if (grid[y][x]) {
+                        drawBlock(ctx, x, y, grid[y][x]);
+                    }
+                }
+            }
+        }
+
+        function drawCurrentPiece() {
+            if (!currentPiece) return;
+            // Draw falling shadow (ghost piece)
+            let ghostY = currentPiece.y;
+            while (isValid(currentPiece.x, ghostY + 1)) { ghostY++; }
+            
+            ctx.globalAlpha = 0.2;
+            drawBlock(ctx, currentPiece.x, ghostY - 1, currentPiece.top);
+            drawBlock(ctx, currentPiece.x, ghostY, currentPiece.bottom);
+            ctx.globalAlpha = 1.0;
+
+            // Draw actual piece
+            if (currentPiece.y - 1 >= 0) drawBlock(ctx, currentPiece.x, currentPiece.y - 1, currentPiece.top);
+            drawBlock(ctx, currentPiece.x, currentPiece.y, currentPiece.bottom);
+        }
+
+        function drawNextPiece() {
+            // Desktop Next
+            nextCtx.clearRect(0, 0, nextCanvas.width, nextCanvas.height);
+            if (nextPiece) {
+                const s = 40; // block size for next canvas
+                drawBlock(nextCtx, 0.25, 0.5, nextPiece.top, s);
+                drawBlock(nextCtx, 0.25, 1.5, nextPiece.bottom, s);
+            }
+
+            // Mobile Next
+            nextCtxMobile.clearRect(0, 0, nextCanvasMobile.width, nextCanvasMobile.height);
+            if(nextPiece) {
+                const ms = 20;
+                drawBlock(nextCtxMobile, 0, 0, nextPiece.top, ms);
+                drawBlock(nextCtxMobile, 0, 1, nextPiece.bottom, ms);
+            }
+        }
+
+        function drawScene() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawGrid();
+            if (!isResolving) drawCurrentPiece();
+            drawNextPiece();
+            updateScoreDisplays();
+        }
+
+        function updateScoreDisplays() {
+            document.getElementById('scoreDisplay').innerText = score;
+            document.getElementById('scoreDisplayMobile').innerText = score;
+        }
+
+        // --- GAME MECHANICS ---
+
+        function initGrid() {
+            grid = Array.from({ length: ROWS }, () => Array(COLS).fill(null));
+            
+            // Add some "garbage" DNA at the bottom to start
+            for (let y = ROWS - 4; y < ROWS; y++) {
+                for (let x = 0; x < COLS; x++) {
+                    if (Math.random() > 0.4) {
+                        let base;
+                        do {
+                            base = randomBase();
+                        } while (y < ROWS - 1 && grid[y+1][x] === BIO[base].comp); // Ensure no instant matches
+                        grid[y][x] = base;
+                    }
+                }
+            }
+        }
+
+        function isValid(x, y) {
+            // Check boundaries
+            if (x < 0 || x >= COLS || y >= ROWS) return false;
+            // Check collisions (only if y >= 0, because pieces spawn above screen)
+            if (y >= 0 && grid[y][x] !== null) return false;
+            return true;
+        }
+
+        function movePiece(dx) {
+            if (isResolving || isGameOver || !currentPiece) return;
+            if (isValid(currentPiece.x + dx, currentPiece.y) && isValid(currentPiece.x + dx, currentPiece.y - 1)) {
+                currentPiece.x += dx;
+                drawScene();
+            }
+        }
+
+        function swapPiece() {
+            if (isResolving || isGameOver || !currentPiece) return;
+            const temp = currentPiece.top;
+            currentPiece.top = currentPiece.bottom;
+            currentPiece.bottom = temp;
+            drawScene();
+        }
+
+        function dropPiece() {
+            if (isResolving || isGameOver || !currentPiece) return;
+            while (isValid(currentPiece.x, currentPiece.y + 1)) {
+                currentPiece.y++;
+            }
+            dropCounter = dropInterval; // Force immediate lock
+            drawScene();
+        }
+
+        async function lockPiece() {
+            isResolving = true;
+            
+            // Lock into grid
+            if (currentPiece.y >= 0) grid[currentPiece.y][currentPiece.x] = currentPiece.bottom;
+            if (currentPiece.y - 1 >= 0) grid[currentPiece.y - 1][currentPiece.x] = currentPiece.top;
+
+            // Check Game Over (if locked at top)
+            if (currentPiece.y - 1 <= 0) {
+                endGame();
+                return;
+            }
+
+            currentPiece = null;
+            drawScene();
+
+            await resolveMatches();
+
+            if(!isGameOver) {
+                currentPiece = nextPiece;
+                nextPiece = createPiece();
+                dropInterval = Math.max(150, dropInterval - 10); // Slowly increase speed
+                isResolving = false;
+            }
+        }
+
+        async function resolveMatches() {
+            let combo = 1;
+            let matchesFound = true;
+
+            while (matchesFound && !isGameOver) {
+                // 1. Apply Gravity (make floating blocks fall)
+                let moved = true;
+                while (moved) {
+                    moved = false;
+                    for (let x = 0; x < COLS; x++) {
+                        for (let y = ROWS - 2; y >= 0; y--) { // Scan bottom-up
+                            if (grid[y][x] && !grid[y+1][x]) {
+                                grid[y+1][x] = grid[y][x];
+                                grid[y][x] = null;
+                                moved = true;
+                            }
+                        }
+                    }
+                    if (moved) {
+                        drawScene();
+                        await sleep(60); // Visual pause for falling animation
+                    }
+                }
+
+                // 2. Scan for vertical Complement pairs
+                matchesFound = false;
+                let toRemove = [];
+
+                for (let x = 0; x < COLS; x++) {
+                    for (let y = 0; y < ROWS - 1; y++) {
+                        if (grid[y][x] && grid[y+1][x]) {
+                            if (BIO[grid[y][x]].comp === grid[y+1][x]) {
+                                toRemove.push({x, y});
+                                toRemove.push({x, y: y+1});
+                            }
+                        }
+                    }
+                }
+
+                // 3. Process removals
+                if (toRemove.length > 0) {
+                    matchesFound = true;
+                    
+                    // Flash effect
+                    toRemove.forEach(pos => {
+                        drawBlock(ctx, pos.x, pos.y, grid[pos.y][pos.x], BLOCK_SIZE, true);
+                    });
+                    await sleep(150);
+
+                    // Actually remove
+                    let scoredThisTurn = 0;
+                    toRemove.forEach(pos => {
+                        if (grid[pos.y][pos.x]) {
+                            grid[pos.y][pos.x] = null;
+                            scoredThisTurn++;
+                        }
+                    });
+                    
+                    score += (scoredThisTurn * 10) * combo;
+                    combo++;
+                    drawScene();
+                    await sleep(100);
+                }
+            }
+        }
+
+        // --- MAIN LOOP ---
+        function update(time = 0) {
+            if (isGameOver) return;
+            
+            const deltaTime = time - lastTime;
+            lastTime = time;
+
+            if (!isResolving) {
+                dropCounter += deltaTime;
+                if (dropCounter > dropInterval) {
+                    if (isValid(currentPiece.x, currentPiece.y + 1)) {
+                        currentPiece.y++;
+                        dropCounter = 0;
+                    } else {
+                        lockPiece(); // asynchronous lock and match
+                    }
+                }
+            }
+
+            if(!isResolving) drawScene();
+            animationId = requestAnimationFrame(update);
+        }
+
+        // --- GAME CONTROLS & INIT ---
+
+        function endGame() {
+            isGameOver = true;
+            document.getElementById('finalScore').innerText = score;
+            document.getElementById('gameOverModal').classList.remove('hidden');
+            cancelAnimationFrame(animationId);
+        }
+
+        function resetGame() {
+            document.getElementById('gameOverModal').classList.add('hidden');
+            initGrid();
+            score = 0;
+            dropInterval = 1000;
+            isGameOver = false;
+            isResolving = false;
+            
+            currentPiece = createPiece();
+            nextPiece = createPiece();
+            
+            lastTime = performance.now();
+            update();
+        }
+
+        // Keyboard Controls
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') movePiece(-1);
+            if (e.key === 'ArrowRight') movePiece(1);
+            if (e.key === 'ArrowDown') { e.preventDefault(); dropPiece(); }
+            if (e.key === 'ArrowUp') { e.preventDefault(); swapPiece(); }
+        });
+
+        // Touch / Click Controls (Mobile)
+        function attachTouch(id, action) {
+            const btn = document.getElementById(id);
+            // Support both touch and mouse for testing
+            const trigger = (e) => { e.preventDefault(); action(); };
+            btn.addEventListener('touchstart', trigger, {passive: false});
+            btn.addEventListener('mousedown', trigger);
+        }
+        
+        attachTouch('btnLeft', () => movePiece(-1));
+        attachTouch('btnRight', () => movePiece(1));
+        attachTouch('btnSwap', swapPiece);
+        attachTouch('btnDrop', dropPiece);
+
+        // Start initial game
+        resetGame();
+
+    </script>
+</body>
+</html>
