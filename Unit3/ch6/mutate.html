@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mutation Detective: Advanced Mode</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@300;400;600;800&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+        }
+        
+        .dna-font {
+            font-family: 'Fira Code', monospace;
+            letter-spacing: 0.2em;
+        }
+        
+        .mrna-font {
+            font-family: 'Fira Code', monospace;
+            letter-spacing: 0.1em;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.4s ease-in forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .shake {
+            animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+        }
+
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+
+        .highlight-mutation {
+            color: #ef4444; /* red-500 */
+            font-weight: bold;
+            background: rgba(239, 68, 68, 0.2);
+            border-radius: 4px;
+            padding: 0 2px;
+        }
+
+        /* Codon Chart Styles */
+        .codon-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 4px;
+        }
+        .codon-cell {
+            background: #1e293b;
+            padding: 4px;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 0.75rem;
+            border: 1px solid #334155;
+        }
+        .codon-cell span {
+            color: #38bdf8; /* light blue */
+            font-weight: bold;
+        }
+
+        body.mode-beginner .show-advanced { display: none !important; }
+        body.mode-advanced .show-beginner { display: none !important; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col mode-beginner">
+
+    <!-- Header -->
+    <header class="bg-slate-900 border-b border-slate-800 p-4 shadow-lg sticky top-0 z-10">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="bg-fuchsia-600 p-2 rounded-lg text-white shadow-[0_0_15px_rgba(192,38,211,0.5)]">
+                    <i class="fas fa-microscope text-xl"></i>
+                </div>
+                <div>
+                <h1 class="text-xl font-bold tracking-tight text-white">Mutation Detective <span id="mode-badge" class="text-xs bg-emerald-700 px-2 py-0.5 rounded text-emerald-100 ml-2 align-middle">BEGINNER</span></h1>
+                <p class="text-xs text-slate-400">Transcribe, Translate, and Classify</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-6">
+            <div class="flex items-center gap-1 bg-slate-800 p-1 rounded-lg border border-slate-700">
+                <button onclick="setMode('beginner')" id="btn-mode-beginner" class="px-3 py-1 rounded text-xs font-bold transition-colors bg-emerald-600 text-white shadow">Beginner</button>
+                <button onclick="setMode('advanced')" id="btn-mode-advanced" class="px-3 py-1 rounded text-xs font-bold transition-colors text-slate-400 hover:text-white">Advanced</button>
+            </div>
+            <div class="text-center">
+                <p class="text-xs text-slate-400 uppercase tracking-wider">Score</p>
+                <p class="text-2xl font-bold text-fuchsia-400" id="score-display">0</p>
+                </div>
+                <div class="text-center">
+                    <p class="text-xs text-slate-400 uppercase tracking-wider">Streak</p>
+                    <p class="text-xl font-bold text-amber-400" id="streak-display">0</p>
+                </div>
+                <button onclick="toggleCodonChart()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2">
+                    <i class="fas fa-table"></i> Codon Key
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow p-4 md:p-8 max-w-6xl mx-auto w-full grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- Left Column: Sequences -->
+        <div class="lg:col-span-2 flex flex-col gap-6">
+            
+            <!-- Original Sequence Panel -->
+            <div class="bg-slate-800 rounded-xl p-6 shadow-xl border border-slate-700 relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
+                <h2 class="text-lg font-semibold text-blue-400 mb-4 flex items-center gap-2">
+                    <i class="fas fa-check-circle"></i> Original Sequence
+                </h2>
+                
+                <div class="space-y-5">
+                    <div class="flex items-center gap-4">
+                        <span class="w-16 text-slate-400 text-sm font-semibold">DNA</span>
+                        <div id="orig-dna" class="dna-font text-xl text-white tracking-[0.2em] bg-slate-900 p-3 rounded w-full border border-slate-700 overflow-x-auto whitespace-nowrap"></div>
+                    </div>
+                    
+                    <div class="flex items-start gap-4">
+                    <span class="w-16 text-slate-400 text-sm font-semibold mt-3">mRNA</span>
+                    <div class="flex-grow relative">
+                        <!-- Beginner Button -->
+                        <button id="btn-transcribe-orig" onclick="transcribeOriginal()" class="show-beginner w-full bg-slate-700 hover:bg-slate-600 border border-slate-600 text-slate-300 py-2 rounded transition-colors text-sm">
+                            <i class="fas fa-arrow-down mr-2"></i> Transcribe to mRNA
+                        </button>
+                        <!-- Advanced Input -->
+                        <div id="orig-mrna-input-group" class="show-advanced flex flex-col gap-2 w-full">
+                            <div class="flex items-center gap-2">
+                                <input type="text" id="orig-mrna-input" onkeydown="if(event.key === 'Enter') verifyOrigMrna()" class="w-full bg-slate-900 border border-slate-600 text-blue-300 font-mono tracking-widest p-2 rounded uppercase focus:ring-2 focus:ring-blue-500 outline-none transition-all placeholder-slate-600" placeholder="e.g. AUGGCC...">
+                                <button onclick="verifyOrigMrna()" class="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded text-white font-bold transition-colors">Check</button>
+                            </div>
+                            <p class="text-xs text-slate-500">Type the complementary mRNA bases.</p>
+                        </div>
+                        <div id="orig-mrna-display" class="hidden mrna-font text-lg text-blue-300 bg-slate-900 p-3 rounded w-full border border-slate-700 overflow-x-auto whitespace-nowrap fade-in mt-1"></div>
+                    </div>
+                </div>
+
+                <div class="flex items-start gap-4 hidden fade-in" id="orig-prot-wrapper">
+                    <span class="w-16 text-slate-400 text-sm font-semibold mt-3">Protein</span>
+                    <div class="flex-grow relative">
+                        <!-- Beginner Button -->
+                        <button id="btn-translate-orig" onclick="translateOriginal()" class="show-beginner w-full bg-slate-700 hover:bg-slate-600 border border-slate-600 text-slate-300 py-2 rounded transition-colors text-sm">
+                            <i class="fas fa-arrow-down mr-2"></i> Translate to Amino Acids
+                        </button>
+                        <!-- Advanced Input -->
+                        <div id="orig-prot-input-group" class="show-advanced flex flex-col gap-2 w-full">
+                            <div class="flex items-center gap-2">
+                                <input type="text" id="orig-prot-input" onkeydown="if(event.key === 'Enter') verifyOrigProt()" class="w-full bg-slate-900 border border-slate-600 text-fuchsia-300 p-2 rounded focus:ring-2 focus:ring-fuchsia-500 outline-none transition-all placeholder-slate-600" placeholder="e.g. Met Ala STOP">
+                                <button onclick="verifyOrigProt()" class="bg-fuchsia-600 hover:bg-fuchsia-500 px-4 py-2 rounded text-white font-bold transition-colors">Check</button>
+                            </div>
+                            <p class="text-xs text-slate-500">Use 3-letter abbreviations separated by spaces (e.g., Met Phe Cys STOP).</p>
+                        </div>
+                        <div id="orig-prot-display" class="hidden flex gap-2 overflow-x-auto pb-2 fade-in mt-1"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mutated Sequence Panel -->
+        <div class="bg-slate-800 rounded-xl p-6 shadow-xl border border-slate-700 relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-1 h-full bg-red-500"></div>
+            <h2 class="text-lg font-semibold text-red-400 mb-4 flex items-center gap-2">
+                <i class="fas fa-exclamation-triangle"></i> Mutated Sequence
+            </h2>
+            
+            <div class="space-y-5">
+                <div class="flex items-center gap-4">
+                    <span class="w-16 text-slate-400 text-sm font-semibold">DNA</span>
+                    <div id="mut-dna" class="dna-font text-xl text-white tracking-[0.2em] bg-slate-900 p-3 rounded w-full border border-slate-700 overflow-x-auto whitespace-nowrap"></div>
+                </div>
+                
+                <div class="flex items-start gap-4 hidden fade-in" id="mut-mrna-wrapper">
+                    <span class="w-16 text-slate-400 text-sm font-semibold mt-3">mRNA</span>
+                    <div class="flex-grow relative">
+                        <!-- Beginner Button -->
+                        <button id="btn-transcribe-mut" onclick="transcribeMutated()" class="show-beginner w-full bg-slate-700 hover:bg-slate-600 border border-slate-600 text-slate-300 py-2 rounded transition-colors text-sm">
+                            <i class="fas fa-arrow-down mr-2"></i> Transcribe Mutated DNA
+                        </button>
+                        <!-- Advanced Input -->
+                        <div id="mut-mrna-input-group" class="show-advanced flex flex-col gap-2 w-full">
+                            <div class="flex items-center gap-2">
+                                <input type="text" id="mut-mrna-input" onkeydown="if(event.key === 'Enter') verifyMutMrna()" class="w-full bg-slate-900 border border-slate-600 text-blue-300 font-mono tracking-widest p-2 rounded uppercase focus:ring-2 focus:ring-blue-500 outline-none transition-all placeholder-slate-600" placeholder="e.g. AUGGCC...">
+                                <button onclick="verifyMutMrna()" class="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded text-white font-bold transition-colors">Check</button>
+                            </div>
+                            <p class="text-xs text-slate-500">Type the complementary mRNA bases for the mutated sequence.</p>
+                        </div>
+                        <div id="mut-mrna-display" class="hidden mrna-font text-lg text-blue-300 bg-slate-900 p-3 rounded w-full border border-slate-700 overflow-x-auto whitespace-nowrap fade-in mt-1"></div>
+                    </div>
+                </div>
+
+                <div class="flex items-start gap-4 hidden fade-in" id="mut-prot-wrapper">
+                    <span class="w-16 text-slate-400 text-sm font-semibold mt-3">Protein</span>
+                    <div class="flex-grow relative">
+                        <!-- Beginner Button -->
+                        <button id="btn-translate-mut" onclick="translateMutated()" class="show-beginner w-full bg-slate-700 hover:bg-slate-600 border border-slate-600 text-slate-300 py-2 rounded transition-colors text-sm">
+                            <i class="fas fa-arrow-down mr-2"></i> Translate Mutated mRNA
+                        </button>
+                        <!-- Advanced Input -->
+                        <div id="mut-prot-input-group" class="show-advanced flex flex-col gap-2 w-full">
+                            <div class="flex items-center gap-2">
+                                <input type="text" id="mut-prot-input" onkeydown="if(event.key === 'Enter') verifyMutProt()" class="w-full bg-slate-900 border border-slate-600 text-fuchsia-300 p-2 rounded focus:ring-2 focus:ring-fuchsia-500 outline-none transition-all placeholder-slate-600" placeholder="e.g. Met Ala STOP">
+                                <button onclick="verifyMutProt()" class="bg-fuchsia-600 hover:bg-fuchsia-500 px-4 py-2 rounded text-white font-bold transition-colors">Check</button>
+                            </div>
+                            <p class="text-xs text-slate-500">Translate the mutated mRNA (ignore incomplete codons at the end).</p>
+                        </div>
+                        <div id="mut-prot-display" class="hidden flex gap-2 overflow-x-auto pb-2 fade-in mt-1"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Right Column: Controls & Answers -->
+        <div class="lg:col-span-1 flex flex-col gap-6">
+            
+            <div class="bg-slate-800 rounded-xl p-6 shadow-xl border border-slate-700 relative">
+                <h3 class="text-xl font-bold text-white mb-2">Analyze & Identify</h3>
+                <p class="text-slate-400 text-sm mb-6">Compare the original and mutated sequences. What type of mutation occurred?</p>
+                
+                <div id="analysis-lock-msg" class="absolute inset-0 bg-slate-900/80 backdrop-blur-[2px] rounded-xl flex flex-col items-center justify-center z-10 p-6 text-center">
+                    <i class="fas fa-lock text-3xl text-slate-500 mb-3"></i>
+                    <p class="text-sm font-bold text-slate-300">Analysis Locked</p>
+                    <p class="text-xs text-slate-400 mt-1">Complete transcription and translation on the left to unlock.</p>
+                </div>
+
+                <div class="space-y-3" id="answer-buttons">
+                    <button onclick="checkAnswer('Substitution - Silent')" class="answer-btn w-full text-left px-4 py-3 bg-slate-700 hover:bg-slate-600 border border-slate-600 rounded-lg transition-colors group">
+                        <span class="font-bold text-white block">Silent</span>
+                        <span class="text-xs text-slate-400 group-hover:text-slate-300">Substitution (No amino acid change)</span>
+                    </button>
+                    <button onclick="checkAnswer('Substitution - Missense')" class="answer-btn w-full text-left px-4 py-3 bg-slate-700 hover:bg-slate-600 border border-slate-600 rounded-lg transition-colors group">
+                        <span class="font-bold text-white block">Missense</span>
+                        <span class="text-xs text-slate-400 group-hover:text-slate-300">Substitution (One amino acid changes)</span>
+                    </button>
+                    <button onclick="checkAnswer('Substitution - Nonsense')" class="answer-btn w-full text-left px-4 py-3 bg-slate-700 hover:bg-slate-600 border border-slate-600 rounded-lg transition-colors group">
+                        <span class="font-bold text-white block">Nonsense</span>
+                        <span class="text-xs text-slate-400 group-hover:text-slate-300">Substitution (Premature STOP codon)</span>
+                    </button>
+                    <button onclick="checkAnswer('Frameshift - Insertion')" class="answer-btn w-full text-left px-4 py-3 bg-slate-700 hover:bg-slate-600 border border-slate-600 rounded-lg transition-colors group">
+                        <span class="font-bold text-white block">Frameshift (Insertion)</span>
+                        <span class="text-xs text-slate-400 group-hover:text-slate-300">Extra base added, shifting reading frame</span>
+                    </button>
+                    <button onclick="checkAnswer('Frameshift - Deletion')" class="answer-btn w-full text-left px-4 py-3 bg-slate-700 hover:bg-slate-600 border border-slate-600 rounded-lg transition-colors group">
+                        <span class="font-bold text-white block">Frameshift (Deletion)</span>
+                        <span class="text-xs text-slate-400 group-hover:text-slate-300">Base removed, shifting reading frame</span>
+                    </button>
+                </div>
+
+                <!-- Feedback Area -->
+                <div id="feedback-area" class="hidden mt-6 p-4 rounded-lg text-center fade-in">
+                    <div id="feedback-icon" class="text-4xl mb-2"></div>
+                    <h4 id="feedback-title" class="text-lg font-bold mb-1"></h4>
+                    <p id="feedback-desc" class="text-sm opacity-90 mb-4"></p>
+                    <button onclick="startRound()" class="w-full bg-white text-slate-900 font-bold py-3 rounded-lg hover:bg-slate-200 transition-colors shadow-lg">
+                        Next Sequence <i class="fas fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Codon Chart Modal -->
+    <div id="codon-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 hidden flex justify-center items-center p-4">
+        <div class="bg-slate-800 border border-slate-600 rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative flex flex-col">
+            <div class="p-4 border-b border-slate-700 flex justify-between items-center sticky top-0 bg-slate-800 z-10">
+                <h2 class="text-xl font-bold text-white"><i class="fas fa-table mr-2 text-blue-400"></i> mRNA Codon Chart</h2>
+                <button onclick="toggleCodonChart()" class="text-slate-400 hover:text-white transition-colors w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="p-4" id="codon-chart-container">
+                <!-- Generated by JS -->
+            </div>
+            <div class="p-4 border-t border-slate-700 bg-slate-800/50 text-sm text-slate-400">
+                Read the first letter on the left, second letter on the top, and third letter on the right. 
+                <span class="inline-block px-2 py-1 bg-red-900/50 text-red-300 rounded ml-2">STOP codons end translation.</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- BIOLOGY ENGINE ---
+        const codonMap = {
+            'UUU': 'Phe', 'UUC': 'Phe', 'UUA': 'Leu', 'UUG': 'Leu',
+            'CUU': 'Leu', 'CUC': 'Leu', 'CUA': 'Leu', 'CUG': 'Leu',
+            'AUU': 'Ile', 'AUC': 'Ile', 'AUA': 'Ile', 'AUG': 'Met',
+            'GUU': 'Val', 'GUC': 'Val', 'GUA': 'Val', 'GUG': 'Val',
+            'UCU': 'Ser', 'UCC': 'Ser', 'UCA': 'Ser', 'UCG': 'Ser',
+            'CCU': 'Pro', 'CCC': 'Pro', 'CCA': 'Pro', 'CCG': 'Pro',
+            'ACU': 'Thr', 'ACC': 'Thr', 'ACA': 'Thr', 'ACG': 'Thr',
+            'GCU': 'Ala', 'GCC': 'Ala', 'GCA': 'Ala', 'GCG': 'Ala',
+            'UAU': 'Tyr', 'UAC': 'Tyr', 'UAA': 'STOP', 'UAG': 'STOP',
+            'CAU': 'His', 'CAC': 'His', 'CAA': 'Gln', 'CAG': 'Gln',
+            'AAU': 'Asn', 'AAC': 'Asn', 'AAA': 'Lys', 'AAG': 'Lys',
+            'GAU': 'Asp', 'GAC': 'Asp', 'GAA': 'Glu', 'GAG': 'Glu',
+            'UGU': 'Cys', 'UGC': 'Cys', 'UGA': 'STOP', 'UGG': 'Trp',
+            'CGU': 'Arg', 'CGC': 'Arg', 'CGA': 'Arg', 'CGG': 'Arg',
+            'AGU': 'Ser', 'AGC': 'Ser', 'AGA': 'Arg', 'AGG': 'Arg',
+            'GGU': 'Gly', 'GGC': 'Gly', 'GGA': 'Gly', 'GGG': 'Gly'
+        };
+
+        const aaColors = {
+            'Phe': 'bg-fuchsia-700', 'Leu': 'bg-fuchsia-600', 'Ile': 'bg-fuchsia-500', 'Met': 'bg-emerald-600',
+            'Val': 'bg-fuchsia-500', 'Ser': 'bg-cyan-600', 'Pro': 'bg-orange-600', 'Thr': 'bg-cyan-500',
+            'Ala': 'bg-fuchsia-400', 'Tyr': 'bg-purple-600', 'STOP': 'bg-red-600 text-white font-bold',
+            'His': 'bg-indigo-600', 'Gln': 'bg-indigo-500', 'Asn': 'bg-cyan-700', 'Lys': 'bg-blue-600',
+            'Asp': 'bg-rose-600', 'Glu': 'bg-rose-500', 'Cys': 'bg-teal-600', 'Trp': 'bg-purple-700',
+            'Arg': 'bg-blue-500', 'Gly': 'bg-stone-500'
+        };
+
+        function transcribe(dna) {
+            let mrna = '';
+            for (let i = 0; i < dna.length; i++) {
+                switch (dna[i]) {
+                    case 'A': mrna += 'U'; break;
+                    case 'T': mrna += 'A'; break;
+                    case 'C': mrna += 'G'; break;
+                    case 'G': mrna += 'C'; break;
+                    default: mrna += dna[i];
+                }
+            }
+            return mrna;
+        }
+
+        function translate(mrna) {
+            let aas = [];
+            for (let i = 0; i < mrna.length; i += 3) {
+                let codon = mrna.substring(i, i + 3);
+                if (codon.length === 3) {
+                    let aa = codonMap[codon];
+                    aas.push({ codon, aa });
+                    if (aa === 'STOP') break; // Ribosome falls off
+                } else {
+                    // Incomplete codon
+                    aas.push({ codon, aa: '?' });
+                }
+            }
+            return aas;
+        }
+
+        // --- GAME LOGIC ---
+    let state = {
+        mode: 'beginner', // 'beginner' or 'advanced'
+        originalDna: '',
+        mutatedDna: '',
+        mutationType: '',
+            mutationIndex: -1,
+            score: 0,
+            streak: 0,
+            answered: false
+        };
+
+        const types = [
+            'Substitution - Silent',
+            'Substitution - Missense',
+            'Substitution - Nonsense',
+            'Frameshift - Insertion',
+            'Frameshift - Deletion'
+        ];
+
+        function generateBaseSequence(codonCount) {
+            let dna = "";
+            for (let i = 0; i < codonCount; i++) {
+                let valid = false;
+                while (!valid) {
+                    let codon = "";
+                    for (let j = 0; j < 3; j++) codon += ['A', 'T', 'C', 'G'][Math.floor(Math.random() * 4)];
+                    let mrna = transcribe(codon);
+                    if (codonMap[mrna] !== 'STOP') {
+                        dna += codon;
+                        valid = true;
+                    }
+                }
+            }
+            return dna;
+        }
+
+        function generateRoundData() {
+            let targetType = types[Math.floor(Math.random() * types.length)];
+            let result = null;
+
+            while (!result) {
+                let dna = generateBaseSequence(5); // 15 bases
+                result = attemptMutation(dna, targetType);
+            }
+            return result;
+        }
+
+        function attemptMutation(dna, type) {
+            let originalMrna = transcribe(dna);
+            let originalAAs = translate(originalMrna).map(x => x.aa);
+
+            for (let attempt = 0; attempt < 50; attempt++) {
+                let index = Math.floor(Math.random() * dna.length);
+                let oldBase = dna[index];
+                let bases = ['A', 'T', 'C', 'G'];
+                let newBase = bases.filter(b => b !== oldBase)[Math.floor(Math.random() * 3)];
+
+                if (type === 'Substitution - Silent') {
+                    let tempDna = dna.substring(0, index) + newBase + dna.substring(index + 1);
+                    let tempMrna = transcribe(tempDna);
+                    let tempAAs = translate(tempMrna).map(x => x.aa);
+                    if (tempAAs.join(',') === originalAAs.join(',') && tempDna !== dna) 
+                        return { original: dna, mutated: tempDna, type, index };
+                }
+                if (type === 'Substitution - Missense') {
+                    let tempDna = dna.substring(0, index) + newBase + dna.substring(index + 1);
+                    let tempMrna = transcribe(tempDna);
+                    let tempAAs = translate(tempMrna).map(x => x.aa);
+                    if (tempAAs.join(',') !== originalAAs.join(',') && !tempAAs.includes('STOP')) 
+                        return { original: dna, mutated: tempDna, type, index };
+                }
+                if (type === 'Substitution - Nonsense') {
+                    let tempDna = dna.substring(0, index) + newBase + dna.substring(index + 1);
+                    let tempMrna = transcribe(tempDna);
+                    let tempAAs = translate(tempMrna).map(x => x.aa);
+                    let stopIndex = tempAAs.indexOf('STOP');
+                    if (stopIndex !== -1 && originalAAs[stopIndex] !== 'STOP') 
+                        return { original: dna, mutated: tempDna, type, index };
+                }
+                if (type === 'Frameshift - Insertion') {
+                    let tempDna = dna.substring(0, index) + newBase + dna.substring(index);
+                    return { original: dna, mutated: tempDna, type, index };
+                }
+                if (type === 'Frameshift - Deletion') {
+                    let tempDna = dna.substring(0, index) + dna.substring(index + 1);
+                    return { original: dna, mutated: tempDna, type, index };
+                }
+            }
+            return null; // Failed this attempt
+        }
+
+        // --- VALIDATION HELPERS ---
+        function triggerErrorShake(inputElement) {
+            inputElement.classList.add('shake', 'border-red-500', 'text-red-300');
+            inputElement.classList.remove('border-slate-600');
+            setTimeout(() => {
+                inputElement.classList.remove('shake', 'border-red-500', 'text-red-300');
+                inputElement.classList.add('border-slate-600');
+            }, 400);
+        }
+
+        function checkTextMatch(inputVal, targetVal) {
+            return inputVal.toUpperCase().replace(/\s+/g, '') === targetVal.toUpperCase().replace(/\s+/g, '');
+        }
+
+        function parseProteinInput(inputVal) {
+            return inputVal.trim().toLowerCase().replace(/[^a-z]+/g, ' ').split(/\s+/).filter(x => x);
+        }
+
+        // --- STEP VERIFICATION FUNCTIONS ---
+
+        function verifyOrigMrna() {
+            let inputEl = document.getElementById('orig-mrna-input');
+            let correctMrna = transcribe(state.originalDna);
+            
+            if (checkTextMatch(inputEl.value, correctMrna)) {
+                document.getElementById('orig-mrna-input-group').classList.add('hidden');
+                let displayEl = document.getElementById('orig-mrna-display');
+                displayEl.innerHTML = formatMRNA(correctMrna);
+                displayEl.classList.remove('hidden');
+                
+                let nextWrapper = document.getElementById('orig-prot-wrapper');
+                nextWrapper.classList.remove('hidden');
+                setTimeout(() => document.getElementById('orig-prot-input').focus(), 50);
+            } else {
+                triggerErrorShake(inputEl);
+            }
+        }
+
+        function verifyOrigProt() {
+            let inputEl = document.getElementById('orig-prot-input');
+            let correctMrna = transcribe(state.originalDna);
+            let correctAAs = translate(correctMrna).filter(x => x.aa !== '?').map(x => x.aa.toLowerCase());
+            let userAAs = parseProteinInput(inputEl.value);
+
+            if (userAAs.join(',') === correctAAs.join(',')) {
+                document.getElementById('orig-prot-input-group').classList.add('hidden');
+                let displayEl = document.getElementById('orig-prot-display');
+                displayEl.innerHTML = translate(correctMrna).map(createAAElement).join('');
+                displayEl.classList.remove('hidden');
+                
+                let nextWrapper = document.getElementById('mut-mrna-wrapper');
+                nextWrapper.classList.remove('hidden');
+                setTimeout(() => document.getElementById('mut-mrna-input').focus(), 50);
+            } else {
+                triggerErrorShake(inputEl);
+            }
+        }
+
+        function verifyMutMrna() {
+            let inputEl = document.getElementById('mut-mrna-input');
+            let correctMrna = transcribe(state.mutatedDna);
+            
+            if (checkTextMatch(inputEl.value, correctMrna)) {
+                document.getElementById('mut-mrna-input-group').classList.add('hidden');
+                let displayEl = document.getElementById('mut-mrna-display');
+                displayEl.innerHTML = formatMRNA(correctMrna);
+                displayEl.classList.remove('hidden');
+                
+                let nextWrapper = document.getElementById('mut-prot-wrapper');
+                nextWrapper.classList.remove('hidden');
+                setTimeout(() => document.getElementById('mut-prot-input').focus(), 50);
+            } else {
+                triggerErrorShake(inputEl);
+            }
+        }
+
+        function verifyMutProt() {
+        let inputEl = document.getElementById('mut-prot-input');
+        let correctMrna = transcribe(state.mutatedDna);
+        let correctAAs = translate(correctMrna).filter(x => x.aa !== '?').map(x => x.aa.toLowerCase());
+        let userAAs = parseProteinInput(inputEl.value);
+
+        if (userAAs.join(',') === correctAAs.join(',')) {
+            document.getElementById('mut-prot-input-group').classList.add('hidden');
+            let displayEl = document.getElementById('mut-prot-display');
+            displayEl.innerHTML = translate(correctMrna).map(createAAElement).join('');
+            displayEl.classList.remove('hidden');
+            
+            unlockAnswers();
+        } else {
+            triggerErrorShake(inputEl);
+        }
+    }
+
+    // --- BEGINNER MODE AUTO-FUNCTIONS ---
+    function transcribeOriginal() {
+        document.getElementById('btn-transcribe-orig').classList.add('hidden');
+        let mrna = transcribe(state.originalDna);
+        let displayEl = document.getElementById('orig-mrna-display');
+        displayEl.innerHTML = formatMRNA(mrna);
+        displayEl.classList.remove('hidden');
+        
+        document.getElementById('orig-prot-wrapper').classList.remove('hidden');
+    }
+
+    function translateOriginal() {
+        document.getElementById('btn-translate-orig').classList.add('hidden');
+        let mrna = transcribe(state.originalDna);
+        let displayEl = document.getElementById('orig-prot-display');
+        displayEl.innerHTML = translate(mrna).map(createAAElement).join('');
+        displayEl.classList.remove('hidden');
+        
+        document.getElementById('mut-mrna-wrapper').classList.remove('hidden');
+    }
+
+    function transcribeMutated() {
+        document.getElementById('btn-transcribe-mut').classList.add('hidden');
+        let mrna = transcribe(state.mutatedDna);
+        let displayEl = document.getElementById('mut-mrna-display');
+        displayEl.innerHTML = formatMRNA(mrna);
+        displayEl.classList.remove('hidden');
+        
+        document.getElementById('mut-prot-wrapper').classList.remove('hidden');
+    }
+
+    function translateMutated() {
+        document.getElementById('btn-translate-mut').classList.add('hidden');
+        let mrna = transcribe(state.mutatedDna);
+        let displayEl = document.getElementById('mut-prot-display');
+        displayEl.innerHTML = translate(mrna).map(createAAElement).join('');
+        displayEl.classList.remove('hidden');
+        
+        unlockAnswers();
+    }
+
+    function setMode(newMode) {
+        state.mode = newMode;
+        document.body.className = `min-h-screen flex flex-col mode-${newMode}`;
+        
+        const btnBeg = document.getElementById('btn-mode-beginner');
+        const btnAdv = document.getElementById('btn-mode-advanced');
+        const badge = document.getElementById('mode-badge');
+        
+        if (newMode === 'beginner') {
+            btnBeg.className = "px-3 py-1 rounded text-xs font-bold transition-colors bg-emerald-600 text-white shadow";
+            btnAdv.className = "px-3 py-1 rounded text-xs font-bold transition-colors text-slate-400 hover:text-white";
+            badge.className = "text-xs bg-emerald-700 px-2 py-0.5 rounded text-emerald-100 ml-2 align-middle";
+            badge.innerText = "BEGINNER";
+        } else {
+            btnAdv.className = "px-3 py-1 rounded text-xs font-bold transition-colors bg-fuchsia-600 text-white shadow";
+            btnBeg.className = "px-3 py-1 rounded text-xs font-bold transition-colors text-slate-400 hover:text-white";
+            badge.className = "text-xs bg-fuchsia-700 px-2 py-0.5 rounded text-fuchsia-100 ml-2 align-middle";
+            badge.innerText = "ADVANCED";
+        }
+        
+        // Restart the round to apply UI state changes cleanly
+        state.score = 0;
+        state.streak = 0;
+        document.getElementById('score-display').innerText = state.score;
+        document.getElementById('streak-display').innerText = state.streak;
+        startRound();
+    }
+
+    // --- UI UPDATES & FLOW ---
+
+    function formatDNA(dnaSequence, highlightIndex = -1, type = '') {
+            let html = '';
+            for (let i = 0; i < dnaSequence.length; i++) {
+                if (i === highlightIndex && state.answered) {
+                    if (type === 'Frameshift - Deletion') {
+                        html += `<span class="highlight-mutation inline-block w-[1em] text-center border-b-2 border-red-500 text-slate-500">-</span>`;
+                        html += dnaSequence[i];
+                    } else {
+                        html += `<span class="highlight-mutation">${dnaSequence[i]}</span>`;
+                    }
+                } else {
+                    html += dnaSequence[i];
+                }
+            }
+            if (state.answered && type === 'Frameshift - Deletion' && highlightIndex === dnaSequence.length) {
+                html += `<span class="highlight-mutation inline-block w-[1em] text-center border-b-2 border-red-500 text-slate-500">-</span>`;
+            }
+            return html;
+        }
+
+        function formatMRNA(mrnaSequence) {
+            let html = '';
+            for (let i = 0; i < mrnaSequence.length; i += 3) {
+                let codon = mrnaSequence.substring(i, i + 3);
+                html += `<span class="inline-block bg-slate-800 border border-slate-600 px-1 rounded mr-2">${codon}</span>`;
+            }
+            return html;
+        }
+
+        function createAAElement(aaObj) {
+            let colorClass = aaColors[aaObj.aa] || 'bg-slate-500';
+            let label = aaObj.aa;
+            if(label === '?') return ''; // Ignore incomplete codons
+            
+            if(label === 'STOP') {
+                return `<div class="flex flex-col items-center min-w-[3.5rem] bg-red-600 border-2 border-red-400 rounded p-1 text-center shadow-lg transform scale-105">
+                            <span class="text-[0.6rem] text-red-200 uppercase tracking-widest">${aaObj.codon}</span>
+                            <span class="font-bold text-white text-sm">STOP</span>
+                        </div>`;
+            }
+            return `<div class="flex flex-col items-center min-w-[3.5rem] ${colorClass} rounded p-1 text-center shadow">
+                        <span class="text-[0.6rem] text-white/70">${aaObj.codon}</span>
+                        <span class="font-bold text-white text-sm">${label}</span>
+                    </div>`;
+        }
+
+        function startRound() {
+            let data = generateRoundData();
+            state.originalDna = data.original;
+            state.mutatedDna = data.mutated;
+            state.mutationType = data.type;
+            state.mutationIndex = data.index;
+            state.answered = false;
+
+            // Reset DNA displays
+            document.getElementById('orig-dna').innerHTML = formatDNA(state.originalDna);
+            document.getElementById('mut-dna').innerHTML = formatDNA(state.mutatedDna);
+            
+            // Reset Original Inputs & Displays
+        document.getElementById('orig-mrna-input').value = '';
+        document.getElementById('orig-mrna-input-group').classList.remove('hidden');
+        document.getElementById('btn-transcribe-orig').classList.remove('hidden');
+        document.getElementById('orig-mrna-display').classList.add('hidden');
+        document.getElementById('orig-mrna-display').innerHTML = '';
+
+        document.getElementById('orig-prot-input').value = '';
+        document.getElementById('orig-prot-wrapper').classList.add('hidden');
+        document.getElementById('orig-prot-input-group').classList.remove('hidden');
+        document.getElementById('btn-translate-orig').classList.remove('hidden');
+        document.getElementById('orig-prot-display').classList.add('hidden');
+        document.getElementById('orig-prot-display').innerHTML = '';
+
+        // Reset Mutated Inputs & Displays
+        document.getElementById('mut-mrna-input').value = '';
+        document.getElementById('mut-mrna-wrapper').classList.add('hidden');
+        document.getElementById('mut-mrna-input-group').classList.remove('hidden');
+        document.getElementById('btn-transcribe-mut').classList.remove('hidden');
+        document.getElementById('mut-mrna-display').classList.add('hidden');
+        document.getElementById('mut-mrna-display').innerHTML = '';
+        
+        document.getElementById('mut-prot-input').value = '';
+        document.getElementById('mut-prot-wrapper').classList.add('hidden');
+        document.getElementById('mut-prot-input-group').classList.remove('hidden');
+        document.getElementById('btn-translate-mut').classList.remove('hidden');
+        document.getElementById('mut-prot-display').classList.add('hidden');
+        document.getElementById('mut-prot-display').innerHTML = '';
+
+        // Reset Analysis Panel
+        document.getElementById('feedback-area').classList.add('hidden');
+        document.getElementById('analysis-lock-msg').classList.remove('hidden');
+        
+        const btns = document.querySelectorAll('.answer-btn');
+        btns.forEach(btn => {
+            btn.disabled = true;
+            btn.classList.add('opacity-50', 'cursor-not-allowed');
+            btn.classList.remove('ring-2', 'ring-emerald-500', 'ring-red-500');
+        });
+        
+        // Focus first input if in advanced mode
+        if (state.mode === 'advanced') {
+            setTimeout(() => document.getElementById('orig-mrna-input').focus(), 100);
+        }
+    }
+
+    function unlockAnswers() {
+            document.getElementById('analysis-lock-msg').classList.add('hidden');
+            const btns = document.querySelectorAll('.answer-btn');
+            btns.forEach(btn => {
+                btn.disabled = false;
+                btn.classList.remove('opacity-50', 'cursor-not-allowed');
+            });
+        }
+
+        function checkAnswer(selectedType) {
+            if (state.answered) return;
+            state.answered = true;
+
+            const btns = document.querySelectorAll('.answer-btn');
+            btns.forEach(btn => {
+                btn.disabled = true;
+                btn.classList.add('opacity-50', 'cursor-not-allowed');
+            });
+
+            let isCorrect = (selectedType === state.mutationType);
+            let feedbackArea = document.getElementById('feedback-area');
+            let feedbackIcon = document.getElementById('feedback-icon');
+            let feedbackTitle = document.getElementById('feedback-title');
+            let feedbackDesc = document.getElementById('feedback-desc');
+
+        if (isCorrect) {
+            let reward = state.mode === 'advanced' ? 200 + (state.streak * 50) : 100 + (state.streak * 20);
+            state.score += reward;
+            state.streak += 1;
+            feedbackArea.className = "mt-6 p-4 rounded-lg text-center fade-in bg-emerald-900/40 border border-emerald-500 text-emerald-100";
+            feedbackIcon.innerHTML = '<i class="fas fa-check-circle text-emerald-400"></i>';
+            feedbackTitle.innerText = "Excellent Detective Work!";
+        } else {
+            state.streak = 0;
+                feedbackArea.className = "mt-6 p-4 rounded-lg text-center fade-in bg-red-900/40 border border-red-500 text-red-100";
+                feedbackIcon.innerHTML = '<i class="fas fa-times-circle text-red-400"></i>';
+                feedbackTitle.innerText = "Incorrect";
+            }
+
+            feedbackDesc.innerHTML = `The correct answer was <strong>${state.mutationType}</strong>.`;
+            
+            document.getElementById('score-display').innerText = state.score;
+            document.getElementById('streak-display').innerText = state.streak;
+
+            // Highlight the mutated area in the UI now that they answered
+            document.getElementById('mut-dna').innerHTML = formatDNA(state.mutatedDna, state.mutationIndex, state.mutationType);
+
+            feedbackArea.classList.remove('hidden');
+        }
+
+        // --- CODON CHART GENERATOR ---
+        function buildCodonChart() {
+            const bases = ['U', 'C', 'A', 'G'];
+            let html = '<div class="grid grid-cols-[auto_1fr_auto] gap-2 items-center">';
+            
+            // Header Top
+            html += `<div></div><div class="grid grid-cols-4 text-center font-bold text-slate-300 pb-2"><div>U</div><div>C</div><div>A</div><div>G</div></div><div></div>`;
+            
+            for (let first of bases) {
+                // Left column label
+                html += `<div class="font-bold text-slate-300 text-center pr-2 flex items-center justify-center">${first}</div>`;
+                
+                // Inner 4 blocks
+                html += `<div class="grid grid-cols-4 gap-2">`;
+                for (let second of bases) {
+                    html += `<div class="bg-slate-700 rounded p-1 flex flex-col justify-between border border-slate-600">`;
+                    for (let third of bases) {
+                        let codon = first + second + third;
+                        let aa = codonMap[codon];
+                        let style = aa === 'STOP' ? 'text-red-400 font-bold' : 'text-slate-200';
+                        html += `<div class="text-xs flex justify-between px-1 hover:bg-slate-600 rounded"><span class="text-slate-400 font-mono">${codon}</span> <span class="${style}">${aa}</span></div>`;
+                    }
+                    html += `</div>`;
+                }
+                html += `</div>`;
+                
+                // Right column label
+                html += `<div class="flex flex-col justify-between text-xs text-slate-500 font-bold pl-2 py-1">
+                    <div>U</div><div>C</div><div>A</div><div>G</div>
+                </div>`;
+            }
+            html += '</div>';
+            document.getElementById('codon-chart-container').innerHTML = html;
+        }
+
+        function toggleCodonChart() {
+            const modal = document.getElementById('codon-modal');
+            if (modal.classList.contains('hidden')) {
+                modal.classList.remove('hidden');
+            } else {
+                modal.classList.add('hidden');
+            }
+        }
+
+        // Initialize
+        buildCodonChart();
+        startRound();
+
+    </script>
+</body>
+</html>
