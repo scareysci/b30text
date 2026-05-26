@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSI 21-44: The Great Pizza Theft</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        mono: ['"Share Tech Mono"', 'monospace'],
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        csi: {
+                            dark: '#0f172a',
+                            panel: '#1e293b',
+                            accent: '#0ea5e9',
+                            glow: '#38bdf8',
+                            danger: '#ef4444',
+                            success: '#22c55e'
+                        }
+                    },
+                    boxShadow: {
+                        'neon': '0 0 10px #0ea5e9, 0 0 20px #0ea5e9',
+                        'neon-success': '0 0 10px #22c55e, 0 0 20px #22c55e',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0f172a;
+            background-image: 
+                radial-gradient(circle at 50% 0%, #1e293b 0%, transparent 50%),
+                linear-gradient(0deg, rgba(15,23,42,1) 0%, rgba(15,23,42,0.8) 100%),
+                url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h40v40H0V0zm20 20h20v20H20V20zM0 20h20v20H0V20z' fill='%231e293b' fill-opacity='0.4' fill-rule='evenodd'/%3E%3C/svg%3E");
+            color: #f8fafc;
+        }
+
+        .scanline {
+            width: 100%;
+            height: 100px;
+            z-index: 50;
+            position: absolute;
+            pointer-events: none;
+            background: linear-gradient(0deg, rgba(0,0,0,0) 0%, rgba(14,165,233,0.1) 50%, rgba(0,0,0,0) 100%);
+            opacity: 0.1;
+            animation: scanline 8s linear infinite;
+        }
+
+        @keyframes scanline {
+            0% { top: -100px; }
+            100% { top: 100%; }
+        }
+
+        .dna-band {
+            height: 4px;
+            width: 80%;
+            background-color: #38bdf8;
+            margin: 0 auto;
+            border-radius: 2px;
+            box-shadow: 0 0 5px #38bdf8;
+            position: absolute;
+            left: 10%;
+            top: 5%; /* Starting position */
+            opacity: 0;
+            transition: top 4s cubic-bezier(0.25, 0.1, 0.25, 1), opacity 0.5s ease-in;
+        }
+
+        .gel-running .dna-band {
+            opacity: 1;
+        }
+
+        /* Pulse animation for evidence */
+        @keyframes pulse-ring {
+            0% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); }
+            100% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+
+        .evidence-hotspot {
+            animation: pulse-ring 2s infinite;
+        }
+
+        .typing-effect {
+            border-right: 2px solid #0ea5e9;
+            white-space: nowrap;
+            overflow: hidden;
+            animation: typing 2s steps(40, end), blink-caret .75s step-end infinite;
+        }
+
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: #0ea5e9; }
+        }
+
+        .beaker-liquid {
+            transition: all 1s ease-in-out;
+        }
+
+        @media print {
+            body {
+                background: white !important;
+                background-image: none !important;
+                color: black !important;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen font-sans antialiased relative overflow-x-hidden flex flex-col print:bg-white">
+    <div class="scanline print:hidden"></div>
+
+    <!-- Header -->
+    <header class="border-b border-csi-panel bg-csi-dark/80 backdrop-blur sticky top-0 z-40 p-4 print:hidden">
+        <div class="max-w-5xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <svg class="w-8 h-8 text-csi-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+                <h1 class="font-mono text-2xl font-bold tracking-wider text-csi-glow">CSI: 21-44</h1>
+            </div>
+            <div class="flex items-center gap-4">
+                <button onclick="toggleWorksheet()" class="print:hidden text-xs sm:text-sm bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-600 px-3 py-1.5 rounded font-mono transition-colors flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    WORKSHEET
+                </button>
+                <div class="font-mono text-sm text-slate-400 print:hidden" id="case-status">STATUS: OPEN</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow flex flex-col items-center justify-center p-4 sm:p-8 max-w-5xl mx-auto w-full relative z-10 print:hidden">
+        
+        <!-- STEP 0: Briefing -->
+        <section id="step-0" class="w-full max-w-3xl bg-csi-panel/80 border border-slate-700 rounded-xl p-8 shadow-2xl backdrop-blur">
+            <h2 class="text-3xl font-bold text-white mb-6 border-b border-slate-700 pb-4 font-mono">CASE BRIEFING</h2>
+            <div class="space-y-4 text-slate-300 text-lg leading-relaxed mb-8">
+                <p>Detectives, we have a Code Red. At exactly 12:00 PM today, a deep-dish, triple-cheese pepperoni pizza was stolen from the 21-44 convenience store in Eatonia.</p>
+                <p>This is a serious offense. The victim is hungry, and morale is at an all-time low.</p>
+                <p>Your mission is to process the crime scene, isolate DNA from any evidence left behind, run a gel electrophoresis, and match the DNA profile to one of our three prime suspects.</p>
+                <div class="p-4 bg-slate-800/50 rounded-lg border border-slate-700 mt-6 flex items-start gap-4">
+                    <svg class="w-6 h-6 text-csi-accent flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <p class="text-sm font-mono text-csi-glow">OBJECTIVE: Follow proper forensic protocols to analyze biological evidence and identify the culprit.</p>
+                </div>
+            </div>
+            <button onclick="nextStep(1)" class="w-full bg-csi-accent hover:bg-cyan-500 text-white font-bold py-4 px-6 rounded-lg transition duration-300 font-mono text-xl shadow-[0_0_15px_rgba(14,165,233,0.5)]">
+                START INVESTIGATION &rarr;
+            </button>
+        </section>
+
+        <!-- STEP 1: Crime Scene -->
+        <section id="step-1" class="w-full max-w-4xl bg-csi-panel/80 border border-slate-700 rounded-xl p-6 shadow-2xl backdrop-blur hidden">
+            <h2 class="text-2xl font-bold text-white mb-2 font-mono flex items-center gap-2">
+                <span class="bg-csi-accent text-csi-dark px-2 py-1 rounded">PHASE 1</span> CRIME SCENE ANALYSIS
+            </h2>
+            <p class="text-slate-400 mb-6 font-mono text-sm border-b border-slate-700 pb-4">Locate and collect biological evidence.</p>
+            
+            <div class="relative w-full aspect-video bg-slate-800 rounded-lg overflow-hidden border border-slate-600 cursor-crosshair">
+                <!-- SVG Crime Scene Background (Table and Pizza box) -->
+                <svg width="100%" height="100%" viewBox="0 0 800 450" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="800" height="450" fill="#1e293b"/>
+                    <!-- Table -->
+                    <path d="M0 250 L800 250 L800 450 L0 450 Z" fill="#334155"/>
+                    <!-- Empty Pizza Box -->
+                    <g transform="translate(250, 150)">
+                        <path d="M50 100 L250 100 L300 150 L0 150 Z" fill="#e2e8f0"/>
+                        <path d="M0 150 L300 150 L300 170 L0 170 Z" fill="#cbd5e1"/>
+                        <path d="M50 100 L250 100 L250 20 L50 20 Z" fill="#f8fafc" transform="skewX(-45)"/>
+                        <!-- Grease stains -->
+                        <circle cx="150" cy="130" r="30" fill="#fef08a" opacity="0.3" filter="blur(5px)"/>
+                        <circle cx="100" cy="140" r="15" fill="#fef08a" opacity="0.3" filter="blur(3px)"/>
+                        <circle cx="200" cy="120" r="20" fill="#fef08a" opacity="0.3" filter="blur(4px)"/>
+                    </g>
+                </svg>
+
+                <!-- Clickable Evidence (Pizza Crust) -->
+                <button id="evidence-item" onclick="collectEvidence()" class="absolute left-[55%] top-[60%] w-16 h-16 -ml-8 -mt-8 flex items-center justify-center group focus:outline-none">
+                    <div class="evidence-hotspot absolute w-full h-full rounded-full border-2 border-red-500 opacity-70 group-hover:border-csi-glow group-hover:shadow-neon transition-all"></div>
+                    <!-- Crust SVG -->
+                    <svg class="w-10 h-10 transform rotate-12 relative z-10 drop-shadow-lg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20 50 C20 20, 80 20, 80 50 C80 60, 70 70, 50 70 C30 70, 20 60, 20 50 Z" fill="#f59e0b" stroke="#b45309" stroke-width="4"/>
+                        <path d="M30 45 C40 40, 60 40, 70 45" fill="none" stroke="#d97706" stroke-width="3" stroke-linecap="round"/>
+                        <!-- Bite mark -->
+                        <path d="M35 25 C45 35, 55 35, 65 25" fill="#1e293b" />
+                    </svg>
+                </button>
+            </div>
+
+            <div id="evidence-feedback" class="mt-6 p-4 bg-green-900/30 border border-green-500 rounded-lg hidden flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <svg class="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <div>
+                        <h3 class="font-bold text-green-400 font-mono">EVIDENCE LOGGED: ITEM #001</h3>
+                        <p class="text-sm text-slate-300">Pizza crust with visible bite marks. Saliva contains epithelial cells. We can extract DNA from this!</p>
+                    </div>
+                </div>
+                <button onclick="nextStep(2)" class="w-full sm:w-auto bg-green-600 hover:bg-green-500 text-white font-bold py-2 px-6 rounded transition duration-300 font-mono whitespace-nowrap">
+                    PROCEED TO LAB &rarr;
+                </button>
+            </div>
+        </section>
+
+        <!-- STEP 2: Suspects -->
+        <section id="step-2" class="w-full max-w-5xl bg-csi-panel/80 border border-slate-700 rounded-xl p-6 shadow-2xl backdrop-blur hidden">
+            <h2 class="text-2xl font-bold text-white mb-2 font-mono flex items-center gap-2">
+                <span class="bg-csi-accent text-csi-dark px-2 py-1 rounded">PHASE 2</span> SUSPECT PROFILES
+            </h2>
+            <p class="text-slate-400 mb-6 font-mono text-sm border-b border-slate-700 pb-4">Review the prime suspects who were seen near the 21-44 today.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <!-- Suspect A -->
+                <div class="bg-slate-800 rounded-lg border border-slate-600 overflow-hidden group hover:border-csi-accent transition-colors duration-300">
+                    <div class="h-40 bg-slate-700 flex items-center justify-center overflow-hidden relative">
+                        <div class="absolute inset-0 bg-blue-900/20 group-hover:bg-transparent transition-colors"></div>
+                        <svg class="w-24 h-24 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                    </div>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-bold text-xl text-white">Alex "The Anchovy"</h3>
+                            <span class="bg-slate-600 text-xs px-2 py-1 rounded font-mono">SUSPECT A</span>
+                        </div>
+                        <p class="text-sm text-slate-400 mb-3"><span class="text-csi-accent font-mono">MOTIVE:</span> Notorious for stealing lunches. Claimed to be "starving" at 11:45 PM.</p>
+                        <p class="text-xs font-mono text-slate-500">DNA SAMPLE: ON FILE</p>
+                    </div>
+                </div>
+
+                <!-- Suspect B -->
+                <div class="bg-slate-800 rounded-lg border border-slate-600 overflow-hidden group hover:border-csi-accent transition-colors duration-300">
+                    <div class="h-40 bg-slate-700 flex items-center justify-center overflow-hidden relative">
+                        <div class="absolute inset-0 bg-blue-900/20 group-hover:bg-transparent transition-colors"></div>
+                        <svg class="w-24 h-24 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                    </div>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-bold text-xl text-white">Sam "Extra Cheese"</h3>
+                            <span class="bg-slate-600 text-xs px-2 py-1 rounded font-mono">SUSPECT B</span>
+                        </div>
+                        <p class="text-sm text-slate-400 mb-3"><span class="text-csi-accent font-mono">MOTIVE:</span> Left a note saying "I will find the pizza" earlier today. Was seen lurking near the 21-44.</p>
+                        <p class="text-xs font-mono text-slate-500">DNA SAMPLE: ON FILE</p>
+                    </div>
+                </div>
+
+                <!-- Suspect C -->
+                <div class="bg-slate-800 rounded-lg border border-slate-600 overflow-hidden group hover:border-csi-accent transition-colors duration-300">
+                    <div class="h-40 bg-slate-700 flex items-center justify-center overflow-hidden relative">
+                        <div class="absolute inset-0 bg-blue-900/20 group-hover:bg-transparent transition-colors"></div>
+                        <svg class="w-24 h-24 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                    </div>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-bold text-xl text-white">Jordan "Deep Dish"</h3>
+                            <span class="bg-slate-600 text-xs px-2 py-1 rounded font-mono">SUSPECT C</span>
+                        </div>
+                        <p class="text-sm text-slate-400 mb-3"><span class="text-csi-accent font-mono">MOTIVE:</span> Refused to pitch in for the pizza but was caught carrying hot sauce.</p>
+                        <p class="text-xs font-mono text-slate-500">DNA SAMPLE: ON FILE</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-end">
+                <button onclick="nextStep(3)" class="bg-csi-accent hover:bg-cyan-500 text-white font-bold py-3 px-8 rounded transition duration-300 font-mono shadow-[0_0_10px_rgba(14,165,233,0.3)]">
+                    PROCEED TO DNA EXTRACTION &rarr;
+                </button>
+            </div>
+        </section>
+
+        <!-- STEP 3: DNA Isolation -->
+        <section id="step-3" class="w-full max-w-4xl bg-csi-panel/80 border border-slate-700 rounded-xl p-6 shadow-2xl backdrop-blur hidden">
+            <h2 class="text-2xl font-bold text-white mb-2 font-mono flex items-center gap-2">
+                <span class="bg-csi-accent text-csi-dark px-2 py-1 rounded">PHASE 3</span> DNA ISOLATION
+            </h2>
+            <p class="text-slate-400 mb-6 font-mono text-sm border-b border-slate-700 pb-4">Extract the DNA from the cells found on the pizza crust.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Interactive Lab -->
+                <div class="bg-slate-800 rounded-lg border border-slate-600 p-6 flex flex-col items-center justify-center min-h-[300px]">
+                    <!-- Tube SVG -->
+                    <div class="relative w-24 h-48 border-4 border-slate-400 rounded-b-3xl border-t-0 overflow-hidden mb-4">
+                        <div class="absolute top-0 w-full h-2 bg-slate-300"></div>
+                        <!-- Liquid fills -->
+                        <div id="tube-dna" class="absolute bottom-0 w-full h-1/4 bg-amber-600/50 beaker-liquid flex items-center justify-center">
+                            <span class="text-[10px] text-white/50">Cells</span>
+                        </div>
+                        <div id="tube-lysis" class="absolute bottom-1/4 w-full h-0 bg-blue-500/50 beaker-liquid"></div>
+                        <div id="tube-protease" class="absolute bottom-2/4 w-full h-0 bg-purple-500/50 beaker-liquid"></div>
+                        <div id="tube-alcohol" class="absolute bottom-[75%] w-full h-0 bg-slate-100/30 beaker-liquid"></div>
+                        
+                        <!-- DNA Clump (Hidden initially) -->
+                        <div id="dna-precipitate" class="absolute top-1/4 left-1/2 -translate-x-1/2 w-8 h-8 opacity-0 transition-opacity duration-1000">
+                            <svg viewBox="0 0 100 100" class="w-full h-full text-white drop-shadow-md">
+                                <path d="M30 20 Q50 50 30 80 M70 20 Q50 50 70 80 M35 35 L65 35 M40 50 L60 50 M35 65 L65 65" stroke="currentColor" stroke-width="4" fill="none"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Instructions/Controls -->
+                <div class="flex flex-col justify-center space-y-4">
+                    <div id="iso-step-1" class="p-4 border border-slate-600 rounded-lg bg-slate-800 transition-colors">
+                        <h4 class="font-bold text-csi-accent font-mono mb-1">1. Lysis Buffer (Detergent)</h4>
+                        <p class="text-sm text-slate-300 mb-3">Detergent breaks open the cell membrane and nuclear envelope to release the DNA.</p>
+                        <button onclick="runIsolationStep(1)" class="w-full bg-slate-700 hover:bg-csi-accent text-white py-2 rounded font-mono text-sm transition-colors">ADD LYSIS BUFFER</button>
+                    </div>
+                    
+                    <div id="iso-step-2" class="p-4 border border-slate-600 rounded-lg bg-slate-800/50 opacity-50 pointer-events-none transition-all">
+                        <h4 class="font-bold text-csi-accent font-mono mb-1">2. Protease (Enzyme)</h4>
+                        <p class="text-sm text-slate-300 mb-3">Protease enzymes cut apart the histone proteins that the DNA is tightly wrapped around.</p>
+                        <button onclick="runIsolationStep(2)" class="w-full bg-slate-700 hover:bg-csi-accent text-white py-2 rounded font-mono text-sm transition-colors">ADD PROTEASE</button>
+                    </div>
+
+                    <div id="iso-step-3" class="p-4 border border-slate-600 rounded-lg bg-slate-800/50 opacity-50 pointer-events-none transition-all">
+                        <h4 class="font-bold text-csi-accent font-mono mb-1">3. Ice-Cold Alcohol</h4>
+                        <p class="text-sm text-slate-300 mb-3">DNA is not soluble in alcohol. Adding it causes the DNA to precipitate (clump together) so we can see it.</p>
+                        <button onclick="runIsolationStep(3)" class="w-full bg-slate-700 hover:bg-csi-accent text-white py-2 rounded font-mono text-sm transition-colors">ADD ALCOHOL</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="isolation-complete" class="mt-6 flex justify-end hidden">
+                <button onclick="nextStep(4)" class="bg-csi-accent hover:bg-cyan-500 text-white font-bold py-3 px-8 rounded transition duration-300 font-mono shadow-[0_0_10px_rgba(14,165,233,0.3)]">
+                    PROCEED TO AMPLIFICATION & DIGESTION &rarr;
+                </button>
+            </div>
+        </section>
+
+        <!-- STEP 4: PCR & Digestion -->
+        <section id="step-4" class="w-full max-w-5xl bg-csi-panel/80 border border-slate-700 rounded-xl p-6 shadow-2xl backdrop-blur hidden">
+            <h2 class="text-2xl font-bold text-white mb-2 font-mono flex items-center gap-2">
+                <span class="bg-csi-accent text-csi-dark px-2 py-1 rounded">PHASE 4</span> AMPLIFICATION & DIGESTION
+            </h2>
+            <p class="text-slate-400 mb-6 font-mono text-sm border-b border-slate-700 pb-4">The DNA sample from the pizza crust is too small to test directly. We need to copy it and cut it.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-6">
+                <!-- PCR Column -->
+                <div class="bg-slate-800 rounded-lg border border-slate-600 p-6 flex flex-col items-center justify-between">
+                    <div class="text-center w-full">
+                        <h3 class="text-xl font-bold text-white mb-2 font-mono text-csi-accent">1. PCR (Polymerase Chain Reaction)</h3>
+                        <p class="text-sm text-slate-300 mb-6">The thermocycler rapidly heats and cools the sample, using DNA polymerase to create millions of copies of our target DNA.</p>
+                    </div>
+                    
+                    <div class="w-32 h-32 bg-slate-900 border-4 border-slate-500 rounded-lg flex items-center justify-center mb-6 relative overflow-hidden shadow-inner">
+                        <div id="pcr-temp" class="text-2xl font-mono text-slate-500 z-10 transition-colors duration-300">READY</div>
+                        <div id="pcr-glow" class="absolute inset-0 bg-red-500/0 transition-colors duration-500"></div>
+                    </div>
+                    
+                    <button id="btn-pcr" onclick="runPCR()" class="w-full bg-slate-700 hover:bg-csi-accent text-white py-3 rounded font-mono text-sm transition-colors font-bold">START THERMOCYCLER</button>
+                </div>
+
+                <!-- Digest Column -->
+                <div id="digest-panel" class="bg-slate-800/50 rounded-lg border border-slate-600 p-6 flex flex-col items-center justify-between opacity-50 pointer-events-none transition-all duration-500">
+                    <div class="text-center w-full">
+                        <h3 class="text-xl font-bold text-white mb-2 font-mono text-purple-400">2. Restriction Digestion</h3>
+                        <p class="text-sm text-slate-300 mb-6">Add restriction enzymes (molecular scissors) to cut the amplified DNA at specific sequences, creating fragments of varying lengths.</p>
+                    </div>
+                    
+                    <div class="w-32 h-32 relative flex items-center justify-center mb-6">
+                        <svg class="w-24 h-24 text-slate-400" viewBox="0 0 100 100" id="dna-strand">
+                            <path d="M10,50 Q30,20 50,50 T90,50" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round"/>
+                            <path d="M10,50 Q30,80 50,50 T90,50" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round"/>
+                        </svg>
+                        <div id="scissors" class="absolute top-0 right-0 text-3xl opacity-0 transition-all duration-1000 origin-bottom-left">
+                            ✂️
+                        </div>
+                    </div>
+
+                    <button id="btn-digest" onclick="runDigest()" class="w-full bg-slate-700 hover:bg-purple-500 text-white py-3 rounded font-mono text-sm transition-colors font-bold">ADD ENZYMES</button>
+                </div>
+            </div>
+
+            <div id="pcr-complete" class="mt-6 flex justify-end hidden">
+                <button onclick="nextStep(5)" class="bg-csi-accent hover:bg-cyan-500 text-white font-bold py-3 px-8 rounded transition duration-300 font-mono shadow-[0_0_10px_rgba(14,165,233,0.3)]">
+                    PROCEED TO GEL ELECTROPHORESIS &rarr;
+                </button>
+            </div>
+        </section>
+
+        <!-- STEP 5: Gel Electrophoresis -->
+        <section id="step-5" class="w-full max-w-5xl bg-csi-panel/80 border border-slate-700 rounded-xl p-6 shadow-2xl backdrop-blur hidden">
+            <h2 class="text-2xl font-bold text-white mb-2 font-mono flex items-center gap-2">
+                <span class="bg-csi-accent text-csi-dark px-2 py-1 rounded">PHASE 5</span> GEL ELECTROPHORESIS
+            </h2>
+            <p class="text-slate-400 mb-6 font-mono text-sm border-b border-slate-700 pb-4">
+                DNA is negatively charged. We apply an electric current to pull it through a gel matrix. Smaller fragments move faster and further, creating a unique "fingerprint".
+            </p>
+
+            <div class="flex flex-col md:flex-row gap-8">
+                <!-- Gel Box -->
+                <div class="flex-grow bg-slate-900 border-4 border-slate-600 rounded-lg p-4 relative">
+                    <!-- Electrodes -->
+                    <div class="absolute top-0 left-0 w-full h-2 bg-slate-800 flex justify-center items-center text-xs text-slate-400 font-mono">- NEGATIVE -</div>
+                    <div class="absolute bottom-0 left-0 w-full h-2 bg-slate-800 flex justify-center items-center text-xs text-red-400 font-mono">+ POSITIVE +</div>
+                    
+                    <!-- Gel Area -->
+                    <div class="w-full h-96 bg-[#1e293b]/50 rounded mt-4 border border-slate-700 flex justify-around p-2" id="gel-matrix">
+                        <!-- Lanes -->
+                        <!-- Scene -->
+                        <div class="w-1/5 h-full border-r border-slate-700/50 flex flex-col relative">
+                            <div class="h-6 w-4/5 mx-auto border-2 border-slate-600 mb-2 flex items-center justify-center text-[10px] font-mono text-slate-400">SCENE</div>
+                            <div class="relative flex-grow w-full">
+                                <div class="dna-band" style="--final-pos: 25%"></div>
+                                <div class="dna-band" style="--final-pos: 55%"></div>
+                                <div class="dna-band" style="--final-pos: 85%"></div>
+                            </div>
+                        </div>
+                        <!-- Suspect A -->
+                        <div class="w-1/5 h-full border-r border-slate-700/50 flex flex-col relative">
+                            <div class="h-6 w-4/5 mx-auto border-2 border-slate-600 mb-2 flex items-center justify-center text-[10px] font-mono text-slate-400">SUS A</div>
+                            <div class="relative flex-grow w-full">
+                                <div class="dna-band" style="--final-pos: 15%"></div>
+                                <div class="dna-band" style="--final-pos: 40%"></div>
+                                <div class="dna-band" style="--final-pos: 70%"></div>
+                            </div>
+                        </div>
+                        <!-- Suspect B -->
+                        <div class="w-1/5 h-full border-r border-slate-700/50 flex flex-col relative">
+                            <div class="h-6 w-4/5 mx-auto border-2 border-slate-600 mb-2 flex items-center justify-center text-[10px] font-mono text-slate-400">SUS B</div>
+                            <div class="relative flex-grow w-full">
+                                <div class="dna-band" style="--final-pos: 35%"></div>
+                                <div class="dna-band" style="--final-pos: 60%"></div>
+                                <div class="dna-band" style="--final-pos: 90%"></div>
+                            </div>
+                        </div>
+                        <!-- Suspect C -->
+                        <div class="w-1/5 h-full flex flex-col relative">
+                            <div class="h-6 w-4/5 mx-auto border-2 border-slate-600 mb-2 flex items-center justify-center text-[10px] font-mono text-slate-400">SUS C</div>
+                            <div class="relative flex-grow w-full">
+                                <div class="dna-band" style="--final-pos: 25%"></div>
+                                <div class="dna-band" style="--final-pos: 55%"></div>
+                                <div class="dna-band" style="--final-pos: 85%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Controls -->
+                <div class="w-full md:w-64 flex flex-col justify-center space-y-6">
+                    <div class="bg-slate-800 p-4 rounded-lg border border-slate-600">
+                        <div class="text-xs text-slate-400 font-mono mb-2">POWER SUPPLY</div>
+                        <div class="font-mono text-2xl text-red-500 mb-4" id="voltage-display">000 V</div>
+                        <button id="run-gel-btn" onclick="runGel()" class="w-full bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 px-4 rounded border-b-4 border-slate-900 active:border-b-0 active:translate-y-1 transition-all font-mono">
+                            TURN POWER ON
+                        </button>
+                    </div>
+
+                    <div id="gel-complete" class="hidden">
+                        <div class="p-3 bg-green-900/30 border border-green-500 rounded text-green-400 text-sm font-mono mb-4 text-center">
+                            RUN COMPLETE. PROFILE GENERATED.
+                        </div>
+                        <button onclick="nextStep(6)" class="w-full bg-csi-accent hover:bg-cyan-500 text-white font-bold py-3 px-4 rounded transition duration-300 font-mono shadow-[0_0_10px_rgba(14,165,233,0.3)]">
+                            ANALYZE DATA &rarr;
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- STEP 6: Analysis & Conclusion -->
+        <section id="step-6" class="w-full max-w-3xl bg-csi-panel/80 border border-slate-700 rounded-xl p-6 shadow-2xl backdrop-blur hidden">
+            <h2 class="text-2xl font-bold text-white mb-2 font-mono flex items-center gap-2">
+                <span class="bg-csi-accent text-csi-dark px-2 py-1 rounded">PHASE 6</span> DATA ANALYSIS
+            </h2>
+            <p class="text-slate-400 mb-6 font-mono text-sm border-b border-slate-700 pb-4">
+                Compare the Crime Scene DNA profile bands with the suspects' bands. Select the guilty party to close the case.
+            </p>
+
+            <div class="bg-slate-900 p-6 rounded-lg border border-slate-700 mb-8">
+                <h3 class="text-lg font-bold text-white mb-4 font-mono text-center">ARREST WARRANT ISSUANCE</h3>
+                
+                <div class="space-y-3">
+                    <label class="block relative p-4 bg-slate-800 border border-slate-600 rounded-lg cursor-pointer hover:border-csi-accent transition-colors flex items-center gap-4">
+                        <input type="radio" name="suspect" value="A" class="w-5 h-5 text-csi-accent bg-slate-900 border-slate-600 focus:ring-csi-accent focus:ring-2">
+                        <div class="flex-grow">
+                            <span class="font-bold text-white block">Suspect A: Alex "The Anchovy"</span>
+                            <span class="text-xs text-slate-400 font-mono">Bands do not align with crime scene.</span>
+                        </div>
+                    </label>
+
+                    <label class="block relative p-4 bg-slate-800 border border-slate-600 rounded-lg cursor-pointer hover:border-csi-accent transition-colors flex items-center gap-4">
+                        <input type="radio" name="suspect" value="B" class="w-5 h-5 text-csi-accent bg-slate-900 border-slate-600 focus:ring-csi-accent focus:ring-2">
+                        <div class="flex-grow">
+                            <span class="font-bold text-white block">Suspect B: Sam "Extra Cheese"</span>
+                            <span class="text-xs text-slate-400 font-mono">Bands do not align with crime scene.</span>
+                        </div>
+                    </label>
+
+                    <label class="block relative p-4 bg-slate-800 border border-slate-600 rounded-lg cursor-pointer hover:border-csi-accent transition-colors flex items-center gap-4">
+                        <input type="radio" name="suspect" value="C" class="w-5 h-5 text-csi-accent bg-slate-900 border-slate-600 focus:ring-csi-accent focus:ring-2">
+                        <div class="flex-grow">
+                            <span class="font-bold text-white block">Suspect C: Jordan "Deep Dish"</span>
+                            <span class="text-xs text-slate-400 font-mono">Bands look identical to crime scene sample.</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <button onclick="checkAnswer()" class="w-full bg-red-600 hover:bg-red-500 text-white font-bold py-4 px-6 rounded-lg transition duration-300 font-mono text-xl shadow-[0_0_15px_rgba(239,68,68,0.5)]">
+                SUBMIT ARREST WARRANT
+            </button>
+
+            <!-- Result Overlay -->
+            <div id="result-overlay" class="hidden fixed inset-0 bg-slate-900/95 backdrop-blur-sm z-50 flex flex-col items-center justify-center p-4">
+                <div id="result-content" class="max-w-xl w-full bg-slate-800 border-2 rounded-xl p-8 text-center shadow-2xl">
+                    <!-- Icon injected by JS -->
+                    <div id="result-icon" class="mx-auto w-20 h-20 mb-6 flex justify-center items-center rounded-full"></div>
+                    <h2 id="result-title" class="text-3xl font-bold text-white mb-4 font-mono"></h2>
+                    <p id="result-desc" class="text-slate-300 text-lg mb-8"></p>
+                    <button onclick="resetCase()" class="bg-slate-700 hover:bg-slate-600 text-white font-bold py-2 px-6 rounded transition duration-300 font-mono border border-slate-500">
+                        RETURN TO HQ
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Worksheet Modal / Printable Area -->
+    <div id="worksheet-modal" class="hidden fixed inset-0 z-[100] overflow-y-auto bg-slate-900/95 backdrop-blur-sm p-4 sm:p-8 print:p-0 print:bg-white print:block print:static print:overflow-visible">
+        <div class="max-w-4xl mx-auto bg-white text-black p-8 sm:p-12 rounded-xl shadow-2xl print:shadow-none print:p-0">
+            <!-- Modal Controls (Hidden on Print) -->
+            <div class="flex flex-col sm:flex-row justify-between items-center mb-8 border-b pb-4 print:hidden gap-4">
+                <h2 class="text-2xl font-bold font-mono text-slate-800">Lab Worksheet Preview</h2>
+                <div class="flex gap-4">
+                    <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-bold font-mono flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                        PRINT
+                    </button>
+                    <button onclick="toggleWorksheet()" class="bg-slate-200 hover:bg-slate-300 text-slate-800 px-4 py-2 rounded font-bold font-mono">
+                        CLOSE
+                    </button>
+                </div>
+            </div>
+
+            <!-- Printable Content -->
+            <div class="font-sans text-black leading-relaxed">
+                <h1 class="text-3xl font-bold border-b-2 border-black pb-2 mb-1">CSI: Eatonia - Official Lab Report</h1>
+                <h2 class="text-xl font-semibold mb-8 text-gray-700 print:text-black">The Great 21-44 Pizza Theft</h2>
+                
+                <div class="flex flex-col sm:flex-row justify-between mb-8 text-lg gap-4">
+                    <div class="flex-grow flex items-end"><strong>Investigator Name:</strong> <div class="flex-grow border-b border-black ml-2 h-6"></div></div>
+                    <div class="w-48 flex items-end"><strong>Date:</strong> <div class="flex-grow border-b border-black ml-2 h-6"></div></div>
+                </div>
+
+                <!-- Part 1 -->
+                <h3 class="text-xl font-bold bg-gray-200 print:bg-transparent print:border-b print:border-black p-2 mt-8 mb-4">Part 1: Crime Scene & Suspects</h3>
+                
+                <p class="font-bold mb-2">1. Crime Scene Analysis:</p>
+                <p class="mb-4">What specific piece of evidence was found at the scene, and what type of biological material allowed you to extract DNA from it?</p>
+                <div class="border-b border-gray-400 h-8 w-full"></div>
+                <div class="border-b border-gray-400 h-8 w-full"></div>
+                <div class="border-b border-gray-400 h-8 w-full mb-6"></div>
+
+                <p class="font-bold mb-2">2. Suspect Profiles:</p>
+                <p class="mb-4">Briefly list the three suspects and their potential motives for stealing the pizza from the 21-44:</p>
+                <ul class="space-y-4 mb-8">
+                    <li class="flex items-end"><strong>Suspect A:</strong> <div class="flex-grow border-b border-gray-400 ml-2 h-6"></div></li>
+                    <li class="flex items-end"><strong>Suspect B:</strong> <div class="flex-grow border-b border-gray-400 ml-2 h-6"></div></li>
+                    <li class="flex items-end"><strong>Suspect C:</strong> <div class="flex-grow border-b border-gray-400 ml-2 h-6"></div></li>
+                </ul>
+
+                <!-- Part 2 -->
+                <h3 class="text-xl font-bold bg-gray-200 print:bg-transparent print:border-b print:border-black p-2 mt-8 mb-4">Part 2: DNA Isolation</h3>
+                
+                <p class="font-bold mb-2">3. The Extraction Process:</p>
+                <p class="mb-4">During the simulation, you added three specific chemicals/agents to extract the DNA. Explain the purpose of each:</p>
+                
+                <p class="font-semibold mt-4">Lysis Buffer (Detergent):</p>
+                <div class="border-b border-gray-400 h-8 w-full"></div>
+                <div class="border-b border-gray-400 h-8 w-full"></div>
+                
+                <p class="font-semibold mt-4">Protease (Enzyme):</p>
+                <div class="border-b border-gray-400 h-8 w-full"></div>
+                <div class="border-b border-gray-400 h-8 w-full"></div>
+                
+                <p class="font-semibold mt-4">Ice-Cold Alcohol:</p>
+                <div class="border-b border-gray-400 h-8 w-full"></div>
+                <div class="border-b border-gray-400 h-8 w-full mb-8"></div>
+
+                <!-- Part 3: PCR & Digestion -->
+                <h3 class="text-xl font-bold bg-gray-200 print:bg-transparent print:border-b print:border-black p-2 mt-8 mb-4">Part 3: DNA Amplification & Digestion</h3>
+                
+                <p class="font-bold mb-2">4. Polymerase Chain Reaction (PCR):</p>
+                <p class="mb-4">Why is PCR necessary when we only have a few cells from the pizza crust?</p>
+                <div class="border-b border-gray-400 h-8 w-full"></div>
+                <div class="border-b border-gray-400 h-8 w-full mb-6"></div>
+
+                <p class="font-bold mb-2">5. Restriction Enzymes:</p>
+                <p class="mb-4">What do restriction enzymes do to the DNA, and why is this step important before running the gel?</p>
+                <div class="border-b border-gray-400 h-8 w-full"></div>
+                <div class="border-b border-gray-400 h-8 w-full mb-8"></div>
+
+                <!-- Part 4 -->
+                <div class="break-before-page"></div>
+                <h3 class="text-xl font-bold bg-gray-200 print:bg-transparent print:border-b print:border-black p-2 mt-8 mb-4">Part 4: Gel Electrophoresis</h3>
+                
+                <p class="font-bold mb-2">6. The Science of the Gel:</p>
+                <p class="mb-4 leading-loose">
+                    DNA molecules possess a <span class="inline-block w-32 border-b border-black"></span> electrical charge. Because of this, when the power supply is turned on, the DNA is pulled through the gel towards the <span class="inline-block w-32 border-b border-black"></span> electrode. Smaller DNA fragments move ( faster / slower ) and travel ( further / shorter ) distances through the gel compared to larger fragments.
+                </p>
+
+                <p class="font-bold mb-2 mt-6">7. Gel Reproduction:</p>
+                <p class="mb-4">Using the simulation, accurately shade in the bands on the blank gel below to represent the DNA fragments for the Crime Scene and the three suspects.</p>
+                
+                <table class="w-full border-collapse border-2 border-black mb-8 text-center">
+                    <thead>
+                        <tr class="bg-gray-100 print:bg-transparent border-b-2 border-black">
+                            <th class="border-r border-black p-2 w-1/5">(-) NEGATIVE</th>
+                            <th class="border-r border-black p-2 w-1/5">CRIME SCENE</th>
+                            <th class="border-r border-black p-2 w-1/5">SUSPECT A</th>
+                            <th class="border-r border-black p-2 w-1/5">SUSPECT B</th>
+                            <th class="p-2 w-1/5">SUSPECT C</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td class="border-r border-black p-3"></td><td class="border-r border-black p-3"></td><td class="border-r border-black p-3"></td><td class="border-r border-black p-3"></td><td class="p-3"></td></tr>
+                        <tr><td class="border-r border-black p-3"></td><td class="border-r border-black p-3 border-t border-gray-300"></td><td class="border-r border-black p-3 border-t border-gray-300"></td><td class="border-r border-black p-3 border-t border-gray-300"></td><td class="p-3 border-t border-gray-300"></td></tr>
+                        <tr><td class="border-r border-black p-3"></td><td class="border-r border-black p-3 border-t border-gray-300"></td><td class="border-r border-black p-3 border-t border-gray-300"></td><td class="border-r border-black p-3 border-t border-gray-300"></td><td class="p-3 border-t border-gray-300"></td></tr>
+                        <tr><td class="border-r border-black p-3"></td><td class="border-r border-black p-3 border-t border-gray-300"></td><td class="border-r border-black p-3 border-t border-gray-300"></td><td class="border-r border-black p-3 border-t border-gray-300"></td><td class="p-3 border-t border-gray-300"></td></tr>
+                        <tr><td class="border-r border-black p-3"></td><td class="border-r border-black p-3 border-t border-gray-300"></td><td class="border-r border-black p-3 border-t border-gray-300"></td><td class="border-r border-black p-3 border-t border-gray-300"></td><td class="p-3 border-t border-gray-300"></td></tr>
+                        <tr><td class="border-r border-black p-3"></td><td class="border-r border-black p-3 border-t border-gray-300"></td><td class="border-r border-black p-3 border-t border-gray-300"></td><td class="border-r border-black p-3 border-t border-gray-300"></td><td class="p-3 border-t border-gray-300"></td></tr>
+                        <tr><td class="border-r border-black p-3"></td><td class="border-r border-black p-3 border-t border-gray-300"></td><td class="border-r border-black p-3 border-t border-gray-300"></td><td class="border-r border-black p-3 border-t border-gray-300"></td><td class="p-3 border-t border-gray-300"></td></tr>
+                        <tr><td class="border-r border-black p-3"></td><td class="border-r border-black p-3 border-t border-gray-300"></td><td class="border-r border-black p-3 border-t border-gray-300"></td><td class="border-r border-black p-3 border-t border-gray-300"></td><td class="p-3 border-t border-gray-300"></td></tr>
+                        <tr class="border-t-2 border-black">
+                            <th class="border-r border-black p-2">(+) POSITIVE</th>
+                            <td class="border-r border-black p-2"></td>
+                            <td class="border-r border-black p-2"></td>
+                            <td class="border-r border-black p-2"></td>
+                            <td class="p-2"></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- Part 5 -->
+                <h3 class="text-xl font-bold bg-gray-200 print:bg-transparent print:border-b print:border-black p-2 mt-8 mb-4">Part 5: Conclusion & Warrant</h3>
+                
+                <p class="font-bold mb-2">8. Final Analysis:</p>
+                <p class="mb-4">Based on the banding patterns in your gel electrophoresis reproduction, who is the pizza thief?</p>
+                <div class="border-b border-gray-400 h-8 w-full mb-6"></div>
+
+                <p class="font-bold mb-2">9. Justification:</p>
+                <p class="mb-4">Explain exactly <em>how</em> the gel data proves your conclusion. Why are the other two suspects innocent?</p>
+                <div class="border-b border-gray-400 h-8 w-full"></div>
+                <div class="border-b border-gray-400 h-8 w-full"></div>
+                <div class="border-b border-gray-400 h-8 w-full mb-8"></div>
+
+                <!-- Part 6 -->
+                <h3 class="text-xl font-bold bg-gray-200 print:bg-transparent print:border-b print:border-black p-2 mt-8 mb-4">Part 6: Independent Research & Critical Thinking</h3>
+                <p class="italic text-sm mb-6">Use the internet to research the following questions regarding forensic science.</p>
+
+                <p class="font-bold mb-2">10. Exclusionary Evidence vs. Inclusionary Evidence:</p>
+                <p class="mb-4 text-sm">In forensic science, blood typing is considered <strong>exclusionary</strong> evidence, while a full DNA profile is considered <strong>inclusionary</strong> (or individualizing) evidence.</p>
+                
+                <p class="font-semibold mt-4">a) Explain what it means when evidence is described as "exclusionary." If a suspect has Type O blood, and the blood found at the crime scene is also Type O, does this prove the suspect committed the crime? Why or why not?</p>
+                <div class="border-b border-gray-400 h-8 w-full"></div>
+                <div class="border-b border-gray-400 h-8 w-full"></div>
+                <div class="border-b border-gray-400 h-8 w-full"></div>
+                <div class="border-b border-gray-400 h-8 w-full"></div>
+
+                <p class="font-semibold mt-6">b) Explain what it means when evidence is described as "inclusionary." Why does DNA profiling allow detectives to confidently "rule in" a specific suspect in a way that blood typing cannot?</p>
+                <div class="border-b border-gray-400 h-8 w-full"></div>
+                <div class="border-b border-gray-400 h-8 w-full"></div>
+                <div class="border-b border-gray-400 h-8 w-full"></div>
+                <div class="border-b border-gray-400 h-8 w-full"></div>
+
+                <p class="font-semibold mt-6">c) What is the approximate probability of two random people having the exact same DNA profile (excluding identical twins), and how does this compare to the probability of two people sharing the same blood type?</p>
+                <div class="border-b border-gray-400 h-8 w-full"></div>
+                <div class="border-b border-gray-400 h-8 w-full"></div>
+                <div class="border-b border-gray-400 h-8 w-full"></div>
+                <div class="border-b border-gray-400 h-8 w-full mb-8"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State management
+        let currentStep = 0;
+        let evidenceFound = false;
+        let isolationStage = 0;
+        let pcrDone = false;
+        let digestDone = false;
+        let gelRun = false;
+
+        // Worksheet Toggle
+        function toggleWorksheet() {
+            const modal = document.getElementById('worksheet-modal');
+            if (modal.classList.contains('hidden')) {
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden'; // Prevent scrolling background
+            } else {
+                modal.classList.add('hidden');
+                document.body.style.overflow = '';
+            }
+        }
+
+        // Navigation
+        function nextStep(step) {
+            document.getElementById(`step-${currentStep}`).classList.add('hidden');
+            currentStep = step;
+            document.getElementById(`step-${currentStep}`).classList.remove('hidden');
+            window.scrollTo(0, 0);
+
+            // Update Header Status
+            const statuses = [
+                "OPEN", 
+                "COLLECTING EVIDENCE", 
+                "REVIEWING PROFILES", 
+                "PROCESSING DNA", 
+                "AMPLIFYING & DIGESTING",
+                "RUNNING GEL", 
+                "FINAL ANALYSIS"
+            ];
+            document.getElementById('case-status').textContent = `STATUS: ${statuses[currentStep]}`;
+        }
+
+        // Phase 1: Crime Scene
+        function collectEvidence() {
+            if (evidenceFound) return;
+            evidenceFound = true;
+            
+            const item = document.getElementById('evidence-item');
+            item.classList.add('scale-150', 'opacity-0');
+            item.style.transition = 'all 0.5s ease';
+            
+            setTimeout(() => {
+                document.getElementById('evidence-feedback').classList.remove('hidden');
+                document.getElementById('evidence-feedback').classList.add('flex');
+            }, 500);
+        }
+
+        // Phase 3: DNA Isolation
+        function runIsolationStep(step) {
+            if (step !== isolationStage + 1) return;
+            isolationStage = step;
+
+            const btn = document.querySelector(`#iso-step-${step} button`);
+            btn.innerHTML = 'COMPLETED <svg class="inline w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
+            btn.classList.replace('bg-slate-700', 'bg-green-600');
+            btn.classList.replace('hover:bg-csi-accent', 'hover:bg-green-500');
+
+            if (step === 1) {
+                document.getElementById('tube-lysis').style.height = '25%';
+                document.getElementById('tube-dna').style.backgroundColor = 'rgba(217, 119, 6, 0.3)'; // Lighter amber
+                document.getElementById('tube-dna').innerHTML = '<span class="text-[10px] text-white/50">Lysed Cells</span>';
+                document.getElementById('iso-step-2').classList.remove('opacity-50', 'pointer-events-none');
+                document.getElementById('iso-step-2').classList.add('bg-slate-800');
+            } else if (step === 2) {
+                document.getElementById('tube-protease').style.height = '25%';
+                document.getElementById('iso-step-3').classList.remove('opacity-50', 'pointer-events-none');
+                document.getElementById('iso-step-3').classList.add('bg-slate-800');
+            } else if (step === 3) {
+                document.getElementById('tube-alcohol').style.height = '25%';
+                setTimeout(() => {
+                    document.getElementById('dna-precipitate').classList.remove('opacity-0');
+                    document.getElementById('isolation-complete').classList.remove('hidden');
+                }, 1000);
+            }
+        }
+
+        // Phase 4: PCR & Digestion
+        function runPCR() {
+            if (pcrDone) return;
+            pcrDone = true;
+            const btn = document.getElementById('btn-pcr');
+            btn.disabled = true;
+            btn.innerText = 'CYCLING...';
+            const display = document.getElementById('pcr-temp');
+            const glow = document.getElementById('pcr-glow');
+            
+            let cycles = 0;
+            const cycleInterval = setInterval(() => {
+                cycles++;
+                if(cycles % 2 !== 0) {
+                    display.innerText = '95°C';
+                    display.classList.replace('text-slate-500', 'text-red-500');
+                    if (glow.classList.contains('bg-blue-500/20')) {
+                        glow.classList.replace('bg-blue-500/20', 'bg-red-500/20');
+                    } else {
+                        glow.classList.replace('bg-red-500/0', 'bg-red-500/20');
+                    }
+                } else {
+                    display.innerText = '55°C';
+                    display.classList.replace('text-red-500', 'text-blue-500');
+                    glow.classList.replace('bg-red-500/20', 'bg-blue-500/20');
+                }
+
+                if(cycles > 7) {
+                    clearInterval(cycleInterval);
+                    display.innerText = 'DONE';
+                    display.classList.replace('text-blue-500', 'text-green-500');
+                    glow.classList.replace('bg-blue-500/20', 'bg-green-500/20');
+                    btn.innerHTML = 'COMPLETED';
+                    btn.classList.replace('bg-slate-700', 'bg-green-600');
+                    
+                    document.getElementById('digest-panel').classList.remove('opacity-50', 'pointer-events-none');
+                    document.getElementById('digest-panel').classList.add('bg-slate-800');
+                }
+            }, 600);
+        }
+
+        function runDigest() {
+            if(digestDone) return;
+            digestDone = true;
+            const btn = document.getElementById('btn-digest');
+            btn.disabled = true;
+            
+            const scissors = document.getElementById('scissors');
+            const strand = document.getElementById('dna-strand');
+            
+            // animate scissors
+            scissors.style.opacity = 1;
+            scissors.style.transform = 'translate(-20px, 30px) rotate(-45deg)';
+            
+            setTimeout(() => {
+                // "cut" DNA
+                strand.innerHTML = `
+                    <path d="M10,50 Q20,35 30,50" fill="none" stroke="currentColor" stroke-width="6" stroke-dasharray="2 6"/>
+                    <path d="M40,50 Q65,20 90,50" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round"/>
+                    <path d="M10,50 Q20,65 30,50" fill="none" stroke="currentColor" stroke-width="6" stroke-dasharray="2 6"/>
+                    <path d="M40,50 Q65,80 90,50" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round"/>
+                `;
+                strand.classList.replace('text-slate-400', 'text-purple-400');
+                
+                btn.innerHTML = 'COMPLETED';
+                btn.classList.replace('bg-slate-700', 'bg-green-600');
+                btn.classList.replace('hover:bg-purple-500', 'hover:bg-green-500');
+                document.getElementById('pcr-complete').classList.remove('hidden');
+            }, 1000);
+        }
+
+        // Phase 5: Gel Electrophoresis
+        function runGel() {
+            if (gelRun) return;
+            gelRun = true;
+
+            const btn = document.getElementById('run-gel-btn');
+            btn.disabled = true;
+            btn.classList.replace('bg-slate-700', 'bg-red-600');
+            btn.classList.replace('hover:bg-slate-600', 'hover:bg-red-700');
+            btn.innerText = 'RUNNING...';
+
+            // Simulate Voltage
+            let volts = 0;
+            const voltInterval = setInterval(() => {
+                volts += 5;
+                document.getElementById('voltage-display').innerText = `${volts} V`;
+                if (volts >= 120) {
+                    clearInterval(voltInterval);
+                    document.getElementById('voltage-display').classList.replace('text-red-500', 'text-green-500');
+                }
+            }, 50);
+
+            // Start CSS animation for bands
+            const gelMatrix = document.getElementById('gel-matrix');
+            gelMatrix.classList.add('gel-running');
+
+            // Apply target positions based on inline CSS variables
+            const bands = document.querySelectorAll('.dna-band');
+            bands.forEach(band => {
+                const finalPos = band.style.getPropertyValue('--final-pos');
+                band.style.top = finalPos;
+            });
+
+            // Show completion
+            setTimeout(() => {
+                btn.innerText = 'POWER OFF';
+                btn.classList.replace('bg-red-600', 'bg-slate-700');
+                document.getElementById('voltage-display').innerText = '000 V';
+                document.getElementById('voltage-display').classList.replace('text-green-500', 'text-red-500');
+                document.getElementById('gel-complete').classList.remove('hidden');
+            }, 4500);
+        }
+
+        // Phase 5: Analysis
+        function checkAnswer() {
+            const selected = document.querySelector('input[name="suspect"]:checked');
+            const overlay = document.getElementById('result-overlay');
+            const content = document.getElementById('result-content');
+            const icon = document.getElementById('result-icon');
+            const title = document.getElementById('result-title');
+            const desc = document.getElementById('result-desc');
+
+            overlay.classList.remove('hidden');
+
+            if (!selected) {
+                content.className = 'max-w-xl w-full bg-slate-800 border-2 border-yellow-500 rounded-xl p-8 text-center shadow-2xl';
+                icon.className = 'mx-auto w-20 h-20 mb-6 flex justify-center items-center rounded-full bg-yellow-500/20 text-yellow-500';
+                icon.innerHTML = '<svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>';
+                title.innerText = 'NO SELECTION MADE';
+                title.className = 'text-3xl font-bold text-yellow-500 mb-4 font-mono';
+                desc.innerText = 'Detective, you must select a suspect before issuing a warrant. Review the gel bands again.';
+                return;
+            }
+
+            if (selected.value === 'C') {
+                // Correct!
+                content.className = 'max-w-xl w-full bg-slate-800 border-2 border-green-500 rounded-xl p-8 text-center shadow-[0_0_30px_rgba(34,197,94,0.3)]';
+                icon.className = 'mx-auto w-20 h-20 mb-6 flex justify-center items-center rounded-full bg-green-500/20 text-green-500';
+                icon.innerHTML = '<svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
+                title.innerText = 'CASE CLOSED';
+                title.className = 'text-3xl font-bold text-green-500 mb-4 font-mono';
+                desc.innerText = 'Excellent work! The DNA fragments from Suspect C (Jordan "Deep Dish") perfectly match the fragments found on the pizza crust. Justice has been served.';
+                document.getElementById('case-status').textContent = 'STATUS: CLOSED / SOLVED';
+            } else {
+                // Incorrect
+                content.className = 'max-w-xl w-full bg-slate-800 border-2 border-red-500 rounded-xl p-8 text-center shadow-[0_0_30px_rgba(239,68,68,0.3)]';
+                icon.className = 'mx-auto w-20 h-20 mb-6 flex justify-center items-center rounded-full bg-red-500/20 text-red-500';
+                icon.innerHTML = '<svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
+                title.innerText = 'WRONG SUSPECT';
+                title.className = 'text-3xl font-bold text-red-500 mb-4 font-mono';
+                desc.innerText = 'You arrested the wrong person! Look closely at the spacing of the bands in the gel. The bands in the Crime Scene lane must align exactly horizontally with the suspect\'s lane.';
+            }
+        }
+
+        function resetCase() {
+            document.getElementById('result-overlay').classList.add('hidden');
+            
+            // Only reset fully if they failed, otherwise let them bask in glory
+            const selected = document.querySelector('input[name="suspect"]:checked');
+            if (selected && selected.value === 'C') {
+                return; // Leave them on the success screen underneath
+            }
+            
+            // Uncheck radios
+            if(selected) selected.checked = false;
+        }
+    </script>
+</body>
+</html>
