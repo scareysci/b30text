@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biology 30 Saskatchewan - Chapter 7</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400&family=Inter:wght@300;400;600;800&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+            line-height: 1.8;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Merriweather', serif;
+        }
+
+        .feature-box {
+            border: 2px dashed #cbd5e1;
+            background-color: #f1f5f9;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            position: relative;
+        }
+
+        .feature-tag {
+            position: absolute;
+            top: -12px;
+            left: 1rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .tag-interactive { background-color: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+        .tag-video { background-color: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+        .tag-simulation { background-color: #fdf4ff; color: #a21caf; border: 1px solid #f5d0fe; }
+
+        .sask-context {
+            border-left: 4px solid #16a34a;
+            background-color: #f0fdf4;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 0 0.5rem 0.5rem 0;
+        }
+
+        .indigenous-context {
+            border-left: 4px solid #b45309;
+            background-color: #fffbeb;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 0 0.5rem 0.5rem 0;
+        }
+
+        .learning-objective {
+            background-color: #eff6ff;
+            border-left: 4px solid #2563eb;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+        }
+        
+        .formative-check {
+            background-color: #fff7ed;
+            border: 1px solid #fed7aa;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            border-radius: 0.5rem;
+        }
+
+        .img-container {
+            margin: 2.5rem 0;
+            background-color: #ffffff;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+
+        .img-placeholder {
+            min-height: 300px;
+            background: repeating-linear-gradient(
+                45deg,
+                #f8fafc,
+                #f8fafc 10px,
+                #f1f5f9 10px,
+                #f1f5f9 20px
+            );
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            font-style: italic;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            font-size: 0.95rem;
+        }
+        th, td {
+            border: 1px solid #e2e8f0;
+            padding: 1rem;
+            text-align: left;
+        }
+        th {
+            background-color: #f1f5f9;
+            font-weight: 700;
+            color: #334155;
+        }
+        tr:nth-child(even) { background-color: #f8fafc; }
+
+        @media print {
+            nav, footer, .print-hidden { display: none !important; }
+            body { background-color: white; color: black; font-size: 12pt; }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50 print-hidden">
+        <div class="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center gap-4">
+            <div class="flex items-center gap-4">
+                <a href="#" class="flex items-center gap-2 text-slate-500 hover:text-green-700 transition-colors">
+                    <i data-lucide="arrow-left" class="w-5 h-5"></i>
+                </a>
+                <span class="font-bold text-xl text-green-700 tracking-tight">Biology 30</span>
+            </div>
+            <div class="text-sm text-slate-500 font-medium hidden md:block">
+                Unit 4: What is evolution?
+            </div>
+            <div class="relative flex-grow max-w-xs">
+                <input type="text" placeholder="Search chapter..." class="block w-full pl-10 pr-3 py-1.5 border border-slate-300 rounded-md text-sm">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i data-lucide="search" class="w-4 h-4 text-slate-400"></i>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-4 py-12">
+        
+        <header class="mb-16">
+            <div class="text-sm font-bold text-teal-600 tracking-widest uppercase mb-2">Unit 4 Schema Activator</div>
+            <h1 class="text-4xl md:text-5xl font-black text-slate-900 mb-6 border-b-4 border-teal-600 pb-4">Chapter 7: Principles, Processes, and Patterns of Evolution</h1>
+            
+            <div class="feature-box mt-8 mb-8 border-teal-200 bg-teal-50">
+                <h4 class="font-bold text-teal-900 mb-2 flex items-center gap-2">
+                    <i data-lucide="globe-2" class="w-5 h-5 text-teal-600"></i>
+                    [Digital Feature]: The Shifting Sands of Deep Time
+                </h4>
+                <p class="text-sm text-teal-800 mb-4">Before we delve into how life changes, we must understand that the stage upon which life acts—the Earth itself—is also constantly changing. Drag the slider below to watch 250 million years of continental drift. Pay close attention to the overlaid fossil markers. Notice how fossils of the same ancient fern (Glossopteris) are found on the modern coasts of South America, Africa, Antarctica, and Australia. How could a fern cross an ocean? It didn't. The continents moved.</p>
+                
+                <div class="w-full bg-white rounded-lg overflow-hidden h-[500px] border border-teal-200 shadow-inner mb-4">
+                     <iframe width="100%" height="100%" src="https://scareysci.github.io/b30text/Unit4/ch7/intro.html" title="Interactive Continental Drift Simulator" frameborder="0" allowfullscreen></iframe>
+                </div>
+                <div class="flex justify-end">
+                    <a href="https://scareysci.github.io/b30text/Unit4/ch7/intro.html" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 bg-teal-600 hover:bg-teal-700 text-white font-medium py-2 px-4 rounded-md transition-colors text-sm shadow-sm">
+                        <i data-lucide="external-link" class="w-4 h-4"></i>
+                        Open Simulator in New Window
+                    </a>
+                </div>
+            </div>
+
+            <div class="prose prose-lg text-slate-700 max-w-none mt-8">
+                <p>In Unit 3, we explored the molecular code of life. We learned how DNA is copied, how it builds proteins, and crucially, how <em>mutations</em> create variations in that code. But a mutation is just a random typo. How do random typos lead to the breathtaking complexity of a hawk's eye, the poison of a rattlesnake, or the deep roots of prairie grass?</p>
+                
+                <p>Evolution is the great unifying theme of biology. The geneticist Theodosius Dobzhansky famously stated, <em>"Nothing in biology makes sense except in the light of evolution."</em> In this chapter, we will connect the microscopic world of genetics to the macroscopic world of ecology. We will see how environmental pressures act upon genetic variations over immense stretches of time, shaping the diversity of all life on Earth.</p>
+            </div>
+        </header>
+
+        <!-- Section 7.1 -->
+        <section class="mb-20" id="section-7-1">
+            <h3 class="text-3xl font-bold text-slate-800 mb-6">7.1 Principles and Misconceptions [BI30-LE2a, b]</h3>
+            
+            <div class="learning-objective">
+                <strong>Learning Objective:</strong> Outline the key principles of biological evolution and identify common misconceptions regarding how evolution works.
+            </div>
+
+            <div class="prose prose-lg text-slate-700 max-w-none">
+                <p class="mb-6">Biological evolution, at its most fundamental level, is defined as a <strong>change in the allele frequencies of a population over time</strong>. It is the process by which modern organisms have descended from ancient ancestors. Before we dive into the mechanisms, we must clear away the dense underbrush of common myths and misunderstandings that surround this topic.</p>
+
+                <h4 class="font-bold text-slate-900 mt-8 mb-4 border-b pb-2">Addressing the Myths</h4>
+                
+                <ul class="space-y-6">
+                    <li class="bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
+                        <strong class="text-red-600">Myth 1: "Evolution is just a theory."</strong><br>
+                        In everyday language, a "theory" means a guess or a hunch. In science, a <strong>Scientific Theory</strong> is the highest level of understanding. It is a well-substantiated explanation of some aspect of the natural world, based on a body of facts that have been repeatedly confirmed through observation and experiment. Gravity, germ theory, and evolution are all scientific theories.
+                    </li>
+                    <li class="bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
+                        <strong class="text-red-600">Myth 2: "Individuals evolve."</strong><br>
+                        An individual organism <em>cannot</em> evolve. You are born with a specific set of genes, and those genes will not change to help you adapt to a new environment. <strong>Populations evolve.</strong> If a drought hits, individual plants don't mutate to suddenly need less water. Instead, the plants that already happen to have a genetic variation for deep roots survive, reproduce, and pass that trait on. Over generations, the <em>population</em> changes.
+                    </li>
+                    <li class="bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
+                        <strong class="text-red-600">Myth 3: "Evolution is completely random."</strong><br>
+                        This is only half true. The <em>mutations</em> that provide the raw material of genetic variation are entirely random. However, <strong>Natural Selection is not random.</strong> The environment acts as a highly specific filter, selecting for traits that are advantageous and selecting against traits that are detrimental.
+                    </li>
+                    <li class="bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
+                        <strong class="text-red-600">Myth 4: "Survival of the Fittest means the strongest survive."</strong><br>
+                        In evolutionary biology, <strong>fitness</strong> does not mean physical strength, speed, or intelligence. Evolutionary fitness is defined strictly by reproductive success. A tiny, weak insect that uses camouflage to hide and produce 10,000 offspring is evolutionarily "fitter" than a massive, muscular predator that dies before finding a mate.
+                    </li>
+                </ul>
+
+                <h4 class="font-bold text-slate-900 mt-8 mb-4">Key Principles of Evolution</h4>
+                <p>Charles Darwin outlined several core principles that drive evolutionary change:</p>
+                <ol class="list-decimal pl-6 space-y-2 mb-6">
+                    <li><strong>Descent with Modification:</strong> Species change over time, give rise to new species, and share a common ancestor.</li>
+                    <li><strong>Variation:</strong> There is natural genetic variation within a population (due to mutations and sexual reproduction).</li>
+                    <li><strong>Overproduction:</strong> More offspring are produced than the environment can support.</li>
+                    <li><strong>Struggle for Existence:</strong> Because resources are limited, organisms must compete for food, space, and mates.</li>
+                    <li><strong>Differential Survival and Reproduction:</strong> Individuals with traits best suited to the environment will survive and reproduce more successfully than others.</li>
+                </ol>
+            </div>
+        </section>
+
+        <!-- Section 7.2 -->
+        <section class="mb-20" id="section-7-2">
+            <h3 class="text-3xl font-bold text-slate-800 mb-6">7.2 Artificial Selection [BI30-LE2c]</h3>
+            
+            <div class="learning-objective">
+                <strong>Learning Objective:</strong> Investigate how humans use selective breeding (artificial selection) to enhance desirable characteristics in organisms.
+            </div>
+
+            <div class="prose prose-lg text-slate-700 max-w-none">
+                <p class="mb-4">Nature is not the only force that can select traits. For thousands of years, long before we understood DNA, humans have been driving evolution through <strong>Artificial Selection</strong> (also known as selective breeding). In artificial selection, humans act as the environmental pressure, choosing which individuals get to reproduce based on traits <em>we</em> find desirable.</p>
+
+                <p class="mb-4">Consider the domestic dog (<em>Canis lupus familiaris</em>). Every dog, from the massive Great Dane to the tiny Chihuahua, is descended from the gray wolf. By selectively breeding wolves that were tamer, then selectively breeding their offspring for traits like guarding, herding, or retrieving, humans rapidly shaped the genetics of the species.</p>
+
+                <p>The same is true for our food. The wild mustard plant was selectively bred by ancient farmers. If they bred plants with larger leaves, they got kale. If they bred plants with larger flower buds, they got broccoli. If they selected for a larger stem, they got kohlrabi. They are all the same species, shaped by human desire.</p>
+            </div>
+
+            <div class="sask-context mt-8">
+                <h4 class="font-bold text-green-800 mb-2 flex items-center gap-2">
+                    <i data-lucide="tractor" class="w-5 h-5"></i> Saskatchewan Connection: The Creation of Canola
+                </h4>
+                <p class="text-slate-700">One of the most famous examples of artificial selection in history occurred right here in Saskatchewan. In the 1970s, researchers Dr. Keith Downey and Dr. Baldur Stefansson at the University of Saskatchewan and the University of Manitoba were studying Rapeseed, a crop grown for industrial oil but toxic to humans and animals. Through rigorous <strong>selective breeding</strong> over many generations, they selected plants with lower and lower levels of toxic erucic acid and glucosinolates. They artificially guided the evolution of the plant until they created a brand-new, healthy, edible crop. They named it <strong>Canola</strong> (<strong>Can</strong>adian <strong>O</strong>il, <strong>L</strong>ow <strong>A</strong>cid). Today, it is a multi-billion dollar pillar of the prairie economy.</p>
+            </div>
+        </section>
+
+        <!-- Section 7.3 -->
+        <section class="mb-20" id="section-7-3">
+            <h3 class="text-3xl font-bold text-slate-800 mb-6">7.3 The Universal Ancestor [BI30-LE2d]</h3>
+            
+            <div class="learning-objective">
+                <strong>Learning Objective:</strong> Explain the importance of the concept of the last universal common ancestor (LUCA) in understanding evolutionary relationships.
+            </div>
+
+            <div class="prose prose-lg text-slate-700 max-w-none">
+                <p class="mb-4">If descent with modification is true, and we trace the branches of the "Tree of Life" backwards in time, they must eventually converge. Scientists believe that all life on Earth today—every human, every oak tree, every mushroom, and every bacterium—is descended from a single population of single-celled organisms that lived roughly 3.5 to 3.8 billion years ago. We call this <strong>LUCA</strong> (the <strong>L</strong>ast <strong>U</strong>niversal <strong>C</strong>ommon <strong>A</strong>ncestor).</p>
+
+                <p class="mb-4">How do we know LUCA existed? The evidence is written in our cells. Despite the staggering diversity of life, we all share a core set of biochemical similarities that point to a single origin:</p>
+                <ul class="list-disc pl-6 space-y-2 mb-6">
+                    <li><strong>Universal Genetic Code:</strong> The language of DNA (A, T, C, G) is identical in all living things. A bacterial ribosome can read a human mRNA sequence and build the correct human protein.</li>
+                    <li><strong>ATP:</strong> Every known organism uses Adenosine Triphosphate as its cellular energy currency.</li>
+                    <li><strong>Cellular Machinery:</strong> The fundamental mechanisms of transcription, translation, and membrane structure are shared across domains.</li>
+                </ul>
+                <p>Because you share an ancestor with a banana, you share about 50% of your DNA with it. You share 85% of your DNA with a mouse, and 98.8% with a chimpanzee. LUCA proves that biological evolution is the story of one massive, extended family.</p>
+            </div>
+
+            <div class="indigenous-context mt-8">
+                <h4 class="font-bold text-amber-900 mb-2 flex items-center gap-2">
+                    <i data-lucide="leaf" class="w-5 h-5"></i> Wâhkôhtowin and the Tree of Life
+                </h4>
+                <p class="text-slate-800">The scientific concept of LUCA and a single, unified "Tree of Life" bears a profound resemblance to the Indigenous worldview of <em>Wâhkôhtowin</em> (kinship). While Western science arrived at this conclusion recently through DNA sequencing, First Nations and Métis knowledge systems have long taught that humans are literally related to the plants, the animals, and the microscopic life in the soil. The phrase "All My Relations" is not merely a metaphor or a polite greeting; in the light of evolutionary biology and the concept of a Universal Common Ancestor, it is a literal, biological fact.</p>
+            </div>
+        </section>
+
+        <!-- Section 7.4 -->
+        <section class="mb-20" id="section-7-4">
+            <h3 class="text-3xl font-bold text-slate-800 mb-6">7.4 Historical Perspectives on Evolution [BI30-LE2f, g]</h3>
+            
+            <div class="learning-objective">
+                <strong>Learning Objective:</strong> Identify key contributions to evolutionary biology by scientists such as Lamarck, Malthus, Darwin, Wallace, Wegener, and Gould.
+            </div>
+
+            <div class="prose prose-lg text-slate-700 max-w-none">
+                <p class="mb-6">The theory of evolution was not invented overnight. It was pieced together over centuries by observers looking at fossils, geology, and anatomy.</p>
+
+                <div class="overflow-x-auto shadow-sm border rounded-lg mb-8 mt-4 bg-white">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="w-1/4">Scientist</th>
+                                <th class="w-3/4">Contribution to Evolutionary Theory</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="font-bold text-indigo-900">Jean-Baptiste Lamarck<br><span class="font-normal text-sm text-slate-500">(1744-1829)</span></td>
+                                <td>Proposed one of the first theories of evolution. He believed in the <strong>Inheritance of Acquired Characteristics</strong>. He suggested that if a giraffe stretched its neck during its lifetime to reach higher leaves, it would pass that longer neck to its offspring. <em>(He was wrong about the mechanism, but right that species change over time).</em></td>
+                            </tr>
+                            <tr>
+                                <td class="font-bold text-indigo-900">Thomas Malthus<br><span class="font-normal text-sm text-slate-500">(1766-1834)</span></td>
+                                <td>An economist who noted that human populations grow exponentially, but food supplies grow linearly. He reasoned that overpopulation leads to a <strong>struggle for survival</strong> (famine, disease). Darwin read Malthus and applied this "struggle" to the natural world.</td>
+                            </tr>
+                            <tr>
+                                <td class="font-bold text-indigo-900">Charles Darwin & Alfred Russel Wallace<br><span class="font-normal text-sm text-slate-500">(Mid-1800s)</span></td>
+                                <td>Independently formulated the theory of <strong>Natural Selection</strong> as the mechanism of evolution. Darwin's extensive observations in the Galapagos Islands (noting how finch beaks adapted to specific island food sources) provided the overwhelming evidence published in <em>On the Origin of Species</em> (1859).</td>
+                            </tr>
+                            <tr>
+                                <td class="font-bold text-indigo-900">Alfred Wegener<br><span class="font-normal text-sm text-slate-500">(1880-1930)</span></td>
+                                <td>Proposed <strong>Continental Drift</strong>. He realized that the continents once fit together into a supercontinent (Pangea). This geological theory perfectly explained why fossils of the exact same ancient species are found separated by massive, impassable modern oceans.</td>
+                            </tr>
+                            <tr>
+                                <td class="font-bold text-indigo-900">Stephen Jay Gould<br><span class="font-normal text-sm text-slate-500">(1941-2002)</span></td>
+                                <td>A paleontologist who proposed <strong>Punctuated Equilibrium</strong>, altering Darwin's idea of slow, constant change. Gould argued that species stay mostly the same for long periods (equilibrium), punctuated by brief, rapid bursts of evolutionary change, often following environmental catastrophes.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 7.5 -->
+        <section class="mb-20" id="section-7-5">
+            <h3 class="text-3xl font-bold text-slate-800 mb-6">7.5 Darwin and Natural Selection [BI30-LE2g, h, i]</h3>
+            
+            <div class="learning-objective">
+                <strong>Learning Objective:</strong> Discuss how Darwin's observations led to the theory of natural selection, recognize how selection acts on individuals to evolve populations, and examine specific selective pressures.
+            </div>
+
+            <div class="prose prose-lg text-slate-700 max-w-none">
+                <h4 class="font-bold text-slate-900 mt-8 mb-4">The Voyage of the Beagle and Key Observations</h4>
+                <p class="mb-4">In 1831, a young Charles Darwin set sail on the <em>HMS Beagle</em> for a five-year voyage around the world. As the ship's naturalist, he collected thousands of plant and animal specimens and kept detailed journals. His observations fundamentally challenged the accepted science of his time and laid the groundwork for his theory of natural selection.</p>
+                
+                <p class="mb-4">During his travels, particularly along the coast of South America and the Galapagos Islands, Darwin noted three distinct patterns of biological diversity:</p>
+                <ul class="list-disc pl-6 space-y-4 mb-6">
+                    <li><strong>Species vary globally:</strong> Darwin noticed that different, yet ecologically similar, animal species inhabited separated, but ecologically similar, habitats around the globe (e.g., flightless rheas in South America, ostriches in Africa, and emus in Australia).</li>
+                    <li><strong>Species vary locally:</strong> This was most evident in the Galapagos Islands. Darwin observed that different islands had different microclimates and food sources, and the animals on those islands were uniquely adapted to them. The famous Galapagos finches had noticeably different beak shapes—heavy, crushing beaks for seed-eaters, and slender, probing beaks for insect-eaters. Similarly, the shape of a giant tortoise's shell corresponded to the height of the vegetation on its specific island.</li>
+                    <li><strong>Species vary over time:</strong> Darwin collected fossils, including the remains of the extinct <em>Glyptodon</em>, a giant armored mammal. He noted that this ancient fossil looked remarkably like a massive version of the modern armadillo living in the exact same region. This suggested that modern species were descendants of ancient, extinct species.</li>
+                </ul>
+
+                <h4 class="font-bold text-slate-900 mt-8 mb-4">The Mechanism: How Natural Selection Works</h4>
+                <p class="mb-4">Upon returning to England, Darwin synthesized his observations with the writings of Thomas Malthus (who noted that human populations overproduce, leading to competition). Darwin realized that if more offspring are born in nature than can survive, there must be a constant "struggle for existence."</p>
+                
+                <p class="mb-4">He proposed <strong>Natural Selection</strong> as the mechanism for evolution, which operates on the following logical sequence:</p>
+                <ol class="list-decimal pl-6 space-y-2 mb-6">
+                    <li><strong>Variation & Inheritance:</strong> Individuals in a population possess natural, heritable variations (which we now know are caused by genetic mutations).</li>
+                    <li><strong>Overproduction:</strong> Organisms produce more offspring than the environment can support.</li>
+                    <li><strong>Competition:</strong> This overproduction leads to a struggle for limited resources (food, space, mates).</li>
+                    <li><strong>Differential Survival (Fitness):</strong> Individuals whose unique genetic variations are best suited (adapted) to their specific environment will survive and reproduce more successfully. This is evolutionary <em>fitness</em>.</li>
+                </ol>
+
+                <div class="bg-amber-50 border-l-4 border-amber-500 p-6 rounded-r-lg mb-8 shadow-sm">
+                    <h5 class="font-bold text-amber-900 mb-2">Crucial Distinction: Individual vs. Population</h5>
+                    <p class="text-slate-800">It is absolutely critical to understand the biological level at which evolution operates. <strong>Natural selection acts on the <em>individual</em>.</strong> A single finch either lives or dies, reproduces or fails, based on the fitness of its beak in that specific environment. However, the individual itself does not evolve during its lifetime. <strong>Evolution occurs at the level of the <em>population</em>.</strong> Because the "fit" individuals survive and pass on their genes, the frequency of those advantageous alleles increases in the next generation. The individual is selected; the population evolves.</p>
+                </div>
+
+                <h4 class="font-bold text-slate-900 mt-12 mb-4 border-b border-slate-200 pb-2">Modes of Selection (Natural Selection in Action)</h4>
+                <p class="mb-4">Natural selection is the editor of genetic variation. It is driven by <strong>Selective Pressures</strong>—environmental factors that affect an organism's ability to survive and reproduce. Examples include predators, competition for food, extreme weather, diseases, and human pollution.</p>
+                
+                <p class="mb-4">When a selective pressure is applied to a population, it can shift the distribution of a trait in three distinct ways:</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 mt-6">
+                    <div class="bg-blue-50 p-4 border border-blue-200 rounded-lg text-center">
+                        <h5 class="font-bold text-blue-900 mb-2">Directional Selection</h5>
+                        <div class="h-24 bg-white border border-blue-100 rounded mb-2 flex items-center justify-center text-xs text-slate-400 italic">Bell curve shifts left or right</div>
+                        <p class="text-sm text-slate-700">One extreme phenotype is favored. <em>Example: Peppered moths during the Industrial Revolution. Soot darkened the trees, so the population shifted from predominantly light-colored to predominantly dark-colored to avoid predators.</em></p>
+                    </div>
+                    <div class="bg-green-50 p-4 border border-green-200 rounded-lg text-center">
+                        <h5 class="font-bold text-green-900 mb-2">Stabilizing Selection</h5>
+                        <div class="h-24 bg-white border border-green-100 rounded mb-2 flex items-center justify-center text-xs text-slate-400 italic">Bell curve narrows in center</div>
+                        <p class="text-sm text-slate-700">The average phenotype is favored, and extremes are selected against. <em>Example: Human birth weight. Babies that are too small struggle to survive, and babies that are too large complicate birth. The average weight is optimal.</em></p>
+                    </div>
+                    <div class="bg-purple-50 p-4 border border-purple-200 rounded-lg text-center">
+                        <h5 class="font-bold text-purple-900 mb-2">Disruptive Selection</h5>
+                        <div class="h-24 bg-white border border-purple-100 rounded mb-2 flex items-center justify-center text-xs text-slate-400 italic">Bell curve dips in center, peaks on sides</div>
+                        <p class="text-sm text-slate-700">Both extreme phenotypes are favored over the average. <em>Example: Finches on an island with only very large seeds or very small seeds. Medium beaks are useless, so the population splits into large-beaked and small-beaked birds.</em></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="feature-box mt-12 mb-8 border-indigo-200 bg-indigo-50">
+                <h4 class="font-bold text-indigo-900 mb-2 flex items-center gap-2">
+                    <i data-lucide="mouse-pointer-click" class="w-5 h-5 text-indigo-600"></i>
+                    [Digital Feature]: The Peppered Moth Simulation
+                </h4>
+                <span class="feature-tag tag-simulation">Interactive Lab</span>
+                <p class="text-sm text-indigo-800 mb-4">Experience Directional Selection firsthand. You are a predatory bird. Play the game in a clean, light-bark forest, and see which moths are easiest to catch. Then, toggle the environment to an industrial, soot-covered forest. Watch the live graph track the changing allele frequencies in the moth population as your "predation" acts as the selective pressure.</p>
+                <div class="w-full bg-slate-200 rounded-lg flex items-center justify-center h-64 border border-indigo-200 shadow-inner">
+                     <span class="text-slate-500 font-medium">[Interactive Simulation Placeholder: Click to hunt moths]</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 7.6 -->
+        <section class="mb-20" id="section-7-6">
+            <h3 class="text-3xl font-bold text-slate-800 mb-6">7.6 Speciation [BI30-LE2j]</h3>
+            
+            <div class="learning-objective">
+                <strong>Learning Objective:</strong> Explain how geographic, temporal, and behavioural isolation can influence speciation.
+            </div>
+
+            <div class="prose prose-lg text-slate-700 max-w-none">
+                <p class="mb-4">How do we get new species? <strong>Speciation</strong> is the evolutionary process by which populations evolve to become distinct, biologically separate species. For this to happen, the gene flow between two groups must be cut off. If they cannot mate and mix their DNA, they will evolve on separate paths until they are so different they can no longer interbreed. This separation is called <strong>Reproductive Isolation</strong>.</p>
+
+                <ul class="list-disc pl-6 space-y-4 mb-6">
+                    <li><strong>Geographic Isolation (Allopatric Speciation):</strong> Two populations are separated by a physical barrier (a river, a canyon, a mountain range). <em>Example: The Grand Canyon separated a population of squirrels. Over millions of years, the North Rim and South Rim populations evolved into two distinct species.</em></li>
+                    <li><strong>Temporal Isolation:</strong> Two populations live in the same area but reproduce at different times (different times of day, different seasons, or different years). <em>Example: Three species of orchids live in the same rainforest, but each species blooms on a different day, preventing cross-pollination.</em></li>
+                    <li><strong>Behavioural Isolation:</strong> Two populations are capable of interbreeding but have differences in courtship rituals or reproductive strategies. <em>Example: Eastern and Western Meadowlarks look identical and live in the same fields, but they will not mate because their mating songs are completely different.</em></li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Section 7.7 -->
+        <section class="mb-20" id="section-7-7">
+            <h3 class="text-3xl font-bold text-slate-800 mb-6">7.7 Patterns of Evolution [BI30-LE2k]</h3>
+            
+            <div class="learning-objective">
+                <strong>Learning Objective:</strong> Identify macro-evolutionary concepts including gradualism, punctuated equilibrium, convergent/divergent evolution, and coevolution.
+            </div>
+
+            <div class="prose prose-lg text-slate-700 max-w-none">
+                <p class="mb-6">When we zoom out and look at evolution across millions of years (macroevolution), distinct patterns emerge in the fossil record.</p>
+
+                <h4 class="font-bold text-slate-900 mt-8 mb-4">The Pace of Change</h4>
+                <p class="mb-4">Does evolution happen slowly or quickly? The answer is both.</p>
+                <ul class="list-disc pl-6 space-y-2 mb-6">
+                    <li><strong>Gradualism:</strong> Darwin believed evolution is a slow, steady, continuous process of tiny changes accumulating over millions of years.</li>
+                    <li><strong>Punctuated Equilibrium:</strong> Stephen Jay Gould proposed that species exist in stable equilibrium for long periods, <em>punctuated</em> by brief, explosive periods of rapid change, usually triggered by sudden environmental shifts or mass extinctions (like the asteroid that wiped out the dinosaurs, making room for rapid mammal evolution).</li>
+                </ul>
+
+                <h4 class="font-bold text-slate-900 mt-8 mb-4">The Direction of Change</h4>
+                <ul class="list-disc pl-6 space-y-2 mb-6">
+                    <li><strong>Divergent Evolution (Adaptive Radiation):</strong> A single ancestral species rapidly diversifies into multiple new species to fill available ecological niches. <em>Example: A single species of finch arrived on the Galapagos and diverged into 14 distinct species with different beaks to eat different foods.</em></li>
+                    <li><strong>Convergent Evolution:</strong> Unrelated organisms evolve similar traits because they face similar environmental pressures (Analogous structures). <em>Example: Sharks (fish) and Dolphins (mammals) are not closely related, but both evolved streamlined bodies and dorsal fins for fast swimming in the ocean.</em></li>
+                    <li><strong>Coevolution:</strong> Two species evolve in response to changes in each other over time. This is common in predator-prey relationships (an <em>evolutionary arms race</em>) or mutualistic relationships (like a specific flower evolving a deep tube that can only be pollinated by a specific moth with a long proboscis).</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Section 7.8 -->
+        <section class="mb-20" id="section-7-8">
+            <h3 class="text-3xl font-bold text-slate-800 mb-6">7.8 Evidence for Evolution [BI30-LE2l]</h3>
+            
+            <div class="learning-objective">
+                <strong>Learning Objective:</strong> Examine how scientists use the fossil record, radioactive dating, comparative embryology, and anatomy as evidence of biological evolution.
+            </div>
+
+            <div class="prose prose-lg text-slate-700 max-w-none">
+                <p class="mb-4">Evolution is supported by a mountain of evidence from multiple, independent fields of science. When genetics, geology, and anatomy all point to the exact same conclusions, the theory is strengthened.</p>
+
+                <ol class="list-decimal pl-6 space-y-4 mb-6">
+                    <li><strong>The Fossil Record & Radioactive Dating:</strong> Fossils provide a chronological timeline of life. By measuring the decay of radioactive isotopes (like Carbon-14 or Uranium-238) in the surrounding rocks, physicists can accurately date fossils. The record shows a clear progression: single-celled life appears first, followed by simple invertebrates, fish, amphibians, reptiles, and eventually mammals and birds. We also find "transitional fossils" like <em>Archaeopteryx</em>, which shows both reptile (teeth, tail) and bird (feathers) characteristics.</li>
+                    <li><strong>Comparative Anatomy (Homologous Structures):</strong> As discussed in Chapter 4, the bone structure in a human arm, a bat wing, and a whale flipper is identical, despite having different functions. This points directly to a common mammalian ancestor.</li>
+                    <li><strong>Vestigial Structures:</strong> These are "leftover" organs or structures that had a function in an early ancestor but are useless now. Examples include the human appendix, the tailbone, or the tiny, useless hip bones found deep inside the bodies of whales and snakes (proving they descended from four-legged land animals).</li>
+                    <li><strong>Comparative Embryology:</strong> In their early developmental stages, vertebrate embryos look remarkably similar. Human embryos temporarily possess tail buds and gill slits (pharyngeal arches)—a lingering genetic memory of our aquatic ancestors.</li>
+                    <li><strong>Molecular Biology:</strong> The ultimate evidence. By comparing the DNA sequences of different species, we can see exactly how closely related they are. DNA is the historical document of evolution.</li>
+                </ol>
+            </div>
+
+            <div class="sask-context mt-8">
+                <h4 class="font-bold text-green-800 mb-2 flex items-center gap-2">
+                    <i data-lucide="bone" class="w-5 h-5"></i> Saskatchewan Connection: Scotty the T-Rex
+                </h4>
+                <p class="text-slate-700">Saskatchewan contains some of the richest fossil beds in the world, providing direct evidence of prehistoric ecosystems. In 1991, in the Frenchman River Valley near Eastend, Saskatchewan, paleontologists discovered "Scotty." Scotty is the massive, nearly complete skeleton of a <em>Tyrannosaurus rex</em>. Living approximately 66 million years ago, Scotty provides crucial anatomical data about theropod dinosaurs right before the great Cretaceous-Paleogene mass extinction event. You can visit Scotty today at the T.rex Discovery Centre in Eastend!</p>
+            </div>
+        </section>
+
+        <!-- Section 7.9 -->
+        <section class="mb-20" id="section-7-9">
+            <h3 class="text-3xl font-bold text-slate-800 mb-6">7.9 Human Evolution [BI30-LE2m]</h3>
+            
+            <div class="learning-objective">
+                <strong>Learning Objective:</strong> Explore human evolution in relationship to other primates, considering the Out of Africa hypothesis and the agricultural revolution.
+            </div>
+
+            <div class="prose prose-lg text-slate-700 max-w-none">
+                <p class="mb-4">Humans (<em>Homo sapiens</em>) are primates. We are subject to the exact same evolutionary rules as every other species. We did not evolve <em>from</em> modern chimpanzees; rather, humans and chimpanzees share a common ape ancestor that lived approximately 6 to 7 million years ago.</p>
+
+                <p class="mb-4">The evolution of our lineage (hominins) is characterized by several major milestones: bipedalism (walking upright, which freed our hands for tool use), a massive expansion in brain size (requiring high-energy food sources, likely cooked meat), and the development of complex language and culture.</p>
+
+                <h4 class="font-bold text-slate-900 mt-8 mb-4">The Out of Africa Hypothesis</h4>
+                <p class="mb-4">Genetic and fossil evidence strongly supports the <strong>Out of Africa Hypothesis</strong>. This theory states that anatomically modern <em>Homo sapiens</em> evolved exclusively in Africa around 300,000 years ago. Around 60,000 to 70,000 years ago, a relatively small group of these humans migrated out of Africa, eventually spreading across the globe and replacing (and occasionally interbreeding with) other hominin species like the Neanderthals.</p>
+
+                <h4 class="font-bold text-slate-900 mt-8 mb-4">Culture as an Evolutionary Force</h4>
+                <p class="mb-4">About 10,000 years ago, humanity experienced the <strong>Agricultural Revolution</strong>. We stopped hunting and gathering and began farming. This completely altered our evolutionary trajectory. We created reliable food sources, which allowed populations to explode and cities to form. However, dense cities also introduced new selective pressures, such as epidemic diseases (cholera, smallpox). Today, modern medicine and technology (like the eyeglasses you might be wearing) allow humans to survive and reproduce even if we possess traits that would have been "unfit" in the wild. We are now, in many ways, directing our own evolution.</p>
+            </div>
+        </section>
+
+        <!-- Chapter Review -->
+        <section class="bg-slate-900 text-white p-8 rounded-lg shadow-xl">
+            <h3 class="text-2xl font-bold mb-4">Chapter 7 Review: Narrative Lab Report</h3>
+            <p class="mb-4 text-slate-300 font-semibold italic">Activity: Simulating Natural Selection (The "Bird Beak" Lab).</p>
+            <ol class="list-decimal pl-6 space-y-4 text-slate-200">
+                <li><strong>What was I looking for?</strong> (I was investigating how different physical traits—represented by different tools like tweezers, spoons, and chopsticks—affect the ability of a "bird" to gather food in different environments).</li>
+                <li><strong>How did I look for it?</strong> (I acted as a bird using a specific tool to pick up different food types, like beans, marbles, and rubber bands, under a time limit. I tracked how much "food" each beak type gathered to determine its survival rate).</li>
+                <li><strong>What did I find?</strong> (I found that the "spoon" beak was highly successful at gathering marbles but failed completely at grabbing rubber bands. When the environment changed and only rubber bands were left, the spoon-beaked birds "starved," while the tweezer-beaked birds survived and "reproduced").</li>
+                <li><strong>What do these findings mean?</strong> (These findings model Natural Selection. There is no single "best" beak. Fitness is entirely dependent on the environment. The variation in tools proved that if the environment changes, the selective pressure shifts, favoring a different phenotype and changing the population over time).</li>
+            </ol>
+        </section>
+
+    </main>
+
+    <footer class="bg-slate-100 py-8 mt-12 border-t border-slate-200">
+        <div class="max-w-4xl mx-auto px-4 text-center text-slate-500 text-sm">
+            <p>Biology 30 Saskatchewan Digital Textbook - Unit 4, Chapter 7</p>
+            <button onclick="window.print()" class="mt-4 bg-slate-800 text-white px-4 py-2 rounded-lg text-xs hover:bg-slate-700 transition-colors">Print to PDF</button>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        });
+    </script>
+</body>
+</html>
