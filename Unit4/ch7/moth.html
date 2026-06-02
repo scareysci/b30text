@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Peppered Moth Simulator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes fadeIn { 
+            from { opacity: 0; transform: scale(0.8); } 
+            to { opacity: 1; transform: scale(1); } 
+        }
+        .moth-element {
+            position: absolute;
+            animation: fadeIn 0.2s ease-in;
+            cursor: crosshair;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-50 text-slate-800 font-sans">
+
+    <!-- Header -->
+    <header class="bg-emerald-800 text-white p-6 shadow-md">
+        <div class="max-w-4xl mx-auto flex items-center justify-between">
+            <div>
+                <h1 class="text-3xl font-extrabold tracking-tight">Evolution in Action</h1>
+                <p class="text-emerald-200 text-lg">The Peppered Moth Simulation</p>
+            </div>
+            <div class="hidden sm:block opacity-60">
+                <svg width="48" height="48" viewBox="0 0 100 100">
+                    <path d="M48 20 C60 -5, 95 10, 90 45 C80 65, 55 50, 48 45 Z" fill="currentColor" />
+                    <path d="M52 20 C40 -5, 5 10, 10 45 C20 65, 45 50, 52 45 Z" fill="currentColor" />
+                    <path d="M48 45 C65 55, 80 85, 65 95 C55 100, 48 80, 48 70 Z" fill="currentColor" />
+                    <path d="M52 45 C35 55, 20 85, 35 95 C45 100, 52 80, 52 70 Z" fill="currentColor" />
+                </svg>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8 relative">
+
+        <!-- PHASE: INTRO -->
+        <div id="phase-intro" class="bg-white p-8 rounded-xl shadow-sm border border-slate-200 print:hidden transition-opacity duration-500">
+            <h2 class="text-2xl font-bold text-emerald-800 border-b-2 border-emerald-100 pb-2 mb-6 flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 14 6l7-7v7a7 7 0 0 1-7 7H4a7 7 0 0 1 7-7z"/><path d="M14 6v6a3 3 0 0 1-3 3h-4"/></svg> 
+                The Pristine Forest (Pre-1850s)
+            </h2>
+            <div class="prose prose-slate max-w-none text-lg leading-relaxed">
+                <p>Welcome to early 19th-century England. The forests are clean, and the trunks of the birch trees are pale and covered in light-colored lichens.</p>
+                <p>Living in this forest is the <strong>Peppered Moth</strong> (<em>Biston betularia</em>). These moths come in two main genetic variations (phenotypes):</p>
+                
+                <div class="flex flex-col sm:flex-row gap-6 my-8 items-center justify-center bg-slate-50 p-6 rounded-lg border border-slate-100">
+                    <div class="flex flex-col items-center max-w-xs text-center">
+                        <div class="w-24 h-24 bg-[#e2e8f0] rounded-full flex items-center justify-center shadow-inner mb-4" id="intro-light-moth"></div>
+                        <h4 class="font-bold text-slate-700">Typica (Light Variant)</h4>
+                        <p class="text-sm text-slate-500 mt-2">Pale with dark speckles. This is the most common variant at this time.</p>
+                    </div>
+                    <div class="flex flex-col items-center max-w-xs text-center">
+                        <div class="w-24 h-24 bg-[#e2e8f0] rounded-full flex items-center justify-center shadow-inner mb-4" id="intro-dark-moth"></div>
+                        <h4 class="font-bold text-slate-700">Carbonaria (Dark Variant)</h4>
+                        <p class="text-sm text-slate-500 mt-2">Solid dark gray or black. A rare genetic mutation.</p>
+                    </div>
+                </div>
+                
+                <p>As a predatory bird, your survival depends on finding and eating these moths. Let's see how well you can hunt in this environment!</p>
+            </div>
+            <div class="mt-8 flex justify-end">
+                <button onclick="startPhase('sim1')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-lg font-bold shadow transition flex items-center gap-2">
+                    Enter the Forest <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- PHASE: TRANSITION -->
+        <div id="phase-transition" class="hidden bg-white p-8 rounded-xl shadow-sm border border-slate-200 print:hidden transition-opacity duration-500">
+            <h2 class="text-2xl font-bold text-slate-800 border-b-2 border-slate-200 pb-2 mb-6 flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8l-7 5V8l-7 5V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M17 18h1"/><path d="M12 18h1"/><path d="M7 18h1"/></svg>
+                The Industrial Revolution (Late 1800s)
+            </h2>
+            <div class="prose prose-slate max-w-none text-lg leading-relaxed">
+                <p>Decades have passed. The Industrial Revolution has transformed England. Factories are burning massive amounts of coal to power new machinery.</p>
+                <p>Unfortunately, there are no environmental regulations. Heavy black smoke pours from the smokestacks, blanketing the surrounding countryside in thick, dark soot.</p>
+                <div class="my-8 p-6 bg-slate-800 text-slate-200 rounded-lg shadow-inner border border-slate-900">
+                    <h4 class="font-bold text-white mb-2">Environmental Impact:</h4>
+                    <ul class="list-disc pl-6 space-y-2">
+                        <li>The air quality plummets, causing the light-colored lichens on the trees to die.</li>
+                        <li>The tree bark itself becomes stained dark brown and black from the industrial soot.</li>
+                        <li>The visual landscape of the forest has completely inverted.</li>
+                    </ul>
+                </div>
+                <p>The peppered moths still live in this forest. As a bird, you must return to hunt. Let's see how the environmental change affects your diet.</p>
+            </div>
+            <div class="mt-8 text-right">
+                <button onclick="startPhase('sim2')" class="bg-slate-800 hover:bg-slate-700 text-white px-6 py-3 rounded-lg font-bold shadow transition flex items-center gap-2 ml-auto">
+                    Enter the Polluted Forest <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- GAME ENGINE CONTAINER -->
+        <div id="game-engine" class="hidden animate-in fade-in duration-500">
+            <div class="w-full max-w-3xl mx-auto bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden">
+                <div class="bg-slate-800 text-white p-4 flex justify-between items-center">
+                    <div>
+                        <h2 id="game-title" class="text-xl font-bold flex items-center gap-2">
+                            <!-- Title injected via JS -->
+                        </h2>
+                        <p class="text-sm text-slate-300">You are a bird. Click the moths to eat them!</p>
+                    </div>
+                    <div class="flex items-center gap-6">
+                        <div class="text-right">
+                            <div id="game-total-score" class="text-3xl font-mono font-bold text-emerald-400">0</div>
+                            <div class="text-xs font-bold uppercase tracking-wider text-slate-400">Moths Eaten</div>
+                        </div>
+                        <div class="text-right">
+                            <div id="game-timer" class="text-3xl font-mono font-bold text-amber-400">00:30</div>
+                            <div class="text-xs font-bold uppercase tracking-wider text-slate-400">Time Remaining</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="game-canvas" class="relative w-full h-[450px] overflow-hidden cursor-crosshair select-none bg-[#e2e8f0]">
+                    <!-- Moths injected here -->
+
+                    <!-- Overlays -->
+                    <div id="overlay-start" class="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-20">
+                        <button onclick="startGameLoop()" class="px-8 py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-full shadow-lg transform transition hover:-translate-y-1 text-xl">
+                            Start Hunting
+                        </button>
+                    </div>
+
+                    <div id="overlay-end" class="hidden absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm z-20 flex-col text-white">
+                        <h3 class="text-3xl font-bold mb-4">Time's Up!</h3>
+                        <div class="flex gap-8 mb-6">
+                            <div class="text-center">
+                                <div id="score-light" class="text-4xl font-bold text-slate-200">0</div>
+                                <div class="text-sm">Light Moths Eaten</div>
+                            </div>
+                            <div class="text-center">
+                                <div id="score-dark" class="text-4xl font-bold text-slate-400">0</div>
+                                <div class="text-sm">Dark Moths Eaten</div>
+                            </div>
+                        </div>
+                        <p class="text-amber-300 font-medium max-w-md text-center mb-6">Data recorded for your lab report.</p>
+                        <button id="btn-continue-game" class="px-8 py-3 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-lg shadow-lg border border-slate-600">
+                            Continue &rarr;
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PHASE: CONCLUSION -->
+        <div id="phase-conclusion" class="hidden bg-white p-8 sm:p-12 rounded-xl shadow-lg border border-slate-200 max-w-2xl mx-auto text-center animate-in fade-in">
+            <div class="mb-6 flex justify-center text-emerald-600">
+                <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
+            </div>
+            <h2 class="text-3xl font-extrabold text-slate-800 mb-4">Simulation Complete!</h2>
+            <p class="text-lg text-slate-600 mb-8 leading-relaxed">
+                Great hunting! Please finish filling out your paper lab report using the data you've collected from both the pristine and polluted forests.
+            </p>
+            <button onclick="startPhase('intro')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-lg font-bold shadow-lg transition inline-flex items-center gap-3 text-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                Restart Simulator
+            </button>
+        </div>
+    </main>
+
+    <!-- Core JavaScript Logic -->
+    <script>
+        // --- SVG Generator ---
+        function getMothSVG(type, rotation) {
+            const fill = type === 'light' ? '#e2e8f0' : '#1e293b';
+            const stroke = type === 'light' ? '#cbd5e1' : '#0f172a';
+            const speckle = type === 'light' ? '#94a3b8' : '#020617';
+            const body = type === 'light' ? '#94a3b8' : '#020617';
+
+            return `
+            <svg viewBox="0 0 100 100" width="48" height="48" style="transform: rotate(${rotation}deg)" class="drop-shadow-sm transition-transform duration-100 ease-in-out hover:scale-110">
+                <g stroke="${stroke}" stroke-width="1.5">
+                    <path d="M48 20 C60 -5, 95 10, 90 45 C80 65, 55 50, 48 45 Z" fill="${fill}" />
+                    <path d="M52 20 C40 -5, 5 10, 10 45 C20 65, 45 50, 52 45 Z" fill="${fill}" />
+                    <path d="M48 45 C65 55, 80 85, 65 95 C55 100, 48 80, 48 70 Z" fill="${fill}" />
+                    <path d="M52 45 C35 55, 20 85, 35 95 C45 100, 52 80, 52 70 Z" fill="${fill}" />
+                    <circle cx="25" cy="35" r="1.5" fill="${speckle}" stroke="none"/>
+                    <circle cx="35" cy="25" r="2" fill="${speckle}" stroke="none"/>
+                    <circle cx="75" cy="35" r="1.5" fill="${speckle}" stroke="none"/>
+                    <circle cx="65" cy="25" r="2" fill="${speckle}" stroke="none"/>
+                    <circle cx="35" cy="75" r="1.5" fill="${speckle}" stroke="none"/>
+                    <circle cx="65" cy="75" r="1.5" fill="${speckle}" stroke="none"/>
+                    <circle cx="20" cy="45" r="1" fill="${speckle}" stroke="none"/>
+                    <circle cx="80" cy="45" r="1" fill="${speckle}" stroke="none"/>
+                    <ellipse cx="50" cy="45" rx="4" ry="18" fill="${body}" stroke="none" />
+                    <path d="M48 28 C45 20, 40 15, 38 15" fill="none" stroke="${body}" stroke-width="1.5" />
+                    <path d="M52 28 C55 20, 60 15, 62 15" fill="none" stroke="${body}" stroke-width="1.5" />
+                </g>
+            </svg>`;
+        }
+
+        // --- Render Intro Icons ---
+        document.getElementById('intro-light-moth').innerHTML = getMothSVG('light', 0);
+        document.getElementById('intro-dark-moth').innerHTML = getMothSVG('dark', 0);
+
+        // --- Global State ---
+        let currentTheme = 'light';
+        let sim1Data = { light: 0, dark: 0 };
+        let sim2Data = { light: 0, dark: 0 };
+
+        // --- Game Engine Variables ---
+        const GAME_DURATION = 30; // 30 seconds
+        let timeLeft = GAME_DURATION;
+        let score = { light: 0, dark: 0 };
+        let moths = [];
+        let isPlaying = false;
+        let timerInterval, loopInterval;
+
+        // DOM Elements
+        const canvas = document.getElementById('game-canvas');
+        const timerDisplay = document.getElementById('game-timer');
+        const overlayStart = document.getElementById('overlay-start');
+        const overlayEnd = document.getElementById('overlay-end');
+        const scoreLight = document.getElementById('score-light');
+        const scoreDark = document.getElementById('score-dark');
+        const gameTitle = document.getElementById('game-title');
+        const btnContinueGame = document.getElementById('btn-continue-game');
+
+        // --- Navigation ---
+        function hideAllPhases() {
+            ['phase-intro', 'phase-transition', 'game-engine', 'phase-conclusion'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+        }
+
+        function startPhase(phase) {
+            hideAllPhases();
+            
+            if (phase === 'intro') {
+                document.getElementById('phase-intro').classList.remove('hidden');
+            } else if (phase === 'sim1') {
+                document.getElementById('game-engine').classList.remove('hidden');
+                setupGame('light');
+            } else if (phase === 'transition') {
+                document.getElementById('phase-transition').classList.remove('hidden');
+            } else if (phase === 'sim2') {
+                document.getElementById('game-engine').classList.remove('hidden');
+                setupGame('dark');
+            } else if (phase === 'conclusion') {
+                document.getElementById('phase-conclusion').classList.remove('hidden');
+            }
+        }
+
+        // --- Game Logic ---
+        function setupGame(theme) {
+            currentTheme = theme;
+            
+            // Reset state
+            timeLeft = GAME_DURATION;
+            score = { light: 0, dark: 0 };
+            moths = [];
+            isPlaying = false;
+            
+            // Update UI 
+            timerDisplay.innerText = `00:${timeLeft}`;
+            document.getElementById('game-total-score').innerText = '0';
+            overlayStart.classList.remove('hidden');
+            overlayEnd.classList.add('hidden');
+            
+            // Clear old moths
+            canvas.querySelectorAll('.moth-element').forEach(el => el.remove());
+
+            // Set background based on theme
+            const noiseLight = 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.85%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22 opacity=%220.1%22/%3E%3C/svg%3E")';
+            const noiseDark = 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22 opacity=%220.2%22/%3E%3C/svg%3E")';
+
+            if (theme === 'light') {
+                gameTitle.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-leaf"><path d="M11 20A7 7 0 0 1 14 6l7-7v7a7 7 0 0 1-7 7H4a7 7 0 0 1 7-7z"/><path d="M14 6v6a3 3 0 0 1-3 3h-4"/></svg> Pristine Forest (Pre-Industrial)`;
+                canvas.className = `relative w-full h-[450px] overflow-hidden cursor-crosshair select-none bg-[#e2e8f0]`;
+                canvas.style.backgroundImage = noiseLight;
+                
+                // Set the continue button destination
+                btnContinueGame.onclick = () => startPhase('transition');
+                btnContinueGame.innerText = "Continue to Next Era →";
+                btnContinueGame.className = "px-8 py-3 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-lg shadow-lg border border-slate-600";
+
+            } else {
+                gameTitle.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-factory"><path d="M2 20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8l-7 5V8l-7 5V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M17 18h1"/><path d="M12 18h1"/><path d="M7 18h1"/></svg> Polluted Forest (Post-Industrial)`;
+                canvas.className = `relative w-full h-[450px] overflow-hidden cursor-crosshair select-none bg-[#1e293b]`;
+                canvas.style.backgroundImage = noiseDark;
+
+                // Set the continue button destination
+                btnContinueGame.onclick = () => startPhase('conclusion');
+                btnContinueGame.innerText = "Finish Simulation →";
+                btnContinueGame.className = "px-8 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-lg shadow-lg";
+            }
+        }
+
+        function startGameLoop() {
+            overlayStart.classList.add('hidden');
+            isPlaying = true;
+            
+            // Start Timer
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                timerDisplay.innerText = `00:${timeLeft.toString().padStart(2, '0')}`;
+                
+                if (timeLeft <= 0) {
+                    endGame();
+                }
+            }, 1000);
+
+            // Spawner & Cleanup Loop
+            loopInterval = setInterval(() => {
+                const now = Date.now();
+                
+                // Filter out expired moths based on camouflage
+                moths = moths.filter(m => {
+                    const isCamouflaged = m.type === currentTheme;
+                    const maxAge = isCamouflaged ? 750 : 3000; // Increased camouflaged time to 750ms
+                    
+                    if (now - m.createdAt >= maxAge) {
+                        m.element.remove();
+                        return false;
+                    }
+                    return true;
+                });
+                
+                // Spawn new moths if population drops
+                if (moths.length < 8 && Math.random() > 0.4) {
+                    spawnMoth();
+                }
+            }, 100);
+        }
+
+        function spawnMoth() {
+            const size = 48;
+            const maxX = Math.max(0, canvas.clientWidth - size);
+            const maxY = Math.max(0, canvas.clientHeight - size);
+            
+            const type = Math.random() > 0.5 ? 'light' : 'dark';
+            const x = Math.random() * maxX;
+            const y = Math.random() * maxY;
+            const id = Math.random().toString(36).substr(2, 9);
+            
+            const el = document.createElement('div');
+            el.className = 'moth-element';
+            el.style.left = `${x}px`;
+            el.style.top = `${y}px`;
+            el.innerHTML = getMothSVG(type, Math.random() * 360);
+            
+            el.addEventListener('mousedown', (e) => {
+                if (!isPlaying) return;
+                e.stopPropagation();
+                
+                // Increment score
+                score[type]++;
+                document.getElementById('game-total-score').innerText = score.light + score.dark;
+                
+                // Remove from DOM and Array immediately
+                el.remove();
+                moths = moths.filter(m => m.id !== id);
+            });
+
+            canvas.appendChild(el);
+            
+            moths.push({
+                id,
+                type,
+                createdAt: Date.now(),
+                element: el
+            });
+        }
+
+        function endGame() {
+            isPlaying = false;
+            clearInterval(timerInterval);
+            clearInterval(loopInterval);
+            
+            // Save data globally
+            if (currentTheme === 'light') {
+                sim1Data = { ...score };
+            } else {
+                sim2Data = { ...score };
+            }
+            
+            // Update and show End Screen
+            scoreLight.innerText = score.light;
+            scoreDark.innerText = score.dark;
+            overlayEnd.classList.remove('hidden');
+            
+            // Remove remaining moths from view
+            canvas.querySelectorAll('.moth-element').forEach(el => el.remove());
+            moths = [];
+        }
+    </script>
+</body>
+</html>
