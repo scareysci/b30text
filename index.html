@@ -105,6 +105,7 @@
 
         <div class="space-y-12">
 
+            <!-- Unit 1 -->
             <section class="unit-card">
                 <div class="unit-header flex items-center gap-4">
                     <div class="p-3 bg-green-100 rounded-full text-green-700">
@@ -134,6 +135,7 @@
                 </div>
             </section>
 
+            <!-- Unit 2 -->
             <section class="unit-card">
                 <div class="unit-header flex items-center gap-4 !bg-blue-50 !border-blue-100">
                     <div class="p-3 bg-blue-100 rounded-full text-blue-700">
@@ -201,6 +203,7 @@
                 </div>
             </section>
 
+            <!-- Unit 3 -->
             <section class="unit-card">
                 <div class="unit-header flex items-center gap-4 !bg-purple-50 !border-purple-100">
                     <div class="p-3 bg-purple-100 rounded-full text-purple-700">
@@ -233,6 +236,7 @@
                 </div>
             </section>
 
+            <!-- Unit 4 -->
             <section class="unit-card">
                 <div class="unit-header flex items-center gap-4 !bg-amber-50 !border-amber-100">
                     <div class="p-3 bg-amber-100 rounded-full text-amber-700">
@@ -252,10 +256,16 @@
                                 Read Chapter <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i>
                             </div>
                         </a>
+                        
+                        <!-- Added Chapter 7 Review here -->
+                        <a href="https://scareysci.github.io/b30text/Unit4/ch7/ch7review.html" class="block w-full py-2 px-4 bg-amber-50 border border-amber-300 rounded-lg text-center text-amber-700 font-bold hover:bg-amber-100 transition-colors text-sm">
+                            Chapter 7 Review
+                        </a>
                     </div>
                 </div>
             </section>
 
+            <!-- Unit 5 -->
             <section class="unit-card">
                 <div class="unit-header flex items-center gap-4 !bg-teal-50 !border-teal-100">
                     <div class="p-3 bg-teal-100 rounded-full text-teal-700">
@@ -357,7 +367,13 @@
                 url: "https://scareysci.github.io/b30text/Unit4/ch7/index.html", 
                 keywords: "evolution, darwin, natural selection, adaptation"
             },
-             {
+            {
+                title: "Chapter 7 Review",
+                unit: "Unit 4: Evolution",
+                url: "https://scareysci.github.io/b30text/Unit4/ch7/ch7review.html",
+                keywords: "review, questions, chapter 7, study, evolution, patterns"
+            },
+            {
                 title: "Chapter 9: Student-Directed Study",
                 unit: "Unit 5: The Future of Biology",
                 url: "https://scareysci.github.io/b30text/ch9/index.html", 
@@ -386,7 +402,7 @@
             if (results.length > 0) {
                 searchResults.innerHTML = results.map(item => `
                     <a href="${item.url}" class="block p-4 hover:bg-slate-50 transition-colors">
-                        <div class="text-xs font-bold text-green-600 uppercase mb-1">${item.unit}</div>
+                        <div class="text-xs font-bold text-amber-600 uppercase mb-1">${item.unit}</div>
                         <div class="font-bold text-slate-800">${item.title}</div>
                     </a>
                 `).join('');
