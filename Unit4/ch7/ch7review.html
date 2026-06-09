@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biology 30: Evolution Quest</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .option-btn { transition: all 0.2s ease-in-out; }
+        .option-btn.correct { border-color: #10b981 !important; background-color: #d1fae5 !important; color: #065f46 !important; }
+        .option-btn.correct .badge { background-color: #10b981 !important; color: white !important; }
+        .option-btn.incorrect { border-color: #ef4444 !important; background-color: #fee2e2 !important; color: #991b1b !important; }
+        .option-btn.incorrect .badge { background-color: #ef4444 !important; color: white !important; }
+        .option-btn:disabled { cursor: not-allowed; }
+        .option-btn:disabled:not(.correct):not(.incorrect) { opacity: 0.5; border-color: #e2e8f0; background-color: white; }
+    </style>
+</head>
+<body class="bg-slate-100 min-h-screen flex flex-col items-center justify-center p-4 md:p-8">
+
+    <!-- HOME SCREEN -->
+    <div id="home-screen" class="w-full max-w-4xl bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-200">
+        <div class="bg-emerald-700 p-10 text-center text-white relative overflow-hidden">
+            <div class="absolute inset-0 opacity-10 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMiIgZmlsbD0iI2ZmZiIvPjwvc3ZnPg==')]"></div>
+            <h1 class="text-4xl md:text-6xl font-black mb-4 flex justify-center items-center gap-4 relative z-10">
+                <i data-lucide="dna" class="w-12 h-12"></i> BioQuest
+            </h1>
+            <p class="text-emerald-100 text-xl font-medium relative z-10">Biology 30: Evolution Item Bank</p>
+        </div>
+
+        <div class="p-6 md:p-10">
+            <h2 class="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2"><i data-lucide="target" class="text-emerald-600"></i> 1. Select Difficulty</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
+                <!-- Easy -->
+                <button id="diff-easy" onclick="setDifficulty('easy')" class="diff-btn border-2 border-emerald-500 bg-emerald-50 p-5 rounded-2xl text-left transition-all relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-3 opacity-10"><i data-lucide="book-open" class="w-16 h-16 text-emerald-900"></i></div>
+                    <div class="font-bold text-emerald-800 text-xl mb-1">Easy</div>
+                    <div class="text-sm text-emerald-600 font-medium">Knowledge Only (60 Qs)</div>
+                </button>
+                <!-- Medium -->
+                <button id="diff-medium" onclick="setDifficulty('medium')" class="diff-btn border-2 border-slate-200 hover:border-blue-500 hover:bg-blue-50 p-5 rounded-2xl text-left transition-all relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-3 opacity-10"><i data-lucide="microscope" class="w-16 h-16 text-blue-900"></i></div>
+                    <div class="font-bold text-slate-800 text-xl mb-1">Medium</div>
+                    <div class="text-sm text-slate-500 font-medium">Knowledge & Application (90 Qs)</div>
+                </button>
+                <!-- Hard -->
+                <button id="diff-hard" onclick="setDifficulty('hard')" class="diff-btn border-2 border-slate-200 hover:border-orange-500 hover:bg-orange-50 p-5 rounded-2xl text-left transition-all relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-3 opacity-10"><i data-lucide="brain" class="w-16 h-16 text-orange-900"></i></div>
+                    <div class="font-bold text-slate-800 text-xl mb-1">Hard</div>
+                    <div class="text-sm text-slate-500 font-medium">Application & Extension (40 Qs)</div>
+                </button>
+            </div>
+
+            <h2 class="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2"><i data-lucide="hash" class="text-emerald-600"></i> 2. Select Length</h2>
+            <div class="flex flex-wrap gap-4 mb-10">
+                <button id="len-10" onclick="setLength('10')" class="len-btn px-8 py-3 rounded-full border-2 border-slate-200 hover:border-emerald-500 font-bold text-slate-700 transition-all">10 Questions</button>
+                <button id="len-20" onclick="setLength('20')" class="len-btn px-8 py-3 rounded-full border-2 border-emerald-500 bg-emerald-50 font-bold text-emerald-800 transition-all">20 Questions</button>
+                <button id="len-50" onclick="setLength('50')" class="len-btn px-8 py-3 rounded-full border-2 border-slate-200 hover:border-emerald-500 font-bold text-slate-700 transition-all">50 Questions</button>
+                <button id="len-max" onclick="setLength('max')" class="len-btn px-8 py-3 rounded-full border-2 border-slate-200 hover:border-emerald-500 font-bold text-slate-700 transition-all">All Available</button>
+            </div>
+
+            <button onclick="startQuiz()" class="w-full py-5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl font-black text-2xl flex justify-center items-center gap-3 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                <i data-lucide="play-circle" class="w-8 h-8"></i> Launch Sequence
+            </button>
+        </div>
+    </div>
+
+    <!-- QUIZ SCREEN -->
+    <div id="quiz-screen" class="hidden w-full max-w-4xl bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-200">
+        <!-- Header -->
+        <div class="bg-slate-50 p-6 border-b border-slate-200 flex justify-between items-center">
+            <div>
+                <div id="q-number" class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-1">Question 1 of 20</div>
+                <div class="w-48 h-2 bg-slate-200 rounded-full overflow-hidden">
+                    <div id="progress-fill" class="h-full bg-emerald-500 transition-all duration-300" style="width: 5%"></div>
+                </div>
+            </div>
+            <div class="text-right">
+                <div class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-1">Score</div>
+                <div id="score-display" class="text-xl font-black text-emerald-600">0</div>
+            </div>
+        </div>
+
+        <!-- Question Body -->
+        <div class="p-6 md:p-10">
+            <h2 id="question-text" class="text-2xl md:text-3xl font-bold text-slate-800 mb-8 leading-tight">Question goes here?</h2>
+            
+            <div id="options-container" class="space-y-4">
+                <!-- Options injected via JS -->
+            </div>
+
+            <!-- Feedback Box -->
+            <div id="feedback-box" class="hidden mt-8">
+                <div class="p-6 bg-slate-50 border-2 border-slate-200 rounded-2xl">
+                    <div id="feedback-title" class="font-black text-xl mb-3 flex items-center gap-2"></div>
+                    <p id="feedback-rationale" class="text-slate-700 text-lg leading-relaxed"></p>
+                </div>
+                <button onclick="nextQuestion()" class="mt-6 w-full py-4 bg-slate-800 hover:bg-slate-900 text-white rounded-xl font-bold text-xl flex justify-center items-center gap-2 transition-colors shadow-md">
+                    Next Question <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- RESULT SCREEN -->
+    <div id="result-screen" class="hidden w-full max-w-4xl bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-200 text-center">
+        <div class="bg-emerald-700 p-12 text-white relative">
+            <div class="absolute inset-0 opacity-10 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMiIgZmlsbD0iI2ZmZiIvPjwvc3ZnPg==')]"></div>
+            <i data-lucide="award" class="w-24 h-24 mx-auto mb-6 text-emerald-300 relative z-10"></i>
+            <h1 class="text-5xl font-black mb-2 relative z-10">Quiz Complete!</h1>
+        </div>
+
+        <div class="p-10">
+            <div class="flex justify-center items-center gap-12 mb-8">
+                <div>
+                    <div class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-2">Final Score</div>
+                    <div id="final-score" class="text-5xl font-black text-slate-800">18 / 20</div>
+                </div>
+                <div class="w-px h-20 bg-slate-200"></div>
+                <div>
+                    <div class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-2">Accuracy</div>
+                    <div id="final-percentage" class="text-5xl font-black text-emerald-600">90%</div>
+                </div>
+            </div>
+
+            <p id="final-message" class="text-2xl text-slate-600 font-medium mb-10">Evolutionary Master!</p>
+
+            <button onclick="returnToMenu()" class="px-10 py-4 bg-slate-800 hover:bg-slate-900 text-white rounded-xl font-bold text-xl inline-flex justify-center items-center gap-3 transition-colors shadow-lg">
+                <i data-lucide="rotate-ccw"></i> Play Again
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // --- 100-Question Bank Database ---
+        // Compact format: {t: Type, q: Question, o: [Options], a: CorrectIndex, r: Rationale}
+        const qBank = [
+            {t:"K", q:"What is the fundamental biological definition of evolution?", o:["A change in the allele frequencies of a population over time.","The adaptation of an individual organism to a changing climate within its lifetime.","The random generation of mutations to create entirely new biological kingdoms.","The physical progression of a species from microscopic simplicity to macroscopic complexity."], a:0, r:"Biological evolution is fundamentally defined as a change in allele frequencies in a population over time. Individuals do not evolve."},
+            {t:"K", q:"In science, how does a \"Scientific Theory\" differ from everyday usage?", o:["It represents an educated guess that has not yet been rigorously tested by experiments.","It is a well-substantiated explanation based on a body of repeatedly confirmed facts.","It is a flexible hypothesis that changes depending on personal interpretation.","It is an absolute, immutable law that can never be modified by new discoveries."], a:1, r:"In science, a theory is a highly validated, comprehensive explanation supported by an immense body of empirical evidence."},
+            {t:"K", q:"Why can an individual organism NOT biologically evolve?", o:["Because an individual can only change its behavior, never its physical anatomy.","Because mutations only occur in reproductive organs and never affect somatic tissues.","Because an organism is born with a specific set of genes that do not alter to adapt to an environment.","Because evolution requires a minimum lifespan of several generations to visually manifest."], a:2, r:"An individual organism’s genetic code is fixed at birth and does not modify in response to environmental needs."},
+            {t:"K", q:"Which component of the evolutionary process is considered entirely random?", o:["The environmental selection pressures acting on structural traits.","The rate of reproductive success across different phenotypes.","The differential survival of individuals within a localized ecosystem.","The genetic mutations that provide the raw material of variation."], a:3, r:"Mutations are random copy mistakes in genetic replication. Selection, however, is a highly non-random environmental filter."},
+            {t:"K", q:"How is \"evolutionary fitness\" strictly defined in biological terms?", o:["By reproductive success and the total number of fertile offspring produced.","By physical strength, speed, and overall predatory efficiency.","By an organism's capacity to tolerate extreme environmental conditions without dying.","By the overall complexity and physical size of an organism's neural architecture."], a:0, r:"Evolutionary fitness is measured strictly by reproductive output: an organism's relative contribution of fertile offspring to the next generation."},
+            {t:"K", q:"Which of the following describes Charles Darwin's principle of \"Descent with Modification\"?", o:["Species remain static for millennia until rapid genetic engineering alters their lineage.","Species change over time, give rise to new species, and share a common ancestor.","Organisms modify their physical traits through effort and pass them directly to their young.","Environmental pressures eliminate all variation to yield a single, permanently perfect organism."], a:1, r:"Darwin’s concept of descent with modification states that all species descend from shared ancestors while modifying over generations."},
+            {t:"K", q:"What is the primary cause of natural genetic variation within a wild population?", o:["Physical exercise and intentional training of muscle groups.","Exponential population growth and localized resource scarcity.","Mutations and sexual reproduction.","Geographic migration across different regional climate zones."], a:2, r:"Genetic variation is driven by genetic mutations (new alleles) and sexual reproduction (recombining existing alleles)."},
+            {t:"K", q:"What occurs during the \"Struggle for Existence\" as described by Darwin?", o:["Organisms alter their allele frequencies at will to ensure immediate survival.","Individuals mutate simultaneously to avoid competing with one another.","Ecosystems expand linearly to prevent any species from going extinct.","Organisms must compete for limited resources such as food, space, and mates."], a:3, r:"Because organisms reproduce exponentially but resources are finite, individuals must compete for food, shelter, and mates."},
+            {t:"K", q:"Who acts as the selecting agent or environmental pressure in artificial selection?", o:["Humans choosing individuals based on desirable traits.","Wild predators and biological disease vectors.","Random climatic fluctuations and deep-time continental drift.","The intrinsic desire of the organism to transform over generations."], a:0, r:"In artificial selection, humans serve as the selective pressure, choosing breeding pairs to emphasize desired traits."},
+            {t:"K", q:"The domestic dog is an example of artificial selection. Which wild ancestor did it descend from?", o:["The coyote.","The gray wolf.","The red fox.","The golden jackal."], a:1, r:"Domestic dogs are all descendants of the gray wolf (Canis lupus familiaris), bred over thousands of years."},
+            {t:"K", q:"Which modern common vegetable was derived from the selective breeding of the wild mustard plant's leaves?", o:["Broccoli.","Kohlrabi.","Kale.","Cauliflower."], a:2, r:"Selecting for large, leafy variations of the wild mustard plant resulted in the creation of kale."},
+            {t:"K", q:"What agricultural breakthrough was developed in Saskatchewan during the 1970s via artificial selection?", o:["Cold-resistant durum wheat.","High-yield malting barley.","Drought-tolerant field peas.","Canola from rapeseed."], a:3, r:"Canola was bred in Saskatchewan and Manitoba in the 1970s by reducing toxic compounds in industrial rapeseed."},
+            {t:"K", q:"What does the acronym LUCA represent in evolutionary biology?", o:["Last Universal Common Ancestor.","Linear Universal Cellular Adaptation.","Localized Unicellular Organism Assembly.","Latent Universal Character Allopatry."], a:0, r:"LUCA stands for the Last Universal Common Ancestor, the organismal origin of all current life branches on Earth."},
+            {t:"K", q:"Approximately how many billion years ago did LUCA live?", o:["1.2 to 1.5 billion years ago.","3.5 to 3.8 billion years ago.","2.1 to 2.5 billion years ago.","4.5 to 4.6 billion years ago."], a:1, r:"Scientists place the biological emergence of LUCA at roughly 3.5 to 3.8 billion years ago."},
+            {t:"K", q:"Which biochemical evidence supports the existence of a single origin of life?", o:["The presence of unique, non-overlapping genetic codes for every animal phylum.","The reliance on entirely different proteins for transcription across animal kingdoms.","The universal use of Adenosine Triphosphate (ATP) as cellular energy currency.","The fact that all living organisms possess exactly the same number of chromosomes."], a:2, r:"The universal use of Adenosine Triphosphate (ATP) across every single domain of life indicates a single origin point."},
+            {t:"K", q:"What percentage of DNA do humans share with a chimpanzee according to the textbook?", o:["50%","85%","95.5%","98.8%"], a:3, r:"Humans and chimpanzees share an estimated 98.8% of their genetic code, showing a close historical relationship."},
+            {t:"K", q:"Which Indigenous worldview corresponds to the biological concept of a unified \"Tree of Life\"?", o:["Wâhkôhtowin.","Mînihewin.","Tansi.","Mithokin."], a:0, r:"Wâhkôhtowin represents the Cree and Métis worldview of interconnected kinship and relations among all living things."},
+            {t:"K", q:"What mechanism did Jean-Baptiste Lamarck incorrectly propose to explain how traits change?", o:["Allopatric Speciation.","Inheritance of Acquired Characteristics.","Punctuated Equilibrium.","Natural Selection."], a:1, r:"Lamarck proposed the \"Inheritance of Acquired Characteristics,\" falsely believing that physical changes gained in life are genetically inherited."},
+            {t:"K", q:"Which economist noted that human population growth outpaces food supply, inspiring Darwin's concept of competition?", o:["Alfred Wegener.","Stephen Jay Gould.","Thomas Malthus.","Alfred Russel Wallace."], a:2, r:"Thomas Malthus wrote that resources grow linearly while populations grow exponentially, creating a struggle for survival."},
+            {t:"K", q:"Which two scientists independently formulated the theory of evolution by natural selection in the mid-1800s?", o:["Jean-Baptiste Lamarck and Charles Darwin.","Thomas Malthus and Alfred Wegener.","Stephen Jay Gould and Charles Darwin.","Charles Darwin and Alfred Russel Wallace."], a:3, r:"Darwin and Alfred Russel Wallace independently co-developed natural selection as the operational driver of evolution."},
+            {t:"K", q:"What did Alfred Wegener propose that explained the discovery of identical ancient plant fossils across impassable oceans?", o:["Continental Drift.","Punctuated Equilibrium.","Adaptive Radiation.","Coevolutionary Arms Races."], a:0, r:"Alfred Wegener proposed \"Continental Drift,\" explaining why matching fossils exist on opposite sides of impassable oceans."},
+            {t:"K", q:"What macroevolutionary concept was introduced by Stephen Jay Gould to describe long periods of stability interrupted by rapid bursts of change?", o:["Gradualism.","Punctuated Equilibrium.","Disruptive Selection.","Behavioral Isolation."], a:1, r:"Gould proposed Punctuated Equilibrium to describe evolutionary stasis interrupted by sudden, rapid bursts of speciation."},
+            {t:"K", q:"What was the name of the ship upon which Charles Darwin completed his five-year global research voyage?", o:["HMS Endeavour.","HMS Discovery.","HMS Beagle.","HMS Challenger."], a:2, r:"Darwin mapped global ecosystems, geological formations, and biological diversity aboard the HMS Beagle (1831-1836)."},
+            {t:"K", q:"What geographic region provided Darwin with his most famous observations of microclimates and distinct bird beak variations?", o:["The Hawaiian Islands.","The Falkland Islands.","The Philippine Archipelago.","The Galapagos Islands."], a:3, r:"The Galapagos Islands allowed Darwin to witness how local environmental conditions shaped localized physical variations (finch beaks)."},
+            {t:"K", q:"Darwin noted that the ancient fossil of the giant armored Glyptodon resembled which modern animal living in the same region?", o:["The modern rhinoceros.","The modern desert tortoise.","The modern porcupine.","The modern armadillo."], a:3, r:"Darwin noted that fossilized Glyptodon remains were structural, giant ancestral versions of modern armadillos."},
+            {t:"K", q:"Which mode of selection favors one extreme phenotype over the average and opposite extreme phenotypes?", o:["Directional Selection.","Stabilizing Selection.","Disruptive Selection.","Artificial Selection."], a:0, r:"Directional selection occurs when environmental changes selectively favor a single phenotype extreme over others."},
+            {t:"K", q:"Human birth weight is a classic example of which mode of natural selection?", o:["Disruptive Selection.","Stabilizing Selection.","Directional Selection.","Coevolutionary Selection."], a:1, r:"Stabilizing selection selects against extreme phenotypes (extreme low or high birth weights) in favor of the optimal average."},
+            {t:"K", q:"What type of selection occurs when both extreme phenotypes are favored, and the average phenotype is selected against?", o:["Directional Selection.","Stabilizing Selection.","Disruptive Selection.","Environmental Selection."], a:2, r:"Disruptive selection selects against average individuals, simultaneously favoring both phenotypic extremes."},
+            {t:"K", q:"What is defined as the evolutionary process by which populations evolve to become distinct, biologically separate species?", o:["Gradualism.","Radiometric Dating.","Coevolution.","Speciation."], a:3, r:"Speciation is the branch of evolutionary development where populations separate to form distinct, non-interbreeding species."},
+            {t:"K", q:"What must occur between two populations for speciation to take place?", o:["Reproductive isolation.","Increased gene flow.","Uniform environmental pressures.","Continuous cross-pollination."], a:0, r:"For populations to diverge into separate species, gene flow must be restricted by reproductive isolation."},
+            {t:"K", q:"Which type of isolation involves two populations separated by a physical barrier like a canyon or mountain range?", o:["Temporal Isolation.","Geographic Isolation.","Behavioral Isolation.","Gametic Isolation."], a:1, r:"Geographic isolation involves physically separating populations with physical terrain barriers."},
+            {t:"K", q:"What type of isolation is demonstrated by orchids that live in the same forest but bloom on different days?", o:["Behavioral Isolation.","Geographic Isolation.","Temporal Isolation.","Mechanical Isolation."], a:2, r:"Temporal isolation occurs when populations occupy the same habitat but reproduce at different times of the year or day."},
+            {t:"K", q:"Eastern and Western Meadowlarks remain separate species due to differences in mating songs. What form of isolation is this?", o:["Temporal Isolation.","Geographic Isolation.","Structural Isolation.","Behavioral Isolation."], a:3, r:"Behavioral isolation occurs when courtship rituals or mating communications (such as bird songs) differ."},
+            {t:"K", q:"What macroevolutionary pattern describes a slow, steady, continuous process of tiny changes accumulating over millions of years?", o:["Gradualism.","Punctuated Equilibrium.","Convergent Evolution.","Adaptive Radiation."], a:0, r:"Gradualism is the evolutionary concept of slow, continuous, micro-adjustments building over deep time."},
+            {t:"K", q:"What is another term for divergent evolution, describing how a single ancestral species rapidly diversifies to fill available ecological niches?", o:["Coevolution.","Adaptive Radiation.","Convergent Evolution.","Punctuated Equilibrium."], a:1, r:"Adaptive radiation (or divergent evolution) occurs when a single lineage rapidly diverges into many species to occupy niches."},
+            {t:"K", q:"What evolutionary pattern describes unrelated organisms developing similar traits because they face similar environmental pressures?", o:["Divergent Evolution.","Coevolution.","Convergent Evolution.","Punctuated Equilibrium."], a:2, r:"Convergent evolution occurs when unrelated species develop similar adaptations due to facing matching environmental challenges."},
+            {t:"K", q:"What pattern of evolution involves two species evolving in response to changes in each other over time, such as an evolutionary arms race?", o:["Gradualism.","Convergent Evolution.","Divergent Evolution.","Coevolution."], a:3, r:"Coevolution occurs when two species adaptively shift in tandem in response to physical changes in each other over time."},
+            {t:"K", q:"How do physicists determine the precise chronological age of a fossil trapped in deep rock layers?", o:["By measuring the decay of radioactive isotopes in the surrounding rocks.","By measuring the thickness of the fossilized bone fragments.","By calculating the current level of carbon pollution in the local atmosphere.","By comparing the visual color spectrum of the surrounding sedimentary matrix."], a:0, r:"Physicists calculate absolute age by measuring the decay of radioactive parent isotopes into stable daughter isotopes."},
+            {t:"K", q:"What are anatomical features called that share an identical bone layout across different species but serve entirely different modern functions?", o:["Analogous structures.","Homologous structures.","Vestigial structures.","Embryonic structures."], a:1, r:"Homologous structures display matching ancestral anatomy adapted to different modern functions (e.g., human arm/bat wing)."},
+            {t:"K", q:"What is a vestigial structure?", o:["An organ that grows larger and more functional through intensive environmental use.","A skeletal feature newly generated by a sudden beneficial mutation.","A leftover structure that had a function in an early ancestor but is useless now.","An identical embryonic structure shared only by invertebrate species."], a:2, r:"Vestigial structures are anatomical components that are reduced and non-functional but served essential purposes in ancestors."},
+            {t:"K", q:"Which of the following is listed in the textbook as a vestigial structure in modern whales?", o:["Fully developed pharyngeal gill slits.","Modified dorsal fins.","Streamlined caudal vertebrae.","Deep interior hip bones."], a:3, r:"The tiny, embedded pelvic bones inside modern whales serve no mechanical purpose but are structural leftovers of tetrapod ancestry."},
+            {t:"K", q:"What temporary developmental features do human embryos possess that point to an aquatic evolutionary ancestry?", o:["Tail buds and pharyngeal gill slits.","Functional deep-sea swim bladders.","Calcified external operculum plates.","Lateral line sensory networks."], a:0, r:"Vertebrate embryos temporarily show matching anatomical stages, such as gill slits and tail buds."},
+            {t:"K", q:"What is considered the \"ultimate evidence\" for confirming the exact degree of evolutionary kinship between two distinct species?", o:["Detailed measurements of adult fossil skeletal volumes.","Comparative analysis of DNA and molecular sequences.","The geographic proximity of their native habitats.","The similarities in their mechanical behavioral patterns."], a:1, r:"Molecular sequencing of DNA provides the ultimate, highly precise blueprint for tracking common descent and evolutionary divergence."},
+            {t:"K", q:"What is the name of the famous, nearly complete Tyrannosaurus rex skeleton discovered near Eastend, Saskatchewan?", o:["Gould.","Keith.","Scotty.","Baldur."], a:2, r:"Scotty is the famous, nearly complete T-rex specimen discovered in southern Saskatchewan."},
+            {t:"K", q:"Approximately how many million years ago did Saskatchewan's famous T-Rex live?", o:["10 million years ago.","35 million years ago.","150 million years ago.","66 million years ago."], a:3, r:"Scotty lived during the late Cretaceous Period, approximately 66 million years ago."},
+            {t:"K", q:"According to evolutionary biology, what is the exact relationship between modern humans and modern chimpanzees?", o:["Humans and chimpanzees share a common ape ancestor that lived 6 to 7 million years ago.","Humans evolved directly from modern chimpanzees via directional selection.","Chimpanzees evolved from primitive human ancestors through disruptive selection.","There is no genetic or evolutionary link between primates and hominin lineages."], a:0, r:"Evolution demonstrates that humans did not descend from modern chimpanzees; rather, both diverged from a common ancestor 6-7 million years ago."},
+            {t:"K", q:"Which hypothesis states that anatomically modern humans evolved exclusively in Africa before migrating globally?", o:["The Punctuated Migration Theory.","The Out of Africa Hypothesis.","The Allopatric Primacy Hypothesis.","The Divergent Hominin Model."], a:1, r:"The Out of Africa hypothesis suggests Homo sapiens evolved in Africa before migrating globally."},
+            {t:"K", q:"Approximately how many years ago did a small group of modern humans migrate out of Africa?", o:["5,000 to 10,000 years ago.","20,000 to 25,000 years ago.","60,000 to 70,000 years ago.","300,000 to 350,000 years ago."], a:2, r:"Fossil and genetic evidence suggest the primary wave of modern human migration out of Africa occurred 60,000 to 70,000 years ago."},
+            {t:"K", q:"What cultural milestone occurred roughly 10,000 years ago, dramatically changing human selective pressures?", o:["The Industrial Revolution.","The Bipedal Migration Event.","The Medical Technology Boom.","The Agricultural Revolution."], a:3, r:"The Agricultural Revolution occurred roughly 10,000 years ago, shifting humans from nomadic hunter-gatherers to settled farmers."},
+            {t:"K", q:"What new evolutionary selective pressure was introduced to human populations due to the formation of dense agricultural cities?", o:["Epidemic diseases like cholera and smallpox.","Increased predation from large mammalian carnivores.","Rapid drops in the global atmospheric oxygen content.","Complete dependency on hunting large migratory herbivores."], a:0, r:"Settling in dense cities created highly localized sanitary challenges, allowing epidemic diseases to act as a major selective pressure."},
+            {t:"K", q:"What ancient fossil fern species did Alfred Wegener map across separated modern continents to prove continental drift?", o:["Glossopteris.","Archaeopteryx.","Glyptodon.","Rapeseed."], a:0, r:"Wegener documented identical fossilized remains of the ancient fern Glossopteris on separated southern continents."},
+            {t:"K", q:"In evolutionary biology, the \"raw material\" that environmental selection filters is generated by:", o:["Acquired physical habits.","Random genetic mutations.","Linear agricultural expansion.","Geological continental drift."], a:1, r:"Mutations are random changes in genetic structure that serve as the fundamental \"raw material\" of variation."},
+            {t:"K", q:"Which Saskatchewan crop was developed by eliminating toxic erucic acid and glucosinolates from its wild, industrial predecessor?", o:["Hard red spring wheat.","Yellow sweet clover.","Canola.","Industrial flax."], a:2, r:"Canola was selectively bred from rapeseed plants to create an edible oil low in toxic acids."},
+            {t:"K", q:"The phrase \"All My Relations\" reflects the biological fact that all living organisms share:", o:["Identical phenotypic ratios.","The exact same number of somatic chromosomes.","A localized habitat in West-Central Saskatchewan.","A single universal common ancestor (LUCA)."], a:3, r:"The kinship of \"All My Relations\" aligns with the biological reality that all life is connected back to a single universal common ancestor."},
+            {t:"K", q:"What was the fatal flaw in Lamarck's proposed mechanism of evolutionary change?", o:["He thought changes acquired during an individual's life could alter inherited genes.","He believed that species remained completely static over deep time.","He claimed that fossils were entirely optical illusions in rock layers.","He argued that extinction was caused only by human agricultural activities."], a:0, r:"Lamarck incorrectly believed that somatic modifications acquired during an individual's lifetime directly changed the inheritable germline."},
+            {t:"K", q:"The observation that different, yet ecologically similar, flightless birds inhabit isolated southern continents demonstrates that:", o:["Species vary locally.","Species vary globally.","Species vary over time.","Species do not vary."], a:1, r:"The global dispersion of ecologically similar yet distinct flightless birds is an example of global species variation."},
+            {t:"K", q:"According to Darwin's observations in the Galapagos, what structural feature of local finches varied most explicitly based on food source?", o:["Tail feather coloration patterns.","Overall body mass and wing skeletal length.","Beak shapes adapted for crushing or probing.","Leg bone density and nesting behaviors."], a:2, r:"Darwin’s finches showed varied beak structures adapted to crushing seeds or probing for insects on different islands."},
+            {t:"K", q:"Which selective pressure historically drove the directional selection of dark-colored peppered moths over light-colored moths?", o:["Severe agricultural droughts in rural areas.","Introduction of foreign avian predatory species.","Rapid warming of the regional climate.","Industrial soot darkening forest tree bark."], a:3, r:"Industrial coal emissions coated trees in soot, driving directional selection toward darker moths that could stay camouflaged."},
+            {t:"K", q:"Transitional fossils like Archaeopteryx are crucial evidence for evolution because they display:", o:["Structural characteristics of both ancient reptiles and modern birds.","Identical molecular codes to modern single-celled bacteria.","Clear evidence of human selective breeding practices.","Skeletal elements that completely lack any radioactive isotopes."], a:0, r:"Archaeopteryx is a transitional fossil because it exhibits skeletal reptilian traits alongside modern avian feathers."},
+            {t:"K", q:"What hominin milestone directly freed hands for advanced tool utilization?", o:["Mass expansion of overall brain size.","The adoption of an upright, bipedal gait.","The switch from farming to hunting.","The sudden development of a universal genetic code."], a:1, r:"Bipedalism freed the forelimbs from locomotion, facilitating the developmental progression of tool use and manual dexterity."},
+            {t:"A", q:"A Saskatchewan farmer discovers that a wild weed population in their field is no longer affected by a common herbicide. How would evolutionary biology explain this?", o:["The herbicide caused a massive, immediate wave of directed mutations in individual weeds to make them stronger.","The weeds learned to metabolize the herbicide as a secondary food source due to an intensive struggle for existence.","A few weeds possessed a pre-existing genetic variation for resistance; they survived the spraying and reproduced, shifting the population allele frequency.","The agricultural ecosystem initiated artificial selection to maximize weed biodiversity alongside cash crops."], a:2, r:"The application of herbicide acts as an environmental filter. Resistant individuals survived and reproduced, passing on resistance genes."},
+            {t:"A", q:"A team of biologists samples a remote lake in northern Saskatchewan and finds a single species of predatory fish has split into two separate populations: one that hunts exclusively along the shallow shorelines and another that hunts in deep open water. If these populations stop interbreeding, what evolutionary process is occurring?", o:["Allopatric Speciation via explicit geographic land barriers.","Coevolution via an industrial predatory arms race.","Punctuated Equilibrium via deep-time continental drift.","Sympatric Speciation via behavioral/ecological isolation."], a:3, r:"Since the fish reside in the same lake but isolate based on behavioral niches (shallow vs. deep hunting), they are undergoing sympatric speciation."},
+            {t:"A", q:"Commercial turkey farmers have selectively bred domestic turkeys for such massive breast muscle sizes that the birds can no longer mate naturally and must rely on artificial insemination. This extreme outcome is a direct result of:", o:["Artificial selection maximizing traits valued solely by humans.","Stabilizing natural selection prioritizing physiological health.","Disruptive natural selection creating a new biological phylum.","Gradualistic evolution driven by wild mammalian predators."], a:0, r:"Humans acted as the selective force to breed birds with larger breasts, prioritizing market value over natural mating viability."},
+            {t:"A", q:"Biologists notice that a species of prairie grass in southern Saskatchewan blooms exclusively in early May, while an identical-looking population located in the exact same field blooms only in late July. Gene flow between these two populations is blocked by:", o:["Geographic Isolation.","Temporal Isolation.","Behavioral Isolation.","Structural Isolation."], a:1, r:"Because the two populations reproduce at different times of the year (May vs. July), they are isolated temporally."},
+            {t:"A", q:"The swift fox and the snowy owl both inhabit cold, snowy winter environments. Both species turn bright white in the winter to camouflage from predators or prey. However, their skeletal lineages and molecular codes are vastly different. Their shared white winter coats are an example of:", o:["Divergent Evolution.","Coevolution.","Convergent Evolution.","Adaptive Radiation."], a:2, r:"The foxes and owls are unrelated, but they evolved white winter coats in response to the same selection pressure (snowy environments)."},
+            {t:"A", q:"An entomologist studies a population of beetles on a windy hill. Beetles with short wings cannot fly and are never blown off the hill. Beetles with exceptionally long wings can fly strongly enough to resist the wind. Beetles with average-sized wings are regularly blown away into the ocean. What mode of selection is acting on this population?", o:["Stabilizing Selection.","Directional Selection.","Artificial Selection.","Disruptive Selection."], a:3, r:"Both wing extreme phenotypes (short and long) are selected for, while intermediate, average-sized wings are selected against."},
+            {t:"A", q:"If a new viral disease spreads through a population of snowshoe hares in Saskatchewan, which individuals are evolutionarily \"fitter\"?", o:["The hares that carry a random genetic mutation giving them immunity, allowing them to survive and produce offspring.","The physically strongest and largest hares that can run the fastest.","The older hares that possess the highest intelligence and know where to hide from the virus.","The hares that intentionally change their diet to avoid catching the viral infection."], a:0, r:"Biological fitness is defined by reproductive success. Surviving a disease through genetic resistance allows an individual to reproduce."},
+            {t:"A", q:"A developer uncovers an ancient cave containing fossilized ancestral rodents. In the bottom rock layer, the fossils have short tails. In the middle rock layers, the tails are slightly longer. In the top layer, the tails are long. The changes are small, steady, and continuous across the layers. This fossil lineage perfectly demonstrates:", o:["Punctuated Equilibrium.","Gradualism.","Convergent Evolution.","Behavioral Isolation."], a:1, r:"A slow, steady, incremental change observed continuously over sequential rock layers is the definition of gradualism."},
+            {t:"A", q:"DNA sequencing reveals that a species of blind cave fish living in complete darkness still retains the fully formed genetic sequence required to build eyes, even though it never develops them. The eye-building genes in this fish can be categorized as a molecular equivalent to a:", o:["Homologous structure.","Analogous structure.","Vestigial structure.","Transitional fossil."], a:2, r:"Possessing non-functional genetic remnants of structures that were functional in ancestors is a molecular vestigial trait."},
+            {t:"A", q:"A rare species of orchid native to a Saskatchewan wetland possesses an extraordinarily deep floral tube. It can only be pollinated by a single species of native moth that has a mouthpart of exact matching length. If the moth's tongue grows longer over generations, the flower's tube also lengthens. This is a clear demonstration of:", o:["Convergent Evolution.","Divergent Evolution.","Stabilizing Selection.","Coevolution."], a:3, r:"The orchid and moth are in an evolutionary partnership where structural changes in one apply direct selection pressure on the other."},
+            {t:"A", q:"While analyzing the embryo of a rare desert lizard, a lab student notices the temporary formation of tiny leg buds, even though this specific lizard species is completely legless as an adult. What does this embryological evidence infer?", o:["The lizard is currently undergoing a rapid burst of punctuated equilibrium to grow legs.","The lizard was created through historical artificial selection by human farmers.","The lizard shares a common ancestor with four-legged reptiles.","The lizard's environment is applying extreme directional selection to eliminate its tail."], a:2, r:"The temporary formation of embryonic legs indicates that the legless lizard shares a four-legged common ancestor."},
+            {t:"A", q:"A massive volcanic eruption instantly splits a single population of gophers into two groups separated by an impassable river of lava. Over thousands of years, the two groups develop completely different coloration and mating rituals. This speciation event was initiated by:", o:["Temporal Isolation.","Behavioral Isolation.","Coevolutionary Isolation.","Geographic Isolation."], a:3, r:"A geographic barrier (lava river) split the single population, initiating geographic isolation."},
+            {t:"A", q:"A student isolates a strain of bacteria from a soil sample taken behind a school in Saskatchewan. They find that this bacteria uses the exact same triplet codon sequence to produce proteins as a standard human cell. What does this confirm?", o:["The bacteria and humans share a common evolutionary origin (LUCA).","Humans recently cross-bred with soil bacteria via artificial selection.","Soil ecosystems are rapidly evolving via directional selection to replace human populations.","Human cells can read bacterial DNA but bacterial ribosomes cannot read human mRNA."], a:0, r:"The fact that both soil bacteria and human cells read the same codons to translate proteins confirms a shared evolutionary origin."},
+            {t:"A", q:"In a forest ecosystem, birds hunt and consume conspicuous, brightly colored tree frogs. Over several years, a permanent drought kills the green moss on the trees, leaving only dark brown bark exposed. Which mode of selection will most likely alter the frog population?", o:["Stabilizing selection favoring medium-green frogs.","Directional selection shifting the population frequency toward dark brown phenotypes.","Disruptive selection creating an entirely new genus of flightless frogs.","Artificial selection directed by the predatory bird populations."], a:1, r:"The loss of green moss changes the background. Selection will directionally favor brown frogs over green ones."},
+            {t:"A", q:"A paleontology student in Eastend, Saskatchewan, discovers a fossil sequence where a species of ancient clam remains visually identical for 5 million years, but then suddenly shifts into a completely distinct shell shape in a layer spanning only a few thousand years. This pattern supports:", o:["Gradualism.","Allopatric Speciation.","Punctuated Equilibrium.","Convergent Evolution."], a:2, r:"A long period of morphological stasis followed by a rapid, sudden shift to a new form is the signature of punctuated equilibrium."},
+            {t:"A", q:"Why do modern medical advancements like prescription eyeglasses or insulin treatments alter the ongoing biological evolution of the human population?", o:["They allow individuals with previously disadvantageous genetic traits to survive and pass on their alleles.","They speed up the rate of beneficial random mutations in our somatic DNA.","They switch our reproductive framework entirely from the Out of Africa model to gradualism.","They eliminate the biological relevance of the universal genetic code."], a:0, r:"By keeping individuals alive who possess previously disadvantageous traits, modern medicine allows those alleles to remain in the gene pool."},
+            {t:"A", q:"A sudden, severe ice storm hits a region of Saskatchewan, killing 95% of a local songbird population. The surviving 5% of birds happen to have thicker down feathers. In the following spring, all the newborn chicks have thick down feathers. What level of biological organization evolved?", o:["The individual birds that survived the storm.","The entire population of songbirds over generations.","The physical structure of the ice storm itself.","The individual genes during the birds' lifespans."], a:1, r:"Individual birds did not change their genes during the storm; the storm selected individuals with thicker down, changing the population's allele frequency."},
+            {t:"A", q:"A marine biologist discovers that the regulatory proteins governing cell division in a Saskatchewan lake microalgae are identical to the proteins found in human livers. This profound molecular similarity is evidence of:", o:["Convergent evolution due to shared underwater selective pressures.","Artificial selection directed by regional agricultural researchers.","A shared common ancestry dating back to a single ancestral population (LUCA).","Lamarckian inheritance of acquired structural cell characteristics."], a:2, r:"Highly conserved, identical regulatory proteins between highly diverse organisms point directly to a shared ancestor (LUCA)."},
+            {t:"A", q:"A livestock breeder wants to create a line of cattle with shorter legs to prevent them from jumping fences. They select the shortest bulls and cows from their herd and breed them. They repeat this for ten generations until all calves are born short-legged. This process is called:", o:["Natural directional selection.","Disruptive natural selection.","Punctuated equilibrium.","Artificial selection."], a:3, r:"The breeder is intentionally choosing breeding pairs based on leg height to satisfy a human goal (artificial selection)."},
+            {t:"A", q:"The physical wing structure of a monarch butterfly and the physical wing structure of a native Saskatchewan hawk serve the exact same function (flight), but their interior anatomical development and ancestral lineages are completely distinct. These wings are:", o:["Analogous structures resulting from convergent evolution.","Homologous structures resulting from divergent evolution.","Vestigial structures resulting from punctuated equilibrium.","Transitional structures resulting from artificial selection."], a:0, r:"The wings of birds and insects share a function but have different ancestral origins, making them analogous structures."},
+            {t:"A", q:"If a massive asteroid impact blocked all sunlight on Earth for decades, why would a species displaying high reproductive rates and generalist diets have higher \"fitness\" than a specialized, long-lived apex predator?", o:["Because physical size correlates negatively with radioactive dating metrics.","Because reproductive success in altered environments favors fast replacement and adaptable resource use.","Because generalist species can intentionally mutate their DNA code faster than apex predators.","Because apex predators always opt for gradualism when facing extinction events."], a:1, r:"After a massive impact, standard ecosystems collapse. Generalist species with rapid replacement rates adapt faster than long-lived specialists."},
+            {t:"A", q:"Two species of crickets live in the exact same Saskatchewan pasture. They look completely identical, but males of Species A chirp at a frequency of 4.5 kHz, while males of Species B chirp at 2.2 kHz. Females only respond to chirps matching their own species. What maintains these as separate species?", o:["Geographic Isolation.","Temporal Isolation.","Behavioral Isolation.","Mechanical Isolation."], a:2, r:"The crickets are isolated behaviorally because females will only respond to males singing at their specific species frequency."},
+            {t:"A", q:"A geologist discovers a fossilized footprint of an ancient creature in a rock layer in southern Saskatchewan. By testing a layer of volcanic ash directly above the fossil, they find that exactly half of the original Uranium-238 has decayed into lead. What scientific methodology are they employing?", o:["Comparative embryology.","Homologous structural mapping.","Artificial selection indexing.","Radioactive dating."], a:3, r:"Measuring radioactive decay rates of unstable parent isotopes in adjacent volcanic layers is radiometric dating."},
+            {t:"A", q:"A plant biologist studies a single ancestral species of wildflower that colonized a newly formed island chain. Within a short evolutionary timeframe, the wildflower split into twelve distinct species, each with a unique leaf shape optimized for the specific moisture level of its island. This is a clear example of:", o:["Adaptive radiation.","Convergent evolution.","Coevolution.","Punctuated equilibrium."], a:0, r:"A single ancestor rapidly branching out into multiple localized species to fill vacant ecological niches is adaptive radiation."},
+            {t:"A", q:"A paleontology lab assistant is cleaning a fossilized skeleton of an ancient mammalian ancestor. They notice two tiny, underdeveloped bone structures floating freely near the lower spine that serve no apparent mechanical purpose. Based on Chapter 7, how should they label these structures?", o:["Analogous elements.","Vestigial structures.","Homologous extensions.","Transitional nodes."], a:1, r:"Tiny, non-functional bones in ancestral lineages are vestigial structures representing remnants of ancestral limbs."},
+            {t:"A", q:"A public health official in Saskatchewan notes that bacteria causing ear infections are increasingly resistant to standard antibiotics. They argue that doctors must reduce antibiotic prescriptions. Why makes this an evolutionary argument?", o:["Reducing prescriptions stops the antibiotics from causing mutations in human tissue.","Reducing prescriptions forces the bacteria to intentionally revert back to a primitive, non-toxic form.","Reducing prescriptions changes the selective pressure, preventing resistant bacterial alleles from dominating the population.","Reducing prescriptions initiates artificial selection to engineer entirely new species of helpful viruses."], a:2, r:"Prescribing fewer antibiotics reduces the selection pressure, helping prevent resistant bacterial strains from outcompeting non-resistant strains."},
+            {t:"A", q:"A student running a computer simulation of natural selection sets the parameters so that only the smallest 10% of organisms can escape an automated predator. After 50 simulated generations, the average size of the digital organisms has dropped significantly. This simulation models:", o:["Stabilizing selection.","Disruptive selection.","Artificial selection.","Directional selection."], a:3, r:"The simulation applies a selective filter against larger sizes, driving a directional shift in the population's average size."},
+            {t:"A", q:"While reviewing the structural diagrams in Figure 7.8b, a student notes that a human hand and a bat wing share the same arrangement of radius, ulna, and phalanges bones. What inference can be made from this anatomical fact?", o:["Humans and bats share a common mammalian ancestor that possessed this basic limb layout.","Bats evolved directly from humans through an ancient agricultural revolution.","Flying environments apply directional selection to turn human arms into functional wings.","Human embryos undergo temporary mutations that mirror adult bat anatomy."], a:0, r:"Shared anatomical layouts (homology) indicate that humans and bats evolved from a common mammalian ancestor."},
+            {t:"A", q:"A global cooling event occurs, causing a Saskatchewan coniferous forest to experience winter temperatures that are 10 degrees colder than normal. Individual pine trees cannot alter their cellular anti-freeze levels. How can the forest population survive?", o:["Individual trees will intentionally mutate their genetic code before the winter begins.","Trees with pre-existing genetic variations for high anti-freeze production will survive and reproduce, shifting the population over time.","The trees will engage in coevolutionary arms races to force nearby plants to insulate them.","The forest will utilize gradualism to completely reset its universal genetic code."], a:1, r:"Individual trees cannot change their anti-freeze levels; cold temperatures will select for trees with pre-existing genetic resistance, shifting the population."},
+            {t:"A", q:"A researcher uncovers an ancient human skull dating back 200,000 years in an archaeological site. Genetic testing reveals that its DNA sequences match the markers found in the ancestral lineages of modern human populations originating from the African continent. This provides physical evidence directly supporting the:", o:["Punctuated Equilibrium Theory.","Inheritance of Acquired Characteristics.","Out of Africa Hypothesis.","Continental Drift Hypothesis."], a:2, r:"Finding ancient skulls with African genetic markers globally supports the Out of Africa hypothesis."},
+            {t:"E", q:"Given that the molecular code of DNA is universal across all domains of life, what would happen if a scientist inserted a synthetic gene sequence designed in a computer into a living Saskatchewan soil bacterium?", o:["The bacterium would read the sequence and assemble the exact corresponding protein, because the core biochemical language of life is identical.","The bacterium would break down the DNA completely because its ribosomes are evolutionarily incompatible with synthetic sequences.","The bacterium would immediately experience allopatric speciation and transform into a new animal kingdom.","The bacterium would utilize Lamarckian mechanics to pass the new trait only to its predatory competitors."], a:0, r:"Because the genetic code is universal, any organism's transcriptional machinery can translate a synthetically designed codon sequence."},
+            {t:"E", q:"If Punctuated Equilibrium is the dominant pace of change for a specific marine ecosystem, what should scientists expect to see when examining an unbroken 10-million-year vertical column of sedimentary rock fossils?", o:["A perfectly smooth, gradual transition where every single intermediate skeletal form is evenly represented across every millimeter of rock.","Long vertical sections showing zero visible anatomical changes in the fossils, bordered by sharp, sudden boundaries where new species appear.","The total absence of any radioactive isotopes or vestigial traits across all fossilized organisms.","A steady, linear decrease in overall biological diversity until only LUCA remains at the top layer."], a:1, r:"Punctuated equilibrium looks like long periods of morphological stasis (vertical lines) interrupted by sudden, rapid shifts in the fossil layers."},
+            {t:"E", q:"Consider the relationship between Thomas Malthus's economic theories and Darwin's principles of Natural Selection. If a wild population experienced a mutation that completely eliminated overproduction, allowing a species to produce only the exact number of offspring the environment could support, how would this alter the evolutionary dynamics?", o:["The rate of random genetic mutations would instantly accelerate to compensate for the change.","The population would immediately experience directional selection to maximize its physical strength.","The struggle for existence would be minimized, significantly slowing down the process of natural selection.","The species would undergo automatic speciation via instant geographic isolation."], a:2, r:"If there is no overproduction of offspring, there is no struggle for limited resources, meaning natural selection slows down."},
+            {t:"E", q:"The Indigenous worldview of Wâhkôhtowin states that humans are kin to the soil, the plants, and the animals. When evaluated alongside modern molecular biology and the discovery of LUCA, what ethical conclusion can be drawn that bridges both systems?", o:["Humans have a biological right to direct the evolution of all species via unchecked artificial selection.","Science should completely ignore cultural perspectives because DNA sequencing proves humans are unrelated to primates.","Natural selection acts only on human individuals, meaning environmental conservation has no impact on future generations.","Ecological management must recognize that harming ecosystems is biologically equivalent to harming our own extended family."], a:3, r:"If all life is connected through LUCA (the scientific Tree of Life), then treating ecosystems as family is a biological reality."},
+            {t:"E", q:"Why does Alfred Wegener’s geological theory of Continental Drift serve as a foundational pillar for understanding the modern geographic distribution of species (biogeography)?", o:["It explains that identical ancestral lineages were separated by moving landmasses, allowing isolated populations to split and evolve independently under unique local pressures.","It proves that ancient plants like Glossopteris evolved flight mechanisms to disperse seeds across oceans.","It demonstrates that natural selection operates entirely on tectonic plates rather than on biological populations.","It confirms that the Last Universal Common Ancestor (LUCA) was a complex terrestrial organism that lived before oceans formed."], a:0, r:"Continental drift explains biogeography: unified ancestral populations were separated by plate movements, allowing them to evolve independently."},
+            {t:"E", q:"In the \"Bird Beak\" narrative lab report summary, a spoon-beaked bird population starves when the environmental food source shifts entirely to rubber bands, while tweezer-beaked birds flourish. What long-term evolutionary inference can be made regarding environmental stability and species specialization?", o:["Highly specialized structural traits maximize a population's long-term survival during unpredictable, catastrophic environmental shifts.","Evolutionary fitness is never a permanent status; it is highly contextual and completely dependent on the stability of the local ecosystem configuration.","Populations that undergo natural selection can actively choose to alter their mechanical tools within a single hunting cycle.","Specialization permanently protects a species from experiencing any future forms of stabilizing or disruptive selection."], a:1, r:"Highly specialized traits are only fit as long as the environment remains stable. When the environment changes, fitness changes."},
+            {t:"E", q:"Given the details of the Out of Africa hypothesis, if scientists discover that modern human populations outside of Africa share a small percentage of DNA with Neanderthals (a hominin that lived exclusively in Europe and Asia), what can we infer about the migration event?", o:["Modern humans did not originate in Africa but evolved independently from Neanderthals in Europe.","The agricultural revolution occurred much earlier than 10,000 years ago, allowing Neanderthals to build dense global cities.","The migrating group of Homo sapiens interacted and occasionally interbred with existing hominin species as they expanded across the globe.","Neanderthal populations utilized convergent evolution to independently generate a universal genetic code identical to humans."], a:2, r:"Finding Neanderthal DNA in non-African populations indicates that migrating Homo sapiens interbred with localized Neanderthal groups."},
+            {t:"E", q:"If humans continue to use modern medicine, sanitation, and technology to bypass natural selective pressures that would normally eliminate disadvantageous alleles, what is the long-term consequence for the human gene pool?", o:["The human population will stop experiencing mutations and achieve a state of permanent genetic stasis.","The human lineage will automatically undergo allopatric speciation via instant geographic isolation.","The universal genetic code will mutate into four entirely separate languages to handle technological shifts.","Genetic diversity and the frequency of previously deleterious alleles will likely increase within the population over time."], a:3, r:"Bypassing natural filters allows alleles for chronic or previously fatal health conditions to persist and accumulate in the human gene pool."},
+            {t:"E", q:"Imagine an ecosystem where stabilizing selection is acting perfectly on a population of wild birds for body size. If a major environmental change introduces both a new, massive predatory hawk and a severe shortage of medium-sized nesting hollows, what long-term evolutionary shift should be inferred?", o:["The population will likely shift from a stabilizing selection model to a disruptive selection model, favoring extreme sizes.","The stabilizing selection pattern will intensify to make the birds even more uniform in size.","The birds will immediately engage in coevolution with the soil bacteria to rewrite their structural protein code.","The ecosystem will use gradualism to eliminate all genetic variation and ensure equal survival."], a:0, r:"If the average phenotype is selected against (lack of medium nesting sites) while extremes are favored, selection shifts to a disruptive model."},
+            {t:"E", q:"When looking at the entire structural framework of Chapter 7—connecting mutations (microscopic) to ecosystems (macroscopic)—what is the ultimate systemic lesson of evolutionary theory?", o:["Organisms possess an intrinsic, conscious drive to maximize their anatomical complexity over deep time.","Biological diversity is a dynamic system shaped by environmental filters acting on random molecular variations across generational time.","All life forms operate as isolated, independent genetic components that are unaffected by deep-time geological alterations.","Artificial selection is the only viable mechanism capable of altering allele frequencies within a wild population."], a:1, r:"The core lesson of evolutionary theory is that biological diversity is a dynamic system driven by natural selection acting on random genetic mutations over time."}
+        ];
+
+        // --- App State ---
+        let selectedDifficulty = 'medium';
+        let selectedLength = '20';
+        let currentQuizPool = [];
+        let currentIndex = 0;
+        let currentScore = 0;
+        let isAnswered = false;
+
+        // Initialize Icons
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            setDifficulty('medium'); // Set defaults visually
+            setLength('20');
+        });
+
+        // --- UI Setup Functions ---
+        function setDifficulty(diff) {
+            selectedDifficulty = diff;
+            const btns = document.querySelectorAll('.diff-btn');
+            btns.forEach(btn => {
+                btn.classList.remove('border-emerald-500', 'border-blue-500', 'border-orange-500', 'ring-4', 'ring-opacity-50');
+                btn.classList.add('border-slate-200');
+            });
+            const activeBtn = document.getElementById(`diff-${diff}`);
+            if(diff === 'easy') activeBtn.classList.replace('border-slate-200', 'border-emerald-500');
+            if(diff === 'medium') activeBtn.classList.replace('border-slate-200', 'border-blue-500');
+            if(diff === 'hard') activeBtn.classList.replace('border-slate-200', 'border-orange-500');
+        }
+
+        function setLength(len) {
+            selectedLength = len;
+            const btns = document.querySelectorAll('.len-btn');
+            btns.forEach(btn => {
+                btn.classList.remove('border-emerald-500', 'bg-emerald-50', 'text-emerald-800');
+                btn.classList.add('border-slate-200', 'text-slate-700');
+            });
+            const activeBtn = document.getElementById(`len-${len}`);
+            activeBtn.classList.replace('border-slate-200', 'border-emerald-500');
+            activeBtn.classList.add('bg-emerald-50', 'text-emerald-800');
+        }
+
+        // --- Game Flow Functions ---
+        function startQuiz() {
+            // Filter Bank
+            if (selectedDifficulty === 'easy') {
+                currentQuizPool = qBank.filter(q => q.t === 'K');
+            } else if (selectedDifficulty === 'medium') {
+                currentQuizPool = qBank.filter(q => q.t === 'K' || q.t === 'A');
+            } else if (selectedDifficulty === 'hard') {
+                currentQuizPool = qBank.filter(q => q.t === 'A' || q.t === 'E');
+            }
+
+            // Shuffle
+            currentQuizPool.sort(() => Math.random() - 0.5);
+
+            // Slice Length
+            let len = selectedLength === 'max' ? currentQuizPool.length : parseInt(selectedLength);
+            if (len > currentQuizPool.length) len = currentQuizPool.length;
+            currentQuizPool = currentQuizPool.slice(0, len);
+
+            currentIndex = 0;
+            currentScore = 0;
+
+            document.getElementById('home-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            isAnswered = false;
+            const q = currentQuizPool[currentIndex];
+            
+            // Update Headers
+            document.getElementById('q-number').innerText = `Question ${currentIndex + 1} of ${currentQuizPool.length}`;
+            document.getElementById('score-display').innerText = currentScore;
+            document.getElementById('progress-fill').style.width = `${((currentIndex) / currentQuizPool.length) * 100}%`;
+
+            // Question Text
+            document.getElementById('question-text').innerText = q.q;
+
+            // Render Options
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+            
+            q.o.forEach((optText, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn w-full text-left p-4 md:p-5 rounded-2xl border-2 border-slate-200 hover:border-emerald-500 hover:bg-emerald-50 font-medium text-slate-700 text-lg flex items-start gap-4 shadow-sm';
+                btn.innerHTML = `<span class="badge flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-slate-200 text-slate-600 font-black text-sm">${String.fromCharCode(65+i)}</span><span class="pt-1">${optText}</span>`;
+                btn.onclick = () => handleAnswer(i);
+                container.appendChild(btn);
+            });
+
+            document.getElementById('feedback-box').classList.add('hidden');
+        }
+
+        function handleAnswer(selectedIndex) {
+            if (isAnswered) return;
+            isAnswered = true;
+
+            const q = currentQuizPool[currentIndex];
+            const isCorrect = (selectedIndex === q.a);
+
+            if (isCorrect) currentScore++;
+
+            const buttons = document.getElementById('options-container').children;
+            for (let i = 0; i < buttons.length; i++) {
+                buttons[i].disabled = true;
+                
+                if (i === q.a) {
+                    buttons[i].classList.add('correct');
+                } else if (i === selectedIndex && !isCorrect) {
+                    buttons[i].classList.add('incorrect');
+                } else {
+                    buttons[i].classList.add('disabled');
+                }
+            }
+
+            // Update Progress/Score immediately
+            document.getElementById('score-display').innerText = currentScore;
+            document.getElementById('progress-fill').style.width = `${((currentIndex + 1) / currentQuizPool.length) * 100}%`;
+
+            // Show Feedback
+            const fb = document.getElementById('feedback-box');
+            fb.classList.remove('hidden');
+            
+            const titleEl = document.getElementById('feedback-title');
+            if (isCorrect) {
+                titleEl.innerHTML = '<i data-lucide="check-circle" class="w-6 h-6 text-emerald-600"></i> <span class="text-emerald-700">Correct!</span>';
+            } else {
+                titleEl.innerHTML = '<i data-lucide="x-circle" class="w-6 h-6 text-red-600"></i> <span class="text-red-700">Incorrect</span>';
+            }
+            
+            document.getElementById('feedback-rationale').innerText = q.r;
+            lucide.createIcons();
+            
+            // Scroll to feedback
+            fb.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        }
+
+        function nextQuestion() {
+            currentIndex++;
+            if (currentIndex >= currentQuizPool.length) {
+                showResults();
+            } else {
+                renderQuestion();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function showResults() {
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+
+            const perc = Math.round((currentScore / currentQuizPool.length) * 100);
+            document.getElementById('final-score').innerText = `${currentScore} / ${currentQuizPool.length}`;
+            document.getElementById('final-percentage').innerText = `${perc}%`;
+
+            let msg = "Keep adapting!";
+            if(perc >= 90) msg = "Evolutionary Master!";
+            else if(perc >= 70) msg = "Great job! Natural selection favors you.";
+            else if(perc >= 50) msg = "Not bad, but room to adapt and grow.";
+
+            document.getElementById('final-message').innerText = msg;
+
+            // Celebration
+            if (perc >= 70) {
+                var end = Date.now() + (2 * 1000);
+                var colors = ['#10b981', '#34d399'];
+                (function frame() {
+                    confetti({ particleCount: 3, angle: 60, spread: 55, origin: { x: 0 }, colors: colors });
+                    confetti({ particleCount: 3, angle: 120, spread: 55, origin: { x: 1 }, colors: colors });
+                    if (Date.now() < end) { requestAnimationFrame(frame); }
+                }());
+            }
+        }
+
+        function returnToMenu() {
+            document.getElementById('result-screen').classList.add('hidden');
+            document.getElementById('home-screen').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
