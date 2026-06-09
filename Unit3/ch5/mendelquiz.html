@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mendelian Genetics Quiz Generator</title>
+    
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- React & ReactDOM -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    
+    <!-- Babel for in-browser JSX compilation -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+
+        /* Print Specific Styling */
+        @media print {
+            body {
+                background-color: white;
+                font-size: 12pt;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .print-area {
+                width: 100% !important;
+                max-width: none !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                box-shadow: none !important;
+            }
+            .page-break {
+                page-break-before: always;
+            }
+            .question-container {
+                page-break-inside: avoid;
+                margin-bottom: 12px;
+            }
+            .print-header {
+                display: flex !important;
+                justify-content: space-between;
+                margin-bottom: 20px;
+                border-bottom: 2px solid black;
+                padding-bottom: 10px;
+            }
+            @page {
+                margin: 0.75in 0.5in;
+            }
+        }
+
+        /* Hide print header on screen */
+        .print-header {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useCallback } = React;
+
+        // --- BIOLOGICAL DATA & CONTEXTS ---
+        const terminologyData = [
+            { term: "gene", def: "A segment of DNA that codes for a specific trait." },
+            { term: "allele", def: "An alternative version or variant of a gene." },
+            { term: "genotype", def: "The genetic makeup of an organism, representing the specific alleles it possesses." },
+            { term: "phenotype", def: "The observable physical or biochemical characteristics of an organism." },
+            { term: "independent assortment", def: "The principle that alleles of different genes separate independently of one another during gamete formation." },
+            { term: "segregation", def: "The principle that two alleles for a trait separate during gamete formation, so each gamete receives only one." },
+            { term: "homozygous", def: "Having two identical alleles for a particular gene." },
+            { term: "heterozygous", def: "Having two different alleles for a particular gene." }
+        ];
+
+        const organisms = {
+            simple: [
+                { name: "pea plants", singular: "pea plant", trait: "height", dom: "tall", rec: "short", domA: "T", recA: "t", icon: "🌱" },
+                { name: "pea plants", singular: "pea plant", trait: "seed shape", dom: "round", rec: "wrinkled", domA: "R", recA: "r", icon: "🟢" },
+                { name: "mice", singular: "mouse", trait: "fur color", dom: "black", rec: "white", domA: "B", recA: "b", icon: "🐁" },
+                { name: "fruit flies", singular: "fruit fly", trait: "wing shape", dom: "normal wings", rec: "vestigial wings", domA: "N", recA: "n", icon: "🪰" }
+            ],
+            incomplete: [
+                { name: "snapdragons", singular: "snapdragon", trait: "flower color", pheno1: "red", pheno2: "white", hetero: "pink", a1: "R", a2: "W", icon: "🌸" },
+                { name: "four o'clock plants", singular: "four o'clock plant", trait: "flower color", pheno1: "crimson", pheno2: "white", hetero: "pink", a1: "C", a2: "W", icon: "🌺" }
+            ],
+            codominance: [
+                { name: "cattle", singular: "cow", trait: "coat color", pheno1: "red", pheno2: "white", hetero: "roan (red and white spots)", a1: "R", a2: "W", icon: "🐄" },
+                { name: "chickens", singular: "chicken", trait: "feather color", pheno1: "black", pheno2: "white", hetero: "erminette (black and white speckled)", a1: "B", a2: "W", icon: "🐔" }
+            ]
+        };
+
+        // --- QUESTION GENERATOR ENGINE ---
+        class QuestionBank {
+            static shuffle(array) {
+                let currentIndex = array.length, randomIndex;
+                while (currentIndex !== 0) {
+                    randomIndex = Math.floor(Math.random() * currentIndex);
+                    currentIndex--;
+                    [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+                }
+                return array;
+            }
+
+            static getRandomElement(array) {
+                return array[Math.floor(Math.random() * array.length)];
+            }
+
+            // Generate Gamete Formation Questions
+            static generateGamete(settings) {
+                const isDihybrid = settings.crossTypes.includes('dihybrid') && (Math.random() > 0.5 || !settings.crossTypes.includes('monohybrid'));
+                
+                if (isDihybrid) {
+                    const letters = ['A', 'B', 'T', 'R', 'Y', 'G'];
+                    const l1 = letters[Math.floor(Math.random() * 3)];
+                    const l2 = letters[Math.floor(Math.random() * 3) + 3];
+                    const genotypes = [
+                        { text: `${l1}${l1.toLowerCase()}${l2}${l2.toLowerCase()}`, ans: `${l1}${l2}, ${l1}${l2.toLowerCase()}, ${l1.toLowerCase()}${l2}, ${l1.toLowerCase()}${l2.toLowerCase()}` },
+                        { text: `${l1}${l1}${l2}${l2.toLowerCase()}`, ans: `${l1}${l2}, ${l1}${l2.toLowerCase()}` },
+                        { text: `${l1.toLowerCase()}${l1.toLowerCase()}${l2}${l2.toLowerCase()}`, ans: `${l1.toLowerCase()}${l2}, ${l1.toLowerCase()}${l2.toLowerCase()}` }
+                    ];
+                    const selected = this.getRandomElement(genotypes);
+                    
+                    const distractors = [
+                        `${selected.text}`,
+                        `${l1}, ${l1.toLowerCase()}, ${l2}, ${l2.toLowerCase()}`,
+                        `${l1}${l1.toLowerCase()}, ${l2}${l2.toLowerCase()}`,
+                        `${l1}${l2}, ${l1.toLowerCase()}${l2.toLowerCase()}`
+                    ].filter(d => d !== selected.ans).slice(0, 3);
+
+                    return {
+                        prompt: `According to the law of independent assortment, what are all the possible allele combinations found in the gametes produced by a cell with the genotype ${selected.text}?`,
+                        options: this.shuffle([selected.ans, ...distractors]),
+                        answer: selected.ans,
+                        icon: "🧬"
+                    };
+                } else {
+                    const l = this.getRandomElement(['A', 'B', 'T', 'R', 'Y']);
+                    const ans = `${l}, ${l.toLowerCase()}`;
+                    return {
+                        prompt: `According to Mendel's law of segregation, what are the possible gametes produced by a heterozygous organism with genotype ${l}${l.toLowerCase()}?`,
+                        options: this.shuffle([ans, `${l}${l.toLowerCase()}`, `${l} only`, `${l.toLowerCase()} only`]),
+                        answer: ans,
+                        icon: "🧬"
+                    };
+                }
+            }
+
+            // Generate Simple Dominance Offspring Prediction
+            static generateSimplePrediction() {
+                const org = this.getRandomElement(organisms.simple);
+                const crosses = [
+                    { 
+                        p1: "heterozygous", p2: "heterozygous",
+                        q: `What is the probability of producing a ${org.rec} offspring in the first filial (F1) generation?`,
+                        ans: "25%", dists: ["0%", "50%", "75%", "100%"]
+                    },
+                    { 
+                        p1: "heterozygous", p2: "homozygous recessive",
+                        q: `What is the probability of producing a ${org.dom} offspring in the F1 generation?`,
+                        ans: "50%", dists: ["25%", "75%", "100%", "0%"]
+                    },
+                    { 
+                        p1: "homozygous dominant", p2: "heterozygous",
+                        q: `What is the probability of producing an offspring with the dominant phenotype?`,
+                        ans: "100%", dists: ["25%", "50%", "75%", "0%"]
+                    }
+                ];
+                const cross = this.getRandomElement(crosses);
+                const distractors = this.shuffle(cross.dists.filter(d => d !== cross.ans)).slice(0, 3);
+
+                return {
+                    prompt: `In ${org.name}, ${org.dom} (${org.domA}) is completely dominant to ${org.rec} (${org.recA}). A ${cross.p1} individual is crossed with a ${cross.p2} individual. ${cross.q}`,
+                    options: this.shuffle([cross.ans, ...distractors]),
+                    answer: cross.ans,
+                    icon: org.icon
+                };
+            }
+
+            // Generate Dihybrid Cross Question
+            static generateDihybridPrediction() {
+                const crosses = [
+                    {
+                        q: "what fraction of the second filial (F2) offspring are expected to be short with wrinkled seeds?",
+                        ans: "1/16", dists: ["3/16", "9/16", "1/4"]
+                    },
+                    {
+                        q: "what fraction of the F2 offspring are expected to be tall with round seeds?",
+                        ans: "9/16", dists: ["1/16", "3/16", "1/2"]
+                    },
+                    {
+                        q: "what fraction of the F2 offspring are expected to be tall with wrinkled seeds?",
+                        ans: "3/16", dists: ["1/16", "9/16", "1/4"]
+                    },
+                    {
+                        q: "what fraction of the F2 offspring are expected to be short with round seeds?",
+                        ans: "3/16", dists: ["1/16", "9/16", "1/4"]
+                    }
+                ];
+                const cross = this.getRandomElement(crosses);
+                
+                return {
+                    prompt: `In pea plants, tall (T) is dominant to short (t), and round seeds (R) are dominant to wrinkled seeds (r). If two plants from the F1 generation that are heterozygous for both traits (TtRr x TtRr) are crossed, ${cross.q}`,
+                    options: this.shuffle([cross.ans, ...cross.dists]),
+                    answer: cross.ans,
+                    icon: "🌱"
+                };
+            }
+
+            // Generate Incomplete Dominance
+            static generateIncomplete() {
+                const org = this.getRandomElement(organisms.incomplete);
+                const crosses = [
+                    { p1: org.hetero, p2: org.hetero, q: `What percentage of the offspring will be ${org.hetero}?`, ans: "50%", dists: ["25%", "75%", "100%", "0%"] },
+                    { p1: org.hetero, p2: org.hetero, q: `What percentage of the offspring will be ${org.pheno1}?`, ans: "25%", dists: ["50%", "75%", "100%", "0%"] },
+                    { p1: org.pheno1, p2: org.pheno2, q: `What percentage of the offspring will be ${org.hetero}?`, ans: "100%", dists: ["25%", "50%", "75%", "0%"] }
+                ];
+                const cross = this.getRandomElement(crosses);
+                const distractors = this.shuffle(cross.dists.filter(d => d !== cross.ans)).slice(0, 3);
+
+                return {
+                    prompt: `In ${org.name}, flower color exhibits incomplete dominance. Homozygous plants are either ${org.pheno1} (${org.a1}${org.a1}) or ${org.pheno2} (${org.a2}${org.a2}), while heterozygotes are ${org.hetero} (${org.a1}${org.a2}). If a ${cross.p1} plant is crossed with a ${cross.p2} plant, ${cross.q}`,
+                    options: this.shuffle([cross.ans, ...distractors]),
+                    answer: cross.ans,
+                    icon: org.icon
+                };
+            }
+
+            // Generate Codominance
+            static generateCodominance() {
+                const org = this.getRandomElement(organisms.codominance);
+                const crosses = [
+                    { p1: org.hetero, p2: org.pheno1, q: `What is the expected phenotypic ratio of their offspring?`, ans: `1 ${org.pheno1} : 1 ${org.hetero}`, dists: [`All ${org.pheno1}`, `1 ${org.pheno1} : 2 ${org.hetero} : 1 ${org.pheno2}`, `3 ${org.pheno1} : 1 ${org.pheno2}`, `All ${org.hetero}`] },
+                    { p1: org.hetero, p2: org.hetero, q: `What is the expected phenotypic ratio of their offspring?`, ans: `1 ${org.pheno1} : 2 ${org.hetero} : 1 ${org.pheno2}`, dists: [`3 ${org.pheno1} : 1 ${org.pheno2}`, `1 ${org.pheno1} : 1 ${org.pheno2}`, `All ${org.hetero}`, `2 ${org.pheno1} : 2 ${org.pheno2}`] }
+                ];
+                const cross = this.getRandomElement(crosses);
+                const distractors = this.shuffle(cross.dists.filter(d => d !== cross.ans)).slice(0, 3);
+
+                return {
+                    prompt: `In ${org.name}, coat color is a codominant trait. The allele for ${org.pheno1} hair is ${org.a1}, and the allele for ${org.pheno2} hair is ${org.a2}. Heterozygous individuals (${org.a1}${org.a2}) exhibit a ${org.hetero} phenotype. If a ${cross.p1} individual is crossed with a ${cross.p2} individual, ${cross.q}`,
+                    options: this.shuffle([cross.ans, ...distractors]),
+                    answer: cross.ans,
+                    icon: org.icon
+                };
+            }
+
+            // Generate Working Backwards (Unknown Genotype)
+            static generateUnknown() {
+                const org = this.getRandomElement(organisms.simple);
+                return {
+                    prompt: `A ${org.dom} ${org.singular} and a ${org.rec} ${org.singular} from the parental (P) generation are crossed. In the resulting first filial (F1) generation, approximately half (50%) of the offspring are ${org.dom} and half are ${org.rec}. What are the most likely genotypes of the parental generation?`,
+                    options: this.shuffle([
+                        `${org.domA}${org.recA} x ${org.recA}${org.recA}`, 
+                        `${org.domA}${org.domA} x ${org.recA}${org.recA}`, 
+                        `${org.domA}${org.recA} x ${org.domA}${org.recA}`, 
+                        `${org.domA}${org.domA} x ${org.domA}${org.recA}`
+                    ]),
+                    answer: `${org.domA}${org.recA} x ${org.recA}${org.recA}`,
+                    icon: "🔍"
+                };
+            }
+
+            // Generate Terminology Question
+            static generateTerminology() {
+                const askForTerm = Math.random() > 0.5;
+                const target = this.getRandomElement(terminologyData);
+                
+                let prompt, ans, options;
+                
+                if (askForTerm) {
+                    prompt = `Which of the following terms is best defined as: "${target.def}"?`;
+                    ans = target.term;
+                    const dists = terminologyData.filter(t => t.term !== target.term).map(t => t.term);
+                    options = this.shuffle([ans, ...this.shuffle(dists).slice(0, 3)]);
+                } else {
+                    prompt = `Which of the following best defines the term "${target.term}"?`;
+                    ans = target.def;
+                    const dists = terminologyData.filter(t => t.term !== target.term).map(t => t.def);
+                    options = this.shuffle([ans, ...this.shuffle(dists).slice(0, 3)]);
+                }
+                
+                return {
+                    prompt,
+                    options,
+                    answer: ans,
+                    icon: "📖"
+                };
+            }
+
+            static generate(settings) {
+                let pool = [];
+                let generatedQuestions = [];
+                
+                // Build pool of available question functions based on settings
+                if (settings.skills.includes('gametes')) pool.push(() => this.generateGamete(settings));
+                if (settings.skills.includes('unknown')) pool.push(() => this.generateUnknown(settings));
+                if (settings.skills.includes('terminology')) pool.push(() => this.generateTerminology());
+                if (settings.skills.includes('predict')) {
+                    if (settings.topics.includes('simple')) {
+                        if (settings.crossTypes.includes('monohybrid')) pool.push(() => this.generateSimplePrediction());
+                        if (settings.crossTypes.includes('dihybrid')) pool.push(() => this.generateDihybridPrediction());
+                    }
+                    if (settings.topics.includes('incomplete')) pool.push(() => this.generateIncomplete());
+                    if (settings.topics.includes('codominance')) pool.push(() => this.generateCodominance());
+                }
+
+                if (pool.length === 0) {
+                    return [{ prompt: "Please select at least one valid combination of Topics, Cross Types, and Skills to generate questions.", options: ["A", "B", "C", "D"], answer: "A" }];
+                }
+
+                let seenPrompts = new Set();
+                let maxAttempts = settings.numQuestions * 20; // Prevent infinite loops
+                let attempts = 0;
+
+                while (generatedQuestions.length < settings.numQuestions && attempts < maxAttempts) {
+                    const generatorFunc = this.getRandomElement(pool);
+                    const q = generatorFunc();
+                    
+                    // Only add the question if we haven't seen this exact prompt yet
+                    if (!seenPrompts.has(q.prompt)) {
+                        seenPrompts.add(q.prompt);
+                        generatedQuestions.push(q);
+                    }
+                    attempts++;
+                }
+
+                return generatedQuestions;
+            }
+        }
+
+        // --- REACT COMPONENTS ---
+
+        const App = () => {
+            const [settings, setSettings] = useState({
+                numQuestions: 10,
+                topics: ['simple', 'incomplete', 'codominance'],
+                crossTypes: ['monohybrid', 'dihybrid'],
+                skills: ['gametes', 'predict', 'unknown', 'terminology']
+            });
+
+            const [questions, setQuestions] = useState([]);
+            const [printMode, setPrintMode] = useState('quiz'); // 'quiz' or 'key'
+            
+            // Initialize Lucide icons
+            useEffect(() => {
+                if (window.lucide) {
+                    window.lucide.createIcons();
+                }
+            }, [questions, printMode]);
+
+            useEffect(() => {
+                generateQuiz();
+            }, []); // Initial generation
+
+            const handleCheckboxChange = (category, value) => {
+                setSettings(prev => {
+                    const current = prev[category];
+                    const updated = current.includes(value) 
+                        ? current.filter(item => item !== value)
+                        : [...current, value];
+                    return { ...prev, [category]: updated };
+                });
+            };
+
+            const generateQuiz = () => {
+                const newQuestions = QuestionBank.generate(settings);
+                setQuestions(newQuestions);
+            };
+
+            const triggerPrint = (mode) => {
+                setPrintMode(mode);
+                setTimeout(() => {
+                    window.print();
+                }, 100);
+            };
+
+            return (
+                <div className="min-h-screen flex flex-col md:flex-row">
+                    
+                    {/* CONFIGURATION SIDEBAR (Hidden on Print) */}
+                    <div className="w-full md:w-80 bg-white border-r border-gray-200 p-6 flex flex-col gap-6 h-screen md:sticky top-0 overflow-y-auto no-print shadow-lg z-10">
+                        <div>
+                            <h1 className="text-xl font-bold text-gray-800 flex items-center gap-2 mb-2">
+                                <i data-lucide="dna" className="w-6 h-6 text-blue-600"></i>
+                                Genetics Generator
+                            </h1>
+                            <p className="text-sm text-gray-500">Configure parameters to generate contextual Mendelian genetics problems.</p>
+                        </div>
+
+                        {/* Number of Questions */}
+                        <div>
+                            <label className="block text-sm font-semibold text-gray-700 mb-2">Number of Questions</label>
+                            <input 
+                                type="range" 
+                                min="5" max="25" step="5" 
+                                value={settings.numQuestions} 
+                                onChange={(e) => setSettings({...settings, numQuestions: parseInt(e.target.value)})}
+                                className="w-full cursor-pointer accent-blue-600"
+                            />
+                            <div className="text-right text-sm font-medium text-blue-600">{settings.numQuestions} Questions</div>
+                        </div>
+
+                        {/* Topics */}
+                        <div>
+                            <label className="block text-sm font-semibold text-gray-700 mb-2">Inheritance Patterns</label>
+                            <div className="space-y-2">
+                                {['simple', 'incomplete', 'codominance'].map(topic => (
+                                    <label key={topic} className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+                                        <input type="checkbox" checked={settings.topics.includes(topic)} onChange={() => handleCheckboxChange('topics', topic)} className="rounded text-blue-600 focus:ring-blue-500 w-4 h-4" />
+                                        {topic === 'simple' ? 'Simple Dominance' : topic === 'incomplete' ? 'Incomplete Dominance' : 'Codominance'}
+                                    </label>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Cross Types */}
+                        <div>
+                            <label className="block text-sm font-semibold text-gray-700 mb-2">Cross Types</label>
+                            <div className="space-y-2">
+                                {['monohybrid', 'dihybrid'].map(type => (
+                                    <label key={type} className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+                                        <input type="checkbox" checked={settings.crossTypes.includes(type)} onChange={() => handleCheckboxChange('crossTypes', type)} className="rounded text-blue-600 focus:ring-blue-500 w-4 h-4" />
+                                        {type.charAt(0).toUpperCase() + type.slice(1)}
+                                    </label>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Skills */}
+                        <div>
+                            <label className="block text-sm font-semibold text-gray-700 mb-2">Assessed Skills</label>
+                            <div className="space-y-2">
+                                <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+                                    <input type="checkbox" checked={settings.skills.includes('terminology')} onChange={() => handleCheckboxChange('skills', 'terminology')} className="rounded text-blue-600 focus:ring-blue-500 w-4 h-4" />
+                                    Terminology
+                                </label>
+                                <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+                                    <input type="checkbox" checked={settings.skills.includes('gametes')} onChange={() => handleCheckboxChange('skills', 'gametes')} className="rounded text-blue-600 focus:ring-blue-500 w-4 h-4" />
+                                    Gamete Formation
+                                </label>
+                                <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+                                    <input type="checkbox" checked={settings.skills.includes('predict')} onChange={() => handleCheckboxChange('skills', 'predict')} className="rounded text-blue-600 focus:ring-blue-500 w-4 h-4" />
+                                    Predict Offspring Probability
+                                </label>
+                                <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+                                    <input type="checkbox" checked={settings.skills.includes('unknown')} onChange={() => handleCheckboxChange('skills', 'unknown')} className="rounded text-blue-600 focus:ring-blue-500 w-4 h-4" />
+                                    Determine Unknown Genotypes
+                                </label>
+                            </div>
+                        </div>
+
+                        {/* Action Buttons */}
+                        <div className="mt-auto space-y-3 pb-4">
+                            <button onClick={generateQuiz} className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors flex items-center justify-center gap-2 shadow-sm">
+                                <i data-lucide="refresh-cw" className="w-4 h-4"></i> Generate New Quiz
+                            </button>
+                            <button onClick={() => triggerPrint('quiz')} className="w-full bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 font-medium py-2 px-4 rounded-md transition-colors flex items-center justify-center gap-2 shadow-sm">
+                                <i data-lucide="printer" className="w-4 h-4"></i> Print as Assignment
+                            </button>
+                            <button onClick={() => triggerPrint('key')} className="w-full bg-white hover:bg-gray-50 text-emerald-700 border border-emerald-300 font-medium py-2 px-4 rounded-md transition-colors flex items-center justify-center gap-2 shadow-sm">
+                                <i data-lucide="check-circle" className="w-4 h-4"></i> Print Answer Key
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* MAIN CONTENT AREA */}
+                    <div className="flex-1 p-4 md:p-8 overflow-y-auto">
+                        <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-sm border border-gray-200 p-8 print-area">
+                            
+                            {/* Document Header (Visible primarily on Print) */}
+                            <div className="print-header">
+                                <div>
+                                    <div className="font-bold text-xl mb-1">Mendelian Genetics Practice</div>
+                                    <div className="text-sm italic">{printMode === 'key' ? 'ANSWER KEY' : 'Student Worksheet'}</div>
+                                </div>
+                                <div className="text-right">
+                                    <div className="text-sm mb-2">Name: _______________________</div>
+                                    <div className="text-sm mb-2">Date: ________________________</div>
+                                    <div className="text-sm">Class: _______________________</div>
+                                </div>
+                            </div>
+                            
+                            {/* Screen Header */}
+                            <div className="no-print mb-8 border-b pb-4">
+                                <h2 className="text-2xl font-bold text-gray-800">Preview</h2>
+                                <p className="text-gray-500 text-sm mt-1">
+                                    Showing {questions.length} dynamically generated questions. 
+                                    Use the buttons on the left to print a clean worksheet.
+                                </p>
+                            </div>
+
+                            {/* Questions Render Loop */}
+                            <div className="space-y-8">
+                                {questions.map((q, index) => (
+                                    <div key={index} className="question-container">
+                                        <div className="flex gap-3 mb-3 print:mb-1">
+                                            <div className="font-semibold text-gray-800 shrink-0">{index + 1}.</div>
+                                            <div className="text-gray-800 leading-relaxed print:leading-snug">
+                                                {q.icon && <span className="mr-2 opacity-80">{q.icon}</span>}
+                                                {q.prompt}
+                                            </div>
+                                        </div>
+                                        
+                                        <div className="pl-6 grid grid-cols-1 md:grid-cols-2 gap-y-3 print:gap-y-1 gap-x-6">
+                                            {q.options.map((option, optIdx) => {
+                                                const letter = String.fromCharCode(65 + optIdx);
+                                                const isCorrect = option === q.answer;
+                                                const showKey = printMode === 'key';
+                                                
+                                                return (
+                                                    <div 
+                                                        key={optIdx} 
+                                                        className={`flex items-start gap-2 p-2 print:py-0 print:leading-snug rounded-md ${showKey && isCorrect ? 'bg-emerald-50 border border-emerald-200 font-medium text-emerald-900' : ''}`}
+                                                    >
+                                                        <div className={`font-semibold shrink-0 mt-0.5 print:mt-0 ${showKey && isCorrect ? 'text-emerald-700' : 'text-gray-500'}`}>
+                                                            {letter}.
+                                                        </div>
+                                                        <div className={`${showKey && isCorrect ? 'text-emerald-900' : 'text-gray-700'}`}>
+                                                            {option}
+                                                        </div>
+                                                        {showKey && isCorrect && (
+                                                            <i data-lucide="check" className="w-4 h-4 text-emerald-600 ml-auto mt-1 shrink-0"></i>
+                                                        )}
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+
+                            {questions.length === 0 && (
+                                <div className="text-center py-12 text-gray-500">
+                                    <i data-lucide="alert-circle" className="w-12 h-12 mx-auto mb-3 opacity-20"></i>
+                                    <p>No questions generated.</p>
+                                    <p className="text-sm">Please adjust your parameters in the sidebar.</p>
+                                </div>
+                            )}
+
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
