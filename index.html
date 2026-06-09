@@ -223,6 +223,11 @@
                                 Read Chapter <i data-lucide="arrow-right" class="w-4 h-4 ml-1"></i>
                             </div>
                         </a>
+                        
+                        <!-- Added Classical Genetics Multiple Choice here -->
+                        <a href="https://scareysci.github.io/b30text/Unit3/ch5/mendelquiz" class="block w-full py-2 px-4 bg-purple-50 border border-purple-300 rounded-lg text-center text-purple-700 font-bold hover:bg-purple-100 transition-colors text-sm">
+                            Classical Genetics Multiple Choice
+                        </a>
                     </div>
                     <div class="flex flex-col gap-2">
                         <a href="https://scareysci.github.io/b30text/Unit3/ch6/index.html" class="flex flex-col h-full p-4 bg-white border-2 border-purple-500 rounded-lg hover:bg-purple-50 transition-colors group">
@@ -356,6 +361,12 @@
                 keywords: "genetics, inheritance, heredity"
             },
             {
+                title: "Classical Genetics Multiple Choice",
+                unit: "Unit 3: Genetics",
+                url: "https://scareysci.github.io/b30text/Unit3/ch5/mendelquiz",
+                keywords: "quiz, test, multiple choice, classical genetics, mendel, chapter 5, inheritance, genetics, study"
+            },
+            {
                 title: "Chapter 6: Molecular Genetics",
                 unit: "Unit 3: Genetics",
                 url: "https://scareysci.github.io/b30text/Unit3/ch6/index.html", 
@@ -402,7 +413,7 @@
             if (results.length > 0) {
                 searchResults.innerHTML = results.map(item => `
                     <a href="${item.url}" class="block p-4 hover:bg-slate-50 transition-colors">
-                        <div class="text-xs font-bold text-amber-600 uppercase mb-1">${item.unit}</div>
+                        <div class="text-xs font-bold text-green-600 uppercase mb-1">${item.unit}</div>
                         <div class="font-bold text-slate-800">${item.title}</div>
                     </a>
                 `).join('');
