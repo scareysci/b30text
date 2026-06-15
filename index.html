@@ -296,6 +296,23 @@
 
         </div>
 
+        <!-- Course Resources & Final Review Section -->
+        <section class="mt-16 bg-gradient-to-r from-emerald-50 to-green-50 border border-emerald-100 rounded-xl p-6 md:p-8 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6">
+            <div class="flex items-center gap-4">
+                <div class="p-3 bg-emerald-100 rounded-full text-emerald-700">
+                    <i data-lucide="graduation-cap" class="w-8 h-8"></i>
+                </div>
+                <div>
+                    <h2 class="text-xl md:text-2xl font-bold text-slate-800">Comprehensive Exam Prep</h2>
+                    <p class="text-slate-600 text-sm mt-1">Ready for finals? Access the course overview and study benchmarks here.</p>
+                </div>
+            </div>
+            <a href="https://scareysci.github.io/b30text/B30RevOut.pdf" target="_blank" class="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg shadow-md hover:shadow-lg transition-all text-base whitespace-nowrap group">
+                Biology 30 Review Outline
+                <i data-lucide="external-link" class="w-5 h-5 opacity-80 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"></i>
+            </a>
+        </section>
+
     </main>
 
     <footer class="bg-slate-100 py-8 mt-12 border-t border-slate-200">
@@ -389,6 +406,12 @@
                 unit: "Unit 5: The Future of Biology",
                 url: "https://scareysci.github.io/b30text/ch9/index.html", 
                 keywords: "project, study, independent"
+            },
+            {
+                title: "Biology 30 Review Outline",
+                unit: "Exam Prep & Review",
+                url: "https://scareysci.github.io/b30text/B30RevOut.pdf",
+                keywords: "final review, biology 30 outline, final exam, syllabus, check list, study guide, pdf"
             }
         ];
 
@@ -412,7 +435,7 @@
 
             if (results.length > 0) {
                 searchResults.innerHTML = results.map(item => `
-                    <a href="${item.url}" class="block p-4 hover:bg-slate-50 transition-colors">
+                    <a href="${item.url}" class="block p-4 hover:bg-slate-50 transition-colors" target="${item.url.endsWith('.pdf') ? '_blank' : '_self'}">
                         <div class="text-xs font-bold text-green-600 uppercase mb-1">${item.unit}</div>
                         <div class="font-bold text-slate-800">${item.title}</div>
                     </a>
