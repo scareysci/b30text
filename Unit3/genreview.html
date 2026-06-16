@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Genetics Mastery: Bio-Defender</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; overflow-x: hidden; }
+        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        .slide-up { animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        
+        .option-btn { transition: all 0.2s ease; }
+        .option-btn:hover:not(:disabled) { transform: scale(1.02); background-color: #3b82f6; border-color: #60a5fa; }
+        .option-btn:active:not(:disabled) { transform: scale(0.98); }
+        
+        .correct-ans { background-color: #22c55e !important; border-color: #4ade80 !important; color: white !important; transform: scale(1.02); box-shadow: 0 0 15px rgba(34, 197, 94, 0.5); }
+        .wrong-ans { background-color: #ef4444 !important; border-color: #f87171 !important; color: white !important; transform: scale(0.98); }
+        
+        .floating-score { position: absolute; font-weight: bold; color: #4ade80; animation: floatUp 1s ease-out forwards; pointer-events: none; z-index: 50; }
+        @keyframes floatUp { 0% { opacity: 1; transform: translateY(0) scale(1); } 100% { opacity: 0; transform: translateY(-40px) scale(1.5); } }
+
+        /* DNA helix background decoration */
+        .bg-pattern {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background-image: radial-gradient(#334155 1px, transparent 1px);
+            background-size: 40px 40px; opacity: 0.3; z-index: -1;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased">
+    <div class="bg-pattern"></div>
+
+    <!-- Main Application Container -->
+    <main class="flex-grow flex items-center justify-center p-4 sm:p-8">
+        
+        <!-- ================= START SCREEN ================= -->
+        <div id="screen-start" class="max-w-2xl w-full bg-slate-800/80 backdrop-blur-md rounded-3xl shadow-2xl border border-slate-700 p-8 text-center slide-up">
+            <div class="mb-6 inline-block p-4 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                </svg>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400 mb-4">
+                Genetics Mastery
+            </h1>
+            <p class="text-lg text-slate-300 mb-8 max-w-lg mx-auto">
+                Test your knowledge across 100 rigorous questions covering Biological Inheritance and Molecular Genetics.
+            </p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8 text-left max-w-lg mx-auto bg-slate-900/50 p-4 rounded-xl border border-slate-700">
+                <div class="flex items-center space-x-3">
+                    <span class="text-emerald-400">⚡</span> <span>Combo Multipliers</span>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <span class="text-blue-400">🧬</span> <span>All 100 Bank Items</span>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <span class="text-purple-400">🎯</span> <span>Active Retrieval</span>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <span class="text-amber-400">🏆</span> <span>Rank Achievement</span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 justify-center w-full">
+                <button onclick="startGame(10)" class="px-4 py-4 bg-slate-700 hover:bg-slate-600 text-white rounded-xl font-bold transition-all shadow-lg border border-slate-600">
+                    10 Qs
+                </button>
+                <button onclick="startGame(25)" class="px-4 py-4 bg-slate-700 hover:bg-slate-600 text-white rounded-xl font-bold transition-all shadow-lg border border-slate-600">
+                    25 Qs
+                </button>
+                <button onclick="startGame(40)" class="px-4 py-4 bg-blue-700 hover:bg-blue-600 text-white rounded-xl font-bold transition-all shadow-lg border border-blue-500">
+                    40 Qs
+                </button>
+                <button onclick="startGame(100)" class="px-4 py-4 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold transition-all shadow-lg shadow-emerald-500/30 border border-emerald-400">
+                    100 Qs
+                </button>
+            </div>
+        </div>
+
+        <!-- ================= GAME SCREEN ================= -->
+        <div id="screen-game" class="hidden w-full max-w-4xl flex-col slide-up relative">
+            
+            <!-- HUD -->
+            <div class="flex justify-between items-end mb-4">
+                <div>
+                    <p class="text-sm text-slate-400 font-semibold tracking-wide uppercase mb-1" id="question-counter">Question 1 / 100</p>
+                    <div class="flex items-center space-x-3">
+                        <div class="text-3xl font-black text-white" id="score-display">0</div>
+                        <div id="streak-badge" class="hidden px-3 py-1 rounded-full bg-orange-500/20 text-orange-400 border border-orange-500/50 text-sm font-bold flex items-center shadow-[0_0_10px_rgba(249,115,22,0.3)]">
+                            <span class="mr-1">🔥</span> <span id="streak-display">2x Combo</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="w-full h-2.5 bg-slate-800 rounded-full mb-8 overflow-hidden border border-slate-700">
+                <div id="progress-bar" class="h-full bg-gradient-to-r from-blue-500 to-emerald-400 w-0 transition-all duration-300 ease-out"></div>
+            </div>
+
+            <!-- Question Card -->
+            <div class="bg-slate-800/90 backdrop-blur-md rounded-2xl shadow-xl border border-slate-700 p-6 md:p-10 mb-6 min-h-[160px] flex items-center">
+                <h2 id="question-text" class="text-2xl md:text-3xl font-semibold leading-snug text-slate-100">
+                    Loading question...
+                </h2>
+            </div>
+
+            <!-- Options Grid -->
+            <div id="options-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Buttons injected via JS -->
+            </div>
+            
+            <div id="feedback-message" class="mt-6 text-center text-lg font-bold h-6 opacity-0 transition-opacity"></div>
+        </div>
+
+        <!-- ================= END SCREEN ================= -->
+        <div id="screen-end" class="hidden max-w-2xl w-full bg-slate-800/90 backdrop-blur-md rounded-3xl shadow-2xl border border-slate-700 p-8 md:p-12 text-center slide-up">
+            <h2 class="text-3xl font-bold text-slate-200 mb-2">Exam Complete</h2>
+            <div id="final-rank" class="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500 mb-8">
+                Master Geneticist
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4 mb-8">
+                <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700">
+                    <p class="text-slate-400 text-sm font-semibold uppercase tracking-wider mb-1">Final Score</p>
+                    <p id="final-score" class="text-3xl font-bold text-white">0</p>
+                </div>
+                <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700">
+                    <p class="text-slate-400 text-sm font-semibold uppercase tracking-wider mb-1">Accuracy</p>
+                    <p id="final-accuracy" class="text-3xl font-bold text-emerald-400">0%</p>
+                </div>
+                <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-700 col-span-2 flex justify-between items-center">
+                    <p class="text-slate-400 text-sm font-semibold uppercase tracking-wider">Highest Streak</p>
+                    <p id="final-streak" class="text-2xl font-bold text-orange-400 flex items-center"><span class="mr-2">🔥</span> 0</p>
+                </div>
+            </div>
+
+            <button onclick="location.reload()" class="w-full md:w-auto px-10 py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold transition-all shadow-lg shadow-blue-500/30 border border-blue-400 text-lg">
+                Play Again
+            </button>
+        </div>
+    </main>
+
+    <!-- Raw Data & Logic -->
+    <script>
+        // --- 1. DATA EXTRACTION & PARSING ---
+        // The answer key provided in the original text contained multiple misalignment errors 
+        // starting around Q40. This array manually corrects them based on Biological facts.
+        // 0 = A, 1 = B, 2 = C, 3 = D
+        const answerMap = [
+            1, 0, 0, 0, 0, 1, 2, 0, 1, 1, // 1-10
+            1, 1, 0, 2, 0, 1, 0, 2, 0, 3, // 11-20
+            0, 0, 1, 0, 0, 2, 0, 0, 3, 1, // 21-30
+            1, 3, 0, 2, 1, 1, 2, 1, 3, 1, // 31-40
+            0, 2, 1, 2, 0, 0, 1, 1, 2, 1, // 41-50
+            1, 2, 2, 1, 0, 2, 1, 1, 0, 2, // 51-60
+            0, 3, 1, 0, 2, 2, 1, 1, 1, 1, // 61-70
+            2, 0, 1, 1, 0, 2, 0, 2, 1, 1, // 71-80
+            2, 1, 0, 1, 0, 0, 1, 1, 0, 1, // 81-90
+            2, 1, 1, 1, 1, 1, 1, 0, 3, 2  // 91-100
+        ];
+
+        // Raw Question Bank Text (Exactly as provided, minus chapter headings)
+        const questionsRaw = `
+The study of genetics is fundamentally the study of:
+Absolute certainty
+Probability
+Environmental factors
+Cellular respiration
+During sexual reproduction, parents pass on:
+A randomized half of their genetic information
+Their exact genetic makeup
+Only dominant alleles
+Only recessive alleles
+In a standard pedigree chart, squares represent:
+Males
+Females
+Affected individuals only
+Carriers
+In a pedigree, shaded shapes indicate that the individual:
+Expresses the trait being studied
+Is deceased
+Is a female
+Is a male
+In Saskatchewan Black Angus cattle, the black coat color is a:
+Dominant trait
+Recessive trait
+Sex-linked trait
+Polygenic trait
+Which model organism did Gregor Mendel use to lay the mathematical foundation of genetics?
+Drosophila melanogaster
+Pisum sativum
+Escherichia coli
+Zea mays
+Why was Mendel's model organism an excellent choice for genetic study?
+They take years to mature
+They exhibit a smooth continuum of blended phenotypes
+They reproduce rapidly and have distinct, observable traits
+They cannot self-pollinate
+The actual genetic makeup of an organism (the invisible code) is called its:
+Genotype
+Phenotype
+Karyotype
+Pedigree
+An organism possessing one dominant and one recessive allele (e.g., Tt) is:
+Homozygous dominant
+Heterozygous
+Homozygous recessive
+True-breeding
+The physical, observable expression of a genetic trait is the:
+Genotype
+Phenotype
+Allele
+Chromosome
+In Mendelian shorthand, the offspring of the true-breeding P generation are called the:
+F2 generation
+F1 generation
+F3 generation
+Parental generation
+When crossing a homozygous dominant purple plant (PP) with a homozygous recessive white plant (pp), what percentage of the F1 generation will be purple?
+0%
+100%
+75%
+50%
+What is the phenotypic ratio of the F2 generation when crossing two heterozygous F1 plants (Pp x Pp)?
+3:1
+1:2:1
+9:3:3:1
+1:1
+What is the genotypic ratio of the F2 generation when crossing two heterozygous F1 plants (Pp x Pp)?
+3:1
+9:3:3:1
+1:2:1
+100% heterozygous
+A genetic pattern where neither allele is completely dominant, resulting in a blending of traits (e.g., pink flowers from red and white parents) is called:
+Incomplete dominance
+Codominance
+Multiple alleles
+Polygenic inheritance
+A genetic pattern where both alleles are equally and fully expressed (e.g., checkered chicken feathers) is called:
+Incomplete dominance
+Codominance
+Sex-linked traits
+Simple dominance
+Human blood type is an example of which complex pattern of inheritance?
+Multiple alleles
+Polygenic inheritance
+Sex-linked traits
+Incomplete dominance
+Sex-linked traits, such as hemophilia and color blindness, are most commonly located on the:
+Y chromosome
+Chromosome 21
+X chromosome
+Autosomes
+Why are males more susceptible to recessive X-linked conditions than females?
+They possess only one X chromosome
+They possess two X chromosomes
+The Y chromosome amplifies the trait
+Hormonal differences express the trait more
+A single trait controlled by the interaction of many genes, resulting in a continuum of phenotypes (e.g., human height, wheat kernel color) is:
+Multiple alleles
+Codominance
+Incomplete dominance
+Polygenic inheritance
+An experiment tracking two distinct traits simultaneously is called a:
+Dihybrid cross
+Monohybrid cross
+Test cross
+Polygenic cross
+What is the genotype of a pure-breeding plant with smooth peas and purple flowers (both dominant traits)?
+SSPP
+SsPp
+sspp
+SSpp
+According to Mendel's Law of Independent Assortment, alleles for different traits:
+Always stick together during gamete formation
+Separate independently of one another during gamete formation
+Blend together to form new alleles
+Are only found on the X chromosome
+What is the classic phenotypic ratio of the F2 generation in a dihybrid cross between two heterozygous parents?
+9:3:3:1
+3:1
+1:2:1:2:4:2:1:2:1
+9:7
+In the 9:3:3:1 ratio, the "9" represents offspring that are:
+Dominant for both traits
+Recessive for both traits
+Dominant for the first trait, recessive for the second
+Heterozygous for both traits
+In human blood typing, the A and B alleles exhibit:
+Simple dominance over each other
+Incomplete dominance
+Codominance
+Polygenic inheritance
+To have Type O blood, an individual must inherit:
+Two recessive 'i' alleles
+At least one 'A' allele
+Both an 'A' and a 'B' allele
+Two dominant 'O' alleles
+The Rh factor gene determines positive (+) or negative (-) blood type and follows which pattern?
+Simple dominance (positive is dominant)
+Simple dominance (negative is dominant)
+Codominance
+Incomplete dominance
+Which complete genotype represents a universal donor (Type O-negative) often carried by STARS air ambulance?
+IAIA RR
+ii Rr
+IAi rr
+ii rr
+Why is O-negative blood considered the universal donor?
+It contains all surface antigens
+It lacks A proteins, B proteins, and Rh proteins
+It has the strongest immune response
+It is the most common blood type globally
+The reduction division process that ensures gametes have half the normal number of chromosomes is:
+Mitosis
+Meiosis
+Transcription
+Translation
+During early meiosis, homologous chromosomes pair up and physically swap chunks of DNA in a process called:
+Nondisjunction
+Transcription
+Independent Assortment
+Crossing-Over
+What is the primary evolutionary advantage of Crossing-Over?
+It ensures infinite genetic variation in offspring
+It prevents chromosomal mutations
+It speeds up cell division
+It ensures all offspring are identical
+A large-scale chromosomal mutation where a piece of a chromosome breaks off and attaches to a non-homologous chromosome is called:
+Deletion
+Duplication
+Translocation
+Inversion
+A chromosomal mutation where a segment detaches, flips 180 degrees, and reattaches is an:
+Insertion
+Inversion
+Deletion
+Amplification
+The failure of chromosomes to separate correctly during anaphase of meiosis is known as:
+Translocation
+Nondisjunction
+Crossing-Over
+Segregation
+A chart that arranges a cell's chromosomes by size and banding pattern to diagnose disorders is a:
+Pedigree
+Punnett square
+Karyotype
+Autoradiogram
+The karyotype notation for Down Syndrome, resulting from nondisjunction, is:
+45, XO
+47, XX, +21 or 47, XY, +21
+47, XXY
+46, XX
+Turner Syndrome is caused by inheriting only one X chromosome. The karyotype notation is:
+47, XXY
+47, XX, +21
+46, XY
+45, XO
+Evolution, at a genetic level, is simply a change in the frequency of:
+Mutations in an individual
+Alleles in a population over generations
+Chromosomes during meiosis
+Cells during mitosis
+The mechanism where the environment applies pressure, allowing advantageous traits to survive and reproduce, is:
+Natural Selection
+Gene Flow
+Genetic Drift
+The Founder Effect
+The movement of alleles into or out of a population due to migration is called:
+Genetic Drift
+The Bottleneck Effect
+Gene Flow
+Nondisjunction
+Random, chance events that change allele frequencies, impacting small populations most severely, are known as:
+Natural Selection
+Genetic Drift
+Gene Flow
+Polygenic inheritance
+When a small group breaks off from a larger population to start a new colony with a potentially different allele frequency, it is called:
+The Bottleneck Effect
+Gene Flow
+The Founder Effect
+Natural Selection
+When a disaster drastically reduces population size and permanently eliminates massive amounts of genetic diversity, it is called:
+The Bottleneck Effect
+The Founder Effect
+Gene Flow
+Translocation
+The reduction of the Plains Bison population to less than 1,000 individuals in 1890 is a devastating historical example of:
+The Bottleneck Effect
+The Founder Effect
+Gene Flow
+Artificial Selection
+In a pedigree tracing a recessive disease, if two healthy parents have a child with the disease, the parents must both be:
+Homozygous dominant
+Heterozygous
+Homozygous recessive
+Sex-linked
+If a true-breeding black chicken and a true-breeding white chicken produce offspring with checkered black and white feathers, the alleles exhibit:
+Incomplete dominance
+Codominance
+Recessive dominance
+Multiple alleles
+During early meiosis, the failure of chromosomes to separate is considered a macro-level error, while a tiny "typo" in the DNA code is considered a:
+Translocation
+Crossing-over
+Mutation
+Replication
+Which phenomenon explains why adjacent populations often remain genetically similar to one another?
+The Founder Effect
+Gene Flow
+Genetic Drift
+The Bottleneck Effect
+Which biochemist discovered that the amount of Adenine always equals Thymine, and Cytosine equals Guanine?
+Rosalind Franklin
+Erwin Chargaff
+James Watson
+Francis Crick
+The critical X-ray diffraction image ("Photo 51") that proved DNA was a double helix was produced by:
+Maurice Wilkins
+James Watson
+Rosalind Franklin
+Erwin Chargaff
+Watson and Crick used Photo 51 to build their famous 1953 model, which showed DNA was shaped like a:
+Single strand
+Triple helix
+Double helix
+Globular protein
+DNA is a polymer made of repeating units called:
+Amino acids
+Nucleotides
+Polypeptides
+Fatty acids
+A single nucleotide consists of which three parts?
+Deoxyribose sugar, phosphate group, nitrogenous base
+Ribose sugar, amino group, nitrogenous base
+Deoxyribose sugar, carboxyl group, phosphate group
+Glucose, phosphate group, lipid tail
+The two sides of the DNA double helix are held together in the middle by:
+Strong covalent bonds
+Ionic bonds
+Weak hydrogen bonds
+Peptide bonds
+The tough outside "backbone" of the DNA molecule that protects the genetic code is made of:
+Alternating nitrogenous bases
+Alternating sugars and phosphates
+Strong hydrogen bonds
+Amino acid chains
+According to complementary base pairing rules in DNA, Adenine (A) always pairs with:
+Cytosine (C)
+Thymine (T)
+Guanine (G)
+Uracil (U)
+Which sugar is found in the backbone of RNA?
+Ribose
+Deoxyribose
+Glucose
+Sucrose
+Which nitrogenous base is unique to RNA and replaces Thymine?
+Adenine
+Cytosine
+Uracil
+Guanine
+Unlike the double-stranded DNA, RNA is usually:
+Single-stranded
+Triple-stranded
+Circular
+Stored permanently in the nucleus
+The Central Dogma of Molecular Biology states that information flows in which direction?
+Protein -> RNA -> DNA
+DNA -> Protein -> RNA
+RNA -> DNA -> Protein
+DNA -> RNA -> Protein
+DNA replication is considered "semi-conservative" because:
+It only copies half of the genes
+Each new DNA molecule keeps one old strand and builds one new strand
+It requires very little energy
+The original DNA is completely destroyed
+During DNA replication, which enzyme unzips the double helix by breaking the hydrogen bonds?
+Helicase
+DNA Polymerase
+RNA Polymerase
+Restriction Enzyme
+During replication, which enzyme reads the exposed bases and attaches free-floating complementary nucleotides?
+Helicase
+RNA Polymerase
+DNA Polymerase
+Ribosome
+The process of making a temporary mRNA copy of a specific gene is called:
+Translation
+Replication
+Transcription
+Methylation
+Where does transcription occur in a eukaryotic cell?
+In the cytoplasm
+In the nucleus
+On the cell membrane
+Inside a ribosome
+During transcription, if the DNA sequence reads 'A', the RNA Polymerase will add which base to the mRNA?
+T (Thymine)
+U (Uracil)
+C (Cytosine)
+G (Guanine)
+The process of converting the mRNA code into a 3D functional protein is called:
+Transcription
+Translation
+Replication
+Epigenetics
+Where does translation occur?
+In the nucleus
+In the cytoplasm at a ribosome
+Inside the DNA helix
+During anaphase of meiosis
+The ribosome reads the mRNA sequence in three-letter blocks called:
+Anti-codons
+Nucleotides
+Codons
+Genes
+Each codon sequence corresponds to one specific:
+Amino acid
+Lipid
+Carbohydrate
+Nucleotide
+Which molecule acts as a delivery service, bringing specific amino acids to the ribosome?
+mRNA
+tRNA
+DNA Polymerase
+rRNA
+The anti-codon is found on which molecule?
+mRNA
+tRNA
+DNA
+Ribosome
+A point mutation occurs when:
+A single nucleotide is swapped for another
+An entire chromosome is duplicated
+A segment of DNA flips 180 degrees
+Homologous chromosomes fail to separate
+If a point mutation changes a base, but the new codon still codes for the exact same amino acid, it is a:
+Missense mutation
+Nonsense mutation
+Silent mutation
+Frameshift mutation
+If a substitution changes the codon to code for a different amino acid (e.g., in Sickle Cell Anemia), it is a:
+Missense mutation
+Silent mutation
+Nonsense mutation
+Deletion
+If a substitution accidentally changes an amino acid codon into a "STOP" codon, cutting the protein short, it is a:
+Missense mutation
+Silent mutation
+Nonsense mutation
+Insertion
+If DNA Polymerase accidentally inserts or deletes an extra nucleotide, it causes a severe disruption called a:
+Silent mutation
+Frameshift mutation
+Missense mutation
+Nondisjunction
+Why are frameshift mutations often more devastating than point substitutions?
+They destroy the nucleus
+They disrupt the entire reading frame for the rest of the sequence
+They cause chromosomes to attach to the wrong spindle fibers
+They convert DNA into RNA permanently
+Which enzyme acts as a proofreader during replication to prevent 99% of mutations?
+Helicase
+RNA Polymerase
+DNA Polymerase
+Restriction Enzyme
+While mutations can break proteins, they are also essential because they provide the raw genetic variation for:
+Mitosis
+Evolution and natural selection
+Cellular respiration
+Photosynthesis
+Kochia weeds in Saskatchewan developed herbicide resistance due to a:
+Random missense point mutation
+Complete duplication of the genome
+Loss of all ribosomes
+Nondisjunction event
+The study of how environmental factors influence genetic expression without changing the underlying DNA sequence is called:
+Mendelian genetics
+Epigenetics
+Population genetics
+Paleontology
+A common epigenetic tag that physically blocks RNA Polymerase, silencing a gene, is a:
+Methyl group
+Phosphate group
+Amino group
+Carboxyl group
+Recent research indicates that epigenetic tags resulting from severe trauma or starvation can sometimes be:
+Inherited by the next generation
+Removed instantly by transcription
+Converted into new DNA bases
+Transferred to completely different species
+A molecular technique used to rapidly amplify (photocopy) a tiny sample of DNA into billions of copies is:
+Gel Electrophoresis
+PCR (Polymerase Chain Reaction)
+DNA Fingerprinting
+Karyotyping
+The heat-resistant enzyme used in PCR was originally discovered in:
+Pea plants
+Extreme thermophilic bacteria
+Saskatchewan Kochia weeds
+Human blood
+Enzymes acting as "molecular scissors" to cut DNA at specific letter sequences are called:
+Restriction enzymes
+Helicases
+Polymerases
+Ligases
+Once DNA is cut into fragments, which technique is used to sort the fragments by size using an electrical current?
+PCR
+Agarose Gel Electrophoresis
+Karyotyping
+Pedigree analysis
+During gel electrophoresis, DNA is pulled toward the positive electrical pole because its phosphate backbone is:
+Neutral
+Positively charged
+Negatively charged
+Magnetic
+During gel electrophoresis sorting, which DNA fragments travel the fastest and furthest through the gel?
+Large, bulky pieces
+Small, short pieces
+Fragments containing Uracil
+Fragments with no charge
+DNA fingerprinting creates a unique barcode by utilizing regions of DNA that vary wildly in length between individuals, often referred to as:
+Exons
+Junk DNA
+Start codons
+Epigenetic tags
+If the banding pattern on an electrophoresis gel from a crime scene perfectly matches the banding pattern of a suspect, it indicates:
+The suspect has a chromosomal mutation
+The suspect's DNA is at the scene
+The suspect has an identical twin
+The suspect is a universal donor
+The mRNA sequence AUG acts as the START codon. What amino acid does it code for?
+Lysine
+Methionine
+Valine
+Tryptophan
+In agricultural innovation, GIFS scientists study which molecule to understand how crops translate DNA to manage drought stress?
+Restriction enzymes
+mRNA sequences
+Glucose levels
+Phospholipid bilayers
+The study of intergenerational trauma, such as the effects of the Residential School system on stress hormones in descendants, is bridged by which field of biology?
+Mendelian inheritance
+Epigenetics
+Polygenic inheritance
+Chromosomal nondisjunction
+What causes the physical block of RNA Polymerase during DNA methylation?
+A methyl group attaching to the DNA or histones
+Helicase destroying the strand
+A frameshift deletion
+Crossing-over during mitosis
+Which of the following is NOT a part of the Central Dogma of Molecular Biology?
+DNA replication
+Transcription
+Translation
+Independent assortment
+In the molecular toolbox, what does the "C" in PCR stand for?
+Cellular
+Chromosomal
+Chain
+Cytosine
+`;
+
+        // Process raw text into objects
+        const lines = questionsRaw.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+        const masterQuestionBank = [];
+        
+        // Loop through 5 lines at a time (1 question + 4 options)
+        const totalItems = Math.min(100, Math.floor(lines.length / 5));
+        for(let i = 0; i < totalItems; i++) {
+            const baseIdx = i * 5;
+            masterQuestionBank.push({
+                id: i + 1,
+                text: lines[baseIdx],
+                options: [
+                    lines[baseIdx + 1],
+                    lines[baseIdx + 2],
+                    lines[baseIdx + 3],
+                    lines[baseIdx + 4]
+                ],
+                correct: answerMap[i]
+            });
+        }
+
+        // --- 2. GAME LOGIC & STATE ---
+        let activeQuestions = [];
+        let currentIndex = 0;
+        let score = 0;
+        let correctAnswers = 0;
+        let streak = 0;
+        let maxStreak = 0;
+        let isAnswering = false;
+
+        // Audio Context Setup (Lazy loaded on first interaction)
+        let audioCtx;
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function playTone(type) {
+            if (!audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            
+            const now = audioCtx.currentTime;
+            
+            if (type === 'correct') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(600, now);
+                osc.frequency.exponentialRampToValueAtTime(1200, now + 0.1);
+                gainNode.gain.setValueAtTime(0.1, now);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                osc.start(now);
+                osc.stop(now + 0.3);
+            } else {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(150, now);
+                osc.frequency.exponentialRampToValueAtTime(80, now + 0.2);
+                gainNode.gain.setValueAtTime(0.1, now);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                osc.start(now);
+                osc.stop(now + 0.3);
+            }
+        }
+
+        // --- 3. UI CONTROLLERS ---
+        function showScreen(screenId) {
+            ['screen-start', 'screen-game', 'screen-end'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+                document.getElementById(id).classList.remove('flex');
+            });
+            const active = document.getElementById(screenId);
+            active.classList.remove('hidden');
+            if(screenId === 'screen-game') active.classList.add('flex');
+        }
+
+        function startGame(amount) {
+            initAudio(); // Required to unlock audio on interaction
+            
+            // Shuffle and slice question bank
+            const shuffled = [...masterQuestionBank].sort(() => 0.5 - Math.random());
+            activeQuestions = shuffled.slice(0, amount);
+            
+            // Reset Stats
+            currentIndex = 0;
+            score = 0;
+            correctAnswers = 0;
+            streak = 0;
+            maxStreak = 0;
+            updateHUD();
+            
+            showScreen('screen-game');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            isAnswering = false;
+            const q = activeQuestions[currentIndex];
+            
+            // Update Text
+            document.getElementById('question-counter').innerText = `Question ${currentIndex + 1} / ${activeQuestions.length}`;
+            document.getElementById('question-text').innerText = q.text;
+            
+            // Update Progress Bar
+            const progressPct = (currentIndex / activeQuestions.length) * 100;
+            document.getElementById('progress-bar').style.width = `${progressPct}%`;
+            
+            // Render Options
+            const grid = document.getElementById('options-grid');
+            grid.innerHTML = '';
+            
+            // We can map them with letters for better UX
+            const letters = ['A', 'B', 'C', 'D'];
+            
+            q.options.forEach((optText, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn flex items-center p-4 bg-slate-700/80 hover:bg-blue-600 text-left rounded-xl border border-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-400 text-slate-200 font-medium text-lg min-h-[80px] shadow-sm';
+                btn.onclick = () => handleAnswer(index, btn);
+                btn.innerHTML = `
+                    <span class="flex-shrink-0 w-8 h-8 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center font-bold mr-4 border border-slate-600 shadow-inner group-hover:bg-blue-500 group-hover:text-white group-hover:border-blue-400 transition-colors">${letters[index]}</span>
+                    <span>${optText}</span>
+                `;
+                grid.appendChild(btn);
+            });
+
+            // Clear feedback text
+            const fb = document.getElementById('feedback-message');
+            fb.style.opacity = '0';
+        }
+
+        function handleAnswer(selectedIndex, btnElement) {
+            if (isAnswering) return;
+            isAnswering = true;
+            
+            const q = activeQuestions[currentIndex];
+            const isCorrect = selectedIndex === q.correct;
+            const buttons = document.querySelectorAll('.option-btn');
+            
+            // Disable all buttons
+            buttons.forEach(b => b.disabled = true);
+            
+            const fb = document.getElementById('feedback-message');
+            fb.style.opacity = '1';
+            
+            if (isCorrect) {
+                playTone('correct');
+                btnElement.classList.add('correct-ans');
+                
+                streak++;
+                if (streak > maxStreak) maxStreak = streak;
+                correctAnswers++;
+                
+                // Calculate score (Base 100 + Streak Multiplier)
+                const multiplier = 1 + (streak * 0.1);
+                const pointsEarned = Math.floor(100 * multiplier);
+                score += pointsEarned;
+                
+                showFloatingPoints(btnElement, `+${pointsEarned}`);
+                fb.innerHTML = `<span class="text-emerald-400">Correct! Great job.</span>`;
+            } else {
+                playTone('wrong');
+                btnElement.classList.add('wrong-ans');
+                // Highlight the actual correct one
+                buttons[q.correct].classList.add('correct-ans', 'opacity-50');
+                
+                streak = 0;
+                fb.innerHTML = `<span class="text-red-400">Incorrect. Review the highlighted answer.</span>`;
+            }
+            
+            updateHUD();
+
+            // Next Question Delay
+            setTimeout(() => {
+                currentIndex++;
+                if (currentIndex >= activeQuestions.length) {
+                    endGame();
+                } else {
+                    loadQuestion();
+                }
+            }, 1800);
+        }
+
+        function updateHUD() {
+            document.getElementById('score-display').innerText = score.toLocaleString();
+            
+            const badge = document.getElementById('streak-badge');
+            if (streak >= 3) {
+                badge.classList.remove('hidden');
+                document.getElementById('streak-display').innerText = `${streak}x Combo`;
+                // Add minor shake animation for excitement
+                badge.style.transform = 'scale(1.1)';
+                setTimeout(() => badge.style.transform = 'scale(1)', 200);
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
+
+        function showFloatingPoints(anchorEl, text) {
+            const rect = anchorEl.getBoundingClientRect();
+            const floatEl = document.createElement('div');
+            floatEl.className = 'floating-score text-2xl';
+            floatEl.innerText = text;
+            floatEl.style.left = `${rect.left + rect.width / 2 - 20}px`;
+            floatEl.style.top = `${rect.top}px`;
+            document.body.appendChild(floatEl);
+            
+            setTimeout(() => floatEl.remove(), 1000);
+        }
+
+        function endGame() {
+            // Update final progress bar
+            document.getElementById('progress-bar').style.width = `100%`;
+            
+            setTimeout(() => {
+                showScreen('screen-end');
+                
+                const accuracy = Math.round((correctAnswers / activeQuestions.length) * 100);
+                
+                document.getElementById('final-score').innerText = score.toLocaleString();
+                document.getElementById('final-accuracy').innerText = `${accuracy}%`;
+                document.getElementById('final-streak').innerHTML = `<span class="mr-2">🔥</span> ${maxStreak}`;
+                
+                // Determine Rank
+                let rankName = "Lab Assistant";
+                let colorClass = "from-slate-400 to-slate-500";
+                
+                if (accuracy >= 90) { rankName = "Master Geneticist"; colorClass = "from-amber-400 to-orange-500"; }
+                else if (accuracy >= 80) { rankName = "Senior Biologist"; colorClass = "from-purple-400 to-pink-500"; }
+                else if (accuracy >= 65) { rankName = "Field Researcher"; colorClass = "from-blue-400 to-emerald-400"; }
+                
+                const rankEl = document.getElementById('final-rank');
+                rankEl.innerText = rankName;
+                rankEl.className = `text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r ${colorClass} mb-8`;
+
+            }, 500);
+        }
+    </script>
+</body>
+</html>
